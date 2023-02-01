@@ -1,5 +1,8 @@
 from flask import Flask, request, render_template, jsonify
 
+from .apps.users import users_bp
+from .apps.tasks import tasks_bp
+
 
 app = Flask(__name__)
 
@@ -17,56 +20,5 @@ def tests():
     return jsonify({"test_num": 456, "test_str": "test"})
 
 
-@app.route("/login", methods=["POST"])
-def login():
-    """URL to login as an authorized user"""
-
-
-@app.route("/login/2fa", methods=["POST"])
-def login2fa():
-    """URL to send 2FA auth - Token required"""
-
-
-@app.route("/user", methods=["PUT"])
-def user():
-    """URL to modify user informations - Token required"""
-
-
-@app.route("/tasks", methods=["GET", "POST"])
-def user():
-    """URL to current user tasks - Token required"""
-    if request.method == "GET":
-        return jsonify()
-    elif request.method == "POST":
-        return jsonify()
-
-
-@app.route("/task/<int:task_id>", methods=["GET", "PUT", "PATCH", "DELETE"])
-def user(task_id):
-    """URL to current user task - Token required"""
-    if request.method == "GET":
-        return jsonify()
-    elif request.method in ["PUT", "PATCH"]:
-        return jsonify()
-    elif request.method == "DELETE":
-        return jsonify()
-
-
-@app.route("/groups", methods=["GET", "POST"])
-def user():
-    """URL to current user groups - Token required"""
-    if request.method == "GET":
-        return jsonify()
-    elif request.method == "POST":
-        return jsonify()
-
-
-@app.route("/group/<int:group_id>", methods=["GET", "PUT", "PATCH", "DELETE"])
-def user(group_id):
-    """URL to current user group - Token required"""
-    if request.method == "GET":
-        return jsonify()
-    elif request.method in ["PUT", "PATCH"]:
-        return jsonify()
-    elif request.method == "DELETE":
-        return jsonify()
+app.register_blueprint(users_bp)
+app.register_blueprint(tasks_bp)
