@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, jsonify
+from flask import Flask, render_template, jsonify
 
 from .apps.users import users_bp
 from .apps.tasks import tasks_bp

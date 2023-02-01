@@ -9,6 +9,7 @@ users_bp = Blueprint(
 )
 
 
+# https://medium.com/swlh/creating-middlewares-with-python-flask-166bd03f2fd4
 @users_bp.route("/login", methods=["POST"])
 def login():
     """
@@ -17,6 +18,8 @@ def login():
     Need an email and a password
     Return a temporary token
     """
+    if request.method == "POST":
+        return jsonify()
 
 
 @users_bp.route("/login/2fa", methods=["POST"])
@@ -40,7 +43,7 @@ def logout():
     """
 
 
-@users_bp.route("/user", methods=["PUT"])
+@users_bp.route("/user", methods=["PUT", "PATCH"])
 def user():
     """
     URL to modify user informations - Token required
@@ -48,4 +51,3 @@ def user():
     Need an expiring token
     Return a jsonify user updated
     """
-
