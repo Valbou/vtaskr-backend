@@ -3,6 +3,7 @@ from enum import Enum
 from typing import Optional, Union, Literal
 
 from sqlalchemy import create_engine, Engine
+
 from .base import Base
 
 
@@ -17,7 +18,13 @@ class SQLService:
         database: Optional[DBType] = None,
         echo: Union[None, bool, Literal["debug"]] = False,
     ) -> None:
-        self.echo: Union[None, bool, Literal["debug"]] = echo
+        debug = False
+        if os.getenv("DEBUG_SQL") == "true":
+            debug = bool(os.getenv("DEBUG_SQL"))
+        elif os.getenv("DEBUG_SQL") == "debug":
+            debug = os.getenv("DEBUG_SQL")
+
+        self.echo: Union[None, bool, Literal["debug"]] = echo or debug
         self.database: Optional[DBType] = database
 
     def get_database_url(self) -> str:
