@@ -3,8 +3,9 @@ from enum import Enum
 from typing import Optional, Union, Literal
 
 from sqlalchemy import create_engine, Engine
+from sqlalchemy.orm import Session, sessionmaker
 
-from .base import Base
+from .base import mapper_registry
 
 
 class DBType(Enum):
@@ -26,6 +27,7 @@ class SQLService:
 
         self.echo: Union[None, bool, Literal["debug"]] = echo or debug
         self.database: Optional[DBType] = database
+        self.mapping()
 
     def get_database_url(self) -> str:
         DB_TYPE = os.getenv("DB_TYPE")
@@ -44,11 +46,17 @@ class SQLService:
             f"{DB_TYPE}+{BD_DRIVER}://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
         )
 
+    def mapping(self):
+        from src.vtasks.apps.users.persistence.sqlalchemy.tables import user_table
+
     def get_engine(self) -> Engine:
-        return create_engine(self.get_database_url(), echo=self.echo)
+        return create_engine(self.get_database_url(), pool_size=20, echo=self.echo)
+
+    def get_session(self) -> Session:
+        return sessionmaker(self.get_engine())()
 
     def create_tables(self):
-        Base.metadata.create_all(bind=self.get_engine())
+        mapper_registry.metadata.create_all(bind=self.get_engine())
 
     def drop_tables(self):
-        Base.metadata.drop_all(bind=self.get_engine())
+        mapper_registry.metadata.drop_all(bind=self.get_engine())

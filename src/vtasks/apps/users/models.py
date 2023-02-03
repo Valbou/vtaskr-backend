@@ -1,11 +1,13 @@
 from uuid import uuid4
 from datetime import datetime
 from typing import Optional
+from dataclasses import dataclass
 
 from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError
 
 
+@dataclass
 class User:
     id: str = ""
     first_name: str = ""

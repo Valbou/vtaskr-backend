@@ -31,7 +31,23 @@ class TestUserAdapter(DBTestCase):
             hash_password=self.fake.password(),
         )
 
-    # def test_insert_user(self):
+    def test_insert_user_and_reload_it(self):
+        with self.user_db.get_session() as session:
+            self.assertTrue(self.user_db.save(session, self.user))
+            user = self.user_db.load(session, self.user.id)
+            self.assertEqual(user.id, self.user.id)
 
-    #     user = self.user_db.save(self.user)
-    #     self.assertEqual(user.id, self.user.id)
+    def test_insert_user_and_delete_it(self):
+        with self.user_db.get_session() as session:
+            self.assertTrue(self.user_db.save(session, self.user))
+            user = self.user_db.load(session, self.user.id)
+            self.assertEqual(user.id, self.user.id)
+            self.assertTrue(self.user_db.delete(session, self.user))
+            self.assertIsNone(self.user_db.load(session, self.user.id))
+
+    def test_user_exists(self):
+        with self.user_db.get_session() as session:
+            self.assertTrue(self.user_db.save(session, self.user))
+            self.assertTrue(self.user_db.exists(session, self.user.id))
+            self.assertTrue(self.user_db.delete(session, self.user))
+            self.assertFalse(self.user_db.exists(session, self.user.id))
