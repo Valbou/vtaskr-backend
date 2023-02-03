@@ -20,4 +20,3 @@ def tests():
     """URL to test flask - REMOVE ME"""
     # TODO: to remove when tests are done
     return jsonify({"test_num": 456, "test_str": "test"})
-

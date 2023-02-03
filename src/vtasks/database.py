@@ -1,21 +1,47 @@
-from sqlalchemy import create_engine
-from sqlalchemy.orm import scoped_session, sessionmaker
-from sqlalchemy.ext.declarative import declarative_base
+import os
+from enum import Enum
+from typing import Optional, Union, Literal
+
+from sqlalchemy import create_engine, Engine
+from .base import Base
 
 
-engine = create_engine("sqlite:////tmp/test.db")
-db_session = scoped_session(
-    sessionmaker(autocommit=False, autoflush=False, bind=engine)
-)
-Base = declarative_base()
-Base.query = db_session.query_property()
+class DBType(Enum):
+    TEST = "test"
+    PROD = "prod"
 
 
-def init_db():
-    # import all modules here that might define models so that
-    # they will be registered properly on the metadata.  Otherwise
-    # you will have to import them first before calling init_db()
-    import vtasks.apps.users.models
-    import vtasks.apps.tasks.models
+class SQLService:
+    def __init__(
+        self,
+        database: Optional[DBType] = None,
+        echo: Union[None, bool, Literal["debug"]] = False,
+    ) -> None:
+        self.echo: Union[None, bool, Literal["debug"]] = echo
+        self.database: Optional[DBType] = database
 
-    Base.metadata.create_all(bind=engine)
+    def get_database_url(self) -> str:
+        DB_TYPE = os.getenv("DB_TYPE")
+        BD_DRIVER = os.getenv("BD_DRIVER")
+        DB_USER = os.getenv("DB_USER")
+        DB_PASS = os.getenv("DB_PASS")
+        DB_HOST = os.getenv("DB_HOST")
+        DB_PORT = os.getenv("DB_PORT")
+        DB_NAME = (
+            os.getenv("DB_NAME")
+            if self.database == DBType.PROD
+            else os.getenv("DB_TEST")
+        )
+
+        return (
+            f"{DB_TYPE}+{BD_DRIVER}://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+        )
+
+    def get_engine(self) -> Engine:
+        return create_engine(self.get_database_url(), echo=self.echo)
+
+    def create_tables(self):
+        Base.metadata.create_all(bind=self.get_engine())
+
+    def drop_tables(self):
+        Base.metadata.drop_all(bind=self.get_engine())
