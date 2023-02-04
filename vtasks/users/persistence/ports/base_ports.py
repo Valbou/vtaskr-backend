@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 
-class AbstractUserPort(ABC):
+class AbstractPort(ABC):
     @abstractmethod
     def load(self, id: str) -> object:
         raise NotImplementedError()

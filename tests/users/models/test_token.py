@@ -16,6 +16,7 @@ class TestToken(TestCase):
     def test_token_table_fields(self):
         self.assertEqual(Token.__annotations__.get("id"), str)
         self.assertEqual(Token.__annotations__.get("created_at"), datetime)
+        self.assertEqual(Token.__annotations__.get("last_activity_at"), datetime)
         self.assertEqual(Token.__annotations__.get("sha_token"), str)
         self.assertEqual(Token.__annotations__.get("user_id"), str)
 
@@ -25,7 +26,7 @@ class TestToken(TestCase):
     def test_token_old_invalid(self):
         token = Token(
             user_id=uuid4().hex,
-            created_at=datetime.now() - timedelta(seconds=TOKEN_VALIDITY)
+            created_at=datetime.now() - timedelta(seconds=TOKEN_VALIDITY),
         )
         self.assertFalse(token.is_valid())
 
