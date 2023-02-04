@@ -1,9 +1,10 @@
 from datetime import datetime
 
 
-from sqlalchemy import Table, Column, String, DateTime
+from sqlalchemy import Table, Column, String, DateTime, ForeignKey
+from sqlalchemy.orm import relationship
 
-from vtasks.users.models import User
+from vtasks.users.models import User, Token
 from vtasks.sqlalchemy.base import mapper_registry
 
 
@@ -22,4 +23,20 @@ user_table = Table(
 mapper_registry.map_imperatively(
     User,
     user_table,
+    properties={"tokens": relationship("Token", back_populates="user")},
+)
+
+
+token_table = Table(
+    "tokens",
+    mapper_registry.metadata,
+    Column("id", String, primary_key=True),
+    Column("created_at", DateTime, default=datetime.now()),
+    Column("user_id", ForeignKey("users.id")),
+)
+
+mapper_registry.map_imperatively(
+    Token,
+    token_table,
+    properties={"user": relationship("User", back_populates="tokens")},
 )
