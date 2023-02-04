@@ -1,8 +1,8 @@
 from flask import Flask
 
-from vtasks.base import base_bp
-from vtasks.users import users_bp
-from vtasks.tasks import tasks_bp
+from vtasks.base.http.flask import base_bp
+from vtasks.users.http.flask import users_bp
+from vtasks.tasks.http.flask import tasks_bp
 
 
 app = Flask(__name__)
