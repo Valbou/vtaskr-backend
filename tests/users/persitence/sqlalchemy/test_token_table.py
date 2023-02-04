@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from faker import Faker
 
 from tests.utils.db_utils import text_query_table_exists
-from tests.base_test import DBTestCase
+from tests.base_db_test import DBTestCase
 
 from vtasks.users.models import User, Token
 from vtasks.users.persistence import UserDB, TokenDB

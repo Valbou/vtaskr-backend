@@ -2,7 +2,7 @@ from dotenv import load_dotenv
 
 from vtasks.sqlalchemy.database import SQLService, DBType
 
-from .base_test import *
+from .base_db_test import *
 
 
 load_dotenv()
