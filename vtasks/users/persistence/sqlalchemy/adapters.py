@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import select
 
 from vtasks.sqlalchemy.database import SQLService, DBType
-from vtasks.users.ports import AbstractUserPort
+from vtasks.users.persistence.ports import AbstractUserPort
 from vtasks.users.models import User
 
 
