@@ -1,6 +1,8 @@
 from unittest import TestCase
+from unittest.mock import patch
 
 from sqlalchemy.orm import Session
+from sqlalchemy import Engine
 
 from tests.utils.db_utils import check_connection_query
 
@@ -24,7 +26,23 @@ class TestSQLService(TestCase):
             self.sql_prod.get_database_url().startswith("postgresql+psycopg2://")
         )
 
+    def test_get_engine(self):
+        self.assertIsInstance(self.sql_test.get_engine(), Engine)
+
+    def test_get_session(self):
+        self.assertIsInstance(self.sql_test.get_session(), Session)
+
     def test_db_connection(self):
         with Session(self.sql_test.get_engine()) as session:
             result = session.execute(check_connection_query()).scalar_one_or_none()
             self.assertEqual(result, 1)
+
+    def test_create_tables(self):
+        with patch("vtasks.sqlalchemy.base.mapper_registry.metadata.create_all") as mock:
+            self.sql_test.create_tables()
+            mock.assert_called_once()
+
+    def test_drop_tables(self):
+        with patch("vtasks.sqlalchemy.base.mapper_registry.metadata.drop_all") as mock:
+            self.sql_test.drop_tables()
+            mock.assert_called_once()
