@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from src.vtasks.apps.base.ports import AbstractModelPort
+from vtasks.base.ports import AbstractModelPort
 
 
 class AbstractUserPort(AbstractModelPort, ABC):

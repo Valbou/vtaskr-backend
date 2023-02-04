@@ -2,12 +2,12 @@ from sqlalchemy.orm import Session
 
 from faker import Faker
 
-from tests.db_utils import text_query_table_exists
+from tests.utils.db_utils import text_query_table_exists
 from tests.base_test import DBTestCase
 
-from src.vtasks.apps.users.models import User
-from src.vtasks.apps.users.persistence import UserDB
-from src.vtasks.database import DBType
+from vtasks.users.models import User
+from vtasks.users.persistence import UserDB
+from vtasks.sqlalchemy.database import DBType
 
 
 class TestUserTable(DBTestCase):

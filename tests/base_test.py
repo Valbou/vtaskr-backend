@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from src.vtasks.database import SQLService, DBType
+from vtasks.sqlalchemy.database import SQLService, DBType
 
 
 class DBTestCase(TestCase):
