@@ -25,6 +25,8 @@ class FlaskTemplateCapture:
 
 
 class FlaskTestCase(TestCase):
+    defined_http_service: bool = False
+
     def setUp(self) -> None:
         super().setUp()
         self._define_client()
@@ -33,6 +35,7 @@ class FlaskTestCase(TestCase):
         self.app: Flask = create_flask_app(testing=True)
         self.client = self.app.test_client()
         self.cli = self.app.test_cli_runner()
+        self.defined_http_service = True
 
     def assertTemplateUsed(self, template_name: str, recorded_templates: List[str]):
         self.assertIn(template_name, recorded_templates)

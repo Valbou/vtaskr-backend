@@ -3,7 +3,7 @@ from enum import Enum
 from typing import Optional, Union, Literal
 
 from sqlalchemy import create_engine, Engine
-from sqlalchemy.orm import Session, sessionmaker
+from sqlalchemy.orm import Session, sessionmaker, scoped_session
 
 from .base import mapper_registry
 
@@ -54,7 +54,7 @@ class SQLService:
         return create_engine(self.get_database_url(), pool_size=20, echo=self.echo)
 
     def get_session(self) -> Session:
-        return sessionmaker(self.get_engine())()
+        return scoped_session(sessionmaker(self.get_engine()))()
 
     def create_tables(self):
         mapper_registry.metadata.create_all(bind=self.get_engine())
