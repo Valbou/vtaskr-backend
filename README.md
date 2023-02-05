@@ -5,8 +5,8 @@ Development in progress... Not ready for use. We aim to use the hexagonal archit
 
 ![License LGPLv3](https://img.shields.io/badge/license-LGPLv3-blue "License LGPLv3")
 ![Python v3.8](https://img.shields.io/badge/python-v3.8-blue "Python v3.8")
-![Tests 25 passed](https://img.shields.io/badge/tests-25%20passed-green "Tests 25 passed")
-![Coverage 89%](https://img.shields.io/badge/coverage-89%25-green "Coverage 89%")
+![Tests 30 passed](https://img.shields.io/badge/tests-30%20passed-green "Tests 30 passed")
+![Coverage 87%](https://img.shields.io/badge/coverage-87%25-green "Coverage 87%")
 ![Code quality A](https://img.shields.io/badge/code%20quality-A-green "Code quality A")
 
 ## Technical informations
