@@ -11,6 +11,11 @@ class TokenDB(AbstractTokenPort):
         result = session.scalars(stmt).one_or_none()
         return result
 
+    def get_token(self, session: Session, sha_token: str) -> Token:
+        stmt = select(Token).where(Token.sha_token == sha_token)
+        result = session.scalars(stmt).one_or_none()
+        return result
+
     def save(self, session: Session, token: Token, autocommit: bool = True) -> True:
         session.add(token)
         if autocommit:

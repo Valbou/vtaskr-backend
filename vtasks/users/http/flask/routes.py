@@ -70,14 +70,39 @@ def login2fa():
     """
 
 
-@users_bp.route(f"{V1}/users/logout", methods=["POST"])
+@users_bp.route(f"{V1}/users/logout", methods=["DELETE"])
 def logout():
     """
     URL to logout a logged in user - Token required
 
-    Need a expiring token
-    Return a boolean
+    Need a expiring token and the user email
+    Return a 204
     """
+
+    payload: dict = request.get_json()
+
+    try:
+        email = payload.get("email")
+        sha_token = payload.get("token")
+    except Exception:
+        return ResponseAPI.get_error_response("Bad request", 400)
+
+    try:
+        user_db = UserDB()
+        token_db = TokenDB()
+        data = {}
+
+        with current_app.sql_service.get_session() as session:
+            user = user_db.find_login(session, email)
+            token = token_db.get_token(session, sha_token)
+            if token.user_id == user.id:
+                token_db.delete(session, token)
+                return ResponseAPI.get_response(data, 204)
+        return ResponseAPI.get_response("Unauthorized", 403)
+
+    except Exception as e:
+        logger.error(str(e))
+        return ResponseAPI.get_error_response("Internal error: " + str(e), 500)
 
 
 @users_bp.route(f"{V1}/users/user", methods=["PUT", "PATCH"])

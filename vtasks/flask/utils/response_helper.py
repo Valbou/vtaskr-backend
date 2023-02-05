@@ -14,8 +14,9 @@ class ResponseAPI:
         assert (  # nosec
             status < 400
         ), f"A status >= 400 is an error not a normal response, given: {status}"
+        response_data = dumps(data) if status != 204 else ""
         return Response(
-            response=dumps(data),
+            response=response_data,
             status=status,
             headers=headers,
             mimetype=JSON_MIME_TYPE,

@@ -1,7 +1,12 @@
-from abc import ABC
+from abc import ABC, abstractmethod
+
+from vtasks.users import Token
 
 from .base_ports import AbstractPort
 
 
 class AbstractTokenPort(AbstractPort, ABC):
-    pass
+    @abstractmethod
+    def get_token(self, token: str) -> Token:
+        raise NotImplementedError()
+
