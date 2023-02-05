@@ -37,6 +37,10 @@ class Token:
             return True
         return False
 
+    def update_last_activity(self):
+        """Token validity is automaticaly extended"""
+        self.last_activity_at = datetime.now()
+
     def __str__(self) -> str:
         return f"Token {self.sha_token}"
 
