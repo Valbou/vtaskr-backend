@@ -1,5 +1,7 @@
 from flask import Flask
 
+from vtasks.sqlalchemy.database import SQLService
+
 from vtasks.base.http.flask import base_bp
 from vtasks.users.http.flask import users_bp
 from vtasks.tasks.http.flask import tasks_bp
@@ -13,5 +15,7 @@ def create_flask_app(testing: bool = False):
     app.register_blueprint(base_bp)
     app.register_blueprint(users_bp)
     app.register_blueprint(tasks_bp)
+
+    app.sql_service = SQLService(testing)
 
     return app

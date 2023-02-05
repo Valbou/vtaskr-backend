@@ -6,14 +6,14 @@ from sqlalchemy import Engine
 
 from tests.utils.db_utils import check_connection_query
 
-from vtasks.sqlalchemy.database import SQLService, DBType
+from vtasks.sqlalchemy.database import SQLService
 
 
 class TestSQLService(TestCase):
     def setUp(self) -> None:
         super().setUp()
-        self.sql_test = SQLService(DBType.TEST)
-        self.sql_prod = SQLService(DBType.PROD)
+        self.sql_test = SQLService(testing=True)
+        self.sql_prod = SQLService(testing=False)
 
     def test_db_test_not_equal_to_prod(self):
         self.assertNotEqual(
