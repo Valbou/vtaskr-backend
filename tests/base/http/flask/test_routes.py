@@ -1,7 +1,7 @@
-from tests import FlaskTestCase, FlaskTemplateCapture
+from tests import BaseTestCase, FlaskTemplateCapture
 
 
-class TestBaseRoutes(FlaskTestCase):
+class TestBaseRoutes(BaseTestCase):
     def test_home_page(self):
         recorder = FlaskTemplateCapture(self.app)
         with recorder:
