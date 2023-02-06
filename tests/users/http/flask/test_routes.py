@@ -74,6 +74,7 @@ class TestUserV1Routes(BaseTestCase):
         )
         self.assertEqual(response.status_code, 401)
         self.assertEqual(response.content_type, "application/json")
+        self.assertEqual(response.text, '{"error": "Invalid credentials", "status": 401}')
 
     def test_post_login_known_user_bad_password(self):
         headers = {"Content-Type": "application/json"}
@@ -86,6 +87,7 @@ class TestUserV1Routes(BaseTestCase):
         )
         self.assertEqual(response.status_code, 401)
         self.assertEqual(response.content_type, "application/json")
+        self.assertEqual(response.text, '{"error": "Invalid credentials", "status": 401}')
 
     def test_delete_logout(self):
         token = self.get_token()
@@ -113,6 +115,7 @@ class TestUserV1Routes(BaseTestCase):
         )
         self.assertEqual(response.status_code, 403)
         self.assertEqual(response.content_type, "application/json")
+        self.assertEqual(response.text, '{"error": "Unauthorized", "status": 403}')
 
     def test_delete_logout_unknown_token(self):
         headers = {"Content-Type": "application/json"}
@@ -125,3 +128,4 @@ class TestUserV1Routes(BaseTestCase):
         )
         self.assertEqual(response.status_code, 403)
         self.assertEqual(response.content_type, "application/json")
+        self.assertEqual(response.text, '{"error": "Unauthorized", "status": 403}')
