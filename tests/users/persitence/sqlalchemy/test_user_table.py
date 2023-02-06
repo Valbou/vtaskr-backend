@@ -1,17 +1,28 @@
 from tests import BaseTestCase
-from tests.utils.db_utils import text_query_table_exists
 
 from vtasks.users.models import User
 from vtasks.users.persistence import UserDB
 
 
 class TestUserTable(BaseTestCase):
-    def test_users_table_exists(self):
-        with self.app.sql_service.get_session() as session:
-            result = session.execute(
-                text_query_table_exists(), params={"table": "users"}
-            ).scalar_one_or_none()
-            self.assertTrue(result)
+    def setUp(self) -> None:
+        super().setUp()
+        self.table_name = "users"
+        self.columns_name = [
+            "id",
+            "first_name",
+            "last_name",
+            "email",
+            "hash_password",
+            "created_at",
+            "last_login_at",
+        ]
+
+    def test_table_exists(self):
+        self.assertTableExists(self.table_name)
+
+    def test_columns_exists(self):
+        self.assertColumnsExists(self.table_name, self.columns_name)
 
 
 class TestUserAdapter(BaseTestCase):
