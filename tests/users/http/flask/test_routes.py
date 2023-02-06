@@ -1,3 +1,5 @@
+from hashlib import sha256
+
 from tests import BaseTestCase
 
 from vtasks.users import User
@@ -36,16 +38,16 @@ class TestUserV1Routes(BaseTestCase):
         return response.json.get("token")
 
     def test_get_user(self):
-        response = self.client.get(f"/{URL_API_USERS}/{self.user.id}")
+        response = self.client.get(f"{URL_API_USERS}/{self.user.id}")
         self.assertEqual(response.status_code, 404)
 
     def test_get_all_users(self):
-        response = self.client.get(f"/{URL_API_USERS}")
+        response = self.client.get(f"{URL_API_USERS}")
         self.assertEqual(response.status_code, 404)
 
     def test_get_user_login(self):
-        response = self.client.get(f"/{URL_API_USERS}/login")
-        self.assertEqual(response.status_code, 404)
+        response = self.client.get(f"{URL_API_USERS}/login")
+        self.assertEqual(response.status_code, 405)
 
     def test_post_login(self):
         headers = {"Content-Type": "application/json"}
@@ -61,6 +63,30 @@ class TestUserV1Routes(BaseTestCase):
         token = response.json.get("token")
         self.assertEqual(len(token), 64)
 
+    def test_post_login_unknown_user(self):
+        headers = {"Content-Type": "application/json"}
+        payload = {
+            "email": self.fake.email(domain="valbou.fr"),
+            "password": self.fake.password(),
+        }
+        response = self.client.post(
+            f"{URL_API_USERS}/login", headers=headers, json=payload
+        )
+        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.content_type, "application/json")
+
+    def test_post_login_known_user_bad_password(self):
+        headers = {"Content-Type": "application/json"}
+        payload = {
+            "email": self.user.email,
+            "password": self.fake.password(),
+        }
+        response = self.client.post(
+            f"{URL_API_USERS}/login", headers=headers, json=payload
+        )
+        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.content_type, "application/json")
+
     def test_delete_logout(self):
         token = self.get_token()
         headers = {"Content-Type": "application/json"}
@@ -74,3 +100,28 @@ class TestUserV1Routes(BaseTestCase):
         self.assertEqual(response.status_code, 204)
         self.assertEqual(response.content_type, "application/json")
         self.assertEqual(response.text, "")
+
+    def test_delete_logout_unknown_email(self):
+        token = self.get_token()
+        headers = {"Content-Type": "application/json"}
+        payload = {
+            "email": self.fake.email(domain="valbou.fr"),
+            "token": token,
+        }
+        response = self.client.delete(
+            f"{URL_API_USERS}/logout", headers=headers, json=payload
+        )
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.content_type, "application/json")
+
+    def test_delete_logout_unknown_token(self):
+        headers = {"Content-Type": "application/json"}
+        payload = {
+            "email": self.user.email,
+            "token": sha256(self.fake.password().encode()).hexdigest(),
+        }
+        response = self.client.delete(
+            f"{URL_API_USERS}/logout", headers=headers, json=payload
+        )
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.content_type, "application/json")
