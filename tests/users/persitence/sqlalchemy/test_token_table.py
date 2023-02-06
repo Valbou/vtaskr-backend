@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from hashlib import sha256
 
 from tests import BaseTestCase
@@ -59,3 +61,17 @@ class TestTokenAdapter(BaseTestCase):
             self.assertEqual(token.id, self.token.id)
             self.assertTrue(self.token_db.delete(session, self.token))
             self.assertFalse(self.token_db.exists(session, self.token.id))
+
+    def test_activity_update(self):
+        with self.app.sql_service.get_session() as session:
+            last_activity = self.token.last_activity_at
+            self.token_db.activity_update(session, self.token)
+            self.assertLess(last_activity, self.token.last_activity_at)
+
+    def test_clean_expired(self):
+        token = Token(self.user.id, created_at=datetime(year=1987, month=1, day=1))
+        with self.app.sql_service.get_session() as session:
+            self.token_db.save(session, token)
+            self.assertTrue(self.token_db.exists(session, token.id))
+            self.token_db.clean_expired(session)
+            self.assertFalse(self.token_db.exists(session, token.id))

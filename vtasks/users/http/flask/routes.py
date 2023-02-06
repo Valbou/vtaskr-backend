@@ -26,6 +26,7 @@ V1 = "/api/v1"
 def login():
     """
     URL to login as an authorized user
+    Clean all expired tokens
 
     Need an email and a password
     Return a temporary token
@@ -44,6 +45,7 @@ def login():
         data = {}
 
         with current_app.sql_service.get_session() as session:
+            token_db.clean_expired(session)
             user = user_db.find_login(session, email)
             if not user.check_password(password):
                 return ResponseAPI.get_error_response("Invalid credentials", 401)
@@ -51,7 +53,6 @@ def login():
                 token = Token(user_id=user.id)
                 token_db.save(session, token)
                 data = {"token": token.sha_token}
-
         return ResponseAPI.get_response(data, 201)
 
     except Exception as e:

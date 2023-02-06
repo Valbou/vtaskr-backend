@@ -9,4 +9,3 @@ class AbstractTokenPort(AbstractPort, ABC):
     @abstractmethod
     def get_token(self, token: str) -> Token:
         raise NotImplementedError()
-
