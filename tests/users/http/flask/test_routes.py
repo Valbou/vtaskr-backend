@@ -128,9 +128,11 @@ class TestUserV1Routes(BaseTestCase):
         response = self.client.get(f"{URL_API_USERS}/me", headers=headers)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.content_type, "application/json")
+        self.assertEqual(response.json.get("id"), self.user.id)
         self.assertEqual(response.json.get("first_name"), self.user.first_name)
         self.assertEqual(response.json.get("last_name"), self.user.last_name)
         self.assertEqual(response.json.get("email"), self.user.email)
+        self.assertEqual(response.json.get("created_at"), str(self.user.created_at))
 
     def test_put_user(self):
         new_first_name = self.fake.first_name()
