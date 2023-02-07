@@ -1,1 +1,1 @@
-from .response_helper import ResponseAPI
+from .response_helper import ResponseAPI, get_token

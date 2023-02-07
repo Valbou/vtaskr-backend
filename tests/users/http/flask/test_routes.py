@@ -1,5 +1,3 @@
-from hashlib import sha256
-
 from tests import BaseTestCase
 
 from vtasks.users import User
@@ -95,11 +93,11 @@ class TestUserV1Routes(BaseTestCase):
 
     def test_delete_logout(self):
         token = self.get_token()
-        headers = {"Content-Type": "application/json"}
-        payload = {
-            "email": self.user.email,
-            "token": token,
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {token}",
         }
+        payload = {"email": self.user.email}
         response = self.client.delete(
             f"{URL_API_USERS}/logout", headers=headers, json=payload
         )
@@ -109,11 +107,11 @@ class TestUserV1Routes(BaseTestCase):
 
     def test_delete_logout_unknown_email(self):
         token = self.get_token()
-        headers = {"Content-Type": "application/json"}
-        payload = {
-            "email": self.fake.email(domain="valbou.fr"),
-            "token": token,
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {token}",
         }
+        payload = {"email": self.fake.email(domain="valbou.fr")}
         response = self.client.delete(
             f"{URL_API_USERS}/logout", headers=headers, json=payload
         )
@@ -121,15 +119,47 @@ class TestUserV1Routes(BaseTestCase):
         self.assertEqual(response.content_type, "application/json")
         self.assertEqual(response.text, '{"error": "Unauthorized", "status": 403}')
 
-    def test_delete_logout_unknown_token(self):
-        headers = {"Content-Type": "application/json"}
-        payload = {
-            "email": self.user.email,
-            "token": sha256(self.fake.password().encode()).hexdigest(),
+    def test_get_me(self):
+        token = self.get_token()
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {token}",
         }
-        response = self.client.delete(
-            f"{URL_API_USERS}/logout", headers=headers, json=payload
-        )
-        self.assertEqual(response.status_code, 403)
+        response = self.client.get(f"{URL_API_USERS}/me", headers=headers)
+        self.assertEqual(response.status_code, 200)
         self.assertEqual(response.content_type, "application/json")
-        self.assertEqual(response.text, '{"error": "Unauthorized", "status": 403}')
+        self.assertEqual(response.json.get("first_name"), self.user.first_name)
+        self.assertEqual(response.json.get("last_name"), self.user.last_name)
+        self.assertEqual(response.json.get("email"), self.user.email)
+
+    def test_put_user(self):
+        new_first_name = self.fake.first_name()
+        token = self.get_token()
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {token}",
+        }
+        payload = {"first_name": new_first_name}
+        response = self.client.put(
+            f"{URL_API_USERS}/me/update", headers=headers, json=payload
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.content_type, "application/json")
+        self.assertEqual(response.json.get("first_name"), new_first_name)
+        self.assertEqual(response.json.get("last_name"), self.user.last_name)
+
+    def test_patch_user(self):
+        new_last_name = self.fake.last_name()
+        token = self.get_token()
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {token}",
+        }
+        payload = {"last_name": new_last_name}
+        response = self.client.patch(
+            f"{URL_API_USERS}/me/update", headers=headers, json=payload
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.content_type, "application/json")
+        self.assertEqual(response.json.get("first_name"), self.user.first_name)
+        self.assertEqual(response.json.get("last_name"), new_last_name)

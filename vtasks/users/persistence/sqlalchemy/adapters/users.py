@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from sqlalchemy import select
+from sqlalchemy import select, update
 
 from vtasks.users.persistence.ports import AbstractUserPort
 from vtasks.users.models import User
@@ -9,6 +9,22 @@ class UserDB(AbstractUserPort):
     def load(self, session: Session, id: str) -> User:
         stmt = select(User).where(User.id == id)
         result = session.scalars(stmt).one_or_none()
+        return result
+
+    def update(self, session: Session, user: User, autocommit: bool = True) -> True:
+        stmt = (
+            update(User)
+            .where(User.id == user.id)
+            .values(
+                first_name=user.first_name,
+                last_name=user.last_name,
+                email=user.email,
+                hash_password=user.hash_password,
+            )
+        )
+        result = session.execute(stmt)
+        if autocommit:
+            session.commit()
         return result
 
     def save(self, session: Session, user: User, autocommit: bool = True) -> True:
