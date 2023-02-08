@@ -9,18 +9,12 @@ class TestUserV1Update(BaseTestCase):
         super().setUp()
         self.headers = self.get_json_headers()
 
-    def test_no_get(self):
-        response = self.client.get(f"{URL_API_USERS}/me/update", headers=self.headers)
-        self.assertEqual(response.status_code, 405)
-
     def test_no_post(self):
         response = self.client.post(f"{URL_API_USERS}/me/update", headers=self.headers)
         self.assertEqual(response.status_code, 405)
 
-    def test_no_delete(self):
-        response = self.client.delete(
-            f"{URL_API_USERS}/me/update", headers=self.headers
-        )
+    def test_no_get(self):
+        response = self.client.get(f"{URL_API_USERS}/me/update", headers=self.headers)
         self.assertEqual(response.status_code, 405)
 
     def test_put_user(self):
@@ -46,3 +40,9 @@ class TestUserV1Update(BaseTestCase):
         self.assertEqual(response.content_type, "application/json")
         self.assertEqual(response.json.get("first_name"), self.user.first_name)
         self.assertEqual(response.json.get("last_name"), new_last_name)
+
+    def test_no_delete(self):
+        response = self.client.delete(
+            f"{URL_API_USERS}/me/update", headers=self.headers
+        )
+        self.assertEqual(response.status_code, 405)
