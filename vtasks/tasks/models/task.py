@@ -55,7 +55,7 @@ class Task:
         self.scheduled_at = scheduled_at
         self.duration = duration
         self.done = done
-        self.tags = tags
+        self.tags = tags or []
 
     def is_done(self) -> bool:
         return bool(self.done)
@@ -68,3 +68,23 @@ class Task:
         elif self.emergency and not self.important:
             return EisenhowerFlag.DELEGATE
         return EisenhowerFlag.DELETE
+
+
+@dataclass
+class TaskTag:
+    id: str = ""
+    created_at: Optional[datetime] = None
+    task_id: str = ""
+    tag_id: str = ""
+
+    def __init__(
+        self,
+        task_id: str,
+        tag_id: str,
+        id: str = "",
+        created_at: Optional[datetime] = None,
+    ):
+        self.id = id or uuid4().hex
+        self.created_at = created_at or datetime.now()
+        self.task_id = task_id
+        self.tag_id = tag_id
