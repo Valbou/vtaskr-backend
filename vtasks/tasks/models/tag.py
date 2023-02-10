@@ -1,7 +1,7 @@
 from re import fullmatch
 from uuid import uuid4
 from datetime import datetime
-from typing import Optional, TypeVar
+from typing import Optional, TypeVar, List, Any
 from dataclasses import dataclass
 
 
@@ -44,6 +44,7 @@ class Tag:
     created_at: Optional[datetime] = None
     title: str = ""
     color: Optional[Color] = None
+    tasks: Optional[List[Any]] = None
 
     def __init__(
         self,
@@ -51,8 +52,10 @@ class Tag:
         color: Optional[Color] = None,
         id: Optional[str] = None,
         created_at: Optional[datetime] = None,
+        tasks: Optional[List[Any]] = None,
     ) -> None:
         self.id = id or uuid4().hex
         self.created_at = created_at or datetime.now()
         self.title = title
         self.color = color
+        self.tasks = tasks

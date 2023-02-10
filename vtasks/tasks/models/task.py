@@ -1,8 +1,10 @@
 from uuid import uuid4
 from datetime import datetime, timedelta
-from typing import Optional
+from typing import Optional, List
 from dataclasses import dataclass
 from enum import Enum
+
+from .tag import Tag
 
 
 class EisenhowerFlag(Enum):
@@ -24,6 +26,7 @@ class Task:
     scheduled_at: Optional[datetime] = None
     duration: Optional[timedelta] = None
     done: Optional[datetime] = None
+    tags: Optional[List[Tag]] = None
     # reccurence
     # rappels
     # sub tasks
@@ -40,6 +43,7 @@ class Task:
         done: Optional[datetime] = None,
         id: str = "",
         created_at: Optional[datetime] = None,
+        tags: Optional[List[Tag]] = None,
     ) -> None:
         self.id = id or uuid4().hex
         self.created_at = created_at or datetime.now()
@@ -51,6 +55,7 @@ class Task:
         self.scheduled_at = scheduled_at
         self.duration = duration
         self.done = done
+        self.tags = tags
 
     def is_done(self) -> bool:
         return bool(self.done)

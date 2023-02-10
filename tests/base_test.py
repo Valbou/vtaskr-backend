@@ -52,7 +52,7 @@ class BaseTestCase(TestCase):
         stmt = text_query_table_exists()
         with self.app.sql_service.get_session() as session:
             result = session.execute(stmt, params=params).scalar_one_or_none()
-            self.assertTrue(result)
+            self.assertTrue(result, f"Table {table_name} doesn't exists")
 
     def assertColumnsExists(self, table_name: str, columns_name: List[str]):
         with self.app.sql_service.get_session() as session:
@@ -63,7 +63,7 @@ class BaseTestCase(TestCase):
                 }
                 stmt = text_query_column_exists()
                 result = session.execute(stmt, params=params).scalar_one_or_none()
-                self.assertTrue(result)
+                self.assertTrue(result, f"Column {column_name} doesn't exists in {table_name} Table")
 
     def create_user(self):
         self.password = self.fake.password()
