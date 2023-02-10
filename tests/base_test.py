@@ -63,7 +63,9 @@ class BaseTestCase(TestCase):
                 }
                 stmt = text_query_column_exists()
                 result = session.execute(stmt, params=params).scalar_one_or_none()
-                self.assertTrue(result, f"Column {column_name} doesn't exists in {table_name} Table")
+                self.assertTrue(
+                    result, f"Column {column_name} doesn't exists in {table_name} Table"
+                )
 
     def create_user(self):
         self.password = self.fake.password()
