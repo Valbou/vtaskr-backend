@@ -43,10 +43,6 @@ tasktag_table = Table(
 mapper_registry.map_imperatively(
     TaskTag,
     tasktag_table,
-    properties={
-        "task": relationship("Task", back_populates="tags"),
-        "tag": relationship("Tag", back_populates="tasks"),
-    },
 )
 
 
@@ -64,7 +60,7 @@ tag_table = Table(
 mapper_registry.map_imperatively(
     Tag,
     tag_table,
-    properties={"tasks": relationship("TaskTag", back_populates="tag")},
+    properties={"tasks": relationship("TaskTag", backref="tag")},
 )
 
 
@@ -87,5 +83,5 @@ tasks_table = Table(
 mapper_registry.map_imperatively(
     Task,
     tasks_table,
-    properties={"tags": relationship("TaskTag", back_populates="task")},
+    properties={"tags": relationship("TaskTag", backref="task")},
 )
