@@ -11,10 +11,9 @@ from sqlalchemy import (
     Dialect,
     Boolean,
     Interval,
-    UniqueConstraint,
 )
 
-from vtasks.tasks import Task, Tag, Color, TaskTag
+from vtasks.tasks import Task, Tag, Color
 from vtasks.sqlalchemy.base import mapper_registry
 
 
@@ -32,21 +31,8 @@ class ColorType(types.TypeDecorator):
 tasktag_table = Table(
     "taskstags",
     mapper_registry.metadata,
-    Column("id", String, primary_key=True),
-    Column("created_at", DateTime, default=datetime.now()),
-    Column("tag_id", String, ForeignKey("tags.id")),
-    Column("task_id", String, ForeignKey("tasks.id")),
-    UniqueConstraint("tag_id", "task_id", name="tasktag_unique_association"),
-)
-
-
-mapper_registry.map_imperatively(
-    TaskTag,
-    tasktag_table,
-    properties={
-        "task": relationship("Task", back_populates="tags"),
-        "tag": relationship("Tag", back_populates="tasks"),
-    },
+    Column("tag_id", String, ForeignKey("tags.id"), primary_key=True),
+    Column("task_id", String, ForeignKey("tasks.id"), primary_key=True),
 )
 
 
@@ -64,7 +50,9 @@ tag_table = Table(
 mapper_registry.map_imperatively(
     Tag,
     tag_table,
-    properties={"tasks": relationship("TaskTag", back_populates="tag")},
+    properties={
+        "tasks": relationship(Task, secondary=tasktag_table, back_populates="tags")
+    },
 )
 
 
@@ -87,5 +75,7 @@ tasks_table = Table(
 mapper_registry.map_imperatively(
     Task,
     tasks_table,
-    properties={"tags": relationship("TaskTag", back_populates="task")},
+    properties={
+        "tags": relationship(Tag, secondary=tasktag_table, back_populates="tasks")
+    },
 )
