@@ -24,6 +24,7 @@ class TestUser(TestCase):
         self.assertEqual(User.__annotations__.get("last_name"), str)
         self.assertEqual(User.__annotations__.get("email"), str)
         self.assertEqual(User.__annotations__.get("hash_password"), str)
+        self.assertEqual(User.__annotations__.get("locale"), str)
         self.assertEqual(User.__annotations__.get("created_at"), datetime)
         self.assertEqual(
             User.__annotations__.get("last_login_at"), Union[datetime, None]
