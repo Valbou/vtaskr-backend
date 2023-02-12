@@ -1,5 +1,6 @@
 from uuid import uuid4
 from datetime import datetime
+from pytz import utc
 from typing import Optional
 from dataclasses import dataclass
 
@@ -16,7 +17,7 @@ class User:
     last_name: str = ""
     email: str = ""
     hash_password: str = ""
-    created_at: datetime = datetime.now()
+    created_at: datetime = datetime.now(utc)
     last_login_at: Optional[datetime] = None
 
     def __init__(
@@ -35,7 +36,7 @@ class User:
         self.set_email(email.lower())
         if hash_password:
             self.hash_password = hash_password
-        self.created_at = created_at or datetime.now()
+        self.created_at = created_at or datetime.now(utc)
         self.last_login_at = last_login_at
 
     @property
@@ -58,7 +59,7 @@ class User:
             return False
 
     def update_last_login(self):
-        self.last_login_at = datetime.now()
+        self.last_login_at = datetime.now(utc)
         return self.last_login_at
 
     def from_external_data(self, user_dict: dict):

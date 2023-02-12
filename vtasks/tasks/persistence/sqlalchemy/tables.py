@@ -1,4 +1,5 @@
 from datetime import datetime
+from pytz import utc
 
 from sqlalchemy.orm import relationship
 from sqlalchemy import (
@@ -40,7 +41,7 @@ tag_table = Table(
     "tags",
     mapper_registry.metadata,
     Column("id", String, primary_key=True),
-    Column("created_at", DateTime, default=datetime.now()),
+    Column("created_at", DateTime(timezone=True), default=datetime.now(utc)),
     Column("user_id", String, ForeignKey("users.id")),
     Column("title", String(50)),
     Column("color", ColorType),
@@ -60,15 +61,15 @@ tasks_table = Table(
     "tasks",
     mapper_registry.metadata,
     Column("id", String, primary_key=True),
-    Column("created_at", DateTime, default=datetime.now()),
+    Column("created_at", DateTime(timezone=True), default=datetime.now(utc)),
     Column("user_id", String, ForeignKey("users.id")),
     Column("title", String(150)),
     Column("description", String),
     Column("emergency", Boolean, default=False),
     Column("important", Boolean, default=False),
-    Column("scheduled_at", DateTime, nullable=True, default=None),
+    Column("scheduled_at", DateTime(timezone=True), nullable=True, default=None),
     Column("duration", Interval, nullable=True, default=None),
-    Column("done", DateTime, nullable=True, default=None),
+    Column("done", DateTime(timezone=True), nullable=True, default=None),
 )
 
 

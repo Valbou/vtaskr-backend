@@ -1,6 +1,7 @@
 from re import fullmatch
 from uuid import uuid4
 from datetime import datetime
+from pytz import utc
 from typing import Optional, TypeVar, List, Any
 from dataclasses import dataclass
 
@@ -57,7 +58,7 @@ class Tag:
         tasks: Optional[List[Any]] = None,
     ) -> None:
         self.id = id or uuid4().hex
-        self.created_at = created_at or datetime.now()
+        self.created_at = created_at or datetime.now(utc)
         self.user_id = user_id
         self.title = title
         self.color = color or Color("#000000", "#FFFFFF")

@@ -1,3 +1,6 @@
+import os
+from pytz import timezone
+
 from tests import BaseTestCase
 
 
@@ -22,7 +25,10 @@ class TestUserV1Me(BaseTestCase):
         self.assertEqual(response.json.get("first_name"), self.user.first_name)
         self.assertEqual(response.json.get("last_name"), self.user.last_name)
         self.assertEqual(response.json.get("email"), self.user.email)
-        self.assertEqual(response.json.get("created_at"), str(self.user.created_at))
+        self.assertEqual(
+            response.json.get("created_at"),
+            str(self.user.created_at.astimezone(timezone(os.getenv("TIMEZONE")))),
+        )
 
     def test_no_put(self):
         response = self.client.put(f"{URL_API_USERS}/me", headers=self.headers)

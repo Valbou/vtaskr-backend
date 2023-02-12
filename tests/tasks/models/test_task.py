@@ -1,4 +1,5 @@
 from unittest import TestCase
+from pytz import utc
 from datetime import datetime, timedelta
 from typing import Optional
 
@@ -30,7 +31,7 @@ class TestTask(TestCase):
 
     def test_is_done(self):
         self.assertFalse(self.task.is_done())
-        self.task.done = datetime.now()
+        self.task.done = datetime.now(utc)
         self.assertTrue(self.task.is_done())
 
     def test_eisenhower_flag(self):

@@ -1,5 +1,6 @@
 from uuid import uuid4
 from datetime import datetime, timedelta
+from pytz import utc
 from typing import Optional, List
 from dataclasses import dataclass
 from enum import Enum
@@ -46,7 +47,7 @@ class Task:
         tags: Optional[List[Tag]] = None,
     ) -> None:
         self.id = id or uuid4().hex
-        self.created_at = created_at or datetime.now()
+        self.created_at = created_at or datetime.now(utc)
         self.user_id = user_id
         self.title = title
         self.description = description

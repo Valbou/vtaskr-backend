@@ -1,5 +1,5 @@
 from datetime import datetime
-
+from pytz import utc
 
 from sqlalchemy import Table, Column, String, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
@@ -16,8 +16,8 @@ user_table = Table(
     Column("last_name", String(25)),
     Column("email", String(250), unique=True),
     Column("hash_password", String(256)),
-    Column("created_at", DateTime, default=datetime.now()),
-    Column("last_login_at", DateTime, nullable=True, default=None),
+    Column("created_at", DateTime(timezone=True), default=datetime.now(utc)),
+    Column("last_login_at", DateTime(timezone=True), nullable=True, default=None),
 )
 
 
@@ -32,8 +32,8 @@ token_table = Table(
     "tokens",
     mapper_registry.metadata,
     Column("id", String, primary_key=True),
-    Column("created_at", DateTime, default=datetime.now()),
-    Column("last_activity_at", DateTime, default=datetime.now()),
+    Column("created_at", DateTime(timezone=True), default=datetime.now(utc)),
+    Column("last_activity_at", DateTime(timezone=True), default=datetime.now(utc)),
     Column("sha_token", String(64), unique=True),
     Column("user_id", String, ForeignKey("users.id")),
 )
