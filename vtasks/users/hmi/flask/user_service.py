@@ -2,16 +2,18 @@ from typing import Optional
 
 from sqlalchemy.orm import Session
 
+from vtasks.notifications import NotificationService
 from vtasks.users import User, Token
 from vtasks.users.persistence import UserDB, TokenDB
 from vtasks.users.hmi.ports import AbstractUserPort
 
 
 class UserService(AbstractUserPort):
-    def __init__(self, session: Session) -> None:
+    def __init__(self, session: Session, testing: bool = False) -> None:
         self.session: Session = session
         self.user_db = UserDB()
         self.token_db = TokenDB()
+        self.notification = NotificationService(testing)
 
     def register(self, data: dict) -> User:
         """Add a new user"""
