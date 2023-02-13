@@ -5,7 +5,7 @@ from flask import Blueprint, request, current_app
 from vtasks.flask.utils import ResponseAPI, get_token
 from vtasks.users.persistence import UserDB
 
-from .authenticate import AuthService
+from .user_service import UserService
 
 
 logger = Logger(__name__)
@@ -33,7 +33,7 @@ def register():
     payload: dict = request.get_json()
     try:
         with current_app.sql_service.get_session() as session:
-            auth_service = AuthService(session)
+            auth_service = UserService(session)
             user = auth_service.register(payload)
             data = user.to_external_data()
             return ResponseAPI.get_response(data, 201)
@@ -61,7 +61,7 @@ def login():
 
     try:
         with current_app.sql_service.get_session() as session:
-            auth_service = AuthService(session)
+            auth_service = UserService(session)
             token = auth_service.authenticate(email, password)
 
         if token is not None:
@@ -93,7 +93,7 @@ def logout():
 
     try:
         with current_app.sql_service.get_session() as session:
-            auth_service = AuthService(session)
+            auth_service = UserService(session)
             if auth_service.logout(email, sha_token):
                 data = {}
                 return ResponseAPI.get_response(data, 204)
@@ -119,7 +119,7 @@ def me():
             return ResponseAPI.get_error_response("Invalid token", 401)
 
         with current_app.sql_service.get_session() as session:
-            auth_service = AuthService(session)
+            auth_service = UserService(session)
             user = auth_service.user_from_token(sha_token)
 
         if user:
@@ -146,7 +146,7 @@ def update_me():
             return ResponseAPI.get_error_response("Invalid token", 401)
 
         with current_app.sql_service.get_session() as session:
-            auth_service = AuthService(session)
+            auth_service = UserService(session)
             user = auth_service.user_from_token(sha_token)
     except Exception as e:
         logger.error(str(e))
