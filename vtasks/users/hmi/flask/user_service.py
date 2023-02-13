@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 
 from vtasks.users import User, Token
 from vtasks.users.persistence import UserDB, TokenDB
-from vtasks.users.http.ports import AbstractUserPort
+from vtasks.users.hmi.ports import AbstractUserPort
 
 
 class UserService(AbstractUserPort):
