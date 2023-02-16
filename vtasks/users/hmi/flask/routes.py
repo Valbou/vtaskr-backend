@@ -5,7 +5,9 @@ from flask import Blueprint, request, current_app
 from vtasks.flask.utils import ResponseAPI, get_token
 from vtasks.users.persistence import UserDB
 
+from vtasks.notifications import NotificationService
 from .user_service import UserService
+from .email_content import RegisterEmail
 
 
 logger = Logger(__name__)
@@ -62,15 +64,21 @@ def login():
     try:
         with current_app.sql_service.get_session() as session:
             auth_service = UserService(session, testing=current_app.testing)
-            token = auth_service.authenticate(email, password)
+            token, user = auth_service.authenticate(email, password)
 
-        if token is not None:
-            data = {"token": token}
-            return ResponseAPI.get_response(data, 201)
-        else:
-            return ResponseAPI.get_error_response("Invalid credentials", 401)
+            if token is not None:
+                register_email = RegisterEmail(
+                    [user.email], user.first_name, user.last_name
+                )
+                notify = NotificationService(testing=current_app.testing)
+                notify.notify_by_email(register_email)
+                data = {"token": token}
+                return ResponseAPI.get_response(data, 201)
+            else:
+                return ResponseAPI.get_error_response("Invalid credentials", 401)
 
     except Exception as e:
+        print(str(e))
         logger.error(str(e))
         return ResponseAPI.get_error_response("Internal error: " + str(e), 500)
 

@@ -39,7 +39,7 @@ class SMTPEmail:
         bcc_emails: Optional[List[str]] = None,
     ) -> None:
         if not text and not html:
-            raise NoEmailContentError
+            raise NoEmailContentError("Error: Email as no content !")
 
         self.from_email = from_email
         self.to_emails = (

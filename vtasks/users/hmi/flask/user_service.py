@@ -1,8 +1,7 @@
-from typing import Optional
+from typing import Optional, Tuple
 
 from sqlalchemy.orm import Session
 
-from vtasks.notifications import NotificationService
 from vtasks.users import User, Token
 from vtasks.users.persistence import UserDB, TokenDB
 from vtasks.users.hmi.ports import AbstractUserPort
@@ -13,7 +12,6 @@ class UserService(AbstractUserPort):
         self.session: Session = session
         self.user_db = UserDB()
         self.token_db = TokenDB()
-        self.notification = NotificationService(testing)
 
     def register(self, data: dict) -> User:
         """Add a new user"""
@@ -26,7 +24,9 @@ class UserService(AbstractUserPort):
         self.user_db.save(self.session, user)
         return user
 
-    def authenticate(self, email: str, password: str) -> Optional[str]:
+    def authenticate(
+        self, email: str, password: str
+    ) -> Tuple[Optional[str], Optional[User]]:
         """Create a token only if user and password are ok"""
         self.token_db.clean_expired(self.session)
         user = self.user_db.find_login(self.session, email)
@@ -36,8 +36,8 @@ class UserService(AbstractUserPort):
             self.session.commit()
             token = Token(user_id=user.id)
             self.token_db.save(self.session, token)
-            return token.sha_token
-        return None
+            return token.sha_token, user
+        return None, None
 
     def logout(self, email: str, sha_token: str) -> bool:
         """Delete active token for this user only"""
