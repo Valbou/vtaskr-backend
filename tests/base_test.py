@@ -68,7 +68,7 @@ class BaseTestCase(TestCase):
                 )
 
     def create_user(self):
-        self.password = self.fake.password()
+        self.password = self.fake.password() + "Aa1#"
         self.user = User(
             first_name=self.fake.first_name(),
             last_name=self.fake.last_name(),

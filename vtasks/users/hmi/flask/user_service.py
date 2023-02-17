@@ -20,7 +20,7 @@ class UserService(AbstractUserPort):
             last_name=data.get("last_name", ""),
             email=data.get("email"),
         )
-        user.set_password(data.get("password"))
+        user.set_password(data.get("password", ""))
         self.user_db.save(self.session, user)
         return user
 
