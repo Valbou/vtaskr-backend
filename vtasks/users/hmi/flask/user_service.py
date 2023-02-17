@@ -26,7 +26,7 @@ class UserService(AbstractUserPort):
 
     def authenticate(
         self, email: str, password: str
-    ) -> Tuple[Optional[str], Optional[User]]:
+    ) -> Tuple[Optional[Token], Optional[User]]:
         """Create a token only if user and password are ok"""
         self.token_db.clean_expired(self.session)
         user = self.user_db.find_login(self.session, email)
@@ -36,7 +36,7 @@ class UserService(AbstractUserPort):
             self.session.commit()
             token = Token(user_id=user.id)
             self.token_db.save(self.session, token)
-            return token.sha_token, user
+            return token, user
         return None, None
 
     def logout(self, email: str, sha_token: str) -> bool:

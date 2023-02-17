@@ -1,1 +1,1 @@
-from .response_helper import ResponseAPI, get_token
+from .response_helper import ResponseAPI, get_bearer_token
