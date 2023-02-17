@@ -73,7 +73,7 @@ class TestTokenAdapter(BaseTestCase):
     def test_clean_expired(self):
         token = Token(
             self.user.id,
-            created_at=datetime.now() - timedelta(seconds=TOKEN_VALIDITY * 2),
+            created_at=datetime.now() - timedelta(seconds=TOKEN_VALIDITY),
         )
         with self.app.sql_service.get_session() as session:
             self.token_db.save(session, token)
@@ -85,7 +85,7 @@ class TestTokenAdapter(BaseTestCase):
         token = Token(
             self.user.id,
             temp=False,
-            created_at=datetime.now() - timedelta(seconds=TOKEN_VALIDITY / 2),
+            created_at=datetime.now() - timedelta(seconds=TOKEN_TEMP_VALIDITY),
         )
         with self.app.sql_service.get_session() as session:
             self.token_db.save(session, token)
