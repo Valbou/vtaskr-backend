@@ -18,7 +18,7 @@ class UserService(AbstractUserPort):
         user = User(
             first_name=data.get("first_name", ""),
             last_name=data.get("last_name", ""),
-            email=data.get("email"),
+            email=data.get("email", ""),
         )
         user.set_password(data.get("password", ""))
         self.user_db.save(self.session, user)

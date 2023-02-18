@@ -53,7 +53,7 @@ class TestTokenAdapter(BaseTestCase):
     def test_complete_crud_token(self):
         with self.app.sql_service.get_session() as session:
             self.assertIsNone(self.token_db.load(session, self.token.id))
-            self.assertTrue(self.token_db.save(session, self.token))
+            self.token_db.save(session, self.token)
             self.assertTrue(self.token_db.exists(session, self.token.id))
             old_sha_token = self.token.sha_token
             self.token.sha_token = "abc"  # nosec
@@ -61,7 +61,7 @@ class TestTokenAdapter(BaseTestCase):
             token = self.token_db.load(session, self.token.id)
             self.assertNotEqual(old_sha_token, token.sha_token)
             self.assertEqual(token.id, self.token.id)
-            self.assertTrue(self.token_db.delete(session, self.token))
+            self.token_db.delete(session, self.token)
             self.assertFalse(self.token_db.exists(session, self.token.id))
 
     def test_activity_update(self):

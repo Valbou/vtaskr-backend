@@ -1,3 +1,5 @@
+from typing import Optional
+
 from sqlalchemy.orm import Session
 from sqlalchemy import select, update
 
@@ -6,12 +8,12 @@ from vtasks.users.models import User
 
 
 class UserDB(AbstractUserPort):
-    def load(self, session: Session, id: str) -> User:
+    def load(self, session: Session, id: str) -> Optional[User]:
         stmt = select(User).where(User.id == id)
         result = session.scalars(stmt).one_or_none()
         return result
 
-    def update(self, session: Session, user: User, autocommit: bool = True) -> True:
+    def update(self, session: Session, user: User, autocommit: bool = True):
         stmt = (
             update(User)
             .where(User.id == user.id)
@@ -22,27 +24,24 @@ class UserDB(AbstractUserPort):
                 hash_password=user.hash_password,
             )
         )
-        result = session.execute(stmt)
+        session.execute(stmt)
         if autocommit:
             session.commit()
-        return result
 
-    def save(self, session: Session, user: User, autocommit: bool = True) -> True:
+    def save(self, session: Session, user: User, autocommit: bool = True):
         session.add(user)
         if autocommit:
             session.commit()
-        return True
 
-    def delete(self, session: Session, user: User, autocommit: bool = True) -> True:
+    def delete(self, session: Session, user: User, autocommit: bool = True):
         session.delete(user)
         if autocommit:
             session.commit()
-        return True
 
     def exists(self, session: Session, id: str) -> bool:
         return session.query(select(User).where(User.id == id).exists()).scalar()
 
-    def find_login(self, session: Session, email: str) -> User:
+    def find_login(self, session: Session, email: str) -> Optional[User]:
         stmt = select(User).where(User.email == email)
         result = session.scalars(stmt).one_or_none()
         return result
