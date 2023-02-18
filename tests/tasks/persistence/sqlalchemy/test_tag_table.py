@@ -36,7 +36,7 @@ class TestTagAdapter(BaseTestCase):
     def test_complete_crud_tag(self):
         with self.app.sql_service.get_session() as session:
             self.assertIsNone(self.tag_db.load(session, self.tag.id))
-            self.assertTrue(self.tag_db.save(session, self.tag))
+            self.tag_db.save(session, self.tag)
             self.assertTrue(self.tag_db.exists(session, self.tag.id))
             old_title = self.tag.title
             self.tag.title = "abc"
@@ -44,5 +44,5 @@ class TestTagAdapter(BaseTestCase):
             tag = self.tag_db.load(session, self.tag.id)
             self.assertNotEqual(old_title, tag.title)
             self.assertEqual(tag.id, self.tag.id)
-            self.assertTrue(self.tag_db.delete(session, self.tag))
+            self.tag_db.delete(session, self.tag)
             self.assertFalse(self.tag_db.exists(session, self.tag.id))
