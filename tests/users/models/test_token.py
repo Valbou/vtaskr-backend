@@ -1,10 +1,10 @@
 from unittest import TestCase
 from datetime import datetime, timedelta
 from pytz import utc
-from uuid import uuid4
 
 from faker import Faker
 
+from vtasks.secutity.utils import get_id
 from vtasks.users import Token, TOKEN_VALIDITY, TOKEN_TEMP_VALIDITY
 
 
@@ -14,7 +14,7 @@ class TestToken(TestCase):
         self.fake = Faker()
 
     def create_token(self, temp: bool = True):
-        return Token(user_id=uuid4().hex, temp=temp)
+        return Token(user_id=get_id(), temp=temp)
 
     def test_token_table_fields(self):
         self.assertEqual(Token.__annotations__.get("id"), str)

@@ -5,7 +5,7 @@ from email_validator import EmailSyntaxError
 
 from vtasks.flask.utils import ResponseAPI, get_bearer_token
 from vtasks.users.persistence import UserDB, TokenDB
-from vtasks.users.validators import PasswordComplexityError
+from vtasks.secutity.validators import PasswordComplexityError
 from vtasks.notifications import NotificationService
 
 from .user_service import UserService

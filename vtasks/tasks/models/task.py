@@ -1,10 +1,10 @@
-from uuid import uuid4
 from datetime import datetime, timedelta
 from pytz import utc
 from typing import Optional, List
 from dataclasses import dataclass
 from enum import Enum
 
+from vtasks.secutity.utils import get_id
 from .tag import Tag
 
 
@@ -46,7 +46,7 @@ class Task:
         created_at: Optional[datetime] = None,
         tags: Optional[List[Tag]] = None,
     ) -> None:
-        self.id = id or uuid4().hex
+        self.id = id or get_id()
         self.created_at = created_at or datetime.now(utc)
         self.user_id = user_id
         self.title = title

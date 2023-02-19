@@ -1,9 +1,10 @@
 from re import fullmatch
-from uuid import uuid4
 from datetime import datetime
 from pytz import utc
 from typing import Optional, TypeVar, List, Any
 from dataclasses import dataclass
+
+from vtasks.secutity.utils import get_id
 
 
 class ColorFormatError(Exception):
@@ -57,7 +58,7 @@ class Tag:
         created_at: Optional[datetime] = None,
         tasks: Optional[List[Any]] = None,
     ) -> None:
-        self.id = id or uuid4().hex
+        self.id = id or get_id()
         self.created_at = created_at or datetime.now(utc)
         self.user_id = user_id
         self.title = title
