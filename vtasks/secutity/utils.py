@@ -42,4 +42,4 @@ def get_2FA(length: int = 6) -> str:
     Generate an alphanumeric case sensitive code.
     Hard to brute-force in few minutes with API response time
     """
-    return b64encode(get_id().encode())[:length].decode()
+    return b64encode(get_id().encode()).decode()[:length]
