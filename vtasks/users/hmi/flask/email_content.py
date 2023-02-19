@@ -3,12 +3,12 @@ from gettext import gettext as _
 
 from flask import render_template
 
-from vtasks.base.config import BASE64_LOGO
+from vtasks.base.config import EMAIL_LOGO
 from vtasks.notifications import AbstractBaseEmailContent
 
 
 class RegisterEmail(AbstractBaseEmailContent):
-    logo = BASE64_LOGO
+    logo = EMAIL_LOGO
 
     def __init__(self, to: List[str], first_name: str, last_name: str) -> None:
         self.html = render_template(
@@ -45,7 +45,7 @@ Welcome in your new to do app. As of now, you can start to create tasks !
 
 
 class LoginEmail(AbstractBaseEmailContent):
-    logo = BASE64_LOGO
+    logo = EMAIL_LOGO
 
     def __init__(
         self, to: List[str], first_name: str, last_name: str, code: str

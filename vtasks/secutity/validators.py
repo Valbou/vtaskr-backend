@@ -4,13 +4,12 @@ from string import ascii_lowercase, ascii_uppercase, digits, punctuation
 
 from email_validator import validate_email
 
+from vtasks.base.config import PASSWORD_MIN_LENGTH
+
 
 def get_valid_email(email: str) -> Optional[str]:
     validation = validate_email(email, check_deliverability=True)
     return validation.email
-
-
-PASSWORD_MIN_LENGTH = 10
 
 
 class PasswordComplexityError(Exception):

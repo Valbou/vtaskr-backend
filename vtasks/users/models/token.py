@@ -4,10 +4,7 @@ from typing import Optional
 from dataclasses import dataclass
 
 from vtasks.secutity.utils import get_id, get_token, get_2FA
-
-
-TOKEN_VALIDITY = 60 * 60 * 0.5  # 30 minutes
-TOKEN_TEMP_VALIDITY = 60 * 3  # 3 minutes
+from vtasks.base.config import TOKEN_TEMP_VALIDITY, TOKEN_VALIDITY
 
 
 @dataclass
