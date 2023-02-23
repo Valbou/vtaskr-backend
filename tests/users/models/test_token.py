@@ -4,8 +4,9 @@ from pytz import utc
 
 from faker import Faker
 
+from vtasks.base.config import TOKEN_VALIDITY, TOKEN_TEMP_VALIDITY
 from vtasks.secutity.utils import get_id
-from vtasks.users import Token, TOKEN_VALIDITY, TOKEN_TEMP_VALIDITY
+from vtasks.users import Token
 
 
 class TestToken(TestCase):

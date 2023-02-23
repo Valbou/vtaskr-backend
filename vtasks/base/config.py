@@ -19,6 +19,7 @@ TOKEN_TEMP_VALIDITY = 60 * 3  # 3 minutes
 
 # Validity of a request change (email or password)
 REQUEST_VALIDITY = 60 * 5
+REQUEST_DAYS_HISTORY = 90
 
 LINK_TO_CHANGE_EMAIL = os.getenv("LINK_TO_CHANGE_EMAIL", "")
 LINK_TO_CHANGE_PASSWORD = os.getenv("LINK_TO_CHANGE_PASSWORD", "")

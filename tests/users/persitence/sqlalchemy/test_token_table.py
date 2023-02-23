@@ -4,7 +4,8 @@ from hashlib import sha256
 
 from tests import BaseTestCase
 
-from vtasks.users.models import User, Token, TOKEN_VALIDITY, TOKEN_TEMP_VALIDITY
+from vtasks.base.config import TOKEN_VALIDITY, TOKEN_TEMP_VALIDITY
+from vtasks.users.models import User, Token
 from vtasks.users.persistence import UserDB, TokenDB
 
 
