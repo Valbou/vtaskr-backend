@@ -66,7 +66,6 @@ class User:
     def from_external_data(self, user_dict: dict):
         self.first_name = user_dict.get("first_name", self.first_name)
         self.last_name = user_dict.get("last_name", self.last_name)
-        self.set_email(user_dict.get("email", self.email))
         if user_dict.get("password"):
             self.set_password(user_dict.get("password", ""))
 
