@@ -47,8 +47,9 @@ def register():
             user = auth_service.register(payload)
 
             register_email = RegisterEmail([user.email], user.first_name)
-            notify = NotificationService(testing=current_app.testing)
-            notify.notify_by_email(register_email)
+            notification = NotificationService(testing=current_app.testing)
+            notification.add_message(register_email)
+            notification.notify_all()
 
             data = user.to_external_data()
             return ResponseAPI.get_response(data, 201)
@@ -84,8 +85,9 @@ def login():
 
             if token is not None:
                 login_email = LoginEmail([user.email], user.first_name, token.temp_code)
-                notify = NotificationService(testing=current_app.testing)
-                notify.notify_by_email(login_email)
+                notification = NotificationService(testing=current_app.testing)
+                notification.add_message(login_email)
+                notification.notify_all()
 
                 data = {"token": token.sha_token}
                 return ResponseAPI.get_response(data, 201)
@@ -249,8 +251,9 @@ def forgotten_password():
                 change_password_email = ChangePasswordEmail(
                     [user.email], user.first_name, request_hash
                 )
-                notify = NotificationService(testing=current_app.testing)
-                notify.notify_by_email(change_password_email)
+                notification = NotificationService(testing=current_app.testing)
+                notification.add_message(change_password_email)
+                notification.notify_all()
         return ResponseAPI.get_response(data, 200)
     except Exception as e:
         logger.error(str(e))
@@ -331,9 +334,10 @@ def change_email():
             new_email_message = ChangeEmailToNewEmail(
                 [new_email], user.first_name, req_hash
             )
-            notify = NotificationService(testing=current_app.testing)
-            notify.notify_by_email(old_email_message)
-            notify.notify_by_email(new_email_message)
+            notification = NotificationService(testing=current_app.testing)
+            notification.add_message(old_email_message)
+            notification.add_message(new_email_message)
+            notification.notify_all()
             return ResponseAPI.get_response(data, 200)
 
     except Exception as e:

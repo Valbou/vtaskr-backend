@@ -48,8 +48,10 @@ class TestSMTPEmail(TestCase):
     def test_multi_email_sent(self):
         NB_EMAIL = 5
         multi = MultiSMTPEmail()
+        self.assertFalse(multi.has_messages)
         for _ in range(NB_EMAIL):
             multi.add_email(self._create_email())
+        self.assertTrue(multi.has_messages)
         with patch("smtplib.SMTP_SSL.sendmail") as mock:
             multi.send_all()
             mock.assert_called()
