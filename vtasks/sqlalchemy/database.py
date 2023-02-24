@@ -1,16 +1,10 @@
 import os
-from enum import Enum
-from typing import Optional, Union, Literal
+from typing import Union, Literal
 
 from sqlalchemy import create_engine, Engine
 from sqlalchemy.orm import Session, sessionmaker, scoped_session
 
 from .base import mapper_registry
-
-
-class DBType(Enum):
-    TEST = "test"
-    PROD = "prod"
 
 
 class SQLService:
