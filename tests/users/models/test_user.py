@@ -78,7 +78,7 @@ class TestUser(TestCase):
         self.assertNotEqual(self.user.id, "new_id")
         self.assertEqual(self.user.first_name, "first_name")
         self.assertEqual(self.user.last_name, "last_name")
-        self.assertEqual(self.user.email, "email@valbou.fr")
+        self.assertNotEqual(self.user.email, "email@valbou.fr")
         self.assertNotEqual(str(self.user.created_at), "created_at")
         self.assertNotEqual(str(self.user.last_login_at), "last_login_at")
         self.assertNotEqual(self.user.hash_password, "passwordA1#")
