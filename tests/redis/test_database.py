@@ -29,3 +29,14 @@ class TestNoSQLService(TestCase):
         self.assertTrue(r.ping())
         self.assertTrue(r.set("test", "testing", ex=1))
         self.assertEqual(r.get("test").decode(), "testing")
+
+    def test_pipe_session(self):
+        with self.nosql_test.get_session() as pipe:
+            pipe.set("one", 1, ex=1)
+            pipe.set("two", 2, ex=1)
+            pipe.set("three", 3, ex=1)
+
+        r = self.nosql_test.get_engine()
+        self.assertEqual(r.get("one"), b"1")
+        self.assertEqual(r.get("two"), b"2")
+        self.assertEqual(r.get("three"), b"3")
