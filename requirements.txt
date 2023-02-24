@@ -46,5 +46,5 @@ SQLAlchemy==2.0.0
 stevedore==4.1.1
 tomli==2.0.1
 typing_extensions==4.4.0
-Werkzeug==2.2.2
+Werkzeug==2.2.3
 zipp==3.12.0
