@@ -48,7 +48,9 @@ def get_bearer_token(request: Request) -> str:
     return bearer
 
 
-def route_limit(app: Flask, user: str, resource: str, limit: int, period: timedelta, logger):
+def route_limit(
+    app: Flask, user: str, resource: str, limit: int, period: timedelta, logger
+):
     redis = app.nosql.get_engine()
     try:
         RateLimit(redis, user, resource, limit, period)()
@@ -58,4 +60,8 @@ def route_limit(app: Flask, user: str, resource: str, limit: int, period: timede
 
 
 def get_ip(request) -> str:
-    return request.environ.get('HTTP_X_FORWARDED_FOR') or request.environ.get('REMOTE_ADDR') or "::1"
+    return (
+        request.environ.get("HTTP_X_FORWARDED_FOR")
+        or request.environ.get("REMOTE_ADDR")
+        or "::1"
+    )
