@@ -18,13 +18,13 @@ class RateLimit:
         self,
         redis: Redis,
         user: str,
-        resource: str,
+        resource_name: str,
         limit: int = 1,
         period: Optional[timedelta] = None,
     ) -> None:
         self.redis = redis
         self.user = user
-        self.resource_name = resource
+        self.resource_name = resource_name
         self.period = period or timedelta(seconds=1)
         self.limit = limit or 1
 
@@ -34,7 +34,7 @@ class RateLimit:
 
     @property
     def key(self) -> str:
-        return f"{self.user}{self.resource_name}{self.period}{self.limit}"
+        return f"{self.user}_{self.resource_name}_{self.period.total_seconds()}_{self.limit}"
 
     def _increment(self):
         self.value = self.redis.get(self.key)
@@ -49,4 +49,6 @@ class RateLimit:
 
     def _check_limit(self):
         if int(self.value) >= self.limit:
-            raise LimitExceededError()
+            raise LimitExceededError(
+                f"Too many request from {self.user} to access {self.resource_name}"
+            )

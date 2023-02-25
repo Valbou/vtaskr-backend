@@ -1,9 +1,10 @@
 from logging import Logger
+from datetime import timedelta
 
 from flask import Blueprint, request, current_app
 from email_validator import EmailSyntaxError
 
-from vtasks.flask.utils import ResponseAPI, get_bearer_token
+from vtasks.flask.utils import ResponseAPI, get_bearer_token, route_limit, get_ip
 from vtasks.users.persistence import UserDB, TokenDB
 from vtasks.secutity.validators import PasswordComplexityError, get_valid_email
 from vtasks.notifications import NotificationService
@@ -40,6 +41,17 @@ def register():
     Need: email, password, first_name, last_name, no_bot
     Return the jsonify user created
     """
+    limit = route_limit(
+        current_app,
+        get_ip(request),
+        f"POST:{V1}/users/register",
+        5,
+        timedelta(seconds=300),
+        logger,
+    )
+    if limit:
+        return limit
+
     payload: dict = request.get_json()
     try:
         with current_app.sql.get_session() as session:
@@ -70,6 +82,17 @@ def login():
     Need an email and a password
     Return a valid token
     """
+    limit = route_limit(
+        current_app,
+        get_ip(request),
+        f"POST:{V1}/users/login",
+        5,
+        timedelta(seconds=60),
+        logger,
+    )
+    if limit:
+        return limit
+
     payload: dict = request.get_json()
 
     try:
@@ -106,6 +129,17 @@ def confirm_2FA():
     Need a valid temp token and a code
     Return a 200
     """
+    limit = route_limit(
+        current_app,
+        get_ip(request),
+        f"POST:{V1}/users/2fa",
+        3,
+        timedelta(seconds=60),
+        logger,
+    )
+    if limit:
+        return limit
+
     sha_token = get_bearer_token(request)
     if not sha_token:
         return ResponseAPI.get_error_response("Invalid token", 401)
@@ -140,6 +174,17 @@ def logout():
     Need a valid token and the user email
     Return a 204
     """
+    limit = route_limit(
+        current_app,
+        get_ip(request),
+        f"DELETE:{V1}/users/logout",
+        6,
+        timedelta(seconds=60),
+        logger,
+    )
+    if limit:
+        return limit
+
     sha_token = get_bearer_token(request)
     payload: dict = request.get_json()
 
@@ -170,6 +215,17 @@ def me():
     Need a valid token
     Return a jsonify user
     """
+    limit = route_limit(
+        current_app,
+        get_ip(request),
+        f"GET:{V1}/users/me",
+        5,
+        timedelta(seconds=60),
+        logger,
+    )
+    if limit:
+        return limit
+
     try:
         sha_token = get_bearer_token(request)
         if not sha_token:
@@ -197,6 +253,17 @@ def update_me():
     Need a valid token
     Return a jsonify user updated
     """
+    limit = route_limit(
+        current_app,
+        get_ip(request),
+        f"PUT:{V1}/users/me/update",
+        5,
+        timedelta(seconds=60),
+        logger,
+    )
+    if limit:
+        return limit
+
     try:
         sha_token = get_bearer_token(request)
         if not sha_token:
@@ -233,6 +300,17 @@ def forgotten_password():
 
     Need the user email
     """
+    limit = route_limit(
+        current_app,
+        get_ip(request),
+        f"POST:{V1}/forgotten-password",
+        5,
+        timedelta(seconds=300),
+        logger,
+    )
+    if limit:
+        return limit
+
     payload: dict = request.get_json()
     data = {}
 
@@ -267,6 +345,17 @@ def new_password():
 
     Need the hash sent by email, the email and the new password
     """
+    limit = route_limit(
+        current_app,
+        get_ip(request),
+        f"POST:{V1}/new-password",
+        5,
+        timedelta(seconds=300),
+        logger,
+    )
+    if limit:
+        return limit
+
     payload: dict = request.get_json()
 
     try:
@@ -305,6 +394,17 @@ def change_email():
 
     Need a valid token and a new email
     """
+    limit = route_limit(
+        current_app,
+        get_ip(request),
+        f"POST:{V1}/users/me/change-email",
+        5,
+        timedelta(seconds=300),
+        logger,
+    )
+    if limit:
+        return limit
+
     try:
         sha_token = get_bearer_token(request)
         if not sha_token:
@@ -353,6 +453,17 @@ def new_email():
     Need a code sent by email to old email, the old email,
     the new email and the hash sent to the new email
     """
+    limit = route_limit(
+        current_app,
+        get_ip(request),
+        f"POST:{V1}/new-email",
+        5,
+        timedelta(seconds=300),
+        logger,
+    )
+    if limit:
+        return limit
+
     payload: dict = request.get_json()
 
     try:

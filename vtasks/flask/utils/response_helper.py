@@ -1,7 +1,9 @@
 from json import dumps
+from datetime import timedelta
 from typing import Optional, Any
 
-from flask import Response, Request
+from flask import Response, Request, Flask
+from vtasks.redis.ratelimit import RateLimit, LimitExceededError
 
 
 JSON_MIME_TYPE = "application/json"
@@ -44,3 +46,16 @@ def get_bearer_token(request: Request) -> str:
     if bearer and bearer.startswith(BEARER):
         return bearer.replace(BEARER, "").strip()
     return bearer
+
+
+def route_limit(app: Flask, user: str, resource: str, limit: int, period: timedelta, logger):
+    redis = app.nosql.get_engine()
+    try:
+        RateLimit(redis, user, resource, limit, period)()
+    except LimitExceededError as e:
+        logger.error(str(e))
+        return ResponseAPI.get_error_response("Too many requests", 429)
+
+
+def get_ip(request) -> str:
+    return request.environ.get('HTTP_X_FORWARDED_FOR') or request.environ.get('REMOTE_ADDR') or "::1"
