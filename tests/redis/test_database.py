@@ -40,3 +40,4 @@ class TestNoSQLService(TestCase):
         self.assertEqual(r.get("one"), b"1")
         self.assertEqual(r.get("two"), b"2")
         self.assertEqual(r.get("three"), b"3")
+        self.assertIsNone(r.get("four"))
