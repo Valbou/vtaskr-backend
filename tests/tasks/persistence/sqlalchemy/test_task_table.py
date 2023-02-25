@@ -39,7 +39,7 @@ class TestTaskAdapter(BaseTestCase):
         )
 
     def test_complete_crud_task(self):
-        with self.app.sql_service.get_session() as session:
+        with self.app.sql.get_session() as session:
             self.assertIsNone(self.task_db.load(session, self.task.id))
             self.task_db.save(session, self.task)
             self.assertTrue(self.task_db.exists(session, self.task.id))

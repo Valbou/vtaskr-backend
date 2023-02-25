@@ -43,7 +43,7 @@ class BaseTestCase(TestCase):
         self.app: Flask = create_flask_app(testing=True)
         self.client = self.app.test_client()
         self.cli = self.app.test_cli_runner()
-        self.app.sql_service = SQLService(testing=True, echo=False)
+        self.app.sql = SQLService(testing=True, echo=False)
 
     def assertTemplateUsed(self, template_name: str, recorded_templates: List[str]):
         self.assertIn(template_name, recorded_templates)
@@ -51,12 +51,12 @@ class BaseTestCase(TestCase):
     def assertTableExists(self, table_name: str):
         params = {"table": table_name}
         stmt = text_query_table_exists()
-        with self.app.sql_service.get_session() as session:
+        with self.app.sql.get_session() as session:
             result = session.execute(stmt, params=params).scalar_one_or_none()
             self.assertTrue(result, f"Table {table_name} doesn't exists")
 
     def assertColumnsExists(self, table_name: str, columns_name: List[str]):
-        with self.app.sql_service.get_session() as session:
+        with self.app.sql.get_session() as session:
             for column_name in columns_name:
                 params = {
                     "table": table_name,
@@ -78,7 +78,7 @@ class BaseTestCase(TestCase):
         self.user.set_password(self.password)
 
         self.user_db = UserDB()
-        with self.app.sql_service.get_session() as session:
+        with self.app.sql.get_session() as session:
             session.expire_on_commit = False
             self.user_db.save(session, self.user)
 
@@ -87,7 +87,7 @@ class BaseTestCase(TestCase):
 
     def get_token_headers(self, valid: bool = True) -> dict:
         self.create_user()
-        with self.app.sql_service.get_session() as session:
+        with self.app.sql.get_session() as session:
             session.expire_on_commit = False
             auth_service = UserService(session, testing=True)
             self.token, _ = auth_service.authenticate(

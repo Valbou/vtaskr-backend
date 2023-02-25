@@ -42,7 +42,7 @@ def register():
     """
     payload: dict = request.get_json()
     try:
-        with current_app.sql_service.get_session() as session:
+        with current_app.sql.get_session() as session:
             auth_service = UserService(session, testing=current_app.testing)
             user = auth_service.register(payload)
 
@@ -79,7 +79,7 @@ def login():
         return ResponseAPI.get_error_response("Bad request", 400)
 
     try:
-        with current_app.sql_service.get_session() as session:
+        with current_app.sql.get_session() as session:
             auth_service = UserService(session, testing=current_app.testing)
             token, user = auth_service.authenticate(email, password)
 
@@ -118,7 +118,7 @@ def confirm_2FA():
         return ResponseAPI.get_error_response("Bad request", 400)
 
     try:
-        with current_app.sql_service.get_session() as session:
+        with current_app.sql.get_session() as session:
             token_db = TokenDB()
             token = token_db.get_token(session, sha_token)
             if code and token.is_temp_valid() and token.validate_token(code):
@@ -149,7 +149,7 @@ def logout():
         return ResponseAPI.get_error_response("Bad request", 400)
 
     try:
-        with current_app.sql_service.get_session() as session:
+        with current_app.sql.get_session() as session:
             auth_service = UserService(session, testing=current_app.testing)
             if auth_service.logout(email, sha_token):
                 data = {}
@@ -175,7 +175,7 @@ def me():
         if not sha_token:
             return ResponseAPI.get_error_response("Invalid token", 401)
 
-        with current_app.sql_service.get_session() as session:
+        with current_app.sql.get_session() as session:
             auth_service = UserService(session, testing=current_app.testing)
             user = auth_service.user_from_token(sha_token)
 
@@ -202,7 +202,7 @@ def update_me():
         if not sha_token:
             return ResponseAPI.get_error_response("Invalid token", 401)
 
-        with current_app.sql_service.get_session() as session:
+        with current_app.sql.get_session() as session:
             auth_service = UserService(session, testing=current_app.testing)
             user = auth_service.user_from_token(sha_token)
     except Exception as e:
@@ -214,7 +214,7 @@ def update_me():
             return ResponseAPI.get_error_response("Invalid token", 401)
         else:
             user_db = UserDB()
-            with current_app.sql_service.get_session() as session:
+            with current_app.sql.get_session() as session:
                 user.from_external_data(request.get_json())
                 user_db.update(session, user)
                 data = user.to_external_data()
@@ -243,7 +243,7 @@ def forgotten_password():
 
     try:
         user_db = UserDB()
-        with current_app.sql_service.get_session() as session:
+        with current_app.sql.get_session() as session:
             user = user_db.find_login(session, email)
             if user:
                 user_service = UserService(session, testing=current_app.testing)
@@ -277,7 +277,7 @@ def new_password():
         return ResponseAPI.get_error_response("Bad request", 400)
 
     try:
-        with current_app.sql_service.get_session() as session:
+        with current_app.sql.get_session() as session:
             user_service = UserService(session, testing=current_app.testing)
             try:
                 if (
@@ -310,7 +310,7 @@ def change_email():
         if not sha_token:
             return ResponseAPI.get_error_response("Invalid token", 401)
 
-        with current_app.sql_service.get_session() as session:
+        with current_app.sql.get_session() as session:
             auth_service = UserService(session, testing=current_app.testing)
             user = auth_service.user_from_token(sha_token)
             if not user:
@@ -364,7 +364,7 @@ def new_email():
         return ResponseAPI.get_error_response("Bad request", 400)
 
     try:
-        with current_app.sql_service.get_session() as session:
+        with current_app.sql.get_session() as session:
             user_service = UserService(session, testing=current_app.testing)
             try:
                 if (
