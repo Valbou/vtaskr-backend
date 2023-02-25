@@ -1,0 +1,184 @@
+# English translations for PROJECT.
+# Copyright (C) 2023 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2023.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2023-02-25 11:16+0100\n"
+"PO-Revision-Date: 2023-02-25 11:17+0100\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: en\n"
+"Language-Team: en <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.11.0\n"
+
+#: vtasks/users/hmi/flask/email_content.py:18
+msgid ""
+"\n"
+"                Welcome {first_name} !\n"
+"                Welcome in your new to do app. As of now, you can start "
+"to create tasks !\n"
+"            "
+msgstr ""
+
+#: vtasks/users/hmi/flask/email_content.py:26
+msgid "Registration Success {first_name}"
+msgstr ""
+
+#: vtasks/users/hmi/flask/email_content.py:27
+msgid "Welcome {first_name} !"
+msgstr ""
+
+#: vtasks/users/hmi/flask/email_content.py:28
+msgid ""
+"\n"
+"                <p>\n"
+"                    Welcome in your new to do app. As of now, you can "
+"start to create tasks !\n"
+"                </p>\n"
+"            "
+msgstr ""
+
+#: vtasks/users/hmi/flask/email_content.py:35
+msgid "Enjoy !"
+msgstr ""
+
+#: vtasks/users/hmi/flask/email_content.py:55
+msgid ""
+"\n"
+"Hi {first_name} !\n"
+"To finish login process (2FA), please copy/paste the following code: "
+"{code}\n"
+"This code stay valid only three minutes, after, you need to make a new "
+"login attempt.\n"
+"            "
+msgstr ""
+
+#: vtasks/users/hmi/flask/email_content.py:64
+msgid "New login with your account"
+msgstr ""
+
+#: vtasks/users/hmi/flask/email_content.py:65
+#: vtasks/users/hmi/flask/email_content.py:112
+#: vtasks/users/hmi/flask/email_content.py:165
+#: vtasks/users/hmi/flask/email_content.py:215
+msgid "Hi {first_name} !"
+msgstr ""
+
+#: vtasks/users/hmi/flask/email_content.py:66
+msgid ""
+"\n"
+"                <p>\n"
+"                    To finish login process (2FA), please copy/paste the "
+"following code:\n"
+"                </p>\n"
+"                <p style=\"font-size: 16px: font-weight: bolder; letter-"
+"spacing: 5px;\">\n"
+"                    {code}\n"
+"                </p>\n"
+"                <p>\n"
+"                    This code stay valid only three minutes, after,\n"
+"                    you need to make a new login attempt.\n"
+"                </p>\n"
+"            "
+msgstr ""
+
+#: vtasks/users/hmi/flask/email_content.py:99
+msgid ""
+"\n"
+"Hi {first_name} !\n"
+"You request us to change your email account.\n"
+"We have sent to you an email, in your new email account.\n"
+"Click on the email sent to your new account and copy/paste the following "
+"code into the form:\n"
+"{code}\n"
+"This old email will be remove of your account after proceed.\n"
+"            "
+msgstr ""
+
+#: vtasks/users/hmi/flask/email_content.py:111
+#: vtasks/users/hmi/flask/email_content.py:164
+#: vtasks/users/hmi/flask/email_content.py:214
+msgid "Change your Email"
+msgstr ""
+
+#: vtasks/users/hmi/flask/email_content.py:113
+msgid ""
+"\n"
+"                <p>\n"
+"                    You request us to change your email account.\n"
+"                    We have sent to you an email, in your new email "
+"account.<br />\n"
+"                    Click on the email sent to your new account and "
+"copy/paste the\n"
+"                    following code into the form:\n"
+"                </p>\n"
+"                <p style=\"font-size: 16px: font-weight: bolder; letter-"
+"spacing: 5px;\">\n"
+"                    {code}\n"
+"                </p>\n"
+"                <p>This old email will be removed of your account after "
+"proceed.</p>\n"
+"            "
+msgstr ""
+
+#: vtasks/users/hmi/flask/email_content.py:153
+msgid ""
+"\n"
+"Hi {first_name} !\n"
+"You request us to change your email account.\n"
+"We sent you an email, in your old email account with a code required to "
+"complete the process.\n"
+"Follow the link below to proceed:\n"
+"{change_email_link}\n"
+"            "
+msgstr ""
+
+#: vtasks/users/hmi/flask/email_content.py:166
+msgid ""
+"\n"
+"                <p>\n"
+"                    You request us to change your email account.\n"
+"                    We sent you an email, in your old email account with "
+"a code\n"
+"                    required to complete the process.<br />\n"
+"                    Click on the following button to proceed (link "
+"available only 3 minutes).\n"
+"                </p>\n"
+"                <p>This old email will be removed of your account after "
+"proceed.</p>\n"
+"            "
+msgstr ""
+
+#: vtasks/users/hmi/flask/email_content.py:183
+#: vtasks/users/hmi/flask/email_content.py:230
+msgid "Change now"
+msgstr ""
+
+#: vtasks/users/hmi/flask/email_content.py:204
+msgid ""
+"\n"
+"Hi {first_name} !\n"
+"You request us to change your account password.\n"
+"Follow the link below to proceed:\n"
+"{change_email_link}\n"
+"            "
+msgstr ""
+
+#: vtasks/users/hmi/flask/email_content.py:216
+msgid ""
+"\n"
+"                <p>\n"
+"                    You request us to change your account password.\n"
+"                    Follow the link below to proceed (link available only"
+" 3 minutes).\n"
+"                </p>\n"
+"            "
+msgstr ""
+
