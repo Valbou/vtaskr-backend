@@ -15,6 +15,7 @@ class TestUserTable(BaseTestCase):
             "email",
             "hash_password",
             "locale",
+            "timezone",
             "created_at",
             "last_login_at",
         ]

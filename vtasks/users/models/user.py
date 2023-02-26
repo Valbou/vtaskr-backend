@@ -3,6 +3,7 @@ from pytz import utc
 from typing import Optional
 from dataclasses import dataclass
 
+from vtasks.base.config import LOCALE, TIMEZONE
 from vtasks.secutity.utils import get_id, hash_from_password, check_password
 from vtasks.secutity.validators import get_valid_email, PasswordChecker
 
@@ -15,6 +16,7 @@ class User:
     email: str = ""
     hash_password: str = ""
     locale: str = ""
+    timezone: str = ""
     created_at: datetime = datetime.now(utc)
     last_login_at: Optional[datetime] = None
 
@@ -24,6 +26,7 @@ class User:
         last_name: str,
         email: str,
         locale: Optional[str] = None,
+        timezone: Optional[str] = None,
         hash_password: Optional[str] = None,
         id: Optional[str] = None,
         created_at: Optional[datetime] = None,
@@ -35,7 +38,8 @@ class User:
         self.set_email(email.lower())
         if hash_password:
             self.hash_password = hash_password
-        self.locale = locale or "en_GB"
+        self.locale = locale or LOCALE
+        self.timezone = timezone or TIMEZONE
         self.created_at = created_at or datetime.now(utc)
         self.last_login_at = last_login_at
 
@@ -66,6 +70,8 @@ class User:
     def from_external_data(self, user_dict: dict):
         self.first_name = user_dict.get("first_name", self.first_name)
         self.last_name = user_dict.get("last_name", self.last_name)
+        self.last_name = user_dict.get("locale", self.locale)
+        self.last_name = user_dict.get("timezone", self.timezone)
         if user_dict.get("password"):
             self.set_password(user_dict.get("password", ""))
 
@@ -77,6 +83,8 @@ class User:
             "email": self.email,
             "created_at": str(self.created_at),
             "last_login_at": str(self.last_login_at),
+            "locale": self.locale,
+            "timezone": self.timezone,
         }
 
     def __str__(self) -> str:

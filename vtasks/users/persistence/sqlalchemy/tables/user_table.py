@@ -17,6 +17,7 @@ user_table = Table(
     Column("email", String(250), unique=True),
     Column("hash_password", String(256)),
     Column("locale", String(5)),
+    Column("timezone", String(35)),
     Column("created_at", DateTime(timezone=True), default=datetime.now(utc)),
     Column("last_login_at", DateTime(timezone=True), nullable=True, default=None),
 )
