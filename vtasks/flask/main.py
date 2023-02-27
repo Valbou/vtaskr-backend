@@ -2,7 +2,8 @@ from flask import Flask
 
 from vtasks.sqlalchemy.database import SQLService
 from vtasks.redis.database import NoSQLService
-from vtasks.base.config import LOCALE, TIMEZONE
+from vtasks.babel.translations import TranslationService
+from vtasks.base.config import AVAILABLE_LANGUAGES
 
 from vtasks.base.hmi.flask import base_bp
 from vtasks.users.hmi.flask import users_bp
@@ -21,7 +22,8 @@ def create_flask_app(testing: bool = False) -> Flask:
     app.jinja_options = {"extensions": ["jinja2.ext.i18n"]}
     app.sql = SQLService(testing)
     app.nosql = NoSQLService(testing)
-    app.timezone = TIMEZONE
-    app.locale = LOCALE
+    app.trans = TranslationService()
+    app.trans.add_domains(["users", "tasks"])
+    app.trans.add_languages(list(AVAILABLE_LANGUAGES.keys()))
 
     return app
