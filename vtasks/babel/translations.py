@@ -21,7 +21,13 @@ class TranslationSession:
         self.path = path
 
     def __enter__(self) -> GNUTranslations:
-        return translation(self.domain, self.path, languages=[self.lang,])
+        return translation(
+            self.domain,
+            self.path,
+            languages=[
+                self.lang,
+            ],
+        )
 
     def __exit__(self, exc_type, exc_value, traceback):
         pass
@@ -35,11 +41,15 @@ class TranslationService:
 
     def _check_valid_domain(self, domain: str):
         if domain not in self.domains:
-            raise TranslationsInvalidDomainError(f"The domain {domain} is not installed")
+            raise TranslationsInvalidDomainError(
+                f"The domain {domain} is not installed"
+            )
 
     def _check_valid_language(self, lang: str):
         if lang not in self.languages:
-            raise TranslationsInvalidLanguageError(f"The language {lang} is not installed")
+            raise TranslationsInvalidLanguageError(
+                f"The language {lang} is not installed"
+            )
 
     def _path_to_translations(self, domain: str):
         self._check_valid_domain(domain)
@@ -51,7 +61,13 @@ class TranslationService:
 
     def get_translation(self, domain: str, lang: str) -> GNUTranslations:
         self._check_valid_language(lang)
-        return translation(domain, self._path_to_translations(domain), languages=[lang,])
+        return translation(
+            domain,
+            self._path_to_translations(domain),
+            languages=[
+                lang,
+            ],
+        )
 
     def jinja_install_translation(self, jinja_env, translation: GNUTranslations):
         jinja_env.install_gettext_translations(translation)
