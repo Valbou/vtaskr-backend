@@ -64,24 +64,11 @@ def bandit_commands(interpreter: str, folder: Path) -> list:
 
 
 def unittest_commands(interpreter: str, folder: Path, app_name: str) -> list:
-    return [
-        interpreter,
-        "-m",
-        "unittest",
-        app_name,
-    ]
+    return [interpreter, "-m", "unittest"]
 
 
 def coverage_commands(interpreter: str, folder: Path, app_name: str) -> list:
-    return [
-        interpreter,
-        "-m",
-        "coverage",
-        "run",
-        "-m",
-        "unittest",
-        app_name,
-    ]
+    return [interpreter, "-m", "coverage", "run", "-m", "unittest"]
 
 
 def check_coverage_report(interpreter: str) -> int:
@@ -150,8 +137,7 @@ if __name__ == "__main__":
         ("Black", black_commands),
         ("Flake8", flake_commands),
         ("Bandit", bandit_commands),
-        ("Unittest", unittest_commands, "vtasks"),
-        ("Coverage", unittest_commands, "vtasks"),
+        ("Coverage", coverage_commands, "vtasks"),
     ]
 
     exit_score = 0

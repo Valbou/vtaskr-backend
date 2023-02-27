@@ -63,12 +63,7 @@ def bandit_commands(interpreter: str, folder: Path) -> list:
 
 
 def unittest_commands(interpreter: str, folder: Path, app_name: str) -> list:
-    return [
-        interpreter,
-        "-m",
-        "unittest",
-        app_name,
-    ]
+    return [interpreter, "-m", "unittest"]
 
 
 if __name__ == "__main__":
