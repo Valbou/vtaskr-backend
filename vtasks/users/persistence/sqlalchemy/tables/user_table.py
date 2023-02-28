@@ -1,11 +1,23 @@
 from datetime import datetime
 from pytz import utc
 
-from sqlalchemy import Table, Column, String, DateTime
+from sqlalchemy import Table, Column, String, DateTime, types, Dialect
 from sqlalchemy.orm import relationship
+from babel import Locale
 
 from vtasks.users.models import User
 from vtasks.sqlalchemy.base import mapper_registry
+
+
+class LocaleField(types.TypeDecorator):
+    impl = String(5)
+    cache_ok = True
+
+    def process_bind_param(self, value: Locale, dialect: Dialect) -> str:
+        return str(value)
+
+    def process_result_value(self, value: str, dialect: Dialect) -> Locale:
+        return Locale.parse(value)
 
 
 user_table = Table(
@@ -16,7 +28,7 @@ user_table = Table(
     Column("last_name", String(25)),
     Column("email", String(250), unique=True),
     Column("hash_password", String(256)),
-    Column("locale", String(5)),
+    Column("locale", LocaleField),
     Column("timezone", String(35)),
     Column("created_at", DateTime(timezone=True), default=datetime.now(utc)),
     Column("last_login_at", DateTime(timezone=True), nullable=True, default=None),

@@ -38,13 +38,13 @@ class TestTranslationService(TestCase):
 
     def test_get_translation(self):
         self.translation.add_domains(["test", "users"])
-        self.translation.add_languages(["fr", "cn"])
+        self.translation.add_languages(["fr", "ja"])
 
         with self.assertRaises(FileNotFoundError):
             self.translation.get_translation("test", "fr")
 
         with self.assertRaises(FileNotFoundError):
-            self.translation.get_translation("users", "cn")
+            self.translation.get_translation("users", "ja")
 
         self.assertIsInstance(
             self.translation.get_translation("users", "fr"), GNUTranslations

@@ -3,6 +3,8 @@ from pytz import utc
 from typing import Optional
 from dataclasses import dataclass
 
+from babel import Locale
+
 from vtasks.base.config import LOCALE, TIMEZONE
 from vtasks.secutity.utils import get_id, hash_from_password, check_password
 from vtasks.secutity.validators import get_valid_email, PasswordChecker
@@ -15,7 +17,7 @@ class User:
     last_name: str = ""
     email: str = ""
     hash_password: str = ""
-    locale: str = ""
+    locale: Locale = ""
     timezone: str = ""
     created_at: datetime = datetime.now(utc)
     last_login_at: Optional[datetime] = None
@@ -25,7 +27,7 @@ class User:
         first_name: str,
         last_name: str,
         email: str,
-        locale: Optional[str] = None,
+        locale: Optional[Locale] = None,
         timezone: Optional[str] = None,
         hash_password: Optional[str] = None,
         id: Optional[str] = None,
@@ -38,7 +40,7 @@ class User:
         self.set_email(email.lower())
         if hash_password:
             self.hash_password = hash_password
-        self.locale = locale or LOCALE
+        self.locale = locale or Locale.parse(LOCALE)
         self.timezone = timezone or TIMEZONE
         self.created_at = created_at or datetime.now(utc)
         self.last_login_at = last_login_at
@@ -70,7 +72,7 @@ class User:
     def from_external_data(self, user_dict: dict):
         self.first_name = user_dict.get("first_name", self.first_name)
         self.last_name = user_dict.get("last_name", self.last_name)
-        self.locale = user_dict.get("locale", self.locale)
+        self.locale = Locale.parse(user_dict.get("locale")) or self.locale
         self.timezone = user_dict.get("timezone", self.timezone)
         if user_dict.get("password"):
             self.set_password(user_dict.get("password", ""))
@@ -83,7 +85,7 @@ class User:
             "email": self.email,
             "created_at": str(self.created_at),
             "last_login_at": str(self.last_login_at),
-            "locale": self.locale,
+            "locale": str(self.locale),
             "timezone": self.timezone,
         }
 
