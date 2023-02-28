@@ -60,7 +60,10 @@ def register():
             auth_service = UserService(session, testing=current_app.testing)
             user = auth_service.register(payload)
 
-            register_email = RegisterEmail([user.email], user.first_name)
+            with current_app.trans.get_translation_session(
+                "users", user.locale
+            ) as trans:
+                register_email = RegisterEmail(trans, [user.email], user.first_name)
             notification = NotificationService(testing=current_app.testing)
             notification.add_message(register_email)
             notification.notify_all()
@@ -110,7 +113,12 @@ def login():
             token, user = auth_service.authenticate(email, password)
 
             if token is not None:
-                login_email = LoginEmail([user.email], user.first_name, token.temp_code)
+                with current_app.trans.get_translation_session(
+                    "users", user.locale
+                ) as trans:
+                    login_email = LoginEmail(
+                        trans, [user.email], user.first_name, token.temp_code
+                    )
                 notification = NotificationService(testing=current_app.testing)
                 notification.add_message(login_email)
                 notification.notify_all()
@@ -334,9 +342,12 @@ def forgotten_password():
             if user:
                 user_service = UserService(session, testing=current_app.testing)
                 request_hash = user_service.request_password_change(user)
-                change_password_email = ChangePasswordEmail(
-                    [user.email], user.first_name, request_hash
-                )
+                with current_app.trans.get_translation_session(
+                    "users", user.locale
+                ) as trans:
+                    change_password_email = ChangePasswordEmail(
+                        trans, [user.email], user.first_name, request_hash
+                    )
                 notification = NotificationService(testing=current_app.testing)
                 notification.add_message(change_password_email)
                 notification.notify_all()
@@ -438,12 +449,15 @@ def change_email():
             except AttributeError:
                 return ResponseAPI.get_error_response("Bad request", 400)
 
-            old_email_message = ChangeEmailToOldEmail(
-                [user.email], user.first_name, req_code
-            )
-            new_email_message = ChangeEmailToNewEmail(
-                [new_email], user.first_name, req_hash
-            )
+            with current_app.trans.get_translation_session(
+                "users", user.locale
+            ) as trans:
+                old_email_message = ChangeEmailToOldEmail(
+                    trans, [user.email], user.first_name, req_code
+                )
+                new_email_message = ChangeEmailToNewEmail(
+                    trans, [new_email], user.first_name, req_hash
+                )
             notification = NotificationService(testing=current_app.testing)
             notification.add_message(old_email_message)
             notification.add_message(new_email_message)
