@@ -22,6 +22,7 @@ def create_flask_app(testing: bool = False) -> Flask:
     app.jinja_options = {"extensions": ["jinja2.ext.i18n"]}
     app.sql = SQLService(testing)
     app.nosql = NoSQLService(testing)
+
     app.trans = TranslationService()
     app.trans.add_domains(["users", "tasks"])
     app.trans.add_languages(list(AVAILABLE_LANGUAGES.keys()))
