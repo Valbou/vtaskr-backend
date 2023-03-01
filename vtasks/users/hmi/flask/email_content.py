@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Tuple
 from gettext import GNUTranslations
 
 from flask import render_template
@@ -16,22 +16,21 @@ class RegisterEmail(AbstractBaseEmailContent):
             "emails/simple_text.html", **self.email_context(first_name)
         )
         self.to_emails = to
+        s1, s2, s3 = self.get_trad(first_name)
         self.text = f"""
-{self._("Welcome {first_name} !")}
-{self._("Welcome in your new to do app. As of now, you can start to create tasks !")}
-        """.format(
-            first_name=first_name
-        )
+        \n{s1}\n{s2}\n{s3}
+        """
 
     def email_context(self, first_name: str) -> dict:
         title = self._("Registration Success {first_name}").format(
             first_name=first_name
         )
-        content_title = self._("Welcome {first_name} !").format(first_name=first_name)
+        s1, s2, s3 = self.get_trad(first_name)
+        content_title = s1
         content = f"""
-<p>
-    {self._("Welcome in your new to do app. As of now, you can start to create tasks !")}
-</p>
+        <p>
+            {s2}<br />{s3}
+        </p>
         """
         call_to_action = self._("Enjoy !")
 
@@ -43,6 +42,12 @@ class RegisterEmail(AbstractBaseEmailContent):
             "call_to_action": call_to_action,
         }
         return context
+
+    def get_trad(self, first_name: str) -> Tuple[str]:
+        s1 = self._("Welcome {first_name} !").format(first_name=first_name)
+        s2 = self._("Welcome in your new to do app management.")
+        s3 = self._("As of now, you can login and start to create your tasks !")
+        return (s1, s2, s3)
 
 
 class LoginEmail(AbstractBaseEmailContent):
@@ -56,36 +61,26 @@ class LoginEmail(AbstractBaseEmailContent):
             "emails/simple_text.html", **self.email_context(first_name, code)
         )
         self.to_emails = to
+        s1, s2, s3, s4 = self.get_trad(first_name)
         self.text = f"""
-{self._("Hi {first_name} !")}
-{self._("To finish login process (2FA), please copy/paste the following code: {code}")}
-{self._(
-    "This code stay valid only three minutes, after,"
-    "you need to make a new login attempt."
-)}
-        """.format(
-            first_name=first_name, code=code
-        )
+        \n{s1}\n{s2}\n{s3} {code}\n{s4}
+        """
 
     def email_context(self, first_name: str, code: str) -> dict:
         title = self._("New login with your account")
-        content_title = self._("Hi {first_name} !").format(first_name=first_name)
+        s1, s2, s3, s4 = self.get_trad(first_name)
+        content_title = s1
         content = f"""
-<p>
-    {self._("To finish login process (2FA), please copy/paste the following code:")}
-</p>
-<p style="font-size: 16px: font-weight: bolder; letter-spacing: 5px;">
-    {"{code}"}
-</p>
-<p>
-    {self._(
-        "This code stay valid only three minutes, after,"
-        "you need to make a new login attempt."
-    )}
-</p>
-        """.format(
-            code=code
-        )
+        <p>
+            {s2}<br />{s3}
+        </p>
+        <p style="font-size: 16px: font-weight: bolder; letter-spacing: 5px;">
+            {code}
+        </p>
+        <p>
+            {s4}
+        </p>
+        """
 
         context = {
             "logo": self.logo,
@@ -95,6 +90,19 @@ class LoginEmail(AbstractBaseEmailContent):
             "call_to_action": None,
         }
         return context
+
+    def get_trad(self, first_name: str) -> Tuple[str]:
+        s1 = self._("Hi {first_name} !").format(first_name=first_name)
+        s2 = self._(
+            "A login attempt was registered, "
+            "if it's not you, please change your password."
+        )
+        s3 = self._("To login, please copy/paste the following code:")
+        s4 = self._(
+            "This code stay valid only three minutes, after,"
+            "you need to make a new login attempt."
+        )
+        return (s1, s2, s3, s4)
 
 
 class ChangeEmailToOldEmail(AbstractBaseEmailContent):
@@ -108,39 +116,24 @@ class ChangeEmailToOldEmail(AbstractBaseEmailContent):
             "emails/simple_text.html", **self.email_context(first_name, code)
         )
         self.to_emails = to
+        s1, s2, s3, s4, s5 = self.get_trad(first_name)
         self.text = f"""
-{self._("Hi {first_name} !")}
-{self._("You request us to change your email account.")}
-{self._("We have sent to you an email, in your new email account.")}
-{self._(
-    "Click on the email sent to your new account and"
-    "copy/paste the following code into the form:"
-)}
-{"{code}"}
-{self._("This old email will be remove of your account after proceed.")}
-        """.format(
-            first_name=first_name, code=code
-        )
+        \n{s1}\n{s2}\n{s3}\n{s4} {code}\n{s5}
+        """
 
     def email_context(self, first_name: str, code: str) -> dict:
         title = self._("Change your Email").format(first_name=first_name)
-        content_title = self._("Hi {first_name} !").format(first_name=first_name)
+        s1, s2, s3, s4, s5 = self.get_trad(first_name)
+        content_title = s1
         content = f"""
-<p>
-    {self._("You request us to change your email account.")}
-    {self._("We have sent to you an email, in your new email account.")}<br />
-    {self._(
-        "Click on the email sent to your new account and"
-        "copy/paste the following code into the form:"
-    )}
-</p>
-<p style="font-size: 16px: font-weight: bolder; letter-spacing: 5px;">
-    {"{code}"}
-</p>
-<p>{self._("This old email will be remove of your account after proceed.")}</p>
-            """.format(
-            code=code
-        )
+        <p>
+            {s2}<br />{s3}<br />{s4}
+        </p>
+        <p style="font-size: 16px: font-weight: bolder; letter-spacing: 5px;">
+            {code}
+        </p>
+        <p>{s5}</p>
+            """
 
         context = {
             "logo": self.logo,
@@ -150,6 +143,17 @@ class ChangeEmailToOldEmail(AbstractBaseEmailContent):
             "call_to_action": None,
         }
         return context
+
+    def get_trad(self, first_name: str) -> Tuple[str]:
+        s1 = self._("Hi {first_name} !").format(first_name=first_name)
+        s2 = self._("You request to change your email account.")
+        s3 = self._("We have sent to you an email, in your new email account.")
+        s4 = self._(
+            "Click on the email sent to your new account and"
+            "copy/paste the following code into the form:"
+        )
+        s5 = self._("This old email will be remove of your account after proceed.")
+        return (s1, s2, s3, s4, s5)
 
 
 class ChangeEmailToNewEmail(AbstractBaseEmailContent):
@@ -170,35 +174,23 @@ class ChangeEmailToNewEmail(AbstractBaseEmailContent):
             **self.email_context(first_name, change_email_link),
         )
         self.to_emails = to
+        s1, s2, s3, _, s4_bis, s5, s6 = self.get_trad(first_name)
         self.text = f"""
-{self._("Hi {first_name} !")}
-{self._("You request us to change your email account.")}
-{self._(
-    "We sent you an email, in your old email account"
-    "with a code required to complete the process."
-)}
-{self._("Follow the link below to proceed")} {self._("(link available only 3 minutes)")}:
-{self._("{change_email_link}")}
+        \n{s1}\n{s2}\n{s3}{s4_bis} {s5}:\n{change_email_link}\n{s6}
 {self._("This old email will be removed of your account after proceed.")}
-        """.format(
-            first_name=first_name, change_email_link=change_email_link
-        )
+        """
 
     def email_context(self, first_name: str, change_email_link: str) -> dict:
         title = self._("Change your Email").format(first_name=first_name)
-        content_title = self._("Hi {first_name} !").format(first_name=first_name)
+        s1, s2, s3, s4, _, s5, s6 = self.get_trad(first_name)
+        content_title = s1
         content = f"""
-<p>
-    {self._("You request us to change your email account.")}
-    {self._(
-        "We sent you an email, in your old email account"
-        "with a code required to complete the process."
-    )}
-    <br />
-    {self._("Click on the following button to proceed")}
-    {self._("(link available only 3 minutes)")}.
-</p>
-<p>{self._("This old email will be removed of your account after proceed.")}</p>
+        <p>
+            {s2} {s3}
+            <br />
+            {s4} {s5}.
+        </p>
+        <p>{s6}</p>
         """
 
         context = {
@@ -210,6 +202,19 @@ class ChangeEmailToNewEmail(AbstractBaseEmailContent):
             "call_to_action_link": change_email_link,
         }
         return context
+
+    def get_trad(self, first_name: str) -> Tuple[str]:
+        s1 = self._("Hi {first_name} !").format(first_name=first_name)
+        s2 = self._("You request to change your email account.")
+        s3 = self._(
+            "We sent you an email, to your old email account "
+            "with a code required to complete the process."
+        )
+        s4 = self._("Click on the following button to proceed")
+        s4_bis = self._("Click on the following link to proceed")
+        s5 = self._("(link available only 3 minutes)")
+        s6 = self._("This old email will be removed of your account after proceed.")
+        return (s1, s2, s3, s4, s4_bis, s5, s6)
 
 
 class ChangePasswordEmail(AbstractBaseEmailContent):
@@ -229,25 +234,22 @@ class ChangePasswordEmail(AbstractBaseEmailContent):
             "emails/simple_text.html",
             **self.email_context(first_name, change_email_link),
         )
+        s1, s2, s3, _, s4 = self.get_trad(first_name)
         self.to_emails = to
         self.text = f"""
-{self._("Hi {first_name} !")}
-{self._("You request us to change your account password.")}
-{self._("Follow the link below to proceed")}
-{self._("{change_email_link}")}
-        """.format(
-            first_name=first_name, change_email_link=change_email_link
-        )
+        \n{s1}\n{s2}\n{s3} {s4}\n{change_email_link}
+        """
 
     def email_context(self, first_name: str, change_email_link: str) -> dict:
         title = self._("Change your Email").format(first_name=first_name)
-        content_title = self._("Hi {first_name} !").format(first_name=first_name)
+        s1, s2, _, s3_bis, s4 = self.get_trad(first_name)
+        content_title = s1
         content = f"""
-<p>
-    {self._("You request us to change your account password.")}
-    {self._("Click on the following button to proceed")}
-    {self._("(link available only 3 minutes)")}.
-</p>
+        <p>
+            {s2}
+            <br />
+            {s3_bis} {s4}.
+        </p>
         """
 
         context = {
@@ -259,3 +261,11 @@ class ChangePasswordEmail(AbstractBaseEmailContent):
             "call_to_action_link": change_email_link,
         }
         return context
+
+    def get_trad(self, first_name: str) -> Tuple[str]:
+        s1 = self._("Hi {first_name} !").format(first_name=first_name)
+        s2 = self._("You request us to change your account password.")
+        s3 = self._("Follow the link below to proceed")
+        s3_bis = self._("Click on the following button to proceed")
+        s4 = self._("(link available only 3 minutes)")
+        return (s1, s2, s3, s3_bis, s4)
