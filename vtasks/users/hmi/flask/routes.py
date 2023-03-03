@@ -51,7 +51,7 @@ def register():
             timedelta(seconds=300),
         )()
     except LimitExceededError as e:
-        logger.error(str(e))
+        logger.warn(str(e))
         return ResponseAPI.get_error_response("Too many requests", 429)
 
     payload: dict = request.get_json()
@@ -96,7 +96,7 @@ def login():
             timedelta(seconds=60),
         )()
     except LimitExceededError as e:
-        logger.error(str(e))
+        logger.warn(str(e))
         return ResponseAPI.get_error_response("Too many requests", 429)
 
     payload: dict = request.get_json()
@@ -150,7 +150,7 @@ def confirm_2FA():
             timedelta(seconds=60),
         )()
     except LimitExceededError as e:
-        logger.error(str(e))
+        logger.warn(str(e))
         return ResponseAPI.get_error_response("Too many requests", 429)
 
     if not sha_token:
@@ -196,7 +196,7 @@ def logout():
             timedelta(seconds=60),
         )()
     except LimitExceededError as e:
-        logger.error(str(e))
+        logger.warn(str(e))
         return ResponseAPI.get_error_response("Too many requests", 429)
 
     payload: dict = request.get_json()
@@ -238,7 +238,7 @@ def me():
             timedelta(seconds=60),
         )()
     except LimitExceededError as e:
-        logger.error(str(e))
+        logger.warn(str(e))
         return ResponseAPI.get_error_response("Too many requests", 429)
 
     try:
@@ -277,7 +277,7 @@ def update_me():
             timedelta(seconds=60),
         )()
     except LimitExceededError as e:
-        logger.error(str(e))
+        logger.warn(str(e))
         return ResponseAPI.get_error_response("Too many requests", 429)
 
     try:
@@ -324,7 +324,7 @@ def forgotten_password():
             timedelta(seconds=300),
         )()
     except LimitExceededError as e:
-        logger.error(str(e))
+        logger.warn(str(e))
         return ResponseAPI.get_error_response("Too many requests", 429)
 
     payload: dict = request.get_json()
@@ -373,7 +373,7 @@ def new_password():
             timedelta(seconds=300),
         )()
     except LimitExceededError as e:
-        logger.error(str(e))
+        logger.warn(str(e))
         return ResponseAPI.get_error_response("Too many requests", 429)
 
     payload: dict = request.get_json()
@@ -424,7 +424,7 @@ def change_email():
             timedelta(seconds=300),
         )()
     except LimitExceededError as e:
-        logger.error(str(e))
+        logger.warn(str(e))
         return ResponseAPI.get_error_response("Too many requests", 429)
 
     try:
@@ -486,7 +486,7 @@ def new_email():
             timedelta(seconds=300),
         )()
     except LimitExceededError as e:
-        logger.error(str(e))
+        logger.warn(str(e))
         return ResponseAPI.get_error_response("Too many requests", 429)
 
     payload: dict = request.get_json()
