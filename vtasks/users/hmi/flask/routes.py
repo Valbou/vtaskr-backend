@@ -5,7 +5,7 @@ from flask import Blueprint, request, current_app
 from email_validator import EmailSyntaxError
 
 from vtasks.flask.utils import ResponseAPI, get_bearer_token, get_ip
-from vtasks.redis.ratelimit import RateLimit, LimitExceededError
+from vtasks.redis import rate_limit, RateLimit, LimitExceededError
 from vtasks.users.persistence import UserDB, TokenDB
 from vtasks.secutity.validators import PasswordComplexityError, get_valid_email
 from vtasks.notifications import NotificationService
@@ -43,15 +43,15 @@ def register():
     Return the jsonify user created
     """
     try:
-        RateLimit(
-            current_app.nosql.get_engine(),
-            get_ip(request),
-            f"POST:{V1}/users/register",
-            5,
-            timedelta(seconds=300),
-        )()
+        rate_limit(
+            redis=current_app.nosql.get_engine(),
+            request=request,
+            token=None,
+            hit=5,
+            period=timedelta(seconds=300),
+        )
     except LimitExceededError as e:
-        logger.warn(str(e))
+        logger.warning(str(e))
         return ResponseAPI.get_error_response("Too many requests", 429)
 
     payload: dict = request.get_json()
@@ -88,15 +88,15 @@ def login():
     Return a valid token
     """
     try:
-        RateLimit(
-            current_app.nosql.get_engine(),
-            get_ip(request),
-            f"POST:{V1}/users/login",
-            5,
-            timedelta(seconds=60),
-        )()
+        rate_limit(
+            redis=current_app.nosql.get_engine(),
+            request=request,
+            token=None,
+            hit=5,
+            period=timedelta(seconds=60),
+        )
     except LimitExceededError as e:
-        logger.warn(str(e))
+        logger.warning(str(e))
         return ResponseAPI.get_error_response("Too many requests", 429)
 
     payload: dict = request.get_json()
@@ -142,15 +142,15 @@ def confirm_2FA():
     """
     sha_token = get_bearer_token(request)
     try:
-        RateLimit(
-            current_app.nosql.get_engine(),
-            sha_token or get_ip(request),
-            f"POST:{V1}/users/2fa",
-            3,
-            timedelta(seconds=60),
-        )()
+        rate_limit(
+            redis=current_app.nosql.get_engine(),
+            request=request,
+            token=sha_token,
+            hit=3,
+            period=timedelta(seconds=60),
+        )
     except LimitExceededError as e:
-        logger.warn(str(e))
+        logger.warning(str(e))
         return ResponseAPI.get_error_response("Too many requests", 429)
 
     if not sha_token:
@@ -188,15 +188,15 @@ def logout():
     """
     sha_token = get_bearer_token(request)
     try:
-        RateLimit(
-            current_app.nosql.get_engine(),
-            sha_token or get_ip(request),
-            f"DELETE:{V1}/users/logout",
-            6,
-            timedelta(seconds=60),
-        )()
+        rate_limit(
+            redis=current_app.nosql.get_engine(),
+            request=request,
+            token=sha_token,
+            hit=6,
+            period=timedelta(seconds=60),
+        )
     except LimitExceededError as e:
-        logger.warn(str(e))
+        logger.warning(str(e))
         return ResponseAPI.get_error_response("Too many requests", 429)
 
     payload: dict = request.get_json()
@@ -230,15 +230,15 @@ def me():
     """
     sha_token = get_bearer_token(request)
     try:
-        RateLimit(
-            current_app.nosql.get_engine(),
-            sha_token or get_ip(request),
-            f"GET:{V1}/users/me",
-            5,
-            timedelta(seconds=60),
-        )()
+        rate_limit(
+            redis=current_app.nosql.get_engine(),
+            request=request,
+            token=sha_token,
+            hit=5,
+            period=timedelta(seconds=60),
+        )
     except LimitExceededError as e:
-        logger.warn(str(e))
+        logger.warning(str(e))
         return ResponseAPI.get_error_response("Too many requests", 429)
 
     try:
@@ -269,15 +269,15 @@ def update_me():
     """
     sha_token = get_bearer_token(request)
     try:
-        RateLimit(
-            current_app.nosql.get_engine(),
-            sha_token or get_ip(request),
-            f"PUT:{V1}/users/me/update",
-            5,
-            timedelta(seconds=60),
-        )()
+        rate_limit(
+            redis=current_app.nosql.get_engine(),
+            request=request,
+            token=sha_token,
+            hit=5,
+            period=timedelta(seconds=60),
+        )
     except LimitExceededError as e:
-        logger.warn(str(e))
+        logger.warning(str(e))
         return ResponseAPI.get_error_response("Too many requests", 429)
 
     try:
@@ -316,15 +316,15 @@ def forgotten_password():
     Need the user email
     """
     try:
-        RateLimit(
-            current_app.nosql.get_engine(),
-            get_ip(request),
-            f"POST:{V1}/forgotten-password",
-            5,
-            timedelta(seconds=300),
-        )()
+        rate_limit(
+            redis=current_app.nosql.get_engine(),
+            request=request,
+            token=None,
+            hit=5,
+            period=timedelta(seconds=300),
+        )
     except LimitExceededError as e:
-        logger.warn(str(e))
+        logger.warning(str(e))
         return ResponseAPI.get_error_response("Too many requests", 429)
 
     payload: dict = request.get_json()
@@ -365,15 +365,15 @@ def new_password():
     Need the hash sent by email, the email and the new password
     """
     try:
-        RateLimit(
-            current_app.nosql.get_engine(),
-            get_ip(request),
-            f"POST:{V1}/new-password",
-            5,
-            timedelta(seconds=300),
-        )()
+        rate_limit(
+            redis=current_app.nosql.get_engine(),
+            request=request,
+            token=None,
+            hit=5,
+            period=timedelta(seconds=300),
+        )
     except LimitExceededError as e:
-        logger.warn(str(e))
+        logger.warning(str(e))
         return ResponseAPI.get_error_response("Too many requests", 429)
 
     payload: dict = request.get_json()
@@ -416,15 +416,15 @@ def change_email():
     """
     sha_token = get_bearer_token(request)
     try:
-        RateLimit(
-            current_app.nosql.get_engine(),
-            sha_token or get_ip(request),
-            f"POST:{V1}/users/me/change-email",
-            5,
-            timedelta(seconds=300),
-        )()
+        rate_limit(
+            redis=current_app.nosql.get_engine(),
+            request=request,
+            token=sha_token,
+            hit=5,
+            period=timedelta(seconds=300),
+        )
     except LimitExceededError as e:
-        logger.warn(str(e))
+        logger.warning(str(e))
         return ResponseAPI.get_error_response("Too many requests", 429)
 
     try:
@@ -478,15 +478,15 @@ def new_email():
     the new email and the hash sent to the new email
     """
     try:
-        RateLimit(
-            current_app.nosql.get_engine(),
-            get_ip(request),
-            f"POST:{V1}/new-email",
-            5,
-            timedelta(seconds=300),
-        )()
+        rate_limit(
+            redis=current_app.nosql.get_engine(),
+            request=request,
+            token=None,
+            hit=5,
+            period=timedelta(seconds=300),
+        )
     except LimitExceededError as e:
-        logger.warn(str(e))
+        logger.warning(str(e))
         return ResponseAPI.get_error_response("Too many requests", 429)
 
     payload: dict = request.get_json()
