@@ -9,7 +9,7 @@ from .tag import Tag
 
 
 class EisenhowerFlag(Enum):
-    TODO = "todo"
+    DO = "todo"
     SCHEDULE = "toschedule"
     DELEGATE = "todelegate"
     DELETE = "todelete"
@@ -63,7 +63,7 @@ class Task:
 
     def get_eisenhower_flag(self):
         if self.emergency and self.important:
-            return EisenhowerFlag.TODO
+            return EisenhowerFlag.DO
         elif not self.emergency and self.important:
             return EisenhowerFlag.SCHEDULE
         elif self.emergency and not self.important:
