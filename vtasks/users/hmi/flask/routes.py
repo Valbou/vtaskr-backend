@@ -1,11 +1,11 @@
 from logging import Logger
 from datetime import timedelta
 
-from flask import Blueprint, request, current_app
+from flask import Blueprint, request, current_app, g
 from email_validator import EmailSyntaxError
 
-from vtasks.flask.utils import ResponseAPI, get_bearer_token, get_ip
-from vtasks.redis import rate_limit, RateLimit, LimitExceededError
+from vtasks.flask.utils import ResponseAPI, get_bearer_token
+from vtasks.redis import rate_limited
 from vtasks.users.persistence import UserDB, TokenDB
 from vtasks.secutity.validators import PasswordComplexityError, get_valid_email
 from vtasks.notifications import NotificationService
@@ -18,6 +18,7 @@ from .email_content import (
     ChangeEmailToOldEmail,
     ChangeEmailToNewEmail,
 )
+from .decorators import login_required
 
 
 logger = Logger(__name__)
@@ -35,6 +36,7 @@ V1 = "/api/v1"
 
 
 @users_bp.route(f"{V1}/users/register", methods=["POST"])
+@rate_limited(logger=logger, hit=5, period=timedelta(seconds=300))
 def register():
     """
     URL to register a new user
@@ -42,18 +44,6 @@ def register():
     Need: email, password, first_name, last_name, no_bot
     Return the jsonify user created
     """
-    try:
-        rate_limit(
-            redis=current_app.nosql.get_engine(),
-            request=request,
-            token=None,
-            hit=5,
-            period=timedelta(seconds=300),
-        )
-    except LimitExceededError as e:
-        logger.warning(str(e))
-        return ResponseAPI.get_error_response("Too many requests", 429)
-
     payload: dict = request.get_json()
     try:
         with current_app.sql.get_session() as session:
@@ -79,6 +69,7 @@ def register():
 
 # https://medium.com/swlh/creating-middlewares-with-python-flask-166bd03f2fd4
 @users_bp.route(f"{V1}/users/login", methods=["POST"])
+@rate_limited(logger=logger, hit=5, period=timedelta(seconds=60))
 def login():
     """
     URL to login as an authorized user
@@ -87,18 +78,6 @@ def login():
     Need an email and a password
     Return a valid token
     """
-    try:
-        rate_limit(
-            redis=current_app.nosql.get_engine(),
-            request=request,
-            token=None,
-            hit=5,
-            period=timedelta(seconds=60),
-        )
-    except LimitExceededError as e:
-        logger.warning(str(e))
-        return ResponseAPI.get_error_response("Too many requests", 429)
-
     payload: dict = request.get_json()
 
     try:
@@ -133,6 +112,7 @@ def login():
 
 
 @users_bp.route(f"{V1}/users/2fa", methods=["POST"])
+@rate_limited(logger=logger, hit=3, period=timedelta(seconds=60))
 def confirm_2FA():
     """
     URL to confirm 2FA auth - Token required
@@ -141,18 +121,6 @@ def confirm_2FA():
     Return a 200
     """
     sha_token = get_bearer_token(request)
-    try:
-        rate_limit(
-            redis=current_app.nosql.get_engine(),
-            request=request,
-            token=sha_token,
-            hit=3,
-            period=timedelta(seconds=60),
-        )
-    except LimitExceededError as e:
-        logger.warning(str(e))
-        return ResponseAPI.get_error_response("Too many requests", 429)
-
     if not sha_token:
         return ResponseAPI.get_error_response("Invalid token", 401)
 
@@ -179,37 +147,19 @@ def confirm_2FA():
 
 
 @users_bp.route(f"{V1}/users/logout", methods=["DELETE"])
+@rate_limited(logger=logger, hit=6, period=timedelta(seconds=60))
+@login_required(logger)
 def logout():
     """
     URL to logout a logged in user - Token required
 
-    Need a valid token and the user email
+    Need a valid token
     Return a 204
     """
-    sha_token = get_bearer_token(request)
-    try:
-        rate_limit(
-            redis=current_app.nosql.get_engine(),
-            request=request,
-            token=sha_token,
-            hit=6,
-            period=timedelta(seconds=60),
-        )
-    except LimitExceededError as e:
-        logger.warning(str(e))
-        return ResponseAPI.get_error_response("Too many requests", 429)
-
-    payload: dict = request.get_json()
-
-    try:
-        email = payload.get("email", "")
-    except AttributeError:
-        return ResponseAPI.get_error_response("Bad request", 400)
-
     try:
         with current_app.sql.get_session() as session:
             auth_service = UserService(session, testing=current_app.testing)
-            if auth_service.logout(email, sha_token):
+            if auth_service.logout(g.token):
                 data = {}
                 return ResponseAPI.get_response(data, 204)
             else:
@@ -221,6 +171,8 @@ def logout():
 
 
 @users_bp.route(f"{V1}/users/me", methods=["GET"])
+@rate_limited(logger=logger, hit=5, period=timedelta(seconds=60))
+@login_required(logger)
 def me():
     """
     URL to get current user informations - Token required
@@ -228,29 +180,9 @@ def me():
     Need a valid token
     Return a jsonify user
     """
-    sha_token = get_bearer_token(request)
     try:
-        rate_limit(
-            redis=current_app.nosql.get_engine(),
-            request=request,
-            token=sha_token,
-            hit=5,
-            period=timedelta(seconds=60),
-        )
-    except LimitExceededError as e:
-        logger.warning(str(e))
-        return ResponseAPI.get_error_response("Too many requests", 429)
-
-    try:
-        if not sha_token:
-            return ResponseAPI.get_error_response("Invalid token", 401)
-
-        with current_app.sql.get_session() as session:
-            auth_service = UserService(session, testing=current_app.testing)
-            user = auth_service.user_from_token(sha_token)
-
-        if user:
-            data = user.to_external_data()
+        if g.user:
+            data = g.user.to_external_data()
             return ResponseAPI.get_response(data, 200)
         else:
             return ResponseAPI.get_error_response("Invalid token", 403)
@@ -260,6 +192,8 @@ def me():
 
 
 @users_bp.route(f"{V1}/users/me/update", methods=["PUT", "PATCH"])
+@rate_limited(logger=logger, hit=5, period=timedelta(seconds=60))
+@login_required(logger)
 def update_me():
     """
     URL to modify user informations - Token required
@@ -267,39 +201,15 @@ def update_me():
     Need a valid token
     Return a jsonify user updated
     """
-    sha_token = get_bearer_token(request)
     try:
-        rate_limit(
-            redis=current_app.nosql.get_engine(),
-            request=request,
-            token=sha_token,
-            hit=5,
-            period=timedelta(seconds=60),
-        )
-    except LimitExceededError as e:
-        logger.warning(str(e))
-        return ResponseAPI.get_error_response("Too many requests", 429)
-
-    try:
-        if not sha_token:
-            return ResponseAPI.get_error_response("Invalid token", 401)
-
-        with current_app.sql.get_session() as session:
-            auth_service = UserService(session, testing=current_app.testing)
-            user = auth_service.user_from_token(sha_token)
-    except Exception as e:
-        logger.error(str(e))
-        return ResponseAPI.get_error_response("Internal error", 500)
-
-    try:
-        if user is None:
+        if g.user is None:
             return ResponseAPI.get_error_response("Invalid token", 401)
         else:
             user_db = UserDB()
             with current_app.sql.get_session() as session:
-                user.from_external_data(request.get_json())
-                user_db.update(session, user)
-                data = user.to_external_data()
+                g.user.from_external_data(request.get_json())
+                user_db.update(session, g.user)
+                data = g.user.to_external_data()
             return ResponseAPI.get_response(data, 200)
     except PasswordComplexityError as e:
         return ResponseAPI.get_error_response(str(e), 400)
@@ -309,27 +219,16 @@ def update_me():
 
 
 @users_bp.route(f"{V1}/forgotten-password", methods=["POST"])
+@rate_limited(logger=logger, hit=5, period=timedelta(seconds=300))
 def forgotten_password():
     """
     URL to request to change password
 
     Need the user email
     """
-    try:
-        rate_limit(
-            redis=current_app.nosql.get_engine(),
-            request=request,
-            token=None,
-            hit=5,
-            period=timedelta(seconds=300),
-        )
-    except LimitExceededError as e:
-        logger.warning(str(e))
-        return ResponseAPI.get_error_response("Too many requests", 429)
 
     payload: dict = request.get_json()
     data = {}
-
     try:
         email = payload.get("email", "")
     except AttributeError:
@@ -358,24 +257,13 @@ def forgotten_password():
 
 
 @users_bp.route(f"{V1}/new-password", methods=["POST"])
+@rate_limited(logger=logger, hit=5, period=timedelta(seconds=300))
 def new_password():
     """
     URL to set a new password
 
     Need the hash sent by email, the email and the new password
     """
-    try:
-        rate_limit(
-            redis=current_app.nosql.get_engine(),
-            request=request,
-            token=None,
-            hit=5,
-            period=timedelta(seconds=300),
-        )
-    except LimitExceededError as e:
-        logger.warning(str(e))
-        return ResponseAPI.get_error_response("Too many requests", 429)
-
     payload: dict = request.get_json()
 
     try:
@@ -408,55 +296,36 @@ def new_password():
 
 
 @users_bp.route(f"{V1}/users/me/change-email", methods=["POST"])
+@rate_limited(logger=logger, hit=5, period=timedelta(seconds=300))
+@login_required(logger)
 def change_email():
     """
     URL to request to change email account
 
     Need a valid token and a new email
     """
-    sha_token = get_bearer_token(request)
     try:
-        rate_limit(
-            redis=current_app.nosql.get_engine(),
-            request=request,
-            token=sha_token,
-            hit=5,
-            period=timedelta(seconds=300),
-        )
-    except LimitExceededError as e:
-        logger.warning(str(e))
-        return ResponseAPI.get_error_response("Too many requests", 429)
-
-    try:
-        if not sha_token:
-            return ResponseAPI.get_error_response("Invalid token", 401)
-
         with current_app.sql.get_session() as session:
-            auth_service = UserService(session, testing=current_app.testing)
-            user = auth_service.user_from_token(sha_token)
-            if not user:
-                return ResponseAPI.get_error_response("Invalid token", 401)
-
             payload: dict = request.get_json()
             data = {}
-
             try:
                 new_email = payload.get("new_email", "")
                 new_email = get_valid_email(new_email)
-                req_hash, req_code = auth_service.request_email_change(user, new_email)
+                auth_service = UserService(session, testing=current_app.testing)
+                req_hash, req_code = auth_service.request_email_change(g.user, new_email)
             except (EmailSyntaxError, EmailAlreadyUsedError) as e:
                 return ResponseAPI.get_error_response(str(e), 400)
             except AttributeError:
                 return ResponseAPI.get_error_response("Bad request", 400)
 
             with current_app.trans.get_translation_session(
-                "users", user.locale
+                "users", g.user.locale
             ) as trans:
                 old_email_message = ChangeEmailToOldEmail(
-                    trans, [user.email], user.first_name, req_code
+                    trans, [g.user.email], g.user.first_name, req_code
                 )
                 new_email_message = ChangeEmailToNewEmail(
-                    trans, [new_email], user.first_name, req_hash
+                    trans, [new_email], g.user.first_name, req_hash
                 )
             notification = NotificationService(testing=current_app.testing)
             notification.add_message(old_email_message)
@@ -470,6 +339,7 @@ def change_email():
 
 
 @users_bp.route(f"{V1}/new-email", methods=["POST"])
+@rate_limited(logger=logger, hit=5, period=timedelta(seconds=300))
 def new_email():
     """
     URL to set a new email
@@ -477,18 +347,6 @@ def new_email():
     Need a code sent by email to old email, the old email,
     the new email and the hash sent to the new email
     """
-    try:
-        rate_limit(
-            redis=current_app.nosql.get_engine(),
-            request=request,
-            token=None,
-            hit=5,
-            period=timedelta(seconds=300),
-        )
-    except LimitExceededError as e:
-        logger.warning(str(e))
-        return ResponseAPI.get_error_response("Too many requests", 429)
-
     payload: dict = request.get_json()
 
     try:

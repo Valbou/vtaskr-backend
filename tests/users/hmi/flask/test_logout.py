@@ -34,13 +34,3 @@ class TestUserV1Logout(BaseTestCase):
         self.assertEqual(response.status_code, 204)
         self.assertEqual(response.content_type, "application/json")
         self.assertEqual(response.text, "")
-
-    def test_delete_logout_unknown_email(self):
-        headers = self.get_token_headers()
-        payload = {"email": self.fake.email(domain="valbou.fr")}
-        response = self.client.delete(
-            f"{URL_API_USERS}/logout", headers=headers, json=payload
-        )
-        self.assertEqual(response.status_code, 403)
-        self.assertEqual(response.content_type, "application/json")
-        self.assertEqual(response.text, '{"error": "Unauthorized", "status": 403}')

@@ -46,11 +46,10 @@ class UserService(AbstractUserPort):
             return token, user
         return None, None
 
-    def logout(self, email: str, sha_token: str) -> bool:
+    def logout(self, sha_token: str) -> bool:
         """Delete active token for this user only"""
-        user = self.user_db.find_login(self.session, email)
         token = self.token_db.get_token(self.session, sha_token)
-        if user and token and token.user_id == user.id:
+        if token:
             self.token_db.delete(self.session, token)
             return True
         return False
