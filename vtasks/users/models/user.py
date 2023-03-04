@@ -82,7 +82,9 @@ class User:
             "last_name": self.last_name,
             "email": self.email,
             "created_at": self.created_at.isoformat(),
-            "last_login_at": self.last_login_at.isoformat() if self.last_login_at else None,
+            "last_login_at": self.last_login_at.isoformat()
+            if self.last_login_at
+            else None,
             "locale": str(self.locale),
             "timezone": self.timezone,
         }
