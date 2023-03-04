@@ -9,8 +9,9 @@ from vtasks.redis import rate_limited
 from vtasks.users.persistence import UserDB, TokenDB
 from vtasks.secutity.validators import PasswordComplexityError, get_valid_email
 from vtasks.notifications import NotificationService
+from vtasks.users.hmi.user_service import UserService, EmailAlreadyUsedError
 
-from .user_service import UserService, EmailAlreadyUsedError
+from .decorators import login_required
 from .email_content import (
     RegisterEmail,
     LoginEmail,
@@ -18,7 +19,6 @@ from .email_content import (
     ChangeEmailToOldEmail,
     ChangeEmailToNewEmail,
 )
-from .decorators import login_required
 
 
 logger = Logger(__name__)
@@ -147,8 +147,8 @@ def confirm_2FA():
 
 
 @users_bp.route(f"{V1}/users/logout", methods=["DELETE"])
-@rate_limited(logger=logger, hit=6, period=timedelta(seconds=60))
 @login_required(logger)
+@rate_limited(logger=logger, hit=6, period=timedelta(seconds=60))
 def logout():
     """
     URL to logout a logged in user - Token required
@@ -171,8 +171,8 @@ def logout():
 
 
 @users_bp.route(f"{V1}/users/me", methods=["GET"])
-@rate_limited(logger=logger, hit=5, period=timedelta(seconds=60))
 @login_required(logger)
+@rate_limited(logger=logger, hit=5, period=timedelta(seconds=60))
 def me():
     """
     URL to get current user informations - Token required
@@ -192,8 +192,8 @@ def me():
 
 
 @users_bp.route(f"{V1}/users/me/update", methods=["PUT", "PATCH"])
-@rate_limited(logger=logger, hit=5, period=timedelta(seconds=60))
 @login_required(logger)
+@rate_limited(logger=logger, hit=5, period=timedelta(seconds=60))
 def update_me():
     """
     URL to modify user informations - Token required
@@ -296,8 +296,8 @@ def new_password():
 
 
 @users_bp.route(f"{V1}/users/me/change-email", methods=["POST"])
-@rate_limited(logger=logger, hit=5, period=timedelta(seconds=300))
 @login_required(logger)
+@rate_limited(logger=logger, hit=5, period=timedelta(seconds=300))
 def change_email():
     """
     URL to request to change email account
