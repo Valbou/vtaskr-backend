@@ -57,7 +57,7 @@ class UserService(AbstractUserPort):
     def user_from_token(self, sha_token: str) -> Optional[User]:
         """Load a user from a given token"""
         token = self.token_db.get_token(self.session, sha_token)
-        if token.is_valid():
+        if token and token.is_valid():
             token.update_last_activity()
             self.session.commit()
             user = self.user_db.load(self.session, token.user_id)
