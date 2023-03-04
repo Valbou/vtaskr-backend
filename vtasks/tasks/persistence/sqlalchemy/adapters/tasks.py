@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, List
 
 from sqlalchemy.orm import Session
 from sqlalchemy import select
@@ -25,3 +25,7 @@ class TaskDB(AbstractTaskPort):
 
     def exists(self, session: Session, id: str) -> bool:
         return session.query(select(Task).where(Task.id == id).exists()).scalar()
+
+    def user_tasks(self, session: Session, user_id: str) -> List[Task]:
+        stmt = select(Task).where(Task.user_id == user_id)
+        return session.execute(stmt).scalars().all()
