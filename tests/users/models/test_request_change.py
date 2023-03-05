@@ -1,11 +1,11 @@
-from unittest import TestCase
 from datetime import datetime, timedelta
 from typing import Optional
-from pytz import utc
+from unittest import TestCase
 
 from faker import Faker
+from pytz import utc
 
-from vtasks.base.config import REQUEST_VALIDITY, REQUEST_DAYS_HISTORY
+from vtasks.base.config import REQUEST_DAYS_HISTORY, REQUEST_VALIDITY
 from vtasks.users import RequestChange, RequestType
 
 

@@ -1,6 +1,6 @@
-from unittest import TestCase
 from datetime import datetime
 from typing import Union
+from unittest import TestCase
 
 from babel import Locale
 from faker import Faker

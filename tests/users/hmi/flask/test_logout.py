@@ -1,6 +1,5 @@
 from tests import BaseTestCase
 
-
 URL_API_USERS = "/api/v1/users"
 
 

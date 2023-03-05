@@ -1,10 +1,10 @@
-from unittest import TestCase
 from datetime import datetime, timedelta
-from pytz import utc
+from unittest import TestCase
 
 from faker import Faker
+from pytz import utc
 
-from vtasks.base.config import TOKEN_VALIDITY, TOKEN_TEMP_VALIDITY
+from vtasks.base.config import TOKEN_TEMP_VALIDITY, TOKEN_VALIDITY
 from vtasks.secutity.utils import get_id
 from vtasks.users import Token
 

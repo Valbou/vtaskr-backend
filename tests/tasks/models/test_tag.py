@@ -1,10 +1,10 @@
-from unittest import TestCase
 from datetime import datetime
 from typing import Optional
+from unittest import TestCase
 
 from faker import Faker
 
-from vtasks.tasks import Tag, Color
+from vtasks.tasks import Color, Tag
 
 
 class TestTag(TestCase):

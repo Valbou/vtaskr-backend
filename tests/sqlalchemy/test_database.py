@@ -1,11 +1,10 @@
 from unittest import TestCase
 from unittest.mock import patch
 
-from sqlalchemy.orm import Session
 from sqlalchemy import Engine
+from sqlalchemy.orm import Session
 
 from tests.utils.db_utils import check_connection_query
-
 from vtasks.sqlalchemy.database import SQLService
 
 

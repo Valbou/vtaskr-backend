@@ -1,12 +1,9 @@
-from unittest import TestCase
 from gettext import GNUTranslations
+from unittest import TestCase
 
-from vtasks.babel.translations import (
-    TranslationService,
-    TranslationsInvalidDomainError,
-    TranslationsInvalidLanguageError,
-    TranslationSession,
-)
+from vtasks.babel.translations import (TranslationService, TranslationSession,
+                                       TranslationsInvalidDomainError,
+                                       TranslationsInvalidLanguageError)
 
 
 class TestTranslationService(TestCase):
