@@ -1,10 +1,11 @@
-from datetime import datetime, timedelta
-from pytz import utc
-from typing import Optional
 from dataclasses import dataclass
+from datetime import datetime, timedelta
+from typing import Optional
 
-from vtasks.secutity.utils import get_id, get_token, get_2FA
+from pytz import utc
+
 from vtasks.base.config import TOKEN_TEMP_VALIDITY, TOKEN_VALIDITY
+from vtasks.secutity.utils import get_2FA, get_id, get_token
 
 
 @dataclass

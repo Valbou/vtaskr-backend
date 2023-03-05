@@ -1,6 +1,6 @@
-from uuid import uuid4
-from hashlib import sha256
 from base64 import b64encode
+from hashlib import sha256
+from uuid import uuid4
 
 from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError

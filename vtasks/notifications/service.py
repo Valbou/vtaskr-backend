@@ -1,5 +1,5 @@
+from .emails import AbstractBaseEmailContent, MultiSMTPEmail, SMTPEmail
 from .message import AbstractMessage
-from .emails import SMTPEmail, MultiSMTPEmail, AbstractBaseEmailContent
 
 
 class NotificationService:

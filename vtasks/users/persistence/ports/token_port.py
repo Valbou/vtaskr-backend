@@ -1,8 +1,7 @@
 from abc import ABC, abstractmethod
 
-from vtasks.users import Token
-
 from vtasks.base.persistence import AbstractPort
+from vtasks.users import Token
 
 
 class AbstractTokenPort(AbstractPort, ABC):

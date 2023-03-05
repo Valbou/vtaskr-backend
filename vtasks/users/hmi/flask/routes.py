@@ -1,25 +1,24 @@
-from logging import Logger
 from datetime import timedelta
+from logging import Logger
 
-from flask import Blueprint, request, current_app, g
 from email_validator import EmailSyntaxError
+from flask import Blueprint, current_app, g, request
 
 from vtasks.flask.utils import ResponseAPI, get_bearer_token
-from vtasks.redis import rate_limited
-from vtasks.users.persistence import UserDB, TokenDB
-from vtasks.secutity.validators import PasswordComplexityError, get_valid_email
 from vtasks.notifications import NotificationService
-from vtasks.users.hmi.user_service import UserService, EmailAlreadyUsedError
+from vtasks.redis import rate_limited
+from vtasks.secutity.validators import PasswordComplexityError, get_valid_email
+from vtasks.users.hmi.user_service import EmailAlreadyUsedError, UserService
+from vtasks.users.persistence import TokenDB, UserDB
 
 from .decorators import login_required
 from .email_content import (
-    RegisterEmail,
-    LoginEmail,
-    ChangePasswordEmail,
-    ChangeEmailToOldEmail,
     ChangeEmailToNewEmail,
+    ChangeEmailToOldEmail,
+    ChangePasswordEmail,
+    LoginEmail,
+    RegisterEmail,
 )
-
 
 logger = Logger(__name__)
 

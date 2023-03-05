@@ -2,7 +2,6 @@ import os
 
 from vtasks.secutity.utils import file_to_base64
 
-
 APP_NAME = "vtasks"
 
 # Validators config

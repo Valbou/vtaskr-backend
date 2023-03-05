@@ -1,9 +1,8 @@
-import ssl
 import os
-
-from typing import List, Optional, Union
-from smtplib import SMTP_SSL
+import ssl
 from email.message import EmailMessage
+from smtplib import SMTP_SSL
+from typing import List, Optional, Union
 
 from .base_email import AbstractBaseEmailContent
 

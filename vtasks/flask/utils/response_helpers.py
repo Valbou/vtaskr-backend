@@ -1,8 +1,7 @@
 from json import dumps
-from typing import Optional, Any
+from typing import Any, Optional
 
 from flask import Response
-
 
 JSON_MIME_TYPE = "application/json"
 

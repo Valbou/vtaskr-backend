@@ -1,12 +1,11 @@
 from datetime import datetime
-from pytz import utc
 
-from sqlalchemy import Table, Column, String, DateTime, ForeignKey, Boolean
+from pytz import utc
+from sqlalchemy import Boolean, Column, DateTime, ForeignKey, String, Table
 from sqlalchemy.orm import relationship
 
-from vtasks.users.models import Token
 from vtasks.sqlalchemy.base import mapper_registry
-
+from vtasks.users.models import Token
 
 token_table = Table(
     "tokens",

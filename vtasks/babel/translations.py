@@ -1,6 +1,6 @@
 import os
+from gettext import GNUTranslations, translation
 from typing import List, Union
-from gettext import translation, GNUTranslations
 
 from babel import Locale
 
