@@ -7,6 +7,7 @@ from vtasks.flask.utils import ResponseAPI
 from vtasks.redis import rate_limited
 from vtasks.users.hmi.flask.decorators import login_required
 from vtasks.tasks.persistence import TaskDB
+from vtasks.tasks.hmi.tasks_service import TaskService
 from vtasks.tasks import Task
 
 
@@ -29,12 +30,11 @@ V1 = "/api/v1"
 @rate_limited(logger=logger, hit=1, period=timedelta(seconds=1))
 def tasks():
     """URL to current user tasks - Token required"""
-    task_db = TaskDB()
     try:
         if request.method == "GET":
             with current_app.sql.get_session() as session:
-                tasks = task_db.user_tasks(session, g.user.id)
-                data = [t.to_external_data() for t in tasks]
+                task_service = TaskService(session, current_app.testing)
+                data = task_service.get_user_tasks(g.user.id)
                 return ResponseAPI.get_response(data, 200)
 
         elif request.method == "POST":
@@ -42,6 +42,7 @@ def tasks():
             try:
                 task: Task = Task.from_external_data(g.user.id, payload)
                 with current_app.sql.get_session() as session:
+                    task_db = TaskDB()
                     task_db.save(session, task)
                     return ResponseAPI.get_response(task.to_external_data(), 201)
             except Exception:
