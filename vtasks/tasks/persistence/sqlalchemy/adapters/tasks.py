@@ -27,5 +27,6 @@ class TaskDB(AbstractTaskPort):
         return session.query(select(Task).where(Task.id == id).exists()).scalar()
 
     def user_tasks(self, session: Session, user_id: str) -> List[Task]:
-        stmt = select(Task).where(Task.user_id == user_id)
+        # TODO: need a better control on where clause, limit and ordering
+        stmt = select(Task).where(Task.user_id == user_id).limit(100)
         return session.execute(stmt).scalars().all()
