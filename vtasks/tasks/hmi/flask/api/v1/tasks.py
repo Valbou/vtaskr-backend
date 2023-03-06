@@ -1,7 +1,6 @@
 from datetime import timedelta
-from logging import Logger
 
-from flask import Blueprint, current_app, g, jsonify, request
+from flask import current_app, g, request, jsonify
 
 from vtasks.flask.utils import ResponseAPI
 from vtasks.redis import rate_limited
@@ -10,18 +9,7 @@ from vtasks.tasks.hmi.tasks_service import TaskService
 from vtasks.tasks.persistence import TaskDB
 from vtasks.users.hmi.flask.decorators import login_required
 
-logger = Logger(__name__)
-
-
-tasks_bp = Blueprint(
-    name="tasks_bp",
-    import_name=__name__,
-    static_folder="static",
-    template_folder="templates",
-)
-
-
-V1 = "/api/v1"
+from .. import tasks_bp, logger, V1
 
 
 @tasks_bp.route(f"{V1}/tasks", methods=["GET", "POST"])
@@ -55,26 +43,6 @@ def tasks():
 @tasks_bp.route(f"{V1}/task/<int:task_id>", methods=["GET", "PUT", "PATCH", "DELETE"])
 def task(task_id):
     """URL to current user task - Token required"""
-    if request.method == "GET":
-        return jsonify()
-    elif request.method in ["PUT", "PATCH"]:
-        return jsonify()
-    elif request.method == "DELETE":
-        return jsonify()
-
-
-@tasks_bp.route(f"{V1}/tags", methods=["GET", "POST"])
-def tags():
-    """URL to current user tags - Token required"""
-    if request.method == "GET":
-        return jsonify()
-    elif request.method == "POST":
-        return jsonify()
-
-
-@tasks_bp.route(f"{V1}/tag/<int:group_id>", methods=["GET", "PUT", "PATCH", "DELETE"])
-def tag(tag_id):
-    """URL to current user tag - Token required"""
     if request.method == "GET":
         return jsonify()
     elif request.method in ["PUT", "PATCH"]:
