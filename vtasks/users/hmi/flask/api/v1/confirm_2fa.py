@@ -6,7 +6,7 @@ from vtasks.flask.utils import ResponseAPI, get_bearer_token
 from vtasks.redis import rate_limited
 from vtasks.users.persistence import TokenDB
 
-from .. import users_bp, logger, V1
+from .. import V1, logger, users_bp
 
 
 @users_bp.route(f"{V1}/users/2fa", methods=["POST"])

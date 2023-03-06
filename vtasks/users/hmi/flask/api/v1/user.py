@@ -5,10 +5,10 @@ from flask import current_app, g, request
 from vtasks.flask.utils import ResponseAPI
 from vtasks.redis import rate_limited
 from vtasks.secutity.validators import PasswordComplexityError
-from vtasks.users.persistence import UserDB
 from vtasks.users.hmi.flask.decorators import login_required
+from vtasks.users.persistence import UserDB
 
-from .. import users_bp, logger, V1
+from .. import V1, logger, users_bp
 
 
 @users_bp.route(f"{V1}/users/me", methods=["GET"])

@@ -7,11 +7,11 @@ from vtasks.flask.utils import ResponseAPI
 from vtasks.notifications import NotificationService
 from vtasks.redis import rate_limited
 from vtasks.secutity.validators import get_valid_email
-from vtasks.users.hmi.user_service import EmailAlreadyUsedError, UserService
-from vtasks.users.hmi.flask.emails import ChangeEmailToNewEmail, ChangeEmailToOldEmail
 from vtasks.users.hmi.flask.decorators import login_required
+from vtasks.users.hmi.flask.emails import ChangeEmailToNewEmail, ChangeEmailToOldEmail
+from vtasks.users.hmi.user_service import EmailAlreadyUsedError, UserService
 
-from .. import users_bp, logger, V1
+from .. import V1, logger, users_bp
 
 
 @users_bp.route(f"{V1}/users/me/change-email", methods=["POST"])

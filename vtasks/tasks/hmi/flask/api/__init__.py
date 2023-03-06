@@ -2,7 +2,6 @@ from logging import Logger
 
 from flask import Blueprint
 
-
 logger = Logger(__name__)
 
 
