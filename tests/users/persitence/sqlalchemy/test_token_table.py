@@ -38,7 +38,7 @@ class TestTokenAdapter(BaseTestCase):
         self.user = User(
             first_name=self.fake.first_name(),
             last_name=self.fake.last_name(),
-            email=self.fake.email(domain="valbou.fr"),
+            email="token." + self.fake.email(domain="valbou.fr"),
             hash_password=self.fake.password(),
         )
 

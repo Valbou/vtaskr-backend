@@ -69,7 +69,7 @@ class BaseTestCase(TestCase):
         self.user = User(
             first_name=self.fake.first_name(),
             last_name=self.fake.last_name(),
-            email=self.fake.email(domain="valbou.fr"),
+            email="base." + self.fake.email(domain="valbou.fr"),
         )
         self.user.set_password(self.password)
 
