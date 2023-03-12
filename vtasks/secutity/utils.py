@@ -1,8 +1,8 @@
 from base64 import b64encode
 from hashlib import sha256
+from secrets import choice, token_hex
+from string import ascii_lowercase, ascii_uppercase, digits
 from uuid import uuid4
-from secrets import token_hex, choice
-from string import ascii_uppercase, ascii_lowercase, digits
 
 from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError
