@@ -5,9 +5,9 @@ from flask import current_app, g, request
 from vtasks.flask.utils import ResponseAPI
 from vtasks.redis import rate_limited
 from vtasks.secutity.validators import PasswordComplexityError
+from vtasks.users.hmi.dto import UserDTO, UserMapperDTO
 from vtasks.users.hmi.flask.decorators import login_required
 from vtasks.users.persistence import UserDB
-from vtasks.users.hmi.dto import UserDTO, UserMapperDTO
 
 from .. import V1, logger, users_bp
 
