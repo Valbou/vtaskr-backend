@@ -28,11 +28,10 @@ cd vtasks-backend
 
 ### Install dependencies
 
-Actually, dev dependencies are in the same requirements.
-
 ```bash
 pip install -r requirements.txt
 ```
+
 ### Install translations
 
 ```bash
@@ -43,6 +42,16 @@ chmod +x trad_*
 ### To run flask
 ```bash
 flask --app vtasks run
+```
+
+## Technical informations for developpers
+
+Follow previous steps, an continue with steps below.
+
+### Install dev dependencies
+
+```bash
+pip install -r requirements-dev.txt
 ```
 
 ### To run tests
