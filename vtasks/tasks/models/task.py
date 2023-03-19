@@ -117,3 +117,9 @@ class Task:
             duration=duration,
             done=done,
         )
+
+    def __str__(self) -> str:
+        return self.title
+
+    def __repr__(self):
+        return f"<Tag {self.title!r}>"

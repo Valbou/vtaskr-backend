@@ -65,3 +65,9 @@ class Tag:
         self.title = title
         self.color = color or Color("#000000", "#FFFFFF")
         self.tasks = tasks or []
+
+    def __str__(self) -> str:
+        return self.title
+
+    def __repr__(self):
+        return f"<Tag {self.title!r}>"
