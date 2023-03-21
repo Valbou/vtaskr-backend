@@ -30,7 +30,5 @@ class TestTaskAPI(BaseTestCase):
         with self.app.sql.get_session() as session:
             task_db.save(session, task)
 
-            response = self.client.get(
-                f"{URL_API}/task/{task.id}", headers=headers
-            )
+            response = self.client.get(f"{URL_API}/task/{task.id}", headers=headers)
             self.assertEqual(response.status_code, 200)
