@@ -50,11 +50,22 @@ def tasks():
         return ResponseAPI.get_error_response("Internal error", 500)
 
 
-@tasks_bp.route(f"{V1}/task/<int:task_id>", methods=["GET", "PUT", "PATCH", "DELETE"])
-def task(task_id):
+@tasks_bp.route(f"{V1}/task/<string:task_id>", methods=["GET", "PUT", "PATCH", "DELETE"])
+@login_required(logger)
+@rate_limited(logger=logger, hit=5, period=timedelta(seconds=1))
+def task(task_id: str):
     """URL to current user task - Token required"""
     if request.method == "GET":
-        return jsonify()
+        with current_app.sql.get_session() as session:
+            task_service = TaskService(session, current_app.testing)
+            task = task_service.get_user_task(g.user.id, task_id)
+            if task:
+                task_dto = TaskMapperDTO.model_to_dto(task)
+                return ResponseAPI.get_response(
+                    TaskMapperDTO.dto_to_dict(task_dto), 200
+                )
+            else:
+                return ResponseAPI.get_error_response({}, 404)
     elif request.method in ["PUT", "PATCH"]:
         return jsonify()
     elif request.method == "DELETE":
