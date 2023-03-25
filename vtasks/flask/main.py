@@ -5,8 +5,13 @@ from vtasks.users.http.flask import users_bp
 from vtasks.tasks.http.flask import tasks_bp
 
 
-app = Flask(__name__)
+def create_flask_app(testing: bool = False):
+    app = Flask(__name__)
 
-app.register_blueprint(base_bp)
-app.register_blueprint(users_bp)
-app.register_blueprint(tasks_bp)
+    app.testing = testing
+
+    app.register_blueprint(base_bp)
+    app.register_blueprint(users_bp)
+    app.register_blueprint(tasks_bp)
+
+    return app
