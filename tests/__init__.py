@@ -1,8 +1,7 @@
 from dotenv import load_dotenv
 
-from src.vtasks.database import SQLService, DBType
+from vtasks.sqlalchemy.database import SQLService, DBType
 
-from .apps import *
 from .base_test import *
 
 

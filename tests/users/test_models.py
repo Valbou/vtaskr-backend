@@ -4,7 +4,7 @@ from typing import Union
 
 from faker import Faker
 
-from src.vtasks.apps.users import User
+from vtasks.users import User
 
 
 class TestUser(TestCase):

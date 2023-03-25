@@ -1,9 +1,9 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import select
 
-from src.vtasks.database import SQLService, DBType
-from src.vtasks.apps.users.ports import AbstractUserPort
-from src.vtasks.apps.users.models import User
+from vtasks.sqlalchemy.database import SQLService, DBType
+from vtasks.users.ports import AbstractUserPort
+from vtasks.users.models import User
 
 
 class UserDB(AbstractUserPort):

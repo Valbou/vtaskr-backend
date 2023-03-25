@@ -3,8 +3,8 @@ from datetime import datetime
 
 from sqlalchemy import Table, Column, String, DateTime
 
-from src.vtasks.apps.users.models import User
-from src.vtasks.base import mapper_registry
+from vtasks.users.models import User
+from vtasks.sqlalchemy.base import mapper_registry
 
 
 user_table = Table(

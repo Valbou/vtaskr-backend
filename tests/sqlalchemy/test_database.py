@@ -2,9 +2,9 @@ from unittest import TestCase
 
 from sqlalchemy.orm import Session
 
-from tests.db_utils import check_connection_query
+from tests.utils.db_utils import check_connection_query
 
-from src.vtasks.database import SQLService, DBType
+from vtasks.sqlalchemy.database import SQLService, DBType
 
 
 class TestSQLService(TestCase):
