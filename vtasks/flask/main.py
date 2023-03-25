@@ -1,3 +1,4 @@
+import os
 from flask import Flask
 
 from vtasks.sqlalchemy.database import SQLService
@@ -17,5 +18,7 @@ def create_flask_app(testing: bool = False):
     app.register_blueprint(tasks_bp)
 
     app.sql_service = SQLService(testing)
+    app.timezone = os.getenv("TIMEZONE", "Europe/Paris")
+    app.locale = os.getenv("LOCALE", "fr_FR")
 
     return app

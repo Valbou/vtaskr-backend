@@ -1,5 +1,6 @@
 from unittest import TestCase
 from datetime import datetime, timedelta
+from pytz import utc
 from uuid import uuid4
 
 from faker import Faker
@@ -26,7 +27,7 @@ class TestToken(TestCase):
     def test_token_old_invalid(self):
         token = Token(
             user_id=uuid4().hex,
-            created_at=datetime.now() - timedelta(seconds=TOKEN_VALIDITY),
+            created_at=datetime.now(utc) - timedelta(seconds=TOKEN_VALIDITY),
         )
         self.assertFalse(token.is_valid())
 
