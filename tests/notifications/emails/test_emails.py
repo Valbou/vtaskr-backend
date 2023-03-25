@@ -1,14 +1,18 @@
+import os
 from unittest import TestCase
 from unittest.mock import patch
 
 from vtasks.notifications import SMTPEmail, MultiSMTPEmail
 
 
+DEFAULT_SMTP_SENDER = os.getenv("DEFAULT_SMTP_SENDER")
+
+
 class TestSMTPEmail(TestCase):
     def _create_email(self) -> SMTPEmail:
         return SMTPEmail(
-            from_email="contact@valbou.fr",
-            to_emails="contact@valbou.fr",
+            from_email=DEFAULT_SMTP_SENDER,
+            to_emails=DEFAULT_SMTP_SENDER,
             subject="Test SMTP Email",
             text="Hello World - Test message",
             html="""
@@ -19,17 +23,17 @@ class TestSMTPEmail(TestCase):
                 </body
             </html>
             """,
-            cc_emails=["contact@valbou.fr", "contact@valbou.fr"],
-            bcc_emails=["contact@valbou.fr"],
+            cc_emails=[DEFAULT_SMTP_SENDER, DEFAULT_SMTP_SENDER],
+            bcc_emails=[DEFAULT_SMTP_SENDER],
         )
 
     def test_email_struct(self):
         email = self._create_email()
         result = email.message.as_string()
         self.assertIn("Subject: Test SMTP Email", result)
-        self.assertIn("From: contact@valbou.fr", result)
-        self.assertIn("To: contact@valbou.fr", result)
-        self.assertIn("Cc: contact@valbou.fr, contact@valbou.fr", result)
+        self.assertIn(f"From: {DEFAULT_SMTP_SENDER}", result)
+        self.assertIn(f"To: {DEFAULT_SMTP_SENDER}", result)
+        self.assertIn(f"Cc: {DEFAULT_SMTP_SENDER}, {DEFAULT_SMTP_SENDER}", result)
         self.assertIn('Content-Type: text/plain; charset="utf-8"', result)
         self.assertIn("Hello World - Test message", result)
         self.assertIn('Content-Type: text/html; charset="utf-8"', result)
