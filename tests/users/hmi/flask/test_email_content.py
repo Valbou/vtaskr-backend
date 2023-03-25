@@ -18,8 +18,7 @@ class TestRegisterEmail(BaseTestCase):
 
     def test_email_object(self):
         with self.app.app_context():
-            recorder = FlaskTemplateCapture(self.app)
-            with recorder:
+            with FlaskTemplateCapture(self.app) as recorder:
                 email = RegisterEmail(
                     to=[self.to],
                     first_name=self.first_name,
@@ -42,8 +41,7 @@ class TestLoginEmail(BaseTestCase):
 
     def test_email_object(self):
         with self.app.app_context():
-            recorder = FlaskTemplateCapture(self.app)
-            with recorder:
+            with FlaskTemplateCapture(self.app) as recorder:
                 email = LoginEmail(
                     to=[self.to],
                     first_name=self.first_name,
@@ -69,8 +67,7 @@ class TestChangeEmailOldEmail(BaseTestCase):
 
     def test_email_object(self):
         with self.app.app_context():
-            recorder = FlaskTemplateCapture(self.app)
-            with recorder:
+            with FlaskTemplateCapture(self.app) as recorder:
                 email = ChangeEmailToOldEmail(
                     to=[self.to],
                     first_name=self.first_name,
@@ -96,8 +93,7 @@ class TestChangeEmailNewEmail(BaseTestCase):
 
     def test_email_object(self):
         with self.app.app_context():
-            recorder = FlaskTemplateCapture(self.app)
-            with recorder:
+            with FlaskTemplateCapture(self.app) as recorder:
                 email = ChangeEmailToNewEmail(
                     to=[self.to],
                     first_name=self.first_name,
@@ -125,8 +121,7 @@ class TestChangePasswordEmail(BaseTestCase):
 
     def test_email_object(self):
         with self.app.app_context():
-            recorder = FlaskTemplateCapture(self.app)
-            with recorder:
+            with FlaskTemplateCapture(self.app) as recorder:
                 email = ChangePasswordEmail(
                     to=[self.to],
                     first_name=self.first_name,

@@ -5,8 +5,7 @@ from vtasks.base.config import AVAILABLE_LANGUAGES
 
 class TestBaseRoutes(BaseTestCase):
     def test_home_page(self):
-        recorder = FlaskTemplateCapture(self.app)
-        with recorder:
+        with FlaskTemplateCapture(self.app) as recorder:
             response = self.client.get("/")
             self.assertEqual(response.status_code, 200)
             self.assertEqual(response.content_type, "text/html; charset=utf-8")

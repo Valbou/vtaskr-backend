@@ -23,6 +23,7 @@ class FlaskTemplateCapture:
 
     def __enter__(self):
         template_rendered.connect(self.add, self.app)
+        return self
 
     def __exit__(self, exc_type, exc_value, traceback):
         template_rendered.disconnect(self.add, self.app)
