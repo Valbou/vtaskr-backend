@@ -1,2 +1,2 @@
 from .tag import Tag, Color
-from .task import Task, EisenhowerFlag, TaskTag
+from .task import Task, EisenhowerFlag

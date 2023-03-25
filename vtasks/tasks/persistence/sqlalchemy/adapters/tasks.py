@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import select
 
 from vtasks.tasks.persistence.ports import AbstractTaskPort
-from vtasks.tasks.models import Task
+from vtasks.tasks import Task
 
 
 class TaskDB(AbstractTaskPort):
