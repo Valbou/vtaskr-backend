@@ -28,6 +28,7 @@ class TestUserV1Update(BaseTestCase):
         self.assertEqual(response.content_type, "application/json")
         self.assertEqual(response.json.get("first_name"), new_first_name)
         self.assertEqual(response.json.get("last_name"), self.user.last_name)
+        self.assertIsNone(response.json.get("hash_password"))
 
     def test_patch_user(self):
         new_last_name = self.fake.last_name()
@@ -40,6 +41,7 @@ class TestUserV1Update(BaseTestCase):
         self.assertEqual(response.content_type, "application/json")
         self.assertEqual(response.json.get("first_name"), self.user.first_name)
         self.assertEqual(response.json.get("last_name"), new_last_name)
+        self.assertIsNone(response.json.get("hash_password"))
 
     def test_no_delete(self):
         response = self.client.delete(

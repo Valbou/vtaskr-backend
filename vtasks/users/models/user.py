@@ -6,8 +6,6 @@ from dataclasses import dataclass
 from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError
 
-from email_validator import EmailNotValidError
-
 from vtasks.users.validators import get_valid_email
 
 
@@ -44,12 +42,9 @@ class User:
     def full_name(self) -> str:
         return f"{self.first_name} {self.last_name}"
 
-    def set_email(self, email: str):
-        try:
-            self.email = get_valid_email(email)
-            return True
-        except EmailNotValidError:
-            return False
+    def set_email(self, email: str) -> True:
+        self.email = get_valid_email(email)
+        return True
 
     def set_password(self, password):
         ph = PasswordHasher()

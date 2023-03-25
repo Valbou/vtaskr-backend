@@ -22,6 +22,25 @@ users_bp = Blueprint(
 V1 = "/api/v1"
 
 
+@users_bp.route(f"{V1}/users/register", methods=["POST"])
+def register():
+    """
+    URL to register a new user
+
+    Need: email, password, first_name, last_name, no_bot
+    Return the jsonify user created
+    """
+    payload: dict = request.get_json()
+    try:
+        with current_app.sql_service.get_session() as session:
+            auth_service = AuthService(session)
+            user = auth_service.register(payload)
+            data = user.to_external_data()
+            return ResponseAPI.get_response(data, 201)
+    except Exception:
+        return ResponseAPI.get_error_response("Bad request", 400)
+
+
 # https://medium.com/swlh/creating-middlewares-with-python-flask-166bd03f2fd4
 @users_bp.route(f"{V1}/users/login", methods=["POST"])
 def login():

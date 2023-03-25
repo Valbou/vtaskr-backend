@@ -8,44 +8,47 @@ from vtasks.users.persistence import UserDB, TokenDB
 
 class AuthService:
     def __init__(self, session: Session) -> None:
-        self.session = session
+        self.session: Session = session
+        self.user_db = UserDB()
+        self.token_db = TokenDB()
+
+    def register(self, data: dict) -> User:
+        user = User(
+            first_name=data.get("first_name", ""),
+            last_name=data.get("last_name", ""),
+            email=data.get("email"),
+        )
+        user.set_password(data.get("password"))
+        self.user_db.save(self.session, user)
+        return user
 
     def authenticate(self, email: str, password: str) -> Optional[str]:
         """Create a token only if user and password are ok"""
-        user_db = UserDB()
-        token_db = TokenDB()
-
-        token_db.clean_expired(self.session)
-        user = user_db.find_login(self.session, email)
+        self.token_db.clean_expired(self.session)
+        user = self.user_db.find_login(self.session, email)
         if isinstance(user, User) and user.check_password(password):
             # Many tokens can be active for a unique user (it's assumed)
             user.update_last_login()
             self.session.commit()
             token = Token(user_id=user.id)
-            token_db.save(self.session, token)
+            self.token_db.save(self.session, token)
             return token.sha_token
         return None
 
     def logout(self, email: str, sha_token: str) -> bool:
         """Delete active token for this user only"""
-        user_db = UserDB()
-        token_db = TokenDB()
-
-        user = user_db.find_login(self.session, email)
-        token = token_db.get_token(self.session, sha_token)
+        user = self.user_db.find_login(self.session, email)
+        token = self.token_db.get_token(self.session, sha_token)
         if user and token and token.user_id == user.id:
-            token_db.delete(self.session, token)
+            self.token_db.delete(self.session, token)
             return True
         return False
 
     def user_from_token(self, sha_token: str) -> Optional[User]:
-        user_db = UserDB()
-        token_db = TokenDB()
-
-        token = token_db.get_token(self.session, sha_token)
+        token = self.token_db.get_token(self.session, sha_token)
         if token.is_valid():
             token.update_last_activity()
             self.session.commit()
-            user = user_db.load(self.session, token.user_id)
+            user = self.user_db.load(self.session, token.user_id)
             return user
         return None
