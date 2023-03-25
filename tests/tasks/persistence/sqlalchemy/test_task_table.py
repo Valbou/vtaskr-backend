@@ -41,7 +41,7 @@ class TestTaskAdapter(BaseTestCase):
     def test_complete_crud_task(self):
         with self.app.sql_service.get_session() as session:
             self.assertIsNone(self.task_db.load(session, self.task.id))
-            self.assertTrue(self.task_db.save(session, self.task))
+            self.task_db.save(session, self.task)
             self.assertTrue(self.task_db.exists(session, self.task.id))
             old_title = self.task.title
             self.task.title = "abc"
@@ -49,5 +49,5 @@ class TestTaskAdapter(BaseTestCase):
             task = self.task_db.load(session, self.task.id)
             self.assertNotEqual(old_title, task.title)
             self.assertEqual(task.id, self.task.id)
-            self.assertTrue(self.task_db.delete(session, self.task))
+            self.task_db.delete(session, self.task)
             self.assertFalse(self.task_db.exists(session, self.task.id))
