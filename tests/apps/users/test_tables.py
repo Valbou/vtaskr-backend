@@ -7,6 +7,7 @@ from tests.base_test import DBTestCase
 
 from src.vtasks.apps.users.models import User
 from src.vtasks.apps.users.persistence import UserDB
+from src.vtasks.database import DBType
 
 
 class TestUserTable(DBTestCase):
@@ -22,12 +23,15 @@ class TestUserAdapter(DBTestCase):
     def setUp(self) -> None:
         super().setUp()
         self.fake = Faker()
+        self.user_db = UserDB(DBType.TEST)
         self.user = User(
             first_name=self.fake.first_name(),
             last_name=self.fake.last_name(),
             email=self.fake.email(domain="valbou.fr"),
-            password=self.fake.password(),
+            hash_password=self.fake.password(),
         )
 
-#     def test_insert_user(self):
-#         UserDB.save(user)
+    # def test_insert_user(self):
+
+    #     user = self.user_db.save(self.user)
+    #     self.assertEqual(user.id, self.user.id)
