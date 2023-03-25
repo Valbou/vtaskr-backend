@@ -1,10 +1,11 @@
 from json import dumps
 from typing import Optional, Any
 
-from flask import Response
+from flask import Response, Request
 
 
 JSON_MIME_TYPE = "application/json"
+BEARER = "Bearer "
 
 
 class ResponseAPI:
@@ -36,3 +37,10 @@ class ResponseAPI:
             mimetype=JSON_MIME_TYPE,
             content_type=JSON_MIME_TYPE,
         )
+
+
+def get_token(request: Request) -> str:
+    bearer = request.headers.get("Authorization")
+    if bearer.startswith(BEARER):
+        return bearer.replace(BEARER, "").strip()
+    return bearer

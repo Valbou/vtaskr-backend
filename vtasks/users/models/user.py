@@ -6,6 +6,10 @@ from dataclasses import dataclass
 from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError
 
+from email_validator import EmailNotValidError
+
+from vtasks.users.validators import get_valid_email
+
 
 @dataclass
 class User:
@@ -30,7 +34,7 @@ class User:
         self.id = id or uuid4().hex
         self.first_name = first_name
         self.last_name = last_name
-        self.email = email.lower()
+        self.set_email(email.lower())
         if hash_password:
             self.hash_password = hash_password
         self.created_at = created_at or datetime.now()
@@ -39,6 +43,13 @@ class User:
     @property
     def full_name(self) -> str:
         return f"{self.first_name} {self.last_name}"
+
+    def set_email(self, email: str):
+        try:
+            self.email = get_valid_email(email)
+            return True
+        except EmailNotValidError:
+            return False
 
     def set_password(self, password):
         ph = PasswordHasher()
@@ -54,6 +65,23 @@ class User:
     def update_last_login(self):
         self.last_login_at = datetime.now()
         return self.last_login_at
+
+    def from_external_data(self, user_dict: dict):
+        self.first_name = user_dict.get("first_name", self.first_name)
+        self.last_name = user_dict.get("last_name", self.last_name)
+        self.set_email(user_dict.get("email", self.email))
+        if user_dict.get("password"):
+            self.set_password(user_dict.get("password"))
+
+    def to_external_data(self) -> dict:
+        return {
+            "id": self.id,
+            "first_name": self.first_name,
+            "last_name": self.last_name,
+            "email": self.email,
+            "created_at": str(self.created_at),
+            "last_login_at": str(self.last_login_at),
+        }
 
     def __str__(self) -> str:
         return self.full_name

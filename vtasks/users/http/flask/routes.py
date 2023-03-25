@@ -2,7 +2,8 @@ from logging import Logger
 
 from flask import Blueprint, request, current_app
 
-from vtasks.flask.utils import ResponseAPI
+from vtasks.flask.utils import ResponseAPI, get_token
+from vtasks.users.persistence import UserDB
 
 from .authenticate import AuthService
 
@@ -40,8 +41,9 @@ def login():
         return ResponseAPI.get_error_response("Bad request", 400)
 
     try:
-        auth_service = AuthService()
-        token = auth_service.authenticate(current_app, email, password)
+        with current_app.sql_service.get_session() as session:
+            auth_service = AuthService(session)
+            token = auth_service.authenticate(email, password)
 
         if token is not None:
             data = {"token": token}
@@ -62,32 +64,85 @@ def logout():
     Need a valid token and the user email
     Return a 204
     """
+    sha_token = get_token(request)
     payload: dict = request.get_json()
 
     try:
         email = payload.get("email")
-        sha_token = payload.get("token")
     except AttributeError:
         return ResponseAPI.get_error_response("Bad request", 400)
 
     try:
-        auth_service = AuthService()
-        if auth_service.logout(current_app, email, sha_token):
-            data = {}
-            return ResponseAPI.get_response(data, 204)
-        else:
-            return ResponseAPI.get_error_response("Unauthorized", 403)
+        with current_app.sql_service.get_session() as session:
+            auth_service = AuthService(session)
+            if auth_service.logout(email, sha_token):
+                data = {}
+                return ResponseAPI.get_response(data, 204)
+            else:
+                return ResponseAPI.get_error_response("Unauthorized", 403)
 
     except Exception as e:
         logger.error(str(e))
         return ResponseAPI.get_error_response("Internal error: " + str(e), 500)
 
 
-@users_bp.route(f"{V1}/users/user", methods=["PUT", "PATCH"])
-def user():
+@users_bp.route(f"{V1}/users/me", methods=["GET"])
+def me():
+    """
+    URL to get current user informations - Token required
+
+    Need a valid token
+    Return a jsonify user
+    """
+    try:
+        sha_token = get_token(request)
+        if not sha_token:
+            return ResponseAPI.get_error_response("Invalid token", 401)
+
+        with current_app.sql_service.get_session() as session:
+            auth_service = AuthService(session)
+            user = auth_service.user_from_token(sha_token)
+
+        if user:
+            data = user.to_external_data()
+            return ResponseAPI.get_response(data, 200)
+        else:
+            return ResponseAPI.get_error_response("Invalid token", 401)
+    except Exception as e:
+        logger.error(str(e))
+        return ResponseAPI.get_error_response("Internal error: " + str(e), 500)
+
+
+@users_bp.route(f"{V1}/users/me/update", methods=["PUT", "PATCH"])
+def update_me():
     """
     URL to modify user informations - Token required
 
     Need a valid token
     Return a jsonify user updated
     """
+    try:
+        sha_token = get_token(request)
+        if not sha_token:
+            return ResponseAPI.get_error_response("Invalid token", 401)
+
+        with current_app.sql_service.get_session() as session:
+            auth_service = AuthService(session)
+            user = auth_service.user_from_token(sha_token)
+    except Exception as e:
+        logger.error(str(e))
+        return ResponseAPI.get_error_response("Internal error: " + str(e), 500)
+
+    try:
+        if user is None:
+            return ResponseAPI.get_error_response("Invalid token", 401)
+        else:
+            user_db = UserDB()
+            with current_app.sql_service.get_session() as session:
+                user.from_external_data(request.get_json())
+                user_db.update(session, user)
+                data = user.to_external_data()
+            return ResponseAPI.get_response(data, 200)
+    except Exception as e:
+        logger.error(str(e))
+        return ResponseAPI.get_error_response("Internal error: " + str(e), 500)
