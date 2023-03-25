@@ -11,9 +11,7 @@ class TestTag(TestCase):
     def setUp(self) -> None:
         super().setUp()
         self.fake = Faker()
-        self.task = Tag(
-            title=self.fake.sentence()
-        )
+        self.task = Tag(title=self.fake.sentence())
 
     def test_user_table_fields(self):
         self.assertEqual(Tag.__annotations__.get("id"), str)
