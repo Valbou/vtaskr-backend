@@ -1,9 +1,7 @@
 from abc import ABC, abstractmethod
 
-from vtasks.base.ports import AbstractModelPort
 
-
-class AbstractUserPort(AbstractModelPort, ABC):
+class AbstractUserPort(ABC):
     @abstractmethod
     def load(self, id: str) -> object:
         raise NotImplementedError()
