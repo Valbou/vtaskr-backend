@@ -2,7 +2,7 @@ import os
 from unittest import TestCase
 from unittest.mock import patch
 
-from vtasks.notifications import SMTPEmail, MultiSMTPEmail
+from vtasks.notifications.emails import SMTPEmail, MultiSMTPEmail
 
 
 DEFAULT_SMTP_SENDER = os.getenv("DEFAULT_SMTP_SENDER")

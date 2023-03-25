@@ -1,1 +1,1 @@
-from .emails import SMTPEmail, MultiSMTPEmail
+from .service import NotificationService
