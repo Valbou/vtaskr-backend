@@ -1,6 +1,13 @@
-from json import dumps
+from logging import Logger
 
-from flask import Blueprint, request, Response
+from flask import Blueprint, request, current_app
+
+from vtasks.flask.utils import ResponseAPI
+from vtasks.users import Token
+from vtasks.users.persistence import UserDB, TokenDB
+
+
+logger = Logger(__name__)
 
 
 users_bp = Blueprint(
@@ -23,13 +30,33 @@ def login():
     Need an email and a password
     Return a temporary token
     """
-    payload = request.get_json()
-    return Response(
-        dumps(payload),
-        status=201,
-        mimetype="application/json",
-        content_type="application/json",
-    )
+    payload: dict = request.get_json()
+
+    try:
+        email = payload.get("email")
+        password = payload.get("password")
+    except Exception:
+        return ResponseAPI.get_error_response("Bad request", 400)
+
+    try:
+        user_db = UserDB()
+        token_db = TokenDB()
+        data = {}
+
+        with current_app.sql_service.get_session() as session:
+            user = user_db.find_login(session, email)
+            if not user.check_password(password):
+                return ResponseAPI.get_error_response("Invalid credentials", 401)
+            else:
+                token = Token(user_id=user.id)
+                token_db.save(session, token)
+                data = {"token": token.sha_token}
+
+        return ResponseAPI.get_response(data, 201)
+
+    except Exception as e:
+        logger.error(str(e))
+        return ResponseAPI.get_error_response("Internal error: " + str(e), 500)
 
 
 @users_bp.route(f"{V1}/users/login/2fa", methods=["POST"])
