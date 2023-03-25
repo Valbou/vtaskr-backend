@@ -1,15 +1,7 @@
 import os
 
 
-AVAILABLE_LANGUAGES = {
-    "de": "Deutsch",
-    "fr": "Français",
-    "en": "English",
-    "es": "Español",
-    "it": "Italiano",
-    "pt": "Português",
-}
-
+APP_NAME = "vtasks"
 
 # Validators config
 PASSWORD_MIN_LENGTH = 10
@@ -26,6 +18,14 @@ LINK_TO_CHANGE_EMAIL = os.getenv("LINK_TO_CHANGE_EMAIL", "")
 LINK_TO_CHANGE_PASSWORD = os.getenv("LINK_TO_CHANGE_PASSWORD", "")
 
 # i18n/l10n
+AVAILABLE_LANGUAGES = {
+    "de": "Deutsch",
+    "fr": "Français",
+    "en": "English",
+    "es": "Español",
+    "it": "Italiano",
+    "pt": "Português",
+}
 LOCALE = os.getenv("LOCALE", "en_GB")
 TIMEZONE = os.getenv("TIMEZONE", "Europe/London")
 
