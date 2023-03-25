@@ -1,4 +1,6 @@
-from flask import Blueprint, request, jsonify
+from json import dumps
+
+from flask import Blueprint, request, Response
 
 
 users_bp = Blueprint(
@@ -9,8 +11,11 @@ users_bp = Blueprint(
 )
 
 
+V1 = "/api/v1"
+
+
 # https://medium.com/swlh/creating-middlewares-with-python-flask-166bd03f2fd4
-@users_bp.route("/login", methods=["POST"])
+@users_bp.route(f"{V1}/users/login", methods=["POST"])
 def login():
     """
     URL to login as an authorized user
@@ -18,11 +23,16 @@ def login():
     Need an email and a password
     Return a temporary token
     """
-    if request.method == "POST":
-        return jsonify()
+    payload = request.get_json()
+    return Response(
+        dumps(payload),
+        status=201,
+        mimetype="application/json",
+        content_type="application/json",
+    )
 
 
-@users_bp.route("/login/2fa", methods=["POST"])
+@users_bp.route(f"{V1}/users/login/2fa", methods=["POST"])
 def login2fa():
     """
     URL to send 2FA auth - Token required
@@ -33,7 +43,7 @@ def login2fa():
     """
 
 
-@users_bp.route("/logout", methods=["POST"])
+@users_bp.route(f"{V1}/users/logout", methods=["POST"])
 def logout():
     """
     URL to logout a logged in user - Token required
@@ -43,7 +53,7 @@ def logout():
     """
 
 
-@users_bp.route("/user", methods=["PUT", "PATCH"])
+@users_bp.route(f"{V1}/users/user", methods=["PUT", "PATCH"])
 def user():
     """
     URL to modify user informations - Token required

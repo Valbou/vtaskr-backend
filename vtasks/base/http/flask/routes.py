@@ -9,7 +9,7 @@ base_bp = Blueprint(
 )
 
 
-@base_bp.route("/")
+@base_bp.route("/", methods=["GET"])
 def hello():
     """Just a logo displayed to curious users"""
     return render_template("home.html")
