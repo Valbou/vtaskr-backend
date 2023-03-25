@@ -1,12 +1,11 @@
 from datetime import datetime
 
-from sqlalchemy.orm import registry
+
 from sqlalchemy import Table, Column, String, DateTime
 
 from src.vtasks.apps.users.models import User
+from src.vtasks.base import mapper_registry
 
-
-mapper_registry = registry()
 
 user_table = Table(
     "users",
