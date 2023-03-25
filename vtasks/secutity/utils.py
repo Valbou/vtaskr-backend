@@ -43,3 +43,8 @@ def get_2FA(length: int = 6) -> str:
     Hard to brute-force in few minutes with API response time
     """
     return b64encode(get_id().encode()).decode()[:length]
+
+
+def file_to_base64(file_path_name: str) -> str:
+    with open(file_path_name, "rb") as file:
+        return b64encode(file.read()).decode()
