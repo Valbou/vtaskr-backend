@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError
 
-from vtasks.users.validators import get_valid_email
+from vtasks.users.validators import get_valid_email, PasswordChecker
 
 
 @dataclass
@@ -50,16 +50,22 @@ class User:
         self.email = get_valid_email(email)
         return True
 
-    def set_password(self, password):
+    def set_password(self, password: str):
+        self._check_password_complexity(password)
         ph = PasswordHasher()
         self.hash_password = ph.hash(password)
 
-    def check_password(self, password):
+    def check_password(self, password: str):
         ph = PasswordHasher()
         try:
             return ph.verify(self.hash_password, password)
         except VerifyMismatchError:
             return False
+
+    def _check_password_complexity(self, password: str) -> True:
+        password_checker = PasswordChecker()
+        password_checker.check_complexity(password)
+        return True
 
     def update_last_login(self):
         self.last_login_at = datetime.now(utc)

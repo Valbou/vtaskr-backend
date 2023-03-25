@@ -1,11 +1,13 @@
 from logging import Logger
 
 from flask import Blueprint, request, current_app
+from email_validator import EmailSyntaxError
 
 from vtasks.flask.utils import ResponseAPI, get_bearer_token
 from vtasks.users.persistence import UserDB, TokenDB
-
+from vtasks.users.validators import PasswordComplexityError
 from vtasks.notifications import NotificationService
+
 from .user_service import UserService
 from .email_content import RegisterEmail, LoginEmail
 
@@ -46,8 +48,11 @@ def register():
 
             data = user.to_external_data()
             return ResponseAPI.get_response(data, 201)
-    except Exception:
-        return ResponseAPI.get_error_response("Bad request", 400)
+    except (PasswordComplexityError, EmailSyntaxError) as e:
+        return ResponseAPI.get_error_response(str(e), 400)
+    except Exception as e:
+        logger.error(str(e))
+        return ResponseAPI.get_error_response("Internal error: " + str(e), 500)
 
 
 # https://medium.com/swlh/creating-middlewares-with-python-flask-166bd03f2fd4
@@ -84,9 +89,7 @@ def login():
                 return ResponseAPI.get_response(data, 201)
             else:
                 return ResponseAPI.get_error_response("Invalid credentials", 401)
-
     except Exception as e:
-        print(str(e))
         logger.error(str(e))
         return ResponseAPI.get_error_response("Internal error: " + str(e), 500)
 
@@ -212,6 +215,8 @@ def update_me():
                 user_db.update(session, user)
                 data = user.to_external_data()
             return ResponseAPI.get_response(data, 200)
+    except PasswordComplexityError as e:
+        return ResponseAPI.get_error_response(str(e), 400)
     except Exception as e:
         logger.error(str(e))
         return ResponseAPI.get_error_response("Internal error: " + str(e), 500)

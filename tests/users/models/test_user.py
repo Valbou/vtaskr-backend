@@ -36,12 +36,12 @@ class TestUser(TestCase):
         )
 
     def test_user_set_password(self):
-        password = "1234"  # nosec
+        password = "aB#1234aB#1234"  # nosec
         self.user.set_password(password)
         self.assertNotEqual(password, self.user.hash_password)
 
     def test_user_check_password(self):
-        password = "1234"  # nosec
+        password = "aB#1234aB#1234"  # nosec
         self.user.set_password(password)
         self.assertTrue(self.user.check_password(password))
 
@@ -70,7 +70,7 @@ class TestUser(TestCase):
             "email": "email@valbou.fr",
             "created_at": "created_at",
             "last_login_at": "last_login_at",
-            "password": "password",
+            "password": "passwordA1#",
             "hash_password": "hash_password",
             "other": "other",
         }
@@ -81,8 +81,8 @@ class TestUser(TestCase):
         self.assertEqual(self.user.email, "email@valbou.fr")
         self.assertNotEqual(str(self.user.created_at), "created_at")
         self.assertNotEqual(str(self.user.last_login_at), "last_login_at")
-        self.assertNotEqual(self.user.hash_password, "password")
-        self.assertTrue(self.user.check_password("password"))
+        self.assertNotEqual(self.user.hash_password, "passwordA1#")
+        self.assertTrue(self.user.check_password("passwordA1#"))
         self.assertNotEqual(self.user.hash_password, "hash_password")
         self.assertNotEqual(self.user.hash_password, previous_hash)
 
