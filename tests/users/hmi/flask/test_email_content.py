@@ -38,7 +38,7 @@ class TestLoginEmail(BaseTestCase):
         super().setUp()
         self.to = self.fake.email(domain="valbou.fr")
         self.first_name = self.fake.first_name()
-        self.code = self.fake.password()
+        self.code = self.fake.bothify("???###???###")
 
     def test_email_object(self):
         with self.app.app_context():
@@ -65,7 +65,7 @@ class TestChangeEmailOldEmail(BaseTestCase):
         super().setUp()
         self.to = self.fake.email(domain="valbou.fr")
         self.first_name = self.fake.first_name()
-        self.code = self.fake.password()
+        self.code = self.fake.bothify("???###???###")
 
     def test_email_object(self):
         with self.app.app_context():
