@@ -1,6 +1,6 @@
 from datetime import timedelta
 
-from flask import current_app, g, jsonify, request
+from flask import current_app, g, request
 
 from vtasks.flask.utils import ResponseAPI
 from vtasks.redis import rate_limited
@@ -57,18 +57,29 @@ def tasks():
 @rate_limited(logger=logger, hit=5, period=timedelta(seconds=1))
 def task(task_id: str):
     """URL to current user task - Token required"""
-    if request.method == "GET":
-        with current_app.sql.get_session() as session:
-            task_service = TaskService(session, current_app.testing)
-            task = task_service.get_user_task(g.user.id, task_id)
-            if task:
+    with current_app.sql.get_session() as session:
+        task_service = TaskService(session, current_app.testing)
+        task = task_service.get_user_task(g.user.id, task_id)
+        if task:
+            if request.method == "GET":
                 task_dto = TaskMapperDTO.model_to_dto(task)
                 return ResponseAPI.get_response(
                     TaskMapperDTO.dto_to_dict(task_dto), 200
                 )
-            else:
-                return ResponseAPI.get_error_response({}, 404)
-    elif request.method in ["PUT", "PATCH"]:
-        return jsonify()
-    elif request.method == "DELETE":
-        return jsonify()
+
+            elif request.method in ("PUT", "PATCH"):
+                task_dto = TaskDTO(**request.get_json())
+                task = TaskMapperDTO.dto_to_model(g.user.id, task_dto, task)
+                task_service.update_user_task(g.user.id, task)
+
+                task_dto = TaskMapperDTO.model_to_dto(task)
+                return ResponseAPI.get_response(
+                    TaskMapperDTO.dto_to_dict(task_dto), 200
+                )
+
+            elif request.method == "DELETE":
+                task_service.delete_user_task(g.user.id, task)
+                return ResponseAPI.get_response({}, 204)
+
+        else:
+            return ResponseAPI.get_error_response({}, 404)

@@ -14,8 +14,8 @@ class TaskDTO:
     emergency: bool = False
     important: bool = False
     scheduled_at: Optional[str] = None
-    duration: str = ""
-    done: bool = False
+    duration: Optional[str] = None
+    done: Optional[datetime] = None
 
 
 class TaskMapperDTO:
@@ -30,7 +30,7 @@ class TaskMapperDTO:
             important=task.important,
             scheduled_at=task.scheduled_at.isoformat() if task.scheduled_at else None,
             duration=task.duration.total_seconds() if task.duration else None,
-            done=task.done,
+            done=task.done.isoformat() if task.done else None,
         )
 
     @classmethod
@@ -44,24 +44,26 @@ class TaskMapperDTO:
         if not task:
             task = Task(user_id=user_id, title=task_dto.title)
 
-        if task_dto.description:
-            task.description = task_dto.description
-        if task_dto.emergency:
-            task.emergency = task_dto.emergency
-        if task_dto.important:
-            task.important = task_dto.important
-        if task_dto.scheduled_at:
-            task.scheduled_at = (
-                datetime.fromisoformat(task_dto.scheduled_at)
-                if task_dto.scheduled_at
-                else None
-            )
-        if task_dto.duration:
-            task.duration = (
-                timedelta(seconds=int(task_dto.duration)) if task_dto.duration else None
-            )
-        if task_dto.done:
-            task.done = task_dto.done
+        task.title = task_dto.title
+        task.description = task_dto.description
+        task.emergency = task_dto.emergency
+        task.important = task_dto.important
+
+        if task_dto.scheduled_at is not None:
+            task.scheduled_at = datetime.fromisoformat(task_dto.scheduled_at)
+        else:
+            task.scheduled_at = None
+
+        if task_dto.duration is not None:
+            task.duration = timedelta(seconds=int(task_dto.duration))
+        else:
+            task.duration = None
+
+        if task_dto.done is not None:
+            task.done = datetime.fromisoformat(task_dto.done)
+        else:
+            task.done = None
+
         return task
 
     @classmethod
