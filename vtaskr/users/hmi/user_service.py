@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 
 from vtaskr.users import RequestChange, RequestType, Token, User
 from vtaskr.users.hmi.ports import AbstractUserPort
+from vtaskr.users.hmi.dto import UserDTO
 from vtaskr.users.persistence import RequestChangeDB, TokenDB, UserDB
 
 
@@ -18,16 +19,16 @@ class UserService(AbstractUserPort):
         self.token_db = TokenDB()
         self.request_change_db = RequestChangeDB()
 
-    def register(self, data: dict) -> User:
+    def register(self, user_dto: UserDTO, password: str) -> User:
         """Add a new user"""
         user = User(
-            first_name=data.get("first_name", ""),
-            last_name=data.get("last_name", ""),
-            email=data.get("email", ""),
-            locale=data.get("locale"),
-            timezone=data.get("timezone"),
+            first_name=user_dto.first_name,
+            last_name=user_dto.last_name,
+            email=user_dto.email,
+            locale=user_dto.locale,
+            timezone=user_dto.timezone,
         )
-        user.set_password(data.get("password", ""))
+        user.set_password(password)
         self.user_db.save(self.session, user)
         return user
 
