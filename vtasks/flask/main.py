@@ -17,6 +17,7 @@ def create_flask_app(testing: bool = False):
     app.register_blueprint(users_bp)
     app.register_blueprint(tasks_bp)
 
+    app.jinja_options = {"extensions": ['jinja2.ext.i18n']}
     app.sql_service = SQLService(testing)
     app.timezone = os.getenv("TIMEZONE", "Europe/Paris")
     app.locale = os.getenv("LOCALE", "fr_FR")
