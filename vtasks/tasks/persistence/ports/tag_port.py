@@ -2,7 +2,7 @@ from abc import ABC
 
 from vtasks.tasks import Task, Tag
 
-from .base_ports import AbstractPort
+from vtasks.base.persistence import AbstractPort
 
 
 class AbstractTagPort(AbstractPort, ABC):

@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 
 from vtasks.users import User
 
-from .base_ports import AbstractPort
+from vtasks.base.persistence import AbstractPort
 
 
 class AbstractUserPort(AbstractPort, ABC):

@@ -30,9 +30,9 @@ class TestSMTPEmail(TestCase):
         self.assertIn("From: contact@valbou.fr", result)
         self.assertIn("To: contact@valbou.fr", result)
         self.assertIn("Cc: contact@valbou.fr, contact@valbou.fr", result)
-        self.assertIn("Content-Type: text/plain; charset=\"utf-8\"", result)
+        self.assertIn('Content-Type: text/plain; charset="utf-8"', result)
         self.assertIn("Hello World - Test message", result)
-        self.assertIn("Content-Type: text/html; charset=\"utf-8\"", result)
+        self.assertIn('Content-Type: text/html; charset="utf-8"', result)
         self.assertIn("<h1>Hello World</h1>", result)
 
     def test_email_sent(self):

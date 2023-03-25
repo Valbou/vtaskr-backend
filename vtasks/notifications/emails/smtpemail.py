@@ -94,5 +94,7 @@ class MultiSMTPEmail:
     ):
         server = get_smtp_server(host, port, user, password)
         for email in self.emails:
-            server.sendmail(email.from_email, email.to_emails, email.message.as_string())
+            server.sendmail(
+                email.from_email, email.to_emails, email.message.as_string()
+            )
         server.quit()
