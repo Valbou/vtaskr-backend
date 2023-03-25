@@ -1,7 +1,6 @@
 from typing import Optional, Tuple
 
 from sqlalchemy.orm import Session
-
 from vtasks.users import RequestChange, RequestType, Token, User
 from vtasks.users.hmi.ports import AbstractUserPort
 from vtasks.users.persistence import RequestChangeDB, TokenDB, UserDB

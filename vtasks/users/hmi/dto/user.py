@@ -1,7 +1,6 @@
 from dataclasses import asdict, dataclass
 
 from babel import Locale
-
 from vtasks.users.models import User
 
 

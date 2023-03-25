@@ -4,7 +4,6 @@ from unittest import TestCase
 
 from faker import Faker
 from pytz import utc
-
 from vtasks.base.config import REQUEST_DAYS_HISTORY, REQUEST_VALIDITY
 from vtasks.users import RequestChange, RequestType
 

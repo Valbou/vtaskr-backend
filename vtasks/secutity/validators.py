@@ -3,7 +3,6 @@ from string import ascii_lowercase, ascii_uppercase, digits, punctuation
 from typing import List, Optional
 
 from email_validator import validate_email
-
 from vtasks.base.config import PASSWORD_MIN_LENGTH
 
 

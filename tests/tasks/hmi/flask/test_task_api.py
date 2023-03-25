@@ -1,10 +1,10 @@
 from datetime import datetime
 
 from pytz import utc
-
-from tests import BaseTestCase
 from vtasks.tasks.models import Task
 from vtasks.tasks.persistence import TaskDB
+
+from tests import BaseTestCase
 
 URL_API = "/api/v1"
 

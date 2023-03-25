@@ -1,6 +1,7 @@
-from tests import BaseTestCase
 from vtasks.tasks import Tag, Task
 from vtasks.tasks.persistence import TagDB, TaskDB
+
+from tests import BaseTestCase
 
 
 class TestTaskTagTable(BaseTestCase):

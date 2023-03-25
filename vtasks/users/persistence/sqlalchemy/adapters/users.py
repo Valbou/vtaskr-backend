@@ -2,7 +2,6 @@ from typing import Optional
 
 from sqlalchemy import select, update
 from sqlalchemy.orm import Session
-
 from vtasks.users.models import User
 from vtasks.users.persistence.ports import AbstractUserPort
 

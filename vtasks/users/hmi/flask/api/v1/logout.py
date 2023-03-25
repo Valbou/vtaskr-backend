@@ -1,7 +1,6 @@
 from datetime import timedelta
 
 from flask import current_app, g
-
 from vtasks.flask.utils import ResponseAPI
 from vtasks.redis import rate_limited
 from vtasks.users.hmi.flask.decorators import login_required

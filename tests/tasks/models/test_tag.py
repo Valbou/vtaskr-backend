@@ -3,7 +3,6 @@ from typing import Optional
 from unittest import TestCase
 
 from faker import Faker
-
 from vtasks.tasks import Color, Tag
 
 

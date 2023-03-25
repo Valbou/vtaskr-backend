@@ -1,10 +1,11 @@
 from datetime import datetime, timedelta
 from hashlib import sha256
 
-from tests import BaseTestCase
 from vtasks.base.config import TOKEN_TEMP_VALIDITY, TOKEN_VALIDITY
 from vtasks.users.models import Token, User
 from vtasks.users.persistence import TokenDB, UserDB
+
+from tests import BaseTestCase
 
 
 class TestTokenTable(BaseTestCase):

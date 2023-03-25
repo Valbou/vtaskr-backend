@@ -1,5 +1,4 @@
 from dotenv import load_dotenv
-
 from vtasks.redis.database import NoSQLService
 from vtasks.sqlalchemy.database import SQLService
 

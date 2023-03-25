@@ -1,7 +1,6 @@
 from datetime import timedelta
 
 from flask import current_app, request
-
 from vtasks.flask.utils import ResponseAPI, get_bearer_token
 from vtasks.redis import rate_limited
 from vtasks.users.persistence import TokenDB

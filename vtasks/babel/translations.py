@@ -3,7 +3,6 @@ from gettext import GNUTranslations, translation
 from typing import List, Union
 
 from babel import Locale
-
 from vtasks.base.config import APP_NAME
 
 

@@ -2,7 +2,6 @@ from typing import Optional
 
 from sqlalchemy import and_, delete, or_, select, update
 from sqlalchemy.orm import Session
-
 from vtasks.users.models import Token
 from vtasks.users.persistence.ports import AbstractTokenPort
 

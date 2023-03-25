@@ -3,13 +3,13 @@ from unittest import TestCase
 
 from faker import Faker
 from flask import Flask, template_rendered
-
-from tests.utils.db_utils import text_query_column_exists, text_query_table_exists
 from vtasks.flask.main import create_flask_app
 from vtasks.sqlalchemy.database import SQLService
 from vtasks.users import User
 from vtasks.users.hmi.user_service import UserService
 from vtasks.users.persistence import UserDB
+
+from tests.utils.db_utils import text_query_column_exists, text_query_table_exists
 
 
 class FlaskTemplateCapture:

@@ -4,7 +4,6 @@ from typing import Optional
 
 from babel import Locale
 from pytz import utc
-
 from vtasks.base.config import LOCALE, TIMEZONE
 from vtasks.secutity.utils import check_password, get_id, hash_from_password
 from vtasks.secutity.validators import PasswordChecker, get_valid_email

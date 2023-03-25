@@ -13,7 +13,6 @@ from sqlalchemy import (
     types,
 )
 from sqlalchemy.orm import relationship
-
 from vtasks.sqlalchemy.base import mapper_registry
 from vtasks.tasks import Color, Tag, Task
 

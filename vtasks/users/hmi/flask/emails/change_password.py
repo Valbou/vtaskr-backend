@@ -2,7 +2,6 @@ from gettext import GNUTranslations
 from typing import List, Tuple
 
 from flask import render_template
-
 from vtasks.base.config import EMAIL_LOGO, LINK_TO_CHANGE_PASSWORD
 from vtasks.notifications import AbstractBaseEmailContent
 

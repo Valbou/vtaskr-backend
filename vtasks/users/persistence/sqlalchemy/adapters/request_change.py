@@ -2,7 +2,6 @@ from typing import Optional
 
 from sqlalchemy import delete, select
 from sqlalchemy.orm import Session
-
 from vtasks.users.models import RequestChange
 from vtasks.users.persistence.ports import AbstractRequestChangePort
 

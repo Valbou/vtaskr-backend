@@ -2,7 +2,6 @@ from typing import List, Optional
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
-
 from vtasks.tasks import Task
 from vtasks.tasks.persistence.ports import AbstractTaskPort
 

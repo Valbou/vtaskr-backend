@@ -1,7 +1,6 @@
 from unittest import TestCase
 
 from flask import Flask
-
 from vtasks.flask.main import create_flask_app
 from vtasks.redis.database import NoSQLService
 from vtasks.sqlalchemy.database import SQLService

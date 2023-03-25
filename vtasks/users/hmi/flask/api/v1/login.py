@@ -1,7 +1,6 @@
 from datetime import timedelta
 
 from flask import current_app, request
-
 from vtasks.flask.utils import ResponseAPI
 from vtasks.notifications import NotificationService
 from vtasks.redis import rate_limited

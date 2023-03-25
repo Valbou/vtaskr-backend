@@ -2,7 +2,6 @@ from datetime import datetime
 
 from pytz import utc
 from sqlalchemy import Boolean, Column, DateTime, Enum, String, Table
-
 from vtasks.sqlalchemy.base import mapper_registry
 from vtasks.users.models import RequestChange, RequestType
 

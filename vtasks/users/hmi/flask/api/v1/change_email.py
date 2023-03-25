@@ -2,7 +2,6 @@ from datetime import timedelta
 
 from email_validator import EmailSyntaxError
 from flask import current_app, g, request
-
 from vtasks.flask.utils import ResponseAPI
 from vtasks.notifications import NotificationService
 from vtasks.redis import rate_limited

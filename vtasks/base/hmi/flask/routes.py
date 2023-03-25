@@ -1,5 +1,4 @@
 from flask import Blueprint, jsonify, render_template
-
 from vtasks.base.config import AVAILABLE_LANGUAGES
 
 base_bp = Blueprint(

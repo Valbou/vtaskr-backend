@@ -1,7 +1,6 @@
 from unittest import TestCase
 
 from email_validator import EmailSyntaxError
-
 from vtasks.secutity.validators import (
     PasswordChecker,
     PasswordComplexityError,

@@ -1,5 +1,6 @@
-from tests import BaseTestCase, FlaskTemplateCapture
 from vtasks.base.config import AVAILABLE_LANGUAGES
+
+from tests import BaseTestCase, FlaskTemplateCapture
 
 
 class TestBaseRoutes(BaseTestCase):

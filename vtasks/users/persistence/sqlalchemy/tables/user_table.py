@@ -4,7 +4,6 @@ from babel import Locale
 from pytz import utc
 from sqlalchemy import Column, DateTime, Dialect, String, Table, types
 from sqlalchemy.orm import relationship
-
 from vtasks.sqlalchemy.base import mapper_registry
 from vtasks.users.models import User
 

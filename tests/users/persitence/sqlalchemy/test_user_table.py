@@ -1,6 +1,7 @@
-from tests import BaseTestCase
 from vtasks.users.models import User
 from vtasks.users.persistence import UserDB
+
+from tests import BaseTestCase
 
 
 class TestUserTable(BaseTestCase):

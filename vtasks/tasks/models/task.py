@@ -5,7 +5,6 @@ from typing import List, Optional, TypeVar
 
 from dateutil import parser
 from pytz import utc
-
 from vtasks.secutity.utils import get_id
 
 from .tag import Tag

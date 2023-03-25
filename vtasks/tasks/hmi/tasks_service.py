@@ -1,7 +1,6 @@
 from typing import List, Optional
 
 from sqlalchemy.orm import Session
-
 from vtasks.tasks.hmi.ports import AbstractTaskPort
 from vtasks.tasks.models import Task
 from vtasks.tasks.persistence import TaskDB

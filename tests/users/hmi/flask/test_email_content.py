@@ -1,4 +1,3 @@
-from tests import BaseTestCase, FlaskTemplateCapture
 from vtasks.base.config import LINK_TO_CHANGE_EMAIL, LINK_TO_CHANGE_PASSWORD
 from vtasks.users.hmi.flask.emails import (
     ChangeEmailToNewEmail,
@@ -7,6 +6,8 @@ from vtasks.users.hmi.flask.emails import (
     LoginEmail,
     RegisterEmail,
 )
+
+from tests import BaseTestCase, FlaskTemplateCapture
 
 
 class TestRegisterEmail(BaseTestCase):

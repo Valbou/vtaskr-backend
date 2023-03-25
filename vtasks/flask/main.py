@@ -2,7 +2,6 @@ import os
 
 from flask import Flask
 from jinja2 import ChoiceLoader, FileSystemLoader
-
 from vtasks.babel.translations import TranslationService
 from vtasks.base.config import AVAILABLE_LANGUAGES
 from vtasks.base.hmi.flask import base_bp
