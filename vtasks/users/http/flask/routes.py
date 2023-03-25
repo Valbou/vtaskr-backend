@@ -3,8 +3,8 @@ from logging import Logger
 from flask import Blueprint, request, current_app
 
 from vtasks.flask.utils import ResponseAPI
-from vtasks.users import Token
-from vtasks.users.persistence import UserDB, TokenDB
+
+from .authenticate import AuthService
 
 
 logger = Logger(__name__)
@@ -26,10 +26,10 @@ V1 = "/api/v1"
 def login():
     """
     URL to login as an authorized user
-    Clean all expired tokens
+    Clean all expired tokens, for all users
 
     Need an email and a password
-    Return a temporary token
+    Return a valid token
     """
     payload: dict = request.get_json()
 
@@ -40,36 +40,18 @@ def login():
         return ResponseAPI.get_error_response("Bad request", 400)
 
     try:
-        user_db = UserDB()
-        token_db = TokenDB()
-        data = {}
+        auth_service = AuthService()
+        token = auth_service.authenticate(current_app, email, password)
 
-        with current_app.sql_service.get_session() as session:
-            token_db.clean_expired(session)
-            user = user_db.find_login(session, email)
-            if user is None or not user.check_password(password):
-                return ResponseAPI.get_error_response("Invalid credentials", 401)
-            else:
-                # Many tokens can be active for a unique user (it's assumed)
-                token = Token(user_id=user.id)
-                token_db.save(session, token)
-                data = {"token": token.sha_token}
-        return ResponseAPI.get_response(data, 201)
+        if token is not None:
+            data = {"token": token}
+            return ResponseAPI.get_response(data, 201)
+        else:
+            return ResponseAPI.get_error_response("Invalid credentials", 401)
 
     except Exception as e:
         logger.error(str(e))
         return ResponseAPI.get_error_response("Internal error: " + str(e), 500)
-
-
-@users_bp.route(f"{V1}/users/login/2fa", methods=["POST"])
-def login2fa():
-    """
-    URL to send 2FA auth - Token required
-
-    Need a temporary token and un numeric code
-    Return an expiring token
-    (30 minutes after last activity as a classique session)
-    """
 
 
 @users_bp.route(f"{V1}/users/logout", methods=["DELETE"])
@@ -77,30 +59,24 @@ def logout():
     """
     URL to logout a logged in user - Token required
 
-    Need a expiring token and the user email
+    Need a valid token and the user email
     Return a 204
     """
-
     payload: dict = request.get_json()
 
     try:
         email = payload.get("email")
         sha_token = payload.get("token")
-    except Exception:
+    except AttributeError:
         return ResponseAPI.get_error_response("Bad request", 400)
 
     try:
-        user_db = UserDB()
-        token_db = TokenDB()
-        data = {}
-
-        with current_app.sql_service.get_session() as session:
-            user = user_db.find_login(session, email)
-            token = token_db.get_token(session, sha_token)
-            if user and token and token.user_id == user.id:
-                token_db.delete(session, token)
-                return ResponseAPI.get_response(data, 204)
-        return ResponseAPI.get_error_response("Unauthorized", 403)
+        auth_service = AuthService()
+        if auth_service.logout(current_app, email, sha_token):
+            data = {}
+            return ResponseAPI.get_response(data, 204)
+        else:
+            return ResponseAPI.get_error_response("Unauthorized", 403)
 
     except Exception as e:
         logger.error(str(e))
@@ -112,6 +88,6 @@ def user():
     """
     URL to modify user informations - Token required
 
-    Need an expiring token
+    Need a valid token
     Return a jsonify user updated
     """

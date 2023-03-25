@@ -51,6 +51,10 @@ class User:
         except VerifyMismatchError:
             return False
 
+    def update_last_login(self):
+        self.last_login_at = datetime.now()
+        return self.last_login_at
+
     def __str__(self) -> str:
         return self.full_name
 
