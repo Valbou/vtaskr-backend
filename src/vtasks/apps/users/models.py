@@ -1,11 +1,9 @@
+from datetime import datetime
 from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, DateTime
 
-from src.database import Base
-
-
-ph = PasswordHasher()
+from vtasks.database import Base
 
 
 class User(Base):
@@ -14,11 +12,15 @@ class User(Base):
     pseudo = Column(String(120), unique=False)
     email = Column(String(250), unique=True)
     password = Column(String(100))
+    created_at = Column(DateTime, default=datetime.now())
+    last_login_at = Column(DateTime, nullable=True, default=None)
 
     def set_password(self, password):
+        ph = PasswordHasher()
         self.password = ph.hash(password)
 
     def check_password(self, password):
+        ph = PasswordHasher()
         try:
             return ph.verify(hash, password)
         except VerifyMismatchError:
