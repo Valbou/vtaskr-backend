@@ -15,8 +15,18 @@ class TestRateLimit(TestCase):
         rl = RateLimit(self.redis, "::1", "/test_1", 1, timedelta(seconds=1))
         self.assertIsNone(rl())
 
-    def test_over_limit(self):
+    def test_over_limit_1_per_sec(self):
         rl = RateLimit(self.redis, "::1", "/", 1, timedelta(seconds=1))
+        rl()
+        with self.assertRaises(LimitExceededError):
+            rl()
+
+    def test_over_limit_5_per_sec(self):
+        rl = RateLimit(self.redis, "::1", "/", 5, timedelta(seconds=1))
+        rl()
+        rl()
+        rl()
+        rl()
         rl()
         with self.assertRaises(LimitExceededError):
             rl()
