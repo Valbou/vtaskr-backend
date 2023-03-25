@@ -47,9 +47,10 @@ def login():
         with current_app.sql_service.get_session() as session:
             token_db.clean_expired(session)
             user = user_db.find_login(session, email)
-            if not user.check_password(password):
+            if user is None or not user.check_password(password):
                 return ResponseAPI.get_error_response("Invalid credentials", 401)
             else:
+                # Many tokens can be active for a unique user (it's assumed)
                 token = Token(user_id=user.id)
                 token_db.save(session, token)
                 data = {"token": token.sha_token}
@@ -96,10 +97,10 @@ def logout():
         with current_app.sql_service.get_session() as session:
             user = user_db.find_login(session, email)
             token = token_db.get_token(session, sha_token)
-            if token.user_id == user.id:
+            if user and token and token.user_id == user.id:
                 token_db.delete(session, token)
                 return ResponseAPI.get_response(data, 204)
-        return ResponseAPI.get_response("Unauthorized", 403)
+        return ResponseAPI.get_error_response("Unauthorized", 403)
 
     except Exception as e:
         logger.error(str(e))
