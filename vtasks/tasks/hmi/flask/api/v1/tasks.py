@@ -50,7 +50,9 @@ def tasks():
         return ResponseAPI.get_error_response("Internal error", 500)
 
 
-@tasks_bp.route(f"{V1}/task/<string:task_id>", methods=["GET", "PUT", "PATCH", "DELETE"])
+@tasks_bp.route(
+    f"{V1}/task/<string:task_id>", methods=["GET", "PUT", "PATCH", "DELETE"]
+)
 @login_required(logger)
 @rate_limited(logger=logger, hit=5, period=timedelta(seconds=1))
 def task(task_id: str):
