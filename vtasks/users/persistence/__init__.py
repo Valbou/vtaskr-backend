@@ -1,1 +1,1 @@
-from .sqlalchemy.adapters import UserDB
+from .sqlalchemy.adapters import UserDB, TokenDB

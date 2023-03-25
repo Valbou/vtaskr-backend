@@ -17,17 +17,18 @@ class UserDB(AbstractUserPort):
     def load(self, session: Session, id: str) -> User:
         stmt = select(User).where(User.id == id)
         result = session.scalars(stmt).one_or_none()
-        session.commit()
         return result
 
-    def save(self, session: Session, user: User) -> True:
+    def save(self, session: Session, user: User, autocommit: bool = True) -> True:
         session.add(user)
-        session.commit()
+        if autocommit:
+            session.commit()
         return True
 
-    def delete(self, session: Session, user: User) -> True:
+    def delete(self, session: Session, user: User, autocommit: bool = True) -> True:
         session.delete(user)
-        session.commit()
+        if autocommit:
+            session.commit()
         return True
 
     def exists(self, session: Session, id: str) -> bool:
