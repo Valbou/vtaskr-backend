@@ -312,7 +312,9 @@ def change_email():
                 new_email = payload.get("new_email", "")
                 new_email = get_valid_email(new_email)
                 auth_service = UserService(session, testing=current_app.testing)
-                req_hash, req_code = auth_service.request_email_change(g.user, new_email)
+                req_hash, req_code = auth_service.request_email_change(
+                    g.user, new_email
+                )
             except (EmailSyntaxError, EmailAlreadyUsedError) as e:
                 return ResponseAPI.get_error_response(str(e), 400)
             except AttributeError:

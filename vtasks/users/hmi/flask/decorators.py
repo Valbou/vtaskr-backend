@@ -21,11 +21,16 @@ def login_required(logger: Logger):
                     session.expire_on_commit = False
                     auth_service = UserService(session, testing=current_app.testing)
                     user = auth_service.user_from_token(sha_token)
-                    g.token = sha_token
-                    g.user = user
+                    if user:
+                        g.token = sha_token
+                        g.user = user
+                    else:
+                        return ResponseAPI.get_error_response("Invalid token", 401)
                 return func(*args, **kwargs)
             except Exception as e:
                 logger.error(str(e))
                 return ResponseAPI.get_error_response("Internal error", 500)
+
         return wrapper
+
     return decorator
