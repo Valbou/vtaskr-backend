@@ -23,10 +23,8 @@ api_item = {
                         "schema": {
                             "type": "object",
                             "properties": {
-                                "token": {
-                                    "type": "string"
-                                },
-                            }
+                                "token": {"type": "string"},
+                            },
                         }
                     }
                 },
@@ -69,7 +67,7 @@ api_item = {
                 "type": "string",
             },
             "example": "12_aB-34#Cd",
-        }
+        },
     ],
 }
 openapi.register_path(f"{V1}/users/login", api_item)
