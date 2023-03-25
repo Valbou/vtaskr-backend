@@ -1,1 +1,1 @@
-from .sqlalchemy.adapters import TaskDB, TagDB
+from .sqlalchemy.adapters import *
