@@ -34,3 +34,12 @@ class TestUserV1Logout(BaseTestCase):
         self.assertEqual(response.status_code, 204)
         self.assertEqual(response.content_type, "application/json")
         self.assertEqual(response.text, "")
+
+    def test_delete_logout_fake_token(self):
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {self.fake.word()}",
+        }
+        response = self.client.delete(f"{URL_API_USERS}/logout", headers=headers)
+        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.content_type, "application/json")

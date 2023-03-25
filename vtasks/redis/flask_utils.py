@@ -9,9 +9,9 @@ from vtasks.flask.utils import get_ip, ResponseAPI
 from vtasks.redis.ratelimit import RateLimit, LimitExceededError
 
 
-def rate_limited(logger: Logger, hit: int = 1, period: Optional[timedelta] = None):
-    period = period or timedelta(seconds=1)
-
+def rate_limited(
+    logger: Logger, hit: int = 1, period: timedelta = timedelta(seconds=1)
+):
     def decorator(func: Callable):
         @wraps(func)
         def wrapper(*args, **kwargs):
@@ -29,4 +29,5 @@ def rate_limited(logger: Logger, hit: int = 1, period: Optional[timedelta] = Non
                 return ResponseAPI.get_error_response("Too many requests", 429)
 
         return wrapper
+
     return decorator

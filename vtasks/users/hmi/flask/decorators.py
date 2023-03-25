@@ -5,7 +5,7 @@ from functools import wraps
 from flask import current_app, request, g
 
 from vtasks.flask.utils import ResponseAPI, get_bearer_token
-from .user_service import UserService
+from vtasks.users.hmi.user_service import UserService
 
 
 def login_required(logger: Logger):
