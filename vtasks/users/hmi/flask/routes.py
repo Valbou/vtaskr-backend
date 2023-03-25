@@ -68,8 +68,8 @@ def login():
     payload: dict = request.get_json()
 
     try:
-        email = payload.get("email")
-        password = payload.get("password")
+        email = payload.get("email", "")
+        password = payload.get("password", "")
     except Exception:
         return ResponseAPI.get_error_response("Bad request", 400)
 
@@ -140,7 +140,7 @@ def logout():
     payload: dict = request.get_json()
 
     try:
-        email = payload.get("email")
+        email = payload.get("email", "")
     except AttributeError:
         return ResponseAPI.get_error_response("Bad request", 400)
 

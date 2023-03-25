@@ -46,8 +46,8 @@ class User:
     def full_name(self) -> str:
         return f"{self.first_name} {self.last_name}"
 
-    def set_email(self, email: str) -> True:
-        self.email = get_valid_email(email)
+    def set_email(self, email: str) -> bool:
+        self.email = get_valid_email(email) or ""
         return True
 
     def set_password(self, password: str):
@@ -62,7 +62,7 @@ class User:
         except VerifyMismatchError:
             return False
 
-    def _check_password_complexity(self, password: str) -> True:
+    def _check_password_complexity(self, password: str) -> bool:
         password_checker = PasswordChecker()
         password_checker.check_complexity(password)
         return True
@@ -76,7 +76,7 @@ class User:
         self.last_name = user_dict.get("last_name", self.last_name)
         self.set_email(user_dict.get("email", self.email))
         if user_dict.get("password"):
-            self.set_password(user_dict.get("password"))
+            self.set_password(user_dict.get("password", ""))
 
     def to_external_data(self) -> dict:
         return {

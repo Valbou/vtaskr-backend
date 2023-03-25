@@ -11,5 +11,5 @@ class AbstractUserPort(AbstractPort, ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    def update(self, user: User) -> True:
+    def update(self, user: User) -> bool:
         raise NotImplementedError()
