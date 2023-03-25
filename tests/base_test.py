@@ -11,6 +11,8 @@ from tests.utils.db_utils import (
 
 from vtasks.flask.main import create_flask_app
 from vtasks.sqlalchemy.database import SQLService
+from vtasks.users import User
+from vtasks.users.persistence import UserDB
 
 
 class FlaskTemplateCapture:
@@ -61,3 +63,37 @@ class BaseTestCase(TestCase):
                 stmt = text_query_column_exists()
                 result = session.execute(stmt, params=params).scalar_one_or_none()
                 self.assertTrue(result)
+
+    def create_user(self):
+        self.password = self.fake.password()
+        self.user = User(
+            first_name=self.fake.first_name(),
+            last_name=self.fake.last_name(),
+            email=self.fake.email(domain="valbou.fr"),
+        )
+        self.user.set_password(self.password)
+
+        self.user_db = UserDB()
+        with self.app.sql_service.get_session() as session:
+            session.expire_on_commit = False
+            self.user_db.save(session, self.user)
+
+    def get_json_headers(self):
+        return {"Content-Type": "application/json"}
+
+    def get_token_headers(self) -> dict:
+        self.create_user()
+        headers = {"Content-Type": "application/json"}
+        payload = {
+            "email": self.user.email,
+            "password": self.password,
+        }
+        response = self.client.post(
+            "/api/v1/users/login", headers=headers, json=payload
+        )
+        token = response.json.get("token")
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {token}",
+        }
+        return headers
