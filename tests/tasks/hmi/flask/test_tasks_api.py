@@ -1,7 +1,6 @@
-from vtasks.tasks.models import Task
-from vtasks.tasks.persistence import TaskDB
-
 from tests import BaseTestCase
+from vtaskr.tasks.models import Task
+from vtaskr.tasks.persistence import TaskDB
 
 URL_API = "/api/v1"
 

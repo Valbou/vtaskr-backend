@@ -4,7 +4,8 @@ from unittest import TestCase
 
 from babel import Locale
 from faker import Faker
-from vtasks.users import User
+
+from vtaskr.users import User
 
 
 class TestUser(TestCase):

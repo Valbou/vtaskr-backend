@@ -153,7 +153,7 @@ if __name__ == "__main__":
         ("Black", black_commands),
         ("Flake8", flake_commands),
         ("Bandit", bandit_commands),
-        ("Coverage", coverage_commands, "vtasks"),
+        ("Coverage", coverage_commands, "vtaskr"),
     ]
 
     exit_score = 0

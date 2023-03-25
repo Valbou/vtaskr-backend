@@ -11,12 +11,12 @@ source ../bin/activate
 if [ -n "$1" ]
 then
     # Compile to MO Files
-    pybabel compile -i vtasks/$1/translations/de/LC_MESSAGES/$1.po -o vtasks/$1/translations/de/LC_MESSAGES/$1.mo
-    pybabel compile -i vtasks/$1/translations/en/LC_MESSAGES/$1.po -o vtasks/$1/translations/en/LC_MESSAGES/$1.mo
-    pybabel compile -i vtasks/$1/translations/es/LC_MESSAGES/$1.po -o vtasks/$1/translations/es/LC_MESSAGES/$1.mo
-    pybabel compile -i vtasks/$1/translations/fr/LC_MESSAGES/$1.po -o vtasks/$1/translations/fr/LC_MESSAGES/$1.mo
-    pybabel compile -i vtasks/$1/translations/it/LC_MESSAGES/$1.po -o vtasks/$1/translations/it/LC_MESSAGES/$1.mo
-    pybabel compile -i vtasks/$1/translations/pt/LC_MESSAGES/$1.po -o vtasks/$1/translations/pt/LC_MESSAGES/$1.mo
+    pybabel compile -i vtaskr/$1/translations/de/LC_MESSAGES/$1.po -o vtaskr/$1/translations/de/LC_MESSAGES/$1.mo
+    pybabel compile -i vtaskr/$1/translations/en/LC_MESSAGES/$1.po -o vtaskr/$1/translations/en/LC_MESSAGES/$1.mo
+    pybabel compile -i vtaskr/$1/translations/es/LC_MESSAGES/$1.po -o vtaskr/$1/translations/es/LC_MESSAGES/$1.mo
+    pybabel compile -i vtaskr/$1/translations/fr/LC_MESSAGES/$1.po -o vtaskr/$1/translations/fr/LC_MESSAGES/$1.mo
+    pybabel compile -i vtaskr/$1/translations/it/LC_MESSAGES/$1.po -o vtaskr/$1/translations/it/LC_MESSAGES/$1.mo
+    pybabel compile -i vtaskr/$1/translations/pt/LC_MESSAGES/$1.po -o vtaskr/$1/translations/pt/LC_MESSAGES/$1.mo
 else 
     echo "No domain given";
 fi

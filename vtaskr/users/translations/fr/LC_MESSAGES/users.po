@@ -1,0 +1,142 @@
+# French translations for PROJECT.
+# Copyright (C) 2023 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2023.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2023-03-01 09:40+0100\n"
+"PO-Revision-Date: 2023-03-01 13:29+0100\n"
+"Last-Translator: \n"
+"Language-Team: fr <LL@li.org>\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Generated-By: Babel 2.11.0\n"
+"X-Generator: Poedit 3.2.2\n"
+
+#: vtaskr/users/hmi/flask/email_content.py:25
+msgid "Registration Success {first_name}"
+msgstr "Inscription réussie {first_name}"
+
+#: vtaskr/users/hmi/flask/email_content.py:35
+msgid "Enjoy !"
+msgstr "Commencez !"
+
+#: vtaskr/users/hmi/flask/email_content.py:47
+msgid "Welcome {first_name} !"
+msgstr "Bienvenue {first_name}  !"
+
+#: vtaskr/users/hmi/flask/email_content.py:48
+msgid "Welcome in your new to do app management."
+msgstr "Bienvenue dans votre nouvelle application de gestion de tâches."
+
+#: vtaskr/users/hmi/flask/email_content.py:49
+msgid "As of now, you can login and start to create your tasks !"
+msgstr ""
+"Vous pouvez dès maintenant commencer à créer vos listes de tâches !"
+
+#: vtaskr/users/hmi/flask/email_content.py:70
+msgid "New login with your account"
+msgstr "Nouvelle connexion à votre compte"
+
+#: vtaskr/users/hmi/flask/email_content.py:95
+#: vtaskr/users/hmi/flask/email_content.py:148
+#: vtaskr/users/hmi/flask/email_content.py:207
+#: vtaskr/users/hmi/flask/email_content.py:266
+msgid "Hi {first_name} !"
+msgstr "Bonjour {first_name} !"
+
+#: vtaskr/users/hmi/flask/email_content.py:96
+msgid ""
+"A login attempt was registered, if it's not you, please change your "
+"password."
+msgstr ""
+"Une tentative de connexion a été enregistrée, si ce n'était pas vous, "
+"changez votre mot de passe dès que possible."
+
+#: vtaskr/users/hmi/flask/email_content.py:100
+msgid "To login, please copy/paste the following code:"
+msgstr "Pour vous connecter, copiez/collez le code ci-dessous:"
+
+#: vtaskr/users/hmi/flask/email_content.py:101
+msgid ""
+"This code stay valid only three minutes, after,you need to make a new "
+"login attempt."
+msgstr ""
+"Ce code restera valide seulement 3 minutes, ensuite, il vous faudra "
+"recommencer."
+
+#: vtaskr/users/hmi/flask/email_content.py:125
+#: vtaskr/users/hmi/flask/email_content.py:184
+#: vtaskr/users/hmi/flask/email_content.py:244
+msgid "Change your Email"
+msgstr "Changer d'email"
+
+#: vtaskr/users/hmi/flask/email_content.py:149
+#: vtaskr/users/hmi/flask/email_content.py:208
+msgid "You request to change your email account."
+msgstr "Vous avez demandé à changer l'email de votre compte."
+
+#: vtaskr/users/hmi/flask/email_content.py:150
+msgid "We have sent to you an email, in your new email account."
+msgstr "Nous vous avons envoyé un email sur votre nouvelle adresse."
+
+#: vtaskr/users/hmi/flask/email_content.py:151
+msgid ""
+"Click on the email sent to your new account andcopy/paste the following "
+"code into the form:"
+msgstr ""
+"Cliquez sur l'email envoyé sur votre nouveau compte et saisissez "
+"ensuite le code fourni ci-dessous:"
+
+#: vtaskr/users/hmi/flask/email_content.py:155
+msgid "This old email will be remove of your account after proceed."
+msgstr ""
+"Cet ancien email sera supprimé de votre compte une fois le nouveau "
+"validé."
+
+#: vtaskr/users/hmi/flask/email_content.py:201
+#: vtaskr/users/hmi/flask/email_content.py:260
+msgid "Change now"
+msgstr "Changer maintenant"
+
+#: vtaskr/users/hmi/flask/email_content.py:209
+msgid ""
+"We sent you an email, to your old email account with a code required to "
+"complete the process."
+msgstr ""
+"Nous vous avons envoyé un email sur votre ancienne adresse avec un code "
+"nécessaire pour terminer la procédure."
+
+#: vtaskr/users/hmi/flask/email_content.py:213
+#: vtaskr/users/hmi/flask/email_content.py:269
+msgid "Click on the following button to proceed"
+msgstr "Cliquez sur le bouton suivant pour continuer"
+
+#: vtaskr/users/hmi/flask/email_content.py:214
+msgid "Click on the following link to proceed"
+msgstr "Cliquez sur le lien suivant pour continuer"
+
+#: vtaskr/users/hmi/flask/email_content.py:215
+#: vtaskr/users/hmi/flask/email_content.py:270
+msgid "(link available only 3 minutes)"
+msgstr "(lien valable seulement 3 minutes)"
+
+#: vtaskr/users/hmi/flask/email_content.py:216
+msgid "This old email will be removed of your account after proceed."
+msgstr ""
+"Cet ancienne adresse email sera retirée de votre compte à la fin du "
+"processus de modification."
+
+#: vtaskr/users/hmi/flask/email_content.py:267
+msgid "You request us to change your account password."
+msgstr "Vous avez demandé à changer le mot de passe de votre compte."
+
+#: vtaskr/users/hmi/flask/email_content.py:268
+msgid "Follow the link below to proceed"
+msgstr "Suivez le lien suivant pour continuer"

@@ -1,7 +1,6 @@
-from vtasks.users import RequestChange, RequestType, User
-from vtasks.users.persistence import RequestChangeDB
-
 from tests import BaseTestCase
+from vtaskr.users import RequestChange, RequestType, User
+from vtaskr.users.persistence import RequestChangeDB
 
 URL_API = "/api/v1"
 

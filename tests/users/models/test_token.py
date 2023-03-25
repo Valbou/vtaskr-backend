@@ -3,9 +3,10 @@ from unittest import TestCase
 
 from faker import Faker
 from pytz import utc
-from vtasks.base.config import TOKEN_TEMP_VALIDITY, TOKEN_VALIDITY
-from vtasks.secutity.utils import get_id
-from vtasks.users import Token
+
+from vtaskr.base.config import TOKEN_TEMP_VALIDITY, TOKEN_VALIDITY
+from vtaskr.secutity.utils import get_id
+from vtaskr.users import Token
 
 
 class TestToken(TestCase):

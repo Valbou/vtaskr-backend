@@ -1,7 +1,7 @@
 from gettext import GNUTranslations
 from unittest import TestCase
 
-from vtasks.babel.translations import (
+from vtaskr.babel.translations import (
     TranslationService,
     TranslationSession,
     TranslationsInvalidDomainError,
@@ -33,7 +33,7 @@ class TestTranslationService(TestCase):
     def test_path_to_translations(self):
         self.translation.add_domains("test")
         self.assertEqual(
-            self.translation._path_to_translations("test"), "vtasks/test/translations"
+            self.translation._path_to_translations("test"), "vtaskr/test/translations"
         )
 
     def test_get_translation(self):
@@ -62,7 +62,7 @@ class TestTranslationSession(TestCase):
     def setUp(self):
         super().setUp()
         self.trans = TranslationSession(
-            domain="users", lang="fr", path="vtasks/users/translations"
+            domain="users", lang="fr", path="vtaskr/users/translations"
         )
 
     def test_trans_session(self):

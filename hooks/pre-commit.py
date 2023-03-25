@@ -76,7 +76,7 @@ if __name__ == "__main__":
         ("Black", black_commands),
         ("Flake8", flake_commands),
         ("Bandit", bandit_commands),
-        ("Unittest", unittest_commands, "vtasks"),
+        ("Unittest", unittest_commands, "vtaskr"),
     ]
 
     exit_score: int = 0

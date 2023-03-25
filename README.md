@@ -20,10 +20,10 @@ Translations were made automatically by https://www.deepl.com and https://poedit
 ```bash
 apt install git python3-venv
 
-python3 -m venv vtasks-project
-cd vtasks-project
-git clone git@github.com:Valbou/vtasks-backend.git
-cd vtasks-backend
+python3 -m venv vtaskr-project
+cd vtaskr-project
+git clone git@github.com:Valbou/vtaskr-backend.git
+cd vtaskr-backend
 ```
 
 ### Install dependencies
@@ -41,7 +41,7 @@ chmod +x trad_*
 
 ### To run flask
 ```bash
-flask --app vtasks run
+flask --app vtaskr run
 ```
 
 ## Technical informations for developpers

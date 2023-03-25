@@ -1,6 +1,5 @@
-from vtasks.base.config import AVAILABLE_LANGUAGES
-
 from tests import BaseTestCase, FlaskTemplateCapture
+from vtaskr.base.config import AVAILABLE_LANGUAGES
 
 
 class TestBaseRoutes(BaseTestCase):
@@ -12,7 +11,7 @@ class TestBaseRoutes(BaseTestCase):
             self.assertTemplateUsed("home.html", recorder.get_recorded_templates())
 
         self.assertIn("<title>vTasks API</title>", response.text)
-        self.assertIn("vtasks-logo-light.svg", response.text)
+        self.assertIn("vtaskr-logo-light.svg", response.text)
 
     def test_languages(self):
         response = self.client.get("/languages")

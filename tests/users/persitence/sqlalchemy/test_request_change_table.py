@@ -1,10 +1,9 @@
 from datetime import datetime, timedelta
 
-from vtasks.base.config import REQUEST_DAYS_HISTORY
-from vtasks.users.models import RequestChange, RequestType
-from vtasks.users.persistence import RequestChangeDB
-
 from tests import BaseTestCase
+from vtaskr.base.config import REQUEST_DAYS_HISTORY
+from vtaskr.users.models import RequestChange, RequestType
+from vtaskr.users.persistence import RequestChangeDB
 
 
 class TestRequestChangeTable(BaseTestCase):

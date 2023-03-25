@@ -1,0 +1,34 @@
+from datetime import timedelta
+
+from flask import current_app, g
+
+from vtaskr.flask.utils import ResponseAPI
+from vtaskr.redis import rate_limited
+from vtaskr.users.hmi.flask.decorators import login_required
+from vtaskr.users.hmi.user_service import UserService
+
+from .. import V1, logger, users_bp
+
+
+@users_bp.route(f"{V1}/users/logout", methods=["DELETE"])
+@login_required(logger)
+@rate_limited(logger=logger, hit=6, period=timedelta(seconds=60))
+def logout():
+    """
+    URL to logout a logged in user - Token required
+
+    Need a valid token
+    Return a 204
+    """
+    try:
+        with current_app.sql.get_session() as session:
+            auth_service = UserService(session, testing=current_app.testing)
+            if auth_service.logout(g.token):
+                data = {}
+                return ResponseAPI.get_response(data, 204)
+            else:
+                return ResponseAPI.get_error_response("Unauthorized", 403)
+
+    except Exception as e:
+        logger.error(str(e))
+        return ResponseAPI.get_error_response("Internal error", 500)
