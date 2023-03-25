@@ -27,7 +27,7 @@ def isort_commands(interpreter: str, folder: Path) -> list:
     return [
         interpreter,
         "-m",
-        "black",
+        "isort",
         # "--check",  # Option to avoid write
         folder,
     ]
