@@ -5,6 +5,8 @@ from typing import List, Optional, Union
 from smtplib import SMTP_SSL
 from email.message import EmailMessage
 
+from .base_email import AbstractBaseEmailContent
+
 
 class NoEmailContentError(Exception):
     pass
@@ -77,6 +79,20 @@ class SMTPEmail:
         server.sendmail(self.from_email, self.to_emails, self.message.as_string())
         server.quit()
 
+    @classmethod
+    def from_base_email_content(
+        cls, email: AbstractBaseEmailContent, from_email: Optional[str] = None
+    ):
+        from_email = from_email or os.getenv("DEFAULT_SMTP_USER")
+        return SMTPEmail(
+            from_email,
+            email.to,
+            email.subject,
+            email.text,
+            email.html,
+            email.cc,
+        )
+
 
 class MultiSMTPEmail:
     def __init__(self) -> None:
@@ -98,3 +114,7 @@ class MultiSMTPEmail:
                 email.from_email, email.to_emails, email.message.as_string()
             )
         server.quit()
+
+    @property
+    def has_messages(self):
+        return bool(self.emails)
