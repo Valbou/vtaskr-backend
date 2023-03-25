@@ -48,4 +48,3 @@ def user():
     Need an expiring token
     Return a jsonify user updated
     """
-

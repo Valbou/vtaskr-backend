@@ -9,7 +9,7 @@ ph = PasswordHasher()
 
 
 class User(Base):
-    __tablename__ = 'users'
+    __tablename__ = "users"
     id = Column(Integer, primary_key=True)
     pseudo = Column(String(120), unique=False)
     email = Column(String(250), unique=True)
@@ -29,5 +29,4 @@ class User(Base):
         self.email = email
 
     def __repr__(self):
-        return f'<User {self.name!r}>'
-
+        return f"<User {self.name!r}>"
