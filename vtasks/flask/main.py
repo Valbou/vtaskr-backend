@@ -8,7 +8,7 @@ from vtasks.users.hmi.flask import users_bp
 from vtasks.tasks.hmi.flask import tasks_bp
 
 
-def create_flask_app(testing: bool = False):
+def create_flask_app(testing: bool = False) -> Flask:
     app = Flask(__name__)
 
     app.testing = testing
