@@ -38,7 +38,7 @@ class TestUserAdapter(BaseTestCase):
         )
 
     def test_complete_crud_user(self):
-        with self.app.sql_service.get_session() as session:
+        with self.app.sql.get_session() as session:
             self.assertIsNone(self.user_db.load(session, self.user.id))
             self.user_db.save(session, self.user)
             self.assertTrue(self.user_db.exists(session, self.user.id))
@@ -52,7 +52,7 @@ class TestUserAdapter(BaseTestCase):
             self.assertFalse(self.user_db.exists(session, self.user.id))
 
     def test_user_find_login(self):
-        with self.app.sql_service.get_session() as session:
+        with self.app.sql.get_session() as session:
             self.user_db.save(session, self.user)
             user = self.user_db.find_login(session, email=self.user.email)
             self.assertEqual(user.first_name, self.user.first_name)

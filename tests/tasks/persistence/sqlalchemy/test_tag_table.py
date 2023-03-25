@@ -34,7 +34,7 @@ class TestTagAdapter(BaseTestCase):
         )
 
     def test_complete_crud_tag(self):
-        with self.app.sql_service.get_session() as session:
+        with self.app.sql.get_session() as session:
             self.assertIsNone(self.tag_db.load(session, self.tag.id))
             self.tag_db.save(session, self.tag)
             self.assertTrue(self.tag_db.exists(session, self.tag.id))

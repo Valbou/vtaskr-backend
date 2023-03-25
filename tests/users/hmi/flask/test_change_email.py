@@ -20,7 +20,7 @@ class TestUserV1ChangeEmail(BaseTestCase):
             f"{URL_API}/users/me/change-email", json=user_data, headers=headers
         )
         self.assertEqual(response.status_code, 200)
-        with self.app.sql_service.get_session() as session:
+        with self.app.sql.get_session() as session:
             request_change = self.request_change_db.find_request(
                 session, self.user.email
             )
@@ -81,7 +81,7 @@ class TestUserV1NewEmail(BaseTestCase):
         self.client.post(
             f"{URL_API}/users/me/change-email", json=user_data, headers=headers
         )
-        with self.app.sql_service.get_session() as session:
+        with self.app.sql.get_session() as session:
             return self.request_change_db.find_request(session, self.user.email)
 
     def test_set_new_email(self):
@@ -99,7 +99,7 @@ class TestUserV1NewEmail(BaseTestCase):
             f"{URL_API}/new-email", json=user_data, headers=self.headers
         )
         self.assertEqual(response.status_code, 200)
-        with self.app.sql_service.get_session() as session:
+        with self.app.sql.get_session() as session:
             user = self.user_db.find_login(session, self.new_email)
             self.assertIsInstance(user, User)
             self.assertEqual(user.email, self.new_email)

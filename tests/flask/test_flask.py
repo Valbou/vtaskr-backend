@@ -11,5 +11,5 @@ class TestCreateFlaskApp(TestCase):
     def test_create_app(self):
         app = create_flask_app(testing=True)
         self.assertIsInstance(app, Flask)
-        self.assertIsInstance(app.sql_service, SQLService)
-        self.assertIsInstance(app.nosql_service, NoSQLService)
+        self.assertIsInstance(app.sql, SQLService)
+        self.assertIsInstance(app.nosql, NoSQLService)
