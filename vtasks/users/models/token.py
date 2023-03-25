@@ -1,5 +1,5 @@
 from uuid import uuid4
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Optional
 from dataclasses import dataclass
 from hashlib import sha256
@@ -37,12 +37,17 @@ class Token:
             return True
         return False
 
-    def update_last_activity(self):
+    def update_last_activity(self) -> datetime:
         """Token validity is automaticaly extended"""
         self.last_activity_at = datetime.now()
+        return self.last_activity_at
 
     def __str__(self) -> str:
         return f"Token {self.sha_token}"
 
     def __repr__(self):
         return f"<Token {self.sha_token!r}>"
+
+    @classmethod
+    def expired_before(cls) -> datetime:
+        return datetime.now() - timedelta(seconds=TOKEN_VALIDITY)
