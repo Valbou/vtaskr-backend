@@ -95,6 +95,8 @@ class TestUser(TestCase):
         self.assertEqual(data.pop("email"), self.user.email)
         self.assertEqual(data.pop("created_at"), str(self.user.created_at))
         self.assertEqual(data.pop("last_login_at"), str(self.user.last_login_at))
+        self.assertEqual(data.pop("locale"), str(self.user.locale))
+        self.assertEqual(data.pop("timezone"), str(self.user.timezone))
         self.assertIsNone(data.pop("password", None))
         self.assertIsNone(data.pop("hash_password", None))
         self.assertEqual(len(data), 0)
