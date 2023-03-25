@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from sqlalchemy import select, update, delete
+from sqlalchemy import select, update, delete, or_, and_
 
 from vtasks.users.persistence.ports import AbstractTokenPort
 from vtasks.users.models import Token
@@ -36,7 +36,15 @@ class TokenDB(AbstractTokenPort):
         return True
 
     def clean_expired(self, session: Session, autocommit: bool = True) -> int:
-        stmt = delete(Token).where(Token.last_activity_at < Token.expired_before())
+        stmt = delete(Token).where(
+            or_(
+                Token.last_activity_at < Token.expired_before(),
+                and_(
+                    Token.created_at < Token.expired_temp_before(),
+                    Token.temp == True,  # noqa: E712
+                ),
+            )
+        )
         result = session.execute(stmt)
         if autocommit:
             session.commit()

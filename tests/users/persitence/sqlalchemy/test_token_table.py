@@ -1,10 +1,10 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from hashlib import sha256
 
 from tests import BaseTestCase
 
-from vtasks.users.models import User, Token
+from vtasks.users.models import User, Token, TOKEN_VALIDITY, TOKEN_TEMP_VALIDITY
 from vtasks.users.persistence import UserDB, TokenDB
 
 
@@ -71,7 +71,54 @@ class TestTokenAdapter(BaseTestCase):
             self.assertLess(last_activity, self.token.last_activity_at)
 
     def test_clean_expired(self):
-        token = Token(self.user.id, created_at=datetime(year=1987, month=1, day=1))
+        token = Token(
+            self.user.id,
+            created_at=datetime.now() - timedelta(seconds=TOKEN_VALIDITY * 2),
+        )
+        with self.app.sql_service.get_session() as session:
+            self.token_db.save(session, token)
+            self.assertTrue(self.token_db.exists(session, token.id))
+            self.token_db.clean_expired(session)
+            self.assertFalse(self.token_db.exists(session, token.id))
+
+    def test_not_clean_expire_soon_not_temp(self):
+        token = Token(
+            self.user.id,
+            temp=False,
+            created_at=datetime.now() - timedelta(seconds=TOKEN_VALIDITY / 2),
+        )
+        with self.app.sql_service.get_session() as session:
+            self.token_db.save(session, token)
+            self.assertTrue(self.token_db.exists(session, token.id))
+            self.token_db.clean_expired(session)
+            self.assertTrue(self.token_db.exists(session, token.id))
+
+    def test_not_clean_not_expired_not_temp(self):
+        token = Token(self.user.id, temp=False, created_at=datetime.now())
+        with self.app.sql_service.get_session() as session:
+            self.token_db.save(session, token)
+            self.assertTrue(self.token_db.exists(session, token.id))
+            self.token_db.clean_expired(session)
+            self.assertTrue(self.token_db.exists(session, token.id))
+
+    def test_not_clean_not_expired_temp(self):
+        token = Token(
+            self.user.id,
+            temp=True,
+            created_at=datetime.now() - timedelta(seconds=TOKEN_TEMP_VALIDITY / 2),
+        )
+        with self.app.sql_service.get_session() as session:
+            self.token_db.save(session, token)
+            self.assertTrue(self.token_db.exists(session, token.id))
+            self.token_db.clean_expired(session)
+            self.assertTrue(self.token_db.exists(session, token.id))
+
+    def test_temp_clean_expired(self):
+        token = Token(
+            self.user.id,
+            temp=True,
+            created_at=datetime.now() - timedelta(seconds=TOKEN_TEMP_VALIDITY * 2),
+        )
         with self.app.sql_service.get_session() as session:
             self.token_db.save(session, token)
             self.assertTrue(self.token_db.exists(session, token.id))

@@ -83,5 +83,9 @@ class Token:
         return f"<Token {self.sha_token!r}>"
 
     @classmethod
+    def expired_temp_before(cls) -> datetime:
+        return datetime.now(utc) - timedelta(seconds=TOKEN_TEMP_VALIDITY)
+
+    @classmethod
     def expired_before(cls) -> datetime:
         return datetime.now(utc) - timedelta(seconds=TOKEN_VALIDITY)
