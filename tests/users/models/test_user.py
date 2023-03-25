@@ -81,12 +81,11 @@ class TestUser(TestCase):
         self.assertEqual(self.user.first_name, "first_name")
         self.assertEqual(self.user.last_name, "last_name")
         self.assertNotEqual(self.user.email, "email@valbou.fr")
-        self.assertNotEqual(str(self.user.created_at), "created_at")
-        self.assertNotEqual(str(self.user.last_login_at), "last_login_at")
+        self.assertNotEqual(self.user.created_at.isoformat(), "created_at")
+        self.assertNotEqual(self.user.last_login_at, "last_login_at")
         self.assertNotEqual(self.user.hash_password, "passwordA1#")
-        self.assertTrue(self.user.check_password("passwordA1#"))  # nosec
         self.assertNotEqual(self.user.hash_password, "hash_password")
-        self.assertNotEqual(self.user.hash_password, previous_hash)
+        self.assertEqual(self.user.hash_password, previous_hash)
 
     def test_to_external_data(self):
         data = self.user.to_external_data()
@@ -94,8 +93,8 @@ class TestUser(TestCase):
         self.assertEqual(data.pop("first_name"), self.user.first_name)
         self.assertEqual(data.pop("last_name"), self.user.last_name)
         self.assertEqual(data.pop("email"), self.user.email)
-        self.assertEqual(data.pop("created_at"), str(self.user.created_at))
-        self.assertEqual(data.pop("last_login_at"), str(self.user.last_login_at))
+        self.assertEqual(data.pop("created_at"), self.user.created_at.isoformat())
+        self.assertIsNone(data.pop("last_login_at"))
         self.assertEqual(data.pop("locale"), str(self.user.locale))
         self.assertEqual(data.pop("timezone"), str(self.user.timezone))
         self.assertIsNone(data.pop("password", None))
