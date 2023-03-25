@@ -12,7 +12,7 @@ body {
   height: 100vh;
   background-color: var(--dark);
   color: var(--light);
-  font-family: Ubuntu, Roboto, "Segoe UI", "Droid Sans", "Helvetica Neue", "sans-serif";
+  font-family: Ubuntu, Roboto, "Segoe UI", "Droid Sans", "Helvetica Neue", "Verdana", "sans-serif";
 
   display: flex;
   flex-flow: column;

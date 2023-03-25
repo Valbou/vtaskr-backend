@@ -88,7 +88,7 @@ class BaseTestCase(TestCase):
         self.create_user()
         with self.app.sql_service.get_session() as session:
             auth_service = UserService(session, testing=True)
-            token = auth_service.authenticate(
+            token, _ = auth_service.authenticate(
                 email=self.user.email, password=self.password
             )
         headers = {

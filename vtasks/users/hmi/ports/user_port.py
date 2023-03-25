@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Optional
+from typing import Optional, Tuple
 
 from vtasks.users import User
 
@@ -10,7 +10,9 @@ class AbstractUserPort(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    def authenticate(self, email: str, password: str) -> Optional[str]:
+    def authenticate(
+        self, email: str, password: str
+    ) -> Tuple[Optional[str], Optional[User]]:
         raise NotImplementedError()
 
     @abstractmethod
