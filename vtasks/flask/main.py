@@ -2,6 +2,7 @@ import os
 from flask import Flask
 
 from vtasks.sqlalchemy.database import SQLService
+from vtasks.redis.database import NoSQLService
 
 from vtasks.base.hmi.flask import base_bp
 from vtasks.users.hmi.flask import users_bp
@@ -19,6 +20,7 @@ def create_flask_app(testing: bool = False) -> Flask:
 
     app.jinja_options = {"extensions": ["jinja2.ext.i18n"]}
     app.sql_service = SQLService(testing)
+    app.nosql_service = NoSQLService(testing)
     app.timezone = os.getenv("TIMEZONE", "Europe/Paris")
     app.locale = os.getenv("LOCALE", "fr_FR")
 
