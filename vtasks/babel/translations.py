@@ -66,7 +66,9 @@ class TranslationService:
         self._check_valid_language(lang)
         return TranslationSession(domain, lang, self._path_to_translations(domain))
 
-    def get_translation(self, domain: str, locale: Union[Locale, str]) -> GNUTranslations:
+    def get_translation(
+        self, domain: str, locale: Union[Locale, str]
+    ) -> GNUTranslations:
         lang = self._locale_to_lang(locale)
         self._check_valid_language(lang)
         return translation(

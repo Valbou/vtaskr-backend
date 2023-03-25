@@ -1,5 +1,5 @@
 from typing import List
-from gettext import gettext as _
+from gettext import GNUTranslations
 
 from flask import render_template
 
@@ -10,12 +10,13 @@ from vtasks.notifications import AbstractBaseEmailContent
 class RegisterEmail(AbstractBaseEmailContent):
     logo = EMAIL_LOGO
 
-    def __init__(self, to: List[str], first_name: str) -> None:
+    def __init__(self, trans: GNUTranslations, to: List[str], first_name: str) -> None:
+        self._ = trans.gettext
         self.html = render_template(
             "emails/simple_text.html", **self.email_context(first_name)
         )
         self.to_emails = to
-        self.text = _(
+        self.text = self._(
             """
                 Welcome {first_name} !
                 Welcome in your new to do app. As of now, you can start to create tasks !
@@ -23,16 +24,18 @@ class RegisterEmail(AbstractBaseEmailContent):
         ).format(first_name=first_name)
 
     def email_context(self, first_name: str) -> dict:
-        title = _("Registration Success {first_name}").format(first_name=first_name)
-        content_title = _("Welcome {first_name} !").format(first_name=first_name)
-        content = _(
+        title = self._("Registration Success {first_name}").format(
+            first_name=first_name
+        )
+        content_title = self._("Welcome {first_name} !").format(first_name=first_name)
+        content = self._(
             """
                 <p>
                     Welcome in your new to do app. As of now, you can start to create tasks !
                 </p>
             """
         )
-        call_to_action = _("Enjoy !")
+        call_to_action = self._("Enjoy !")
 
         context = {
             "logo": self.logo,
@@ -47,12 +50,15 @@ class RegisterEmail(AbstractBaseEmailContent):
 class LoginEmail(AbstractBaseEmailContent):
     logo = EMAIL_LOGO
 
-    def __init__(self, to: List[str], first_name: str, code: str) -> None:
+    def __init__(
+        self, trans: GNUTranslations, to: List[str], first_name: str, code: str
+    ) -> None:
+        self._ = trans.gettext
         self.html = render_template(
             "emails/simple_text.html", **self.email_context(first_name, code)
         )
         self.to_emails = to
-        self.text = _(
+        self.text = self._(
             """
 Hi {first_name} !
 To finish login process (2FA), please copy/paste the following code: {code}
@@ -61,9 +67,9 @@ This code stay valid only three minutes, after, you need to make a new login att
         ).format(first_name=first_name, code=code)
 
     def email_context(self, first_name: str, code: str) -> dict:
-        title = _("New login with your account")
-        content_title = _("Hi {first_name} !").format(first_name=first_name)
-        content = _(
+        title = self._("New login with your account")
+        content_title = self._("Hi {first_name} !").format(first_name=first_name)
+        content = self._(
             """
                 <p>
                     To finish login process (2FA), please copy/paste the following code:
@@ -91,12 +97,15 @@ This code stay valid only three minutes, after, you need to make a new login att
 class ChangeEmailToOldEmail(AbstractBaseEmailContent):
     logo = EMAIL_LOGO
 
-    def __init__(self, to: List[str], first_name: str, code: str) -> None:
+    def __init__(
+        self, trans: GNUTranslations, to: List[str], first_name: str, code: str
+    ) -> None:
+        self._ = trans.gettext
         self.html = render_template(
             "emails/simple_text.html", **self.email_context(first_name, code)
         )
         self.to_emails = to
-        self.text = _(
+        self.text = self._(
             """
 Hi {first_name} !
 You request us to change your email account.
@@ -108,9 +117,9 @@ This old email will be remove of your account after proceed.
         ).format(first_name=first_name, code=code)
 
     def email_context(self, first_name: str, code: str) -> dict:
-        title = _("Change your Email").format(first_name=first_name)
-        content_title = _("Hi {first_name} !").format(first_name=first_name)
-        content = _(
+        title = self._("Change your Email").format(first_name=first_name)
+        content_title = self._("Hi {first_name} !").format(first_name=first_name)
+        content = self._(
             """
                 <p>
                     You request us to change your email account.
@@ -138,7 +147,10 @@ This old email will be remove of your account after proceed.
 class ChangeEmailToNewEmail(AbstractBaseEmailContent):
     logo = EMAIL_LOGO
 
-    def __init__(self, to: List[str], first_name: str, hash: str) -> None:
+    def __init__(
+        self, trans: GNUTranslations, to: List[str], first_name: str, hash: str
+    ) -> None:
+        self._ = trans.gettext
         change_email_link = (
             f"{LINK_TO_CHANGE_EMAIL}&hash={hash}&email={to}"
             if "?" in LINK_TO_CHANGE_EMAIL
@@ -150,7 +162,7 @@ class ChangeEmailToNewEmail(AbstractBaseEmailContent):
             **self.email_context(first_name, change_email_link),
         )
         self.to_emails = to
-        self.text = _(
+        self.text = self._(
             """
 Hi {first_name} !
 You request us to change your email account.
@@ -161,9 +173,9 @@ Follow the link below to proceed:
         ).format(first_name=first_name, change_email_link=change_email_link)
 
     def email_context(self, first_name: str, change_email_link: str) -> dict:
-        title = _("Change your Email").format(first_name=first_name)
-        content_title = _("Hi {first_name} !").format(first_name=first_name)
-        content = _(
+        title = self._("Change your Email").format(first_name=first_name)
+        content_title = self._("Hi {first_name} !").format(first_name=first_name)
+        content = self._(
             """
                 <p>
                     You request us to change your email account.
@@ -180,7 +192,7 @@ Follow the link below to proceed:
             "title": title,
             "content_title": content_title,
             "content": content,
-            "call_to_action": _("Change now"),
+            "call_to_action": self._("Change now"),
             "call_to_action_link": change_email_link,
         }
         return context
@@ -189,7 +201,10 @@ Follow the link below to proceed:
 class ChangePasswordEmail(AbstractBaseEmailContent):
     logo = EMAIL_LOGO
 
-    def __init__(self, to: List[str], first_name: str, hash: str) -> None:
+    def __init__(
+        self, trans: GNUTranslations, to: List[str], first_name: str, hash: str
+    ) -> None:
+        self._ = trans.gettext
         change_email_link = (
             f"{LINK_TO_CHANGE_PASSWORD}&hash={hash}&email={to}"
             if "?" in LINK_TO_CHANGE_PASSWORD
@@ -201,7 +216,7 @@ class ChangePasswordEmail(AbstractBaseEmailContent):
             **self.email_context(first_name, change_email_link),
         )
         self.to_emails = to
-        self.text = _(
+        self.text = self._(
             """
 Hi {first_name} !
 You request us to change your account password.
@@ -211,9 +226,9 @@ Follow the link below to proceed:
         ).format(first_name=first_name, change_email_link=change_email_link)
 
     def email_context(self, first_name: str, change_email_link: str) -> dict:
-        title = _("Change your Email").format(first_name=first_name)
-        content_title = _("Hi {first_name} !").format(first_name=first_name)
-        content = _(
+        title = self._("Change your Email").format(first_name=first_name)
+        content_title = self._("Hi {first_name} !").format(first_name=first_name)
+        content = self._(
             """
                 <p>
                     You request us to change your account password.
@@ -227,7 +242,7 @@ Follow the link below to proceed:
             "title": title,
             "content_title": content_title,
             "content": content,
-            "call_to_action": _("Change now"),
+            "call_to_action": self._("Change now"),
             "call_to_action_link": change_email_link,
         }
         return context

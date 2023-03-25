@@ -19,10 +19,12 @@ class TestRegisterEmail(BaseTestCase):
     def test_email_object(self):
         with self.app.app_context():
             with FlaskTemplateCapture(self.app) as recorder:
-                email = RegisterEmail(
-                    to=[self.to],
-                    first_name=self.first_name,
-                )
+                with self.app.trans.get_translation_session("users", "en") as trans:
+                    email = RegisterEmail(
+                        trans=trans,
+                        to=[self.to],
+                        first_name=self.first_name,
+                    )
                 self.assertTemplateUsed(
                     "emails/simple_text.html", recorder.get_recorded_templates()
                 )
@@ -42,11 +44,13 @@ class TestLoginEmail(BaseTestCase):
     def test_email_object(self):
         with self.app.app_context():
             with FlaskTemplateCapture(self.app) as recorder:
-                email = LoginEmail(
-                    to=[self.to],
-                    first_name=self.first_name,
-                    code=self.code,
-                )
+                with self.app.trans.get_translation_session("users", "en") as trans:
+                    email = LoginEmail(
+                        trans=trans,
+                        to=[self.to],
+                        first_name=self.first_name,
+                        code=self.code,
+                    )
                 self.assertTemplateUsed(
                     "emails/simple_text.html", recorder.get_recorded_templates()
                 )
@@ -68,11 +72,13 @@ class TestChangeEmailOldEmail(BaseTestCase):
     def test_email_object(self):
         with self.app.app_context():
             with FlaskTemplateCapture(self.app) as recorder:
-                email = ChangeEmailToOldEmail(
-                    to=[self.to],
-                    first_name=self.first_name,
-                    code=self.code,
-                )
+                with self.app.trans.get_translation_session("users", "en") as trans:
+                    email = ChangeEmailToOldEmail(
+                        trans=trans,
+                        to=[self.to],
+                        first_name=self.first_name,
+                        code=self.code,
+                    )
                 self.assertTemplateUsed(
                     "emails/simple_text.html", recorder.get_recorded_templates()
                 )
@@ -94,11 +100,13 @@ class TestChangeEmailNewEmail(BaseTestCase):
     def test_email_object(self):
         with self.app.app_context():
             with FlaskTemplateCapture(self.app) as recorder:
-                email = ChangeEmailToNewEmail(
-                    to=[self.to],
-                    first_name=self.first_name,
-                    hash=self.hash,
-                )
+                with self.app.trans.get_translation_session("users", "en") as trans:
+                    email = ChangeEmailToNewEmail(
+                        trans=trans,
+                        to=[self.to],
+                        first_name=self.first_name,
+                        hash=self.hash,
+                    )
                 self.assertTemplateUsed(
                     "emails/simple_text.html", recorder.get_recorded_templates()
                 )
@@ -122,11 +130,13 @@ class TestChangePasswordEmail(BaseTestCase):
     def test_email_object(self):
         with self.app.app_context():
             with FlaskTemplateCapture(self.app) as recorder:
-                email = ChangePasswordEmail(
-                    to=[self.to],
-                    first_name=self.first_name,
-                    hash=self.hash,
-                )
+                with self.app.trans.get_translation_session("users", "en") as trans:
+                    email = ChangePasswordEmail(
+                        trans=trans,
+                        to=[self.to],
+                        first_name=self.first_name,
+                        hash=self.hash,
+                    )
                 self.assertTemplateUsed(
                     "emails/simple_text.html", recorder.get_recorded_templates()
                 )
