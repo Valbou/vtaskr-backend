@@ -31,13 +31,13 @@ jobs:
         pip install pytest
     - name: Lint with black
       run: |
-        python -m black vtasks
+        black vtasks
     - name: Lint with isort
       run: |
-        python -m isort vtasks
+        isort vtasks
     - name: Lint with flake8
       run: |
-        python -m flake8 vtasks
+        flake8 vtasks
     - name: Test with pytest
       run: |
         pytest -v
