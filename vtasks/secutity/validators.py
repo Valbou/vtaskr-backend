@@ -1,6 +1,6 @@
 from gettext import gettext as _
-from typing import List, Optional
 from string import ascii_lowercase, ascii_uppercase, digits, punctuation
+from typing import List, Optional
 
 from email_validator import validate_email
 

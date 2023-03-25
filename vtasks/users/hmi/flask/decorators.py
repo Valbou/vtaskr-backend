@@ -1,8 +1,8 @@
+from functools import wraps
 from logging import Logger
 from typing import Callable
-from functools import wraps
 
-from flask import current_app, request, g
+from flask import current_app, g, request
 
 from vtasks.flask.utils import ResponseAPI, get_bearer_token
 from vtasks.users.hmi.user_service import UserService

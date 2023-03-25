@@ -1,7 +1,6 @@
-from flask import render_template, Blueprint, jsonify
+from flask import Blueprint, jsonify, render_template
 
 from vtasks.base.config import AVAILABLE_LANGUAGES
-
 
 base_bp = Blueprint(
     name="base_bp",

@@ -1,5 +1,5 @@
-from typing import List, Tuple
 from gettext import GNUTranslations
+from typing import List, Tuple
 
 from flask import render_template
 

@@ -1,21 +1,21 @@
 from datetime import datetime
+
 from pytz import utc
-
-from sqlalchemy.orm import relationship
 from sqlalchemy import (
-    Table,
-    Column,
-    String,
-    DateTime,
-    ForeignKey,
-    types,
-    Dialect,
     Boolean,
+    Column,
+    DateTime,
+    Dialect,
+    ForeignKey,
     Interval,
+    String,
+    Table,
+    types,
 )
+from sqlalchemy.orm import relationship
 
-from vtasks.tasks import Task, Tag, Color
 from vtasks.sqlalchemy.base import mapper_registry
+from vtasks.tasks import Color, Tag, Task
 
 
 class ColorType(types.TypeDecorator):

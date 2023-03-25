@@ -1,10 +1,10 @@
 from typing import Optional
 
-from sqlalchemy.orm import Session
 from sqlalchemy import select
+from sqlalchemy.orm import Session
 
-from vtasks.tasks.persistence.ports import AbstractTagPort
 from vtasks.tasks.models import Tag
+from vtasks.tasks.persistence.ports import AbstractTagPort
 
 
 class TagDB(AbstractTagPort):

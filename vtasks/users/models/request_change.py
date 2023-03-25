@@ -1,13 +1,13 @@
-from datetime import datetime, timedelta
 from dataclasses import dataclass
-from typing import Optional
+from datetime import datetime, timedelta
 from enum import Enum
+from typing import Optional
+
 from pytz import utc
 
-from vtasks.secutity.utils import get_id, hash_str, get_2FA
+from vtasks.base.config import REQUEST_DAYS_HISTORY, REQUEST_VALIDITY
+from vtasks.secutity.utils import get_2FA, get_id, hash_str
 from vtasks.secutity.validators import get_valid_email
-
-from vtasks.base.config import REQUEST_VALIDITY, REQUEST_DAYS_HISTORY
 
 
 class RequestType(Enum):

@@ -1,15 +1,14 @@
-from logging import Logger
 from datetime import timedelta
+from logging import Logger
 
-from flask import Blueprint, request, jsonify, current_app, g
+from flask import Blueprint, current_app, g, jsonify, request
 
 from vtasks.flask.utils import ResponseAPI
 from vtasks.redis import rate_limited
-from vtasks.users.hmi.flask.decorators import login_required
-from vtasks.tasks.persistence import TaskDB
-from vtasks.tasks.hmi.tasks_service import TaskService
 from vtasks.tasks import Task
-
+from vtasks.tasks.hmi.tasks_service import TaskService
+from vtasks.tasks.persistence import TaskDB
+from vtasks.users.hmi.flask.decorators import login_required
 
 logger = Logger(__name__)
 

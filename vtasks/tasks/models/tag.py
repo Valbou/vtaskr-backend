@@ -1,8 +1,9 @@
-from re import fullmatch
-from datetime import datetime
-from pytz import utc
-from typing import Optional, TypeVar, List, Any
 from dataclasses import dataclass
+from datetime import datetime
+from re import fullmatch
+from typing import Any, List, Optional, TypeVar
+
+from pytz import utc
 
 from vtasks.secutity.utils import get_id
 

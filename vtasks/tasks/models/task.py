@@ -1,11 +1,13 @@
+from dataclasses import dataclass
 from datetime import datetime, timedelta
+from enum import Enum
+from typing import List, Optional, TypeVar
+
 from dateutil import parser
 from pytz import utc
-from typing import Optional, List, TypeVar
-from dataclasses import dataclass
-from enum import Enum
 
 from vtasks.secutity.utils import get_id
+
 from .tag import Tag
 
 

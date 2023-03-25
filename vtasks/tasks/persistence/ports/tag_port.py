@@ -1,8 +1,7 @@
 from abc import ABC
 
-from vtasks.tasks import Task, Tag
-
 from vtasks.base.persistence import AbstractPort
+from vtasks.tasks import Tag, Task
 
 
 class AbstractTagPort(AbstractPort, ABC):

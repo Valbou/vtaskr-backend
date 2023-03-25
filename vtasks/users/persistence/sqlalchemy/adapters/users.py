@@ -1,10 +1,10 @@
 from typing import Optional
 
-from sqlalchemy.orm import Session
 from sqlalchemy import select, update
+from sqlalchemy.orm import Session
 
-from vtasks.users.persistence.ports import AbstractUserPort
 from vtasks.users.models import User
+from vtasks.users.persistence.ports import AbstractUserPort
 
 
 class UserDB(AbstractUserPort):

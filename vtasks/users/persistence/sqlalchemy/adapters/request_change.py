@@ -1,10 +1,10 @@
 from typing import Optional
 
+from sqlalchemy import delete, select
 from sqlalchemy.orm import Session
-from sqlalchemy import select, delete
 
-from vtasks.users.persistence.ports import AbstractRequestChangePort
 from vtasks.users.models import RequestChange
+from vtasks.users.persistence.ports import AbstractRequestChangePort
 
 
 class RequestChangeDB(AbstractRequestChangePort):

@@ -1,8 +1,8 @@
 import os
-from typing import Union, Literal
+from typing import Literal, Union
 
-from sqlalchemy import create_engine, Engine
-from sqlalchemy.orm import Session, sessionmaker, scoped_session
+from sqlalchemy import Engine, create_engine
+from sqlalchemy.orm import Session, scoped_session, sessionmaker
 
 from .base import mapper_registry
 
@@ -38,15 +38,15 @@ class SQLService:
 
     def mapping(self):
         """Import all sqlalchemy tables here to set registry mapping"""
-        from vtasks.users.persistence.sqlalchemy.tables import (
-            user_table,
-            token_table,
-            request_change_table,
-        )
         from vtasks.tasks.persistence.sqlalchemy.tables import (
             tag_table,
             tasks_table,
             tasktag_table,
+        )
+        from vtasks.users.persistence.sqlalchemy.tables import (
+            request_change_table,
+            token_table,
+            user_table,
         )
 
     def get_engine(self) -> Engine:

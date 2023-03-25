@@ -1,13 +1,12 @@
 from flask import Flask
 
-from vtasks.sqlalchemy.database import SQLService
-from vtasks.redis.database import NoSQLService
 from vtasks.babel.translations import TranslationService
 from vtasks.base.config import AVAILABLE_LANGUAGES
-
 from vtasks.base.hmi.flask import base_bp
-from vtasks.users.hmi.flask import users_bp
+from vtasks.redis.database import NoSQLService
+from vtasks.sqlalchemy.database import SQLService
 from vtasks.tasks.hmi.flask import tasks_bp
+from vtasks.users.hmi.flask import users_bp
 
 
 def create_flask_app(testing: bool = False) -> Flask:

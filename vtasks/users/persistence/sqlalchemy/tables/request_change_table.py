@@ -1,11 +1,10 @@
 from datetime import datetime
+
 from pytz import utc
+from sqlalchemy import Boolean, Column, DateTime, Enum, String, Table
 
-from sqlalchemy import Table, Column, String, DateTime, Enum, Boolean
-
-from vtasks.users.models import RequestChange, RequestType
 from vtasks.sqlalchemy.base import mapper_registry
-
+from vtasks.users.models import RequestChange, RequestType
 
 request_change_table = Table(
     "requestschanges",

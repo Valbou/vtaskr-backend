@@ -1,12 +1,12 @@
 from datetime import timedelta
-from typing import Callable
 from functools import wraps
 from logging import Logger
+from typing import Callable
 
-from flask import current_app, request, g
+from flask import current_app, g, request
 
-from vtasks.flask.utils import get_ip, ResponseAPI
-from vtasks.redis.ratelimit import RateLimit, LimitExceededError
+from vtasks.flask.utils import ResponseAPI, get_ip
+from vtasks.redis.ratelimit import LimitExceededError, RateLimit
 
 
 def rate_limited(

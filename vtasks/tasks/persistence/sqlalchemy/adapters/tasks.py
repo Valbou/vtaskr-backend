@@ -1,10 +1,10 @@
-from typing import Optional, List
+from typing import List, Optional
 
-from sqlalchemy.orm import Session
 from sqlalchemy import select
+from sqlalchemy.orm import Session
 
-from vtasks.tasks.persistence.ports import AbstractTaskPort
 from vtasks.tasks import Task
+from vtasks.tasks.persistence.ports import AbstractTaskPort
 
 
 class TaskDB(AbstractTaskPort):
