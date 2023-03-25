@@ -13,6 +13,7 @@ from vtasks.flask.main import create_flask_app
 from vtasks.sqlalchemy.database import SQLService
 from vtasks.users import User
 from vtasks.users.persistence import UserDB
+from vtasks.users.http.flask.authenticate import AuthService
 
 
 class FlaskTemplateCapture:
@@ -83,15 +84,11 @@ class BaseTestCase(TestCase):
 
     def get_token_headers(self) -> dict:
         self.create_user()
-        headers = {"Content-Type": "application/json"}
-        payload = {
-            "email": self.user.email,
-            "password": self.password,
-        }
-        response = self.client.post(
-            "/api/v1/users/login", headers=headers, json=payload
-        )
-        token = response.json.get("token")
+        with self.app.sql_service.get_session() as session:
+            auth_service = AuthService(session)
+            token = auth_service.authenticate(
+                email=self.user.email, password=self.password
+            )
         headers = {
             "Content-Type": "application/json",
             "Authorization": f"Bearer {token}",
