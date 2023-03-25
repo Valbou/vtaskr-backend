@@ -44,7 +44,11 @@ class SQLService:
 
     def mapping(self):
         """Import all sqlalchemy tables here to set registry mapping"""
-        from vtasks.users.persistence.sqlalchemy.tables import user_table, token_table
+        from vtasks.users.persistence.sqlalchemy.tables import (
+            user_table,
+            token_table,
+            request_change_table,
+        )
         from vtasks.tasks.persistence.sqlalchemy.tables import (
             tag_table,
             tasks_table,
