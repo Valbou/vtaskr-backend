@@ -18,8 +18,8 @@ class PermissionControlTest(TestCase):
 
     def test_is_owner(self):
         token = Token(user_id=self.user.id)
-        self.assertTrue(self.control.is_owner(self.user, token))
+        self.assertTrue(self.control.is_owner(self.user.id, token.user_id))
 
     def test_is_not_owner(self):
         token = Token(user_id="1234abcd")
-        self.assertFalse(self.control.is_owner(self.user, token))
+        self.assertFalse(self.control.is_owner(self.user.id, token.user_id))
