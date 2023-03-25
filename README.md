@@ -11,8 +11,16 @@ Development in progress... Not ready for use. We aim to use the hexagonal archit
 
 ## Technical informations
 
-All commands are given from the repository root folder (where you find .git).
-You may need to run it in your python virtual environment.
+### Install project
+
+```bash
+apt install git python3-venv
+
+python3 -m venv vtasks-project
+cd vtasks-project
+git clone git@github.com:Valbou/vtasks-backend.git
+cd vtasks-backend
+```
 
 ### Install dependencies
 
@@ -36,3 +44,13 @@ python -m coverage run -m unittest -vv
 ```bash
 python -m coverage report
 ```
+
+## How to help ?
+
+- First you can encourage development with starring project <3
+- Give us feedback in issues: what you need, what doesn't work for you...
+- If you are a dev, you can submit pull request linked to issues
+- If you are a polyglot, you can translate using .po files
+- If you are an user, you can write an end user documentation
+
+All with kindness, we are just humans ;)
