@@ -23,7 +23,7 @@ class User:
         first_name: str,
         last_name: str,
         email: str,
-        locale: str = "en_GB",
+        locale: Optional[str] = None,
         hash_password: Optional[str] = None,
         id: Optional[str] = None,
         created_at: Optional[datetime] = None,
@@ -35,7 +35,7 @@ class User:
         self.set_email(email.lower())
         if hash_password:
             self.hash_password = hash_password
-        self.locale = locale
+        self.locale = locale or "en_GB"
         self.created_at = created_at or datetime.now(utc)
         self.last_login_at = last_login_at
 
