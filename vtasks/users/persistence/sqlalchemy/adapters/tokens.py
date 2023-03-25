@@ -18,9 +18,7 @@ class TokenDB(AbstractTokenPort):
         result = session.scalars(stmt).one_or_none()
         return result
 
-    def activity_update(
-        self, session: Session, token: Token, autocommit: bool = True
-    ):
+    def activity_update(self, session: Session, token: Token, autocommit: bool = True):
         stmt = (
             update(Token)
             .where(Token.id == token.id)
