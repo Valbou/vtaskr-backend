@@ -27,7 +27,7 @@ class Color:
         return f"{self.background}|{self.text}"
 
     @classmethod
-    def from_string(cls, colors: str) -> TColor:
+    def from_string(cls, colors: str) -> Optional[TColor]:
         return Color(*colors.split("|"))
 
     @classmethod
@@ -57,5 +57,5 @@ class Tag:
         self.id = id or uuid4().hex
         self.created_at = created_at or datetime.now()
         self.title = title
-        self.color = color
+        self.color = color or Color("#000000", "#FFFFFF")
         self.tasks = tasks
