@@ -22,7 +22,7 @@ class User:
         first_name: str,
         last_name: str,
         email: str,
-        hash_password: str,
+        hash_password: Optional[str] = None,
         id: Optional[str] = None,
         created_at: Optional[datetime] = None,
         last_login_at: Optional[datetime] = None,
