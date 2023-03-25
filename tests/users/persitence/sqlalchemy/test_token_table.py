@@ -16,6 +16,8 @@ class TestTokenTable(BaseTestCase):
             "id",
             "created_at",
             "last_activity_at",
+            "temp",
+            "temp_code",
             "sha_token",
             "user_id",
         ]

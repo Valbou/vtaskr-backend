@@ -1,2 +1,2 @@
 from .user import User
-from .token import Token, TOKEN_VALIDITY
+from .token import Token, TOKEN_VALIDITY, TOKEN_TEMP_VALIDITY

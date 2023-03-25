@@ -84,15 +84,20 @@ class BaseTestCase(TestCase):
     def get_json_headers(self):
         return {"Content-Type": "application/json"}
 
-    def get_token_headers(self) -> dict:
+    def get_token_headers(self, valid: bool = True) -> dict:
         self.create_user()
         with self.app.sql_service.get_session() as session:
+            session.expire_on_commit = False
             auth_service = UserService(session, testing=True)
-            token, _ = auth_service.authenticate(
+            self.token, _ = auth_service.authenticate(
                 email=self.user.email, password=self.password
             )
+            if valid:
+                self.token.validate_token(self.token.temp_code)
+            session.commit()
+            sha_token = self.token.sha_token
         headers = {
             "Content-Type": "application/json",
-            "Authorization": f"Bearer {token}",
+            "Authorization": f"Bearer {sha_token}",
         }
         return headers

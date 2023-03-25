@@ -2,12 +2,12 @@ from logging import Logger
 
 from flask import Blueprint, request, current_app
 
-from vtasks.flask.utils import ResponseAPI, get_token
-from vtasks.users.persistence import UserDB
+from vtasks.flask.utils import ResponseAPI, get_bearer_token
+from vtasks.users.persistence import UserDB, TokenDB
 
 from vtasks.notifications import NotificationService
 from .user_service import UserService
-from .email_content import RegisterEmail
+from .email_content import RegisterEmail, LoginEmail
 
 
 logger = Logger(__name__)
@@ -37,6 +37,13 @@ def register():
         with current_app.sql_service.get_session() as session:
             auth_service = UserService(session, testing=current_app.testing)
             user = auth_service.register(payload)
+
+            register_email = RegisterEmail(
+                [user.email], user.first_name, user.last_name
+            )
+            notify = NotificationService(testing=current_app.testing)
+            notify.notify_by_email(register_email)
+
             data = user.to_external_data()
             return ResponseAPI.get_response(data, 201)
     except Exception:
@@ -67,18 +74,53 @@ def login():
             token, user = auth_service.authenticate(email, password)
 
             if token is not None:
-                register_email = RegisterEmail(
-                    [user.email], user.first_name, user.last_name
+                login_email = LoginEmail(
+                    [user.email], user.first_name, user.last_name, token.temp_code
                 )
                 notify = NotificationService(testing=current_app.testing)
-                notify.notify_by_email(register_email)
-                data = {"token": token}
+                notify.notify_by_email(login_email)
+
+                data = {"token": token.sha_token}
                 return ResponseAPI.get_response(data, 201)
             else:
                 return ResponseAPI.get_error_response("Invalid credentials", 401)
 
     except Exception as e:
         print(str(e))
+        logger.error(str(e))
+        return ResponseAPI.get_error_response("Internal error: " + str(e), 500)
+
+
+@users_bp.route(f"{V1}/users/2fa", methods=["POST"])
+def confirm_2FA():
+    """
+    URL to confirm 2FA auth - Token required
+
+    Need a valid temp token and a code
+    Return a 200
+    """
+    sha_token = get_bearer_token(request)
+    if not sha_token:
+        return ResponseAPI.get_error_response("Invalid token", 401)
+
+    payload: dict = request.get_json()
+
+    try:
+        code = payload.get("code_2FA")
+    except AttributeError:
+        return ResponseAPI.get_error_response("Bad request", 400)
+
+    try:
+        with current_app.sql_service.get_session() as session:
+            token_db = TokenDB()
+            token = token_db.get_token(session, sha_token)
+            if code and token.is_temp_valid() and token.validate_token(code):
+                session.commit()
+                data = {"2FA": "ok"}
+                return ResponseAPI.get_response(data, 200)
+            else:
+                return ResponseAPI.get_error_response("Invalid 2FA code", 401)
+    except Exception as e:
         logger.error(str(e))
         return ResponseAPI.get_error_response("Internal error: " + str(e), 500)
 
@@ -91,7 +133,7 @@ def logout():
     Need a valid token and the user email
     Return a 204
     """
-    sha_token = get_token(request)
+    sha_token = get_bearer_token(request)
     payload: dict = request.get_json()
 
     try:
@@ -122,7 +164,7 @@ def me():
     Return a jsonify user
     """
     try:
-        sha_token = get_token(request)
+        sha_token = get_bearer_token(request)
         if not sha_token:
             return ResponseAPI.get_error_response("Invalid token", 401)
 
@@ -134,7 +176,7 @@ def me():
             data = user.to_external_data()
             return ResponseAPI.get_response(data, 200)
         else:
-            return ResponseAPI.get_error_response("Invalid token", 401)
+            return ResponseAPI.get_error_response("Invalid token", 403)
     except Exception as e:
         logger.error(str(e))
         return ResponseAPI.get_error_response("Internal error: " + str(e), 500)
@@ -149,7 +191,7 @@ def update_me():
     Return a jsonify user updated
     """
     try:
-        sha_token = get_token(request)
+        sha_token = get_bearer_token(request)
         if not sha_token:
             return ResponseAPI.get_error_response("Invalid token", 401)
 
