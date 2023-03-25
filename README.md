@@ -33,6 +33,12 @@ Actually, dev dependencies are in the same requirements.
 ```bash
 pip install -r requirements.txt
 ```
+### Install translations
+
+```bash
+chmod +x trad_*
+./trad_compile_mo.sh users
+```
 
 ### To run flask
 ```bash
