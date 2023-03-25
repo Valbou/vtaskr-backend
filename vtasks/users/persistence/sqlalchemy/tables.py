@@ -32,6 +32,8 @@ token_table = Table(
     mapper_registry.metadata,
     Column("id", String, primary_key=True),
     Column("created_at", DateTime, default=datetime.now()),
+    Column("last_activity_at", DateTime, default=datetime.now()),
+    Column("sha_token", String(64), unique=True),
     Column("user_id", ForeignKey("users.id")),
 )
 
