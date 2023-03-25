@@ -132,10 +132,11 @@ def confirm_2FA():
     Need a valid temp token and a code
     Return a 200
     """
+    sha_token = get_bearer_token(request)
     try:
         RateLimit(
             current_app.nosql.get_engine(),
-            get_ip(request),
+            sha_token or get_ip(request),
             f"POST:{V1}/users/2fa",
             3,
             timedelta(seconds=60),
@@ -144,7 +145,6 @@ def confirm_2FA():
         logger.error(str(e))
         return ResponseAPI.get_error_response("Too many requests", 429)
 
-    sha_token = get_bearer_token(request)
     if not sha_token:
         return ResponseAPI.get_error_response("Invalid token", 401)
 
@@ -178,10 +178,11 @@ def logout():
     Need a valid token and the user email
     Return a 204
     """
+    sha_token = get_bearer_token(request)
     try:
         RateLimit(
             current_app.nosql.get_engine(),
-            get_ip(request),
+            sha_token or get_ip(request),
             f"DELETE:{V1}/users/logout",
             6,
             timedelta(seconds=60),
@@ -190,7 +191,6 @@ def logout():
         logger.error(str(e))
         return ResponseAPI.get_error_response("Too many requests", 429)
 
-    sha_token = get_bearer_token(request)
     payload: dict = request.get_json()
 
     try:
@@ -220,10 +220,11 @@ def me():
     Need a valid token
     Return a jsonify user
     """
+    sha_token = get_bearer_token(request)
     try:
         RateLimit(
             current_app.nosql.get_engine(),
-            get_ip(request),
+            sha_token or get_ip(request),
             f"GET:{V1}/users/me",
             5,
             timedelta(seconds=60),
@@ -233,7 +234,6 @@ def me():
         return ResponseAPI.get_error_response("Too many requests", 429)
 
     try:
-        sha_token = get_bearer_token(request)
         if not sha_token:
             return ResponseAPI.get_error_response("Invalid token", 401)
 
@@ -259,10 +259,11 @@ def update_me():
     Need a valid token
     Return a jsonify user updated
     """
+    sha_token = get_bearer_token(request)
     try:
         RateLimit(
             current_app.nosql.get_engine(),
-            get_ip(request),
+            sha_token or get_ip(request),
             f"PUT:{V1}/users/me/update",
             5,
             timedelta(seconds=60),
@@ -272,7 +273,6 @@ def update_me():
         return ResponseAPI.get_error_response("Too many requests", 429)
 
     try:
-        sha_token = get_bearer_token(request)
         if not sha_token:
             return ResponseAPI.get_error_response("Invalid token", 401)
 
@@ -403,10 +403,11 @@ def change_email():
 
     Need a valid token and a new email
     """
+    sha_token = get_bearer_token(request)
     try:
         RateLimit(
             current_app.nosql.get_engine(),
-            get_ip(request),
+            sha_token or get_ip(request),
             f"POST:{V1}/users/me/change-email",
             5,
             timedelta(seconds=300),
@@ -416,7 +417,6 @@ def change_email():
         return ResponseAPI.get_error_response("Too many requests", 429)
 
     try:
-        sha_token = get_bearer_token(request)
         if not sha_token:
             return ResponseAPI.get_error_response("Invalid token", 401)
 

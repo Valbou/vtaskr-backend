@@ -39,7 +39,7 @@ class ResponseAPI:
         )
 
 
-def get_bearer_token(request: Request) -> str:
+def get_bearer_token(request: Request) -> Optional[str]:
     bearer = request.headers.get("Authorization")
     if bearer and bearer.startswith(BEARER):
         return bearer.replace(BEARER, "").strip()
