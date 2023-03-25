@@ -14,6 +14,9 @@ class OpenApiRegistry:
         self.components = {
             "schemas": {},
             "requestBodies": {},
+            "headers": {},
+            "parameters": {},
+            "responses": {},
             "securitySchemes": {},
         }
 

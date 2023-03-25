@@ -21,3 +21,17 @@ if openapi.infos is None:
 
     openapi.register_server("https://api.vtaskr.com", "Production API")
     openapi.register_server("https://test-api.vtaskr.com", "Test API")
+
+    api_error = {
+        "type": "object",
+        "properties": {
+        "error": {
+            "type": "string",
+        },
+        "status": {
+            "type": "integer",
+            "format": "int32",
+        }
+        }
+    }
+    openapi.register_schemas_components("APIError", api_error)
