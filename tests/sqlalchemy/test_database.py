@@ -38,7 +38,9 @@ class TestSQLService(TestCase):
             self.assertEqual(result, 1)
 
     def test_create_tables(self):
-        with patch("vtasks.sqlalchemy.base.mapper_registry.metadata.create_all") as mock:
+        with patch(
+            "vtasks.sqlalchemy.base.mapper_registry.metadata.create_all"
+        ) as mock:
             self.sql_test.create_tables()
             mock.assert_called_once()
 
