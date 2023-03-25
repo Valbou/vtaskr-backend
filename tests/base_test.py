@@ -13,7 +13,7 @@ from vtasks.flask.main import create_flask_app
 from vtasks.sqlalchemy.database import SQLService
 from vtasks.users import User
 from vtasks.users.persistence import UserDB
-from vtasks.users.http.flask.user_service import UserService
+from vtasks.users.hmi.flask.user_service import UserService
 
 
 class FlaskTemplateCapture:
