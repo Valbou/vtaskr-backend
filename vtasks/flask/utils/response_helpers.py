@@ -1,11 +1,10 @@
 from json import dumps
 from typing import Optional, Any
 
-from flask import Response, Request
+from flask import Response
 
 
 JSON_MIME_TYPE = "application/json"
-BEARER = "Bearer "
 
 
 class ResponseAPI:
@@ -39,16 +38,9 @@ class ResponseAPI:
         )
 
 
-def get_bearer_token(request: Request) -> Optional[str]:
-    bearer = request.headers.get("Authorization")
-    if bearer and bearer.startswith(BEARER):
-        return bearer.replace(BEARER, "").strip()
-    return bearer
+class ResponseService:
+    def check_rate_limite(self):
+        pass
 
-
-def get_ip(request) -> str:
-    return (
-        request.environ.get("HTTP_X_FORWARDED_FOR")
-        or request.environ.get("REMOTE_ADDR")
-        or "::1"
-    )
+    def check_user(self):
+        pass
