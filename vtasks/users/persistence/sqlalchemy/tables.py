@@ -20,6 +20,7 @@ user_table = Table(
     Column("last_login_at", DateTime, nullable=True, default=None),
 )
 
+
 mapper_registry.map_imperatively(
     User,
     user_table,
@@ -34,8 +35,9 @@ token_table = Table(
     Column("created_at", DateTime, default=datetime.now()),
     Column("last_activity_at", DateTime, default=datetime.now()),
     Column("sha_token", String(64), unique=True),
-    Column("user_id", ForeignKey("users.id")),
+    Column("user_id", String, ForeignKey("users.id")),
 )
+
 
 mapper_registry.map_imperatively(
     Token,
