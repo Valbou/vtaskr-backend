@@ -1,19 +1,28 @@
 from hashlib import sha256
 
 from tests import BaseTestCase
-from tests.utils.db_utils import text_query_table_exists
 
 from vtasks.users.models import User, Token
 from vtasks.users.persistence import UserDB, TokenDB
 
 
 class TestTokenTable(BaseTestCase):
-    def test_tokens_table_exists(self):
-        with self.app.sql_service.get_session() as session:
-            result = session.execute(
-                text_query_table_exists(), params={"table": "tokens"}
-            ).scalar_one_or_none()
-            self.assertTrue(result)
+    def setUp(self) -> None:
+        super().setUp()
+        self.table_name = "tokens"
+        self.columns_name = [
+            "id",
+            "created_at",
+            "last_activity_at",
+            "sha_token",
+            "user_id",
+        ]
+
+    def test_table_exists(self):
+        self.assertTableExists(self.table_name)
+
+    def test_columns_exists(self):
+        self.assertColumnsExists(self.table_name, self.columns_name)
 
 
 class TestTokenAdapter(BaseTestCase):
