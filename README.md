@@ -2,16 +2,17 @@
 An open-source to do list application for personnal use.
 
 Development in progress... Not ready for use. We aim to use the hexagonal architecture, and assume it, even if it seems overkill/overengineering for a small app.
+You can follow the [Roadmap](https://github.com/Valbou/vtaskr-backend/blob/master/ROADMAP.md).
 
 ![License LGPLv3](https://img.shields.io/badge/license-LGPLv3-blue "License LGPLv3")
 ![Python v3.8](https://img.shields.io/badge/python-v3.8-blue "Python v3.8")
-![Tests 180 passed](https://img.shields.io/badge/tests-180%20passed-green "Tests 180 passed")
+![Tests 182 passed](https://img.shields.io/badge/tests-182%20passed-green "Tests 182 passed")
 ![Coverage 93%](https://img.shields.io/badge/coverage-93%25-green "Coverage 93%")
 ![Code quality A](https://img.shields.io/badge/code%20quality-A-green "Code quality A")
 
 ### Translations
 vTaskr is available in some languages (europeans): EN, ES, DE, FR, IT, PT.
-Translations were made automatically by https://www.deepl.com and https://poedit.net/, and may not be accurate. Feel free to amend them if necessary !
+Translations were made automatically by [Deepl](https://www.deepl.com) and [PoEdit](https://poedit.net/), and may not be accurate. Feel free to amend them if necessary !
 
 ## Technical informations
 
