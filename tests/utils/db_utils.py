@@ -1,4 +1,4 @@
-from sqlalchemy import text, TextClause
+from sqlalchemy import TextClause, text
 
 
 def text_query_table_exists() -> TextClause:

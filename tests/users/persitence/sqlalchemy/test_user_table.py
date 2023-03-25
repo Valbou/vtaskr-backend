@@ -1,5 +1,4 @@
 from tests import BaseTestCase
-
 from vtasks.users.models import User
 from vtasks.users.persistence import UserDB
 

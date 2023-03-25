@@ -1,5 +1,4 @@
 from tests import BaseTestCase, FlaskTemplateCapture
-
 from vtasks.base.config import AVAILABLE_LANGUAGES
 
 

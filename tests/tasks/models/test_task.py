@@ -1,11 +1,11 @@
-from unittest import TestCase
-from pytz import utc
 from datetime import datetime, timedelta
 from typing import Optional
+from unittest import TestCase
 
 from faker import Faker
+from pytz import utc
 
-from vtasks.tasks import Task, EisenhowerFlag
+from vtasks.tasks import EisenhowerFlag, Task
 
 
 class TestTask(TestCase):

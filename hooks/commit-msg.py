@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import sys
 import re
+import sys
+
 from colorama import Back, Style
 
 

@@ -1,10 +1,9 @@
 from dotenv import load_dotenv
 
-from vtasks.sqlalchemy.database import SQLService
 from vtasks.redis.database import NoSQLService
+from vtasks.sqlalchemy.database import SQLService
 
 from .base_test import BaseTestCase, FlaskTemplateCapture
-
 
 load_dotenv()
 
