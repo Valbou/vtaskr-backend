@@ -1,6 +1,6 @@
 from tests import BaseTestCase, FlaskTemplateCapture
 from vtasks.base.config import LINK_TO_CHANGE_EMAIL, LINK_TO_CHANGE_PASSWORD
-from vtasks.users.hmi.flask.email_content import (
+from vtasks.users.hmi.flask.emails import (
     ChangeEmailToNewEmail,
     ChangeEmailToOldEmail,
     ChangePasswordEmail,
