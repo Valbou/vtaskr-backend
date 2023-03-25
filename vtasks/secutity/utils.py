@@ -1,6 +1,8 @@
 from base64 import b64encode
 from hashlib import sha256
 from uuid import uuid4
+from secrets import token_hex, choice
+from string import ascii_uppercase, ascii_lowercase, digits
 
 from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError
@@ -34,7 +36,7 @@ def get_token() -> str:
     """
     Generate a hash from an unique Token
     """
-    return sha256(get_id().encode()).hexdigest()
+    return token_hex()
 
 
 def get_2FA(length: int = 6) -> str:
@@ -42,7 +44,8 @@ def get_2FA(length: int = 6) -> str:
     Generate an alphanumeric case sensitive code.
     Hard to brute-force in few minutes with API response time
     """
-    return b64encode(get_id().encode()).decode()[:length]
+    seq = ascii_lowercase + ascii_uppercase + digits
+    return "".join([choice(seq) for _ in range(length)])
 
 
 def file_to_base64(file_path_name: str) -> str:
