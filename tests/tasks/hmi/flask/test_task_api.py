@@ -1,4 +1,5 @@
 from datetime import datetime
+
 from pytz import utc
 
 from tests import BaseTestCase
@@ -47,7 +48,9 @@ class TestTaskAPI(BaseTestCase):
                 "done": done_at,
             }
 
-            response = self.client.put(f"{URL_API}/task/{task.id}", json=data, headers=headers)
+            response = self.client.put(
+                f"{URL_API}/task/{task.id}", json=data, headers=headers
+            )
             self.assertEqual(response.status_code, 200)
             self.assertNotEqual(task.title, new_title)
             self.assertEqual(response.json.get("title"), new_title)
@@ -68,7 +71,9 @@ class TestTaskAPI(BaseTestCase):
                 "emergency": True,
             }
 
-            response = self.client.patch(f"{URL_API}/task/{task.id}", json=data, headers=headers)
+            response = self.client.patch(
+                f"{URL_API}/task/{task.id}", json=data, headers=headers
+            )
             self.assertEqual(response.status_code, 200)
             self.assertNotEqual(task.title, new_title)
             self.assertEqual(response.json.get("title"), new_title)
