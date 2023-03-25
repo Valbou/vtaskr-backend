@@ -4,15 +4,17 @@ from sqlalchemy.orm import Session
 
 from vtasks.users import User, Token
 from vtasks.users.persistence import UserDB, TokenDB
+from vtasks.users.http.ports import AbstractUserPort
 
 
-class AuthService:
+class UserService(AbstractUserPort):
     def __init__(self, session: Session) -> None:
         self.session: Session = session
         self.user_db = UserDB()
         self.token_db = TokenDB()
 
     def register(self, data: dict) -> User:
+        """Add a new user"""
         user = User(
             first_name=data.get("first_name", ""),
             last_name=data.get("last_name", ""),
@@ -45,6 +47,7 @@ class AuthService:
         return False
 
     def user_from_token(self, sha_token: str) -> Optional[User]:
+        """Load a user from a given token"""
         token = self.token_db.get_token(self.session, sha_token)
         if token.is_valid():
             token.update_last_activity()
