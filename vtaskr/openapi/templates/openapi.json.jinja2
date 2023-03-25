@@ -1,17 +1,16 @@
 {
   "openapi": "3.0.3",
-  "info": {{ openapi.infos }}
-
+  "info": {{ openapi.infos|tojson }},
   "servers": [
     {% for server in openapi.servers %}
-      {{ server }}
+      {{ server|tojson }}{% if not loop.last %},{% endif %}
     {% endfor %}
   ],
   "tags": [
     {% for tag in openapi.tags %}
-      {{ tag }}
+      {{ tag|tojson }}{% if not loop.last %},{% endif %}
     {% endfor %}
   ],
-  "paths": {{ openapi.paths }},
-  "components": {{ openapi.components }},
+  "paths": {{ openapi.paths|tojson }},
+  "components": {{ openapi.components|tojson }}
 }

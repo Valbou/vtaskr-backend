@@ -39,6 +39,10 @@ api_item = {
             "in": "header",
             "description": "New email",
             "required": True,
+            "schema": {
+                "type": "string",
+            },
+            "example": "new@email.com",
         }
     ],
 }
@@ -116,25 +120,41 @@ api_item = {
             "in": "header",
             "description": "Old email",
             "required": True,
+            "schema": {
+                "type": "string",
+            },
+            "example": "old@email.com",
         },
         {
             "name": "new_email",
             "in": "header",
             "description": "New email",
             "required": True,
+            "schema": {
+                "type": "string",
+            },
+            "example": "new@email.com",
         },
         {
             "name": "hash",
             "in": "header",
             "description": "Hash given in email link",
             "required": True,
+            "schema": {
+                "type": "string",
+            },
+            "example": "a91776c5fbbde1910bc55e7390417d54805a99b0",
         },
         {
             "name": "code",
             "in": "header",
             "description": "Code given in email content",
             "required": True,
-        }
+            "schema": {
+                "type": "string",
+            },
+            "example": "1A2b3C",
+        },
     ],
 }
 openapi.register_path(f"{V1}/new-email", api_item)
