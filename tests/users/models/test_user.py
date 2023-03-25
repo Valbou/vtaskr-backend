@@ -70,7 +70,7 @@ class TestUser(TestCase):
             "email": "email@valbou.fr",
             "created_at": "created_at",
             "last_login_at": "last_login_at",
-            "password": "passwordA1#",
+            "password": "passwordA1#",  # nosec
             "hash_password": "hash_password",
             "other": "other",
         }
@@ -82,7 +82,7 @@ class TestUser(TestCase):
         self.assertNotEqual(str(self.user.created_at), "created_at")
         self.assertNotEqual(str(self.user.last_login_at), "last_login_at")
         self.assertNotEqual(self.user.hash_password, "passwordA1#")
-        self.assertTrue(self.user.check_password("passwordA1#"))
+        self.assertTrue(self.user.check_password("passwordA1#"))  # nosec
         self.assertNotEqual(self.user.hash_password, "hash_password")
         self.assertNotEqual(self.user.hash_password, previous_hash)
 
