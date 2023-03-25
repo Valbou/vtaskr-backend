@@ -39,6 +39,6 @@ class TestTask(TestCase):
         self.task.emergency = True
         self.assertEqual(self.task.get_eisenhower_flag(), EisenhowerFlag.DELEGATE)
         self.task.important = True
-        self.assertEqual(self.task.get_eisenhower_flag(), EisenhowerFlag.TODO)
+        self.assertEqual(self.task.get_eisenhower_flag(), EisenhowerFlag.DO)
         self.task.emergency = False
         self.assertEqual(self.task.get_eisenhower_flag(), EisenhowerFlag.SCHEDULE)
