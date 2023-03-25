@@ -1,5 +1,5 @@
 from datetime import timedelta
-from typing import Optional, Callable
+from typing import Callable
 from functools import wraps
 from logging import Logger
 

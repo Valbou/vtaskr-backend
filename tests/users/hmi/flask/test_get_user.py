@@ -27,7 +27,9 @@ class TestUserV1Me(BaseTestCase):
         self.assertEqual(response.json.get("email"), self.user.email)
         self.assertEqual(
             response.json.get("created_at"),
-            self.user.created_at.astimezone(timezone(os.getenv("TIMEZONE"))).isoformat(),
+            self.user.created_at.astimezone(
+                timezone(os.getenv("TIMEZONE"))
+            ).isoformat(),
         )
 
     def test_no_put(self):

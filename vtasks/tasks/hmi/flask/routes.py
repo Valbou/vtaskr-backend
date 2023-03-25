@@ -1,4 +1,16 @@
-from flask import Blueprint, request, jsonify
+from logging import Logger
+from datetime import timedelta
+
+from flask import Blueprint, request, jsonify, current_app, g
+
+from vtasks.flask.utils import ResponseAPI
+from vtasks.redis import rate_limited
+from vtasks.users.hmi.flask.decorators import login_required
+from vtasks.tasks.persistence import TaskDB
+from vtasks.tasks import Task
+
+
+logger = Logger(__name__)
 
 
 tasks_bp = Blueprint(
@@ -9,16 +21,38 @@ tasks_bp = Blueprint(
 )
 
 
-@tasks_bp.route("/tasks", methods=["GET", "POST"])
+V1 = "/api/v1"
+
+
+@tasks_bp.route(f"{V1}/tasks", methods=["GET", "POST"])
+@login_required(logger)
+@rate_limited(logger=logger, hit=1, period=timedelta(seconds=1))
 def tasks():
     """URL to current user tasks - Token required"""
-    if request.method == "GET":
-        return jsonify()
-    elif request.method == "POST":
-        return jsonify()
+    task_db = TaskDB()
+    try:
+        if request.method == "GET":
+            with current_app.sql.get_session() as session:
+                tasks = task_db.user_tasks(session, g.user.id)
+                data = [t.to_external_data() for t in tasks]
+                return ResponseAPI.get_response(data, 200)
+
+        elif request.method == "POST":
+            payload: dict = request.get_json()
+            try:
+                task: Task = Task.from_external_data(g.user.id, payload)
+                with current_app.sql.get_session() as session:
+                    task_db.save(session, task)
+                    return ResponseAPI.get_response(task.to_external_data(), 201)
+            except Exception:
+                return ResponseAPI.get_error_response("Bad request", 400)
+
+    except Exception as e:
+        logger.error(str(e))
+        return ResponseAPI.get_error_response("Internal error", 500)
 
 
-@tasks_bp.route("/task/<int:task_id>", methods=["GET", "PUT", "PATCH", "DELETE"])
+@tasks_bp.route(f"{V1}/task/<int:task_id>", methods=["GET", "PUT", "PATCH", "DELETE"])
 def task(task_id):
     """URL to current user task - Token required"""
     if request.method == "GET":
@@ -29,18 +63,18 @@ def task(task_id):
         return jsonify()
 
 
-@tasks_bp.route("/groups", methods=["GET", "POST"])
-def groups():
-    """URL to current user groups - Token required"""
+@tasks_bp.route(f"{V1}/tags", methods=["GET", "POST"])
+def tags():
+    """URL to current user tags - Token required"""
     if request.method == "GET":
         return jsonify()
     elif request.method == "POST":
         return jsonify()
 
 
-@tasks_bp.route("/group/<int:group_id>", methods=["GET", "PUT", "PATCH", "DELETE"])
-def group(group_id):
-    """URL to current user group - Token required"""
+@tasks_bp.route(f"{V1}/tag/<int:group_id>", methods=["GET", "PUT", "PATCH", "DELETE"])
+def tag(tag_id):
+    """URL to current user tag - Token required"""
     if request.method == "GET":
         return jsonify()
     elif request.method in ["PUT", "PATCH"]:
