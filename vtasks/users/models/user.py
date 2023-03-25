@@ -30,7 +30,7 @@ class User:
         self.id = id or uuid4().hex
         self.first_name = first_name
         self.last_name = last_name
-        self.email = email
+        self.email = email.lower()
         if hash_password:
             self.hash_password = hash_password
         self.created_at = created_at or datetime.now()
