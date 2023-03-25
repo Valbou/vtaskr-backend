@@ -1,10 +1,9 @@
-from uuid import uuid4
 from datetime import datetime, timedelta
 from pytz import utc
 from typing import Optional
 from dataclasses import dataclass
-from hashlib import sha256
-from base64 import b64encode
+
+from vtasks.secutity.utils import get_id, get_token, get_2FA
 
 
 TOKEN_VALIDITY = 60 * 60 * 0.5  # 30 minutes
@@ -31,23 +30,13 @@ class Token:
         created_at: Optional[datetime] = None,
         last_activity_at: Optional[datetime] = None,
     ) -> None:
-        self.id = id or uuid4().hex
+        self.id = id or get_id()
         self.created_at = created_at or datetime.now(utc)
         self.last_activity_at = last_activity_at or self.created_at
-        self.sha_token = token or self._gen_token()
+        self.sha_token = token or get_token()
         self.user_id = user_id
         self.temp = temp
-        self.temp_code = temp_code or self._gen_temp_code()
-
-    def _gen_token(self):
-        return sha256(str(uuid4()).encode()).hexdigest()
-
-    def _gen_temp_code(self, length: int = 6):
-        """
-        Generate an alphanumeric case sensitive code.
-        Hard to brute-force in few minutes with API response time
-        """
-        return b64encode(uuid4().hex.encode())[:length].decode()
+        self.temp_code = temp_code or get_2FA()
 
     def is_temp_valid(self) -> bool:
         """

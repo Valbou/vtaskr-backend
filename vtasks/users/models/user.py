@@ -1,13 +1,10 @@
-from uuid import uuid4
 from datetime import datetime
 from pytz import utc
 from typing import Optional
 from dataclasses import dataclass
 
-from argon2 import PasswordHasher
-from argon2.exceptions import VerifyMismatchError
-
-from vtasks.users.validators import get_valid_email, PasswordChecker
+from vtasks.secutity.utils import get_id, hash_from_password, check_password
+from vtasks.secutity.validators import get_valid_email, PasswordChecker
 
 
 @dataclass
@@ -32,7 +29,7 @@ class User:
         created_at: Optional[datetime] = None,
         last_login_at: Optional[datetime] = None,
     ) -> None:
-        self.id = id or uuid4().hex
+        self.id = id or get_id()
         self.first_name = first_name
         self.last_name = last_name
         self.set_email(email.lower())
@@ -52,15 +49,10 @@ class User:
 
     def set_password(self, password: str):
         self._check_password_complexity(password)
-        ph = PasswordHasher()
-        self.hash_password = ph.hash(password)
+        self.hash_password = hash_from_password(password)
 
-    def check_password(self, password: str):
-        ph = PasswordHasher()
-        try:
-            return ph.verify(self.hash_password, password)
-        except VerifyMismatchError:
-            return False
+    def check_password(self, password: str) -> bool:
+        return check_password(self.hash_password, password)
 
     def _check_password_complexity(self, password: str) -> bool:
         password_checker = PasswordChecker()
