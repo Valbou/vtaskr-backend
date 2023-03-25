@@ -2,6 +2,7 @@ from unittest import TestCase
 from datetime import datetime
 from typing import Union
 
+from babel import Locale
 from faker import Faker
 
 from vtasks.users import User
@@ -24,7 +25,7 @@ class TestUser(TestCase):
         self.assertEqual(User.__annotations__.get("last_name"), str)
         self.assertEqual(User.__annotations__.get("email"), str)
         self.assertEqual(User.__annotations__.get("hash_password"), str)
-        self.assertEqual(User.__annotations__.get("locale"), str)
+        self.assertEqual(User.__annotations__.get("locale"), Locale)
         self.assertEqual(User.__annotations__.get("timezone"), str)
         self.assertEqual(User.__annotations__.get("created_at"), datetime)
         self.assertEqual(

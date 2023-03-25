@@ -1,7 +1,8 @@
 import os
 from typing import List, Union
-
 from gettext import translation, GNUTranslations
+
+from babel import Locale
 
 from vtasks.base.config import APP_NAME
 
@@ -51,15 +52,22 @@ class TranslationService:
                 f"The language {lang} is not installed"
             )
 
+    def _locale_to_lang(self, locale: Union[Locale, str]) -> str:
+        if isinstance(locale, str):
+            locale = Locale.parse(locale)
+        return locale.language
+
     def _path_to_translations(self, domain: str):
         self._check_valid_domain(domain)
         return os.path.join(APP_NAME, domain, self.dirname)
 
-    def get_translation_session(self, domain: str, lang: str):
+    def get_translation_session(self, domain: str, locale: Union[Locale, str]):
+        lang = self._locale_to_lang(locale)
         self._check_valid_language(lang)
         return TranslationSession(domain, lang, self._path_to_translations(domain))
 
-    def get_translation(self, domain: str, lang: str) -> GNUTranslations:
+    def get_translation(self, domain: str, locale: Union[Locale, str]) -> GNUTranslations:
+        lang = self._locale_to_lang(locale)
         self._check_valid_language(lang)
         return translation(
             domain,
