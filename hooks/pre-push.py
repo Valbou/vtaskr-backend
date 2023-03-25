@@ -104,9 +104,18 @@ def check_requirements(interpreter: str) -> int:
 
     content_output = process.stdout.decode().replace("\\n", "\n")
 
+    package_bug = "pkg_resources==0.0.0"
     for req in content_output.split("\n"):
-        if req not in content_file_prod and req not in content_file_dev:
+        if (
+            req != package_bug
+            and req not in content_file_prod
+            and req not in content_file_dev
+        ):
             print(f"missing {req} requirement")
+            status += 1
+
+        if req == package_bug:
+            print(f"Remove pkg_{package_bug} requirement please.")
             status += 1
 
     if status == 0:
