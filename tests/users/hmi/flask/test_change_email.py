@@ -9,7 +9,7 @@ class TestUserV1ChangeEmail(BaseTestCase):
     def setUp(self) -> None:
         super().setUp()
         self.request_change_db = RequestChangeDB()
-        self.new_email = self.fake.email(domain="valbou.fr")
+        self.new_email = "email." + self.fake.email(domain="valbou.fr")
         self.headers = self.get_json_headers()
 
     def test_change_email(self):
@@ -71,7 +71,7 @@ class TestUserV1NewEmail(BaseTestCase):
         super().setUp()
         self.headers = self.get_json_headers()
         self.request_change_db = RequestChangeDB()
-        self.new_email = self.fake.email(domain="valbou.fr")
+        self.new_email = "email." + self.fake.email(domain="valbou.fr")
 
     def _create_request_change_email(self) -> RequestChange:
         headers = self.get_token_headers()

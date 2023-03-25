@@ -12,7 +12,7 @@ class TestUserV1Register(BaseTestCase):
         user_data = {
             "first_name": self.fake.first_name(),
             "last_name": self.fake.last_name(),
-            "email": self.fake.email(domain="valbou.fr"),
+            "email": "register." + self.fake.email(domain="valbou.fr"),
             "password": self.fake.password(),
         }
         response = self.client.post(
@@ -41,7 +41,7 @@ class TestUserV1Register(BaseTestCase):
         user_data = {
             "first_name": self.fake.first_name(),
             "last_name": self.fake.last_name(),
-            "email": self.fake.email(domain="valbou.fr"),
+            "email": "register." + self.fake.email(domain="valbou.fr"),
         }
         response = self.client.post(
             f"{URL_API_USERS}/register", json=user_data, headers=self.headers
