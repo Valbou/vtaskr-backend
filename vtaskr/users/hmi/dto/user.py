@@ -5,7 +5,6 @@ from babel import Locale
 from vtaskr.openapi.base import openapi
 from vtaskr.users.models import User
 
-
 user_component = {
     "type": "object",
     "properties": {

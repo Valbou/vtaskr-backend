@@ -12,5 +12,6 @@
     {% endfor %}
   ],
   "paths": {{ openapi.paths|tojson }},
-  "components": {{ openapi.components|tojson }}
+  "components": {{ openapi.components|tojson }},
+  "security": {bearerAuth: []}
 }

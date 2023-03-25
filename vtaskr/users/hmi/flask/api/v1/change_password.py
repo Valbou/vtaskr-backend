@@ -12,7 +12,6 @@ from vtaskr.users.persistence import UserDB
 
 from .. import V1, logger, openapi, users_bp
 
-
 api_item = {
     "post": {
         "description": "Allow request to change password",
@@ -45,6 +44,7 @@ api_item = {
             "example": "my@email.com",
         }
     ],
+    "security": {}
 }
 openapi.register_path(f"{V1}/forgotten-password", api_item)
 
@@ -139,6 +139,7 @@ api_item = {
             "example": "12_aB-34#Cd",
         },
     ],
+    "security": {}
 }
 openapi.register_path(f"{V1}/new-password", api_item)
 

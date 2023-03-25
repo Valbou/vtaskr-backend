@@ -35,3 +35,10 @@ if openapi.infos is None:
         },
     }
     openapi.register_schemas_components("APIError", api_error)
+
+    api_security = {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "bearer",
+    }
+    openapi.register_security("bearerAuth", api_security)

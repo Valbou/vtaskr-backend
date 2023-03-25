@@ -6,7 +6,42 @@ from vtaskr.flask.utils import ResponseAPI, get_bearer_token
 from vtaskr.redis import rate_limited
 from vtaskr.users.persistence import TokenDB
 
-from .. import V1, logger, users_bp
+from .. import V1, logger, openapi, users_bp
+
+api_item = {
+    "post": {
+        "description": "Secure user auth with 2FA confirmation",
+        "summary": "To confirm 2FA auth",
+        "operationId": "postConfirm2FA",
+        "responses": {
+            "200": {
+                "description": "no response content",
+                "content": {},
+            },
+            "400": {
+                "description": "Bad request format",
+                "content": {
+                    "application/json": {
+                        "schema": {"$ref": "#/components/schemas/APIError"}
+                    }
+                },
+            },
+        },
+    },
+    "parameters": [
+        {
+            "name": "code_2FA",
+            "in": "header",
+            "description": "Code to confirm user identity",
+            "required": True,
+            "schema": {
+                "type": "string",
+            },
+            "example": "1A2b3C",
+        }
+    ],
+}
+openapi.register_path(f"{V1}/users/2fa", api_item)
 
 
 @users_bp.route(f"{V1}/users/2fa", methods=["POST"])
@@ -35,7 +70,7 @@ def confirm_2fa():
             token = token_db.get_token(session, sha_token)
             if code and token.is_temp_valid() and token.validate_token(code):
                 session.commit()
-                data = {"2FA": "ok"}
+                data = {}
                 return ResponseAPI.get_response(data, 200)
             else:
                 return ResponseAPI.get_error_response("Invalid 2FA code", 401)
