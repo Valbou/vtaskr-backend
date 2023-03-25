@@ -1,0 +1,21 @@
+:root {
+  --dark: #181818;
+  --light: #f9f9f9;
+  --lb: #9be4ff;
+  --mb: #1f93cc;
+  --db: #193254;
+  --error: #9c2b2e;
+  --success: #1C7330;
+}
+
+body {
+  height: 100vh;
+  background-color: var(--dark);
+  color: var(--light);
+  font-family: Ubuntu, Roboto, "Segoe UI", "Droid Sans", "Helvetica Neue", "sans-serif";
+
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+}
