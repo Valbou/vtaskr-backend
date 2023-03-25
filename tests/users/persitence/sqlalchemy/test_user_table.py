@@ -14,6 +14,7 @@ class TestUserTable(BaseTestCase):
             "last_name",
             "email",
             "hash_password",
+            "locale",
             "created_at",
             "last_login_at",
         ]
