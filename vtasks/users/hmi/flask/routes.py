@@ -40,9 +40,7 @@ def register():
             auth_service = UserService(session, testing=current_app.testing)
             user = auth_service.register(payload)
 
-            register_email = RegisterEmail(
-                [user.email], user.first_name, user.last_name
-            )
+            register_email = RegisterEmail([user.email], user.first_name)
             notify = NotificationService(testing=current_app.testing)
             notify.notify_by_email(register_email)
 
@@ -79,9 +77,7 @@ def login():
             token, user = auth_service.authenticate(email, password)
 
             if token is not None:
-                login_email = LoginEmail(
-                    [user.email], user.first_name, user.last_name, token.temp_code
-                )
+                login_email = LoginEmail([user.email], user.first_name, token.temp_code)
                 notify = NotificationService(testing=current_app.testing)
                 notify.notify_by_email(login_email)
 
