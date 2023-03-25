@@ -1,3 +1,11 @@
+#!/usr/bin/env bash
+
+# Third script to run to generate a compiled .mo file 
+
+# To use it pass the folder app to trad
+# ./trad_compile_mo users
+# ./trad_compile_mo tasks
+
 source ../bin/activate
 
 # Compile to MO Files
