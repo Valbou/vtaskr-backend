@@ -31,20 +31,27 @@ api_item = {
                 },
             },
         },
-    },
-    "parameters": [
-        {
-            "name": "email",
-            "in": "header",
+        "requestBody": {
             "description": "Email used to login",
-            "required": True,
-            "schema": {
-                "type": "string",
+            "content": {
+                "application/json": {
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "email": {
+                                "type": "string",
+                                "format": "email",
+                                "required": True,
+                                "example": "my@email.com",
+                            },
+                        },
+                    }
+                }
             },
-            "example": "my@email.com",
-        }
-    ],
-    "security": {},
+            "required": True,
+        },
+        "security": [],
+    },
 }
 openapi.register_path(f"{V1}/forgotten-password", api_item)
 
@@ -106,40 +113,37 @@ api_item = {
                 },
             },
         },
+        "requestBody": {
+            "description": "To set the new password",
+            "content": {
+                "application/json": {
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "email": {
+                                "type": "string",
+                                "format": "email",
+                                "required": True,
+                                "example": "my@email.com",
+                            },
+                            "hash": {
+                                "type": "string",
+                                "required": True,
+                                "example": "a91776c5fbbde1910bc55e7390417d54805a99b0",
+                            },
+                            "new_password": {
+                                "type": "string",
+                                "required": True,
+                                "example": "12_aB-34#Cd",
+                            },
+                        },
+                    }
+                }
+            },
+            "required": True,
+        },
+        "security": [],
     },
-    "parameters": [
-        {
-            "name": "email",
-            "in": "header",
-            "description": "Email used to login",
-            "required": True,
-            "schema": {
-                "type": "string",
-            },
-            "example": "my@email.com",
-        },
-        {
-            "name": "hash",
-            "in": "header",
-            "description": "Hash given in email link",
-            "required": True,
-            "schema": {
-                "type": "string",
-            },
-            "example": "a91776c5fbbde1910bc55e7390417d54805a99b0",
-        },
-        {
-            "name": "new_password",
-            "in": "header",
-            "description": "The new password to set",
-            "required": True,
-            "schema": {
-                "type": "string",
-            },
-            "example": "12_aB-34#Cd",
-        },
-    ],
-    "security": {},
 }
 openapi.register_path(f"{V1}/new-password", api_item)
 

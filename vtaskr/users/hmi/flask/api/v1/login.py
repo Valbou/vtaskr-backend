@@ -17,7 +17,7 @@ api_item = {
         "operationId": "postLogin",
         "responses": {
             "201": {
-                "description": "no response content",
+                "description": "Return a token to confirm with 2FA",
                 "content": {
                     "application/json": {
                         "schema": {
@@ -46,29 +46,27 @@ api_item = {
                 },
             },
         },
+        "requestBody": {
+            "description": "Credentials to login user",
+            "content": {
+                "application/json": {
+                    "schema": {
+                        "email": {
+                            "type": "string",
+                            "required": True,
+                            "example": "my@email.com",
+                        },
+                        "password": {
+                            "type": "string",
+                            "required": True,
+                            "example": "12_aB-34#Cd",
+                        },
+                    }
+                }
+            },
+            "required": True,
+        },
     },
-    "parameters": [
-        {
-            "name": "email",
-            "in": "header",
-            "description": "User email",
-            "required": True,
-            "schema": {
-                "type": "string",
-            },
-            "example": "my@email.com",
-        },
-        {
-            "name": "password",
-            "in": "header",
-            "description": "User password",
-            "required": True,
-            "schema": {
-                "type": "string",
-            },
-            "example": "12_aB-34#Cd",
-        },
-    ],
 }
 openapi.register_path(f"{V1}/users/login", api_item)
 

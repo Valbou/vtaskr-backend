@@ -3,8 +3,8 @@ from typing import Optional, Tuple
 from sqlalchemy.orm import Session
 
 from vtaskr.users import RequestChange, RequestType, Token, User
-from vtaskr.users.hmi.ports import AbstractUserPort
 from vtaskr.users.hmi.dto import UserDTO
+from vtaskr.users.hmi.ports import AbstractUserPort
 from vtaskr.users.persistence import RequestChangeDB, TokenDB, UserDB
 
 

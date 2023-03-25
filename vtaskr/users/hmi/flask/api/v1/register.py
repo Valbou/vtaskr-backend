@@ -52,7 +52,7 @@ api_item = {
                         "$ref": "#/components/schemas/User",
                         "password": {
                             "type": "string",
-                        }
+                        },
                     }
                 }
             },

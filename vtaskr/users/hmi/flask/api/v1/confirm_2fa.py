@@ -27,19 +27,22 @@ api_item = {
                 },
             },
         },
-    },
-    "parameters": [
-        {
-            "name": "code_2FA",
-            "in": "header",
+        "requestBody": {
             "description": "Code to confirm user identity",
-            "required": True,
-            "schema": {
-                "type": "string",
+            "content": {
+                "application/json": {
+                    "schema": {
+                        "code_2FA": {
+                            "type": "string",
+                            "required": True,
+                            "example": "1A2b3C",
+                        },
+                    }
+                }
             },
-            "example": "1A2b3C",
-        }
-    ],
+            "required": True,
+        },
+    },
 }
 openapi.register_path(f"{V1}/users/2fa", api_item)
 
