@@ -22,3 +22,21 @@ class AbstractUserPort(ABC):
     @abstractmethod
     def user_from_token(self, sha_token: str) -> Optional[User]:
         raise NotImplementedError()
+
+    @abstractmethod
+    def request_password_change(self, user: User) -> str:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def request_email_change(self, user: User, new_email: str) -> Tuple[str, str]:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def set_new_password(self, email: str, hash: str, password: str) -> bool:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def set_new_email(
+        self, old_email: str, new_email: str, hash: str, code: str
+    ) -> bool:
+        raise NotImplementedError()
