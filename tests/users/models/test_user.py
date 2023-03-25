@@ -59,3 +59,40 @@ class TestUser(TestCase):
         )
 
         self.assertNotEqual(user.id, self.user.id)
+
+    def test_from_external_data(self):
+        previous_hash = self.user.hash_password
+        data = {
+            "id": "new_id",
+            "first_name": "first_name",
+            "last_name": "last_name",
+            "email": "email@valbou.fr",
+            "created_at": "created_at",
+            "last_login_at": "last_login_at",
+            "password": "password",
+            "hash_password": "hash_password",
+            "other": "other",
+        }
+        self.user.from_external_data(data)
+        self.assertNotEqual(self.user.id, "new_id")
+        self.assertEqual(self.user.first_name, "first_name")
+        self.assertEqual(self.user.last_name, "last_name")
+        self.assertEqual(self.user.email, "email@valbou.fr")
+        self.assertNotEqual(str(self.user.created_at), "created_at")
+        self.assertNotEqual(str(self.user.last_login_at), "last_login_at")
+        self.assertNotEqual(self.user.hash_password, "password")
+        self.assertTrue(self.user.check_password("password"))
+        self.assertNotEqual(self.user.hash_password, "hash_password")
+        self.assertNotEqual(self.user.hash_password, previous_hash)
+
+    def test_to_external_data(self):
+        data = self.user.to_external_data()
+        self.assertEqual(data.pop("id"), self.user.id)
+        self.assertEqual(data.pop("first_name"), self.user.first_name)
+        self.assertEqual(data.pop("last_name"), self.user.last_name)
+        self.assertEqual(data.pop("email"), self.user.email)
+        self.assertEqual(data.pop("created_at"), str(self.user.created_at))
+        self.assertEqual(data.pop("last_login_at"), str(self.user.last_login_at))
+        self.assertIsNone(data.pop("password", None))
+        self.assertIsNone(data.pop("hash_password", None))
+        self.assertEqual(len(data), 0)
