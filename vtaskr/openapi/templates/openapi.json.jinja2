@@ -1,0 +1,17 @@
+{
+  "openapi": "3.0.3",
+  "info": {{ openapi.infos }}
+
+  "servers": [
+    {% for server in openapi.servers %}
+      {{ server }}
+    {% endfor %}
+  ],
+  "tags": [
+    {% for tag in openapi.tags %}
+      {{ tag }}
+    {% endfor %}
+  ],
+  "paths": {{ openapi.paths }},
+  "components": {{ openapi.components }},
+}

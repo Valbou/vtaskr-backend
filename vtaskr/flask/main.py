@@ -29,6 +29,7 @@ def create_flask_app(testing: bool = False) -> Flask:
             FileSystemLoader(f"{project_dir}/vtaskr/base/hmi/flask/templates"),
             FileSystemLoader(f"{project_dir}/vtaskr/users/hmi/flask/templates"),
             FileSystemLoader(f"{project_dir}/vtaskr/tasks/hmi/flask/templates"),
+            FileSystemLoader(f"{project_dir}/vtaskr/openapi/templates"),
         ]
     )
     app.sql = SQLService(testing)
