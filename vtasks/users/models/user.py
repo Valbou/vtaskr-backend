@@ -53,9 +53,10 @@ class User:
         self.email = get_valid_email(email) or ""
         return True
 
-    def set_password(self, password: str):
+    def set_password(self, password: str) -> bool:
         self._check_password_complexity(password)
         self.hash_password = hash_from_password(password)
+        return True
 
     def check_password(self, password: str) -> bool:
         return check_password(self.hash_password, password)
@@ -65,7 +66,7 @@ class User:
         password_checker.check_complexity(password)
         return True
 
-    def update_last_login(self):
+    def update_last_login(self) -> datetime:
         self.last_login_at = datetime.now(utc)
         return self.last_login_at
 
