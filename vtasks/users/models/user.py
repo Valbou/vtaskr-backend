@@ -70,8 +70,8 @@ class User:
     def from_external_data(self, user_dict: dict):
         self.first_name = user_dict.get("first_name", self.first_name)
         self.last_name = user_dict.get("last_name", self.last_name)
-        self.last_name = user_dict.get("locale", self.locale)
-        self.last_name = user_dict.get("timezone", self.timezone)
+        self.locale = user_dict.get("locale", self.locale)
+        self.timezone = user_dict.get("timezone", self.timezone)
         if user_dict.get("password"):
             self.set_password(user_dict.get("password", ""))
 
