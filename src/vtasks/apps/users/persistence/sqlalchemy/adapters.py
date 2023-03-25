@@ -1,11 +1,19 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import select
 
+from src.vtasks.database import SQLService, DBType
 from src.vtasks.apps.users.ports import AbstractUserPort
 from src.vtasks.apps.users.models import User
 
 
 class UserDB(AbstractUserPort):
+    def __init__(self, db_type: DBType) -> None:
+        super().__init__()
+        self.sql_service = SQLService(db_type)
+
+    def get_session(self) -> Session:
+        return self.sql_service.get_session()
+
     def load(self, session: Session, id: str) -> User:
         stmt = select(User).where(User.id == id)
         result = session.scalars(stmt).one_or_none()
