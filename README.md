@@ -1,4 +1,4 @@
-# vTasks Backend
+# vTaskr Backend
 An open-source to do list application for personnal use.
 
 Development in progress... Not ready for use. We aim to use the hexagonal architecture, and assume it, even if it seems overkill/overengineering for a small app.
@@ -10,7 +10,7 @@ Development in progress... Not ready for use. We aim to use the hexagonal archit
 ![Code quality A](https://img.shields.io/badge/code%20quality-A-green "Code quality A")
 
 ### Translations
-vTasks is available in some languages (europeans): EN, ES, DE, FR, IT, PT.
+vTaskr is available in some languages (europeans): EN, ES, DE, FR, IT, PT.
 Translations were made automatically by https://www.deepl.com and https://poedit.net/, and may not be accurate. Feel free to amend them if necessary !
 
 ## Technical informations

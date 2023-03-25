@@ -1,7 +1,7 @@
-# vTasks Backend - ROADMAP
+# vTaskr Backend - ROADMAP
 
 ## Go to v1
-Needed to pass vTasks in fonctional v1:
+Needed to pass vTaskr in fonctional v1:
 - [x] User can register
 - [x] User can change profile information
 - [x] User can change securely email and password

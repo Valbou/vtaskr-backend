@@ -10,7 +10,7 @@ class TestBaseRoutes(BaseTestCase):
             self.assertEqual(response.content_type, "text/html; charset=utf-8")
             self.assertTemplateUsed("home.html", recorder.get_recorded_templates())
 
-        self.assertIn("<title>vTasks API</title>", response.text)
+        self.assertIn("<title>vTaskr API</title>", response.text)
         self.assertIn("vtaskr-logo-light.svg", response.text)
 
     def test_languages(self):
