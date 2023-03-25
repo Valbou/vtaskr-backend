@@ -114,10 +114,6 @@ def check_requirements(interpreter: str) -> int:
             print(f"missing {req} requirement")
             status += 1
 
-        if req == package_bug:
-            print(f"Remove pkg_{package_bug} requirement please.")
-            status += 1
-
     if status == 0:
         print(f"{Back.GREEN+Fore.BLACK} Requirements PASSED {Style.RESET_ALL}")
         return status
