@@ -16,7 +16,7 @@ class DBType(Enum):
 class SQLService:
     def __init__(
         self,
-        database: Optional[DBType] = None,
+        testing: bool = False,
         echo: Union[None, bool, Literal["debug"]] = False,
     ) -> None:
         debug = False
@@ -26,7 +26,7 @@ class SQLService:
             debug = os.getenv("DEBUG_SQL")
 
         self.echo: Union[None, bool, Literal["debug"]] = echo or debug
-        self.database: Optional[DBType] = database
+        self.testing = testing
         self.mapping()
 
     def get_database_url(self) -> str:
@@ -36,11 +36,7 @@ class SQLService:
         DB_PASS = os.getenv("DB_PASS")
         DB_HOST = os.getenv("DB_HOST")
         DB_PORT = os.getenv("DB_PORT")
-        DB_NAME = (
-            os.getenv("DB_NAME")
-            if self.database == DBType.PROD
-            else os.getenv("DB_TEST")
-        )
+        DB_NAME = os.getenv("DB_TEST") if self.testing else os.getenv("DB_NAME")
 
         return (
             f"{DB_TYPE}+{BD_DRIVER}://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}"

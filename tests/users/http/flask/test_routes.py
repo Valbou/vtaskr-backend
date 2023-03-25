@@ -19,8 +19,8 @@ class TestUserV1Routes(BaseTestCase):
         )
         self.user.set_password(self.password)
 
-        self.user_db = UserDB(self.sql_test.database)
-        with self.sql_test.get_session() as session:
+        self.user_db = UserDB()
+        with self.app.sql_service.get_session() as session:
             session.expire_on_commit = False
             self.user_db.save(session, self.user)
 
@@ -37,15 +37,15 @@ class TestUserV1Routes(BaseTestCase):
         self.assertEqual(response.status_code, 404)
 
     def test_user_post_api(self):
-        pass
-        # TODO: Doesn't work with flask test_client but works with curl
-        # curl -X POST -d '{"test": "ho ho ho"}' -H "Content-Type: application/json" \
-        # http://127.0.0.1:5000/api/v1/users/login -o curl_return.json -s -v
-
-        # headers = {"Content-Type": "application/json"}
-        # payload = {"Test": "Hello !"}
-        # response = self.client.post(
-        # f"/{URL_API_USERS}/login", headers=headers, json=payload
-        # )
-        # self.assertEqual(response.status_code, 201)
-        # self.assertEqual(response.content_type, "application/json")
+        headers = {"Content-Type": "application/json"}
+        payload = {
+            "email": self.user.email,
+            "password": self.password,
+        }
+        response = self.client.post(
+            f"{URL_API_USERS}/login", headers=headers, json=payload
+        )
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.content_type, "application/json")
+        token = response.json.get("token")
+        self.assertEqual(len(token), 64)
