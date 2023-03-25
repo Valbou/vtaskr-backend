@@ -2,7 +2,25 @@ from dataclasses import asdict, dataclass
 from datetime import datetime, timedelta
 from typing import List, Optional
 
+from vtaskr.openapi.base import openapi
 from vtaskr.tasks.models import Task
+
+task_component = (
+    {
+        "type": "object",
+        "properties": {
+            "id": {"type": "string"},
+            "title": {"type": "string"},
+            "description": {"type": "string"},
+            "emergency": {"type": "boolean"},
+            "important": {"type": "boolean"},
+            "scheduled_at": {"type": "string", "format": "date-time"},
+            "duration": {"type": "integer", "format": "int32"},
+            "created_at": {"type": "string", "format": "date-time"},
+        },
+    },
+)
+openapi.register_schemas_components("Task", task_component)
 
 
 @dataclass
@@ -14,7 +32,7 @@ class TaskDTO:
     emergency: bool = False
     important: bool = False
     scheduled_at: Optional[str] = None
-    duration: Optional[str] = None
+    duration: Optional[int] = None
     done: Optional[datetime] = None
 
 
@@ -55,7 +73,7 @@ class TaskMapperDTO:
             task.scheduled_at = None
 
         if task_dto.duration is not None:
-            task.duration = timedelta(seconds=int(task_dto.duration))
+            task.duration = timedelta(seconds=task_dto.duration)
         else:
             task.duration = None
 
