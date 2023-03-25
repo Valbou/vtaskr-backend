@@ -5,21 +5,20 @@ from babel import Locale
 from vtaskr.openapi.base import openapi
 from vtaskr.users.models import User
 
-user_component = (
-    {
-        "type": "object",
-        "properties": {
-            "id": {"type": "string"},
-            "first_name": {"type": "string"},
-            "last_name": {"type": "string"},
-            "email": {"type": "string"},
-            "locale": {"type": "string"},
-            "timezone": {"type": "string"},
-            "created_at": {"type": "string", "format": "date-time"},
-            "last_login_at": {"type": "string", "format": "date-time"},
-        },
+
+user_component = {
+    "type": "object",
+    "properties": {
+        "id": {"type": "string"},
+        "first_name": {"type": "string"},
+        "last_name": {"type": "string"},
+        "email": {"type": "string"},
+        "locale": {"type": "string"},
+        "timezone": {"type": "string"},
+        "created_at": {"type": "string", "format": "date-time"},
+        "last_login_at": {"type": "string", "format": "date-time"},
     },
-)
+}
 openapi.register_schemas_components("User", user_component)
 
 

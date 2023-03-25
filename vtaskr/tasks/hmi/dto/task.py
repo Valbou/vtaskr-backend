@@ -5,21 +5,19 @@ from typing import List, Optional
 from vtaskr.openapi.base import openapi
 from vtaskr.tasks.models import Task
 
-task_component = (
-    {
-        "type": "object",
-        "properties": {
-            "id": {"type": "string"},
-            "title": {"type": "string"},
-            "description": {"type": "string"},
-            "emergency": {"type": "boolean"},
-            "important": {"type": "boolean"},
-            "scheduled_at": {"type": "string", "format": "date-time"},
-            "duration": {"type": "integer", "format": "int32"},
-            "created_at": {"type": "string", "format": "date-time"},
-        },
+task_component = {
+    "type": "object",
+    "properties": {
+        "id": {"type": "string"},
+        "title": {"type": "string"},
+        "description": {"type": "string"},
+        "emergency": {"type": "boolean"},
+        "important": {"type": "boolean"},
+        "scheduled_at": {"type": "string", "format": "date-time"},
+        "duration": {"type": "integer", "format": "int32"},
+        "created_at": {"type": "string", "format": "date-time"},
     },
-)
+}
 openapi.register_schemas_components("Task", task_component)
 
 

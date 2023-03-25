@@ -6,7 +6,6 @@ from vtaskr.base.config import AVAILABLE_LANGUAGES
 from vtaskr.flask.utils import ResponseAPI
 from vtaskr.openapi.base import openapi
 
-
 base_bp = Blueprint(
     name="base_bp",
     import_name=__name__,

@@ -13,6 +13,7 @@ from vtaskr.users.hmi.user_service import EmailAlreadyUsedError, UserService
 
 from .. import V1, logger, openapi, users_bp
 
+
 api_item = {
     "post": {
         "description": "Allow request to change email",
