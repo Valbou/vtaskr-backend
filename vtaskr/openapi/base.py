@@ -25,13 +25,13 @@ if openapi.infos is None:
     api_error = {
         "type": "object",
         "properties": {
-        "error": {
-            "type": "string",
+            "error": {
+                "type": "string",
+            },
+            "status": {
+                "type": "integer",
+                "format": "int32",
+            },
         },
-        "status": {
-            "type": "integer",
-            "format": "int32",
-        }
-        }
     }
     openapi.register_schemas_components("APIError", api_error)

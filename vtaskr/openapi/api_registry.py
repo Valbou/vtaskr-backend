@@ -10,7 +10,7 @@ class OpenApiRegistry:
         self.infos = None
         self.servers = []
         self.tags = []
-        self.paths = dict
+        self.paths = dict()
         self.components = {
             "schemas": {},
             "requestBodies": {},

@@ -2,6 +2,8 @@ from logging import Logger
 
 from flask import Blueprint
 
+from vtaskr.openapi.base import openapi
+
 logger = Logger(__name__)
 
 
