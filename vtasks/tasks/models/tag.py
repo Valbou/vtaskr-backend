@@ -42,12 +42,14 @@ class Color:
 class Tag:
     id: str = ""
     created_at: Optional[datetime] = None
+    user_id: str = ""
     title: str = ""
     color: Optional[Color] = None
     tasks: Optional[List[Any]] = None
 
     def __init__(
         self,
+        user_id: str,
         title: str,
         color: Optional[Color] = None,
         id: Optional[str] = None,
@@ -56,6 +58,7 @@ class Tag:
     ) -> None:
         self.id = id or uuid4().hex
         self.created_at = created_at or datetime.now()
+        self.user_id = user_id
         self.title = title
         self.color = color or Color("#000000", "#FFFFFF")
-        self.tasks = tasks
+        self.tasks = tasks or []

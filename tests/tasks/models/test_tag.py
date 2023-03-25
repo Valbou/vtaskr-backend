@@ -11,11 +11,15 @@ class TestTag(TestCase):
     def setUp(self) -> None:
         super().setUp()
         self.fake = Faker()
-        self.task = Tag(title=self.fake.sentence())
+        self.tag = Tag(
+            user_id="1234abcd",
+            title=self.fake.text(max_nb_chars=50),
+        )
 
-    def test_user_table_fields(self):
+    def test_tag_table_fields(self):
         self.assertEqual(Tag.__annotations__.get("id"), str)
         self.assertEqual(Tag.__annotations__.get("title"), str)
+        self.assertEqual(Tag.__annotations__.get("user_id"), str)
         self.assertEqual(Tag.__annotations__.get("color"), Optional[Color])
         self.assertEqual(Tag.__annotations__.get("created_at"), Optional[datetime])
 

@@ -16,7 +16,7 @@ class TestTask(TestCase):
             title=self.fake.sentence(),
         )
 
-    def test_user_table_fields(self):
+    def test_task_table_fields(self):
         self.assertEqual(Task.__annotations__.get("id"), str)
         self.assertEqual(Task.__annotations__.get("user_id"), str)
         self.assertEqual(Task.__annotations__.get("title"), str)

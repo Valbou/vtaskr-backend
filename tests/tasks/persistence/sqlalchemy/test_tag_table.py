@@ -4,13 +4,14 @@ from vtasks.tasks.persistence import TagDB
 from vtasks.tasks import Tag
 
 
-class TestUserTable(BaseTestCase):
+class TestTagTable(BaseTestCase):
     def setUp(self) -> None:
         super().setUp()
         self.table_name = "tags"
         self.columns_name = [
             "id",
             "created_at",
+            "user_id",
             "title",
             "color",
         ]
@@ -25,8 +26,10 @@ class TestUserTable(BaseTestCase):
 class TestTagAdapter(BaseTestCase):
     def setUp(self) -> None:
         super().setUp()
+        self.create_user()
         self.tag_db = TagDB()
         self.tag = Tag(
+            user_id=self.user.id,
             title=self.fake.text(max_nb_chars=50),
         )
 

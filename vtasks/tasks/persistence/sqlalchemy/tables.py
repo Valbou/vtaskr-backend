@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from sqlalchemy.orm import relationship
 from sqlalchemy import (
     Table,
     Column,
@@ -10,9 +11,10 @@ from sqlalchemy import (
     Dialect,
     Boolean,
     Interval,
+    UniqueConstraint,
 )
 
-from vtasks.tasks import Task, Tag, Color
+from vtasks.tasks import Task, Tag, Color, TaskTag
 from vtasks.sqlalchemy.base import mapper_registry
 
 
@@ -28,10 +30,23 @@ class ColorType(types.TypeDecorator):
 
 
 tasktag_table = Table(
-    "tasks_tags",
+    "taskstags",
     mapper_registry.metadata,
-    Column("tag_id", String, ForeignKey("tags.id"), primary_key=True),
-    Column("task_id", String, ForeignKey("tasks.id"), primary_key=True),
+    Column("id", String, primary_key=True),
+    Column("created_at", DateTime, default=datetime.now()),
+    Column("tag_id", String, ForeignKey("tags.id")),
+    Column("task_id", String, ForeignKey("tasks.id")),
+    UniqueConstraint("tag_id", "task_id", name="tasktag_unique_association"),
+)
+
+
+mapper_registry.map_imperatively(
+    TaskTag,
+    tasktag_table,
+    properties={
+        "task": relationship("Task", back_populates="tags"),
+        "tag": relationship("Tag", back_populates="tasks"),
+    },
 )
 
 
@@ -40,6 +55,7 @@ tag_table = Table(
     mapper_registry.metadata,
     Column("id", String, primary_key=True),
     Column("created_at", DateTime, default=datetime.now()),
+    Column("user_id", String, ForeignKey("users.id")),
     Column("title", String(50)),
     Column("color", ColorType),
 )
@@ -48,6 +64,7 @@ tag_table = Table(
 mapper_registry.map_imperatively(
     Tag,
     tag_table,
+    properties={"tasks": relationship("TaskTag", back_populates="tag")},
 )
 
 
@@ -70,4 +87,5 @@ tasks_table = Table(
 mapper_registry.map_imperatively(
     Task,
     tasks_table,
+    properties={"tags": relationship("TaskTag", back_populates="task")},
 )
