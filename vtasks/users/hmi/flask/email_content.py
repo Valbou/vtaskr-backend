@@ -3,10 +3,13 @@ from gettext import gettext as _
 
 from flask import render_template
 
+from vtasks.base.config import BASE64_LOGO
 from vtasks.notifications import AbstractBaseEmailContent
 
 
 class RegisterEmail(AbstractBaseEmailContent):
+    logo = BASE64_LOGO
+
     def __init__(self, to: List[str], first_name, last_name) -> None:
         self.html = render_template(
             "emails/simple_text.html", **self.email_context(first_name, last_name)

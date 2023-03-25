@@ -23,5 +23,6 @@ class TestRegisterEmail(BaseTestCase):
                     "emails/simple_text.html", recorder.get_recorded_templates()
                 )
                 self.assertIn(self.first_name, email.html)
+                self.assertIn("data:image/svg+xml;base64,", email.html)
                 self.assertIn(self.first_name, email.text)
                 self.assertIn(self.to, email.to_emails)
