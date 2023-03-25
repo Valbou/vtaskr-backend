@@ -1,13 +1,13 @@
 from dataclasses import asdict, dataclass
 from datetime import datetime, timedelta
-from typing import Optional
+from typing import List, Optional
 
 from vtasks.tasks.models import Task
 
 
 @dataclass
 class TaskDTO:
-    id: str = ""
+    id: Optional[str] = ""
     created_at: str = ""
     title: str = ""
     description: str = ""
@@ -34,9 +34,16 @@ class TaskMapperDTO:
         )
 
     @classmethod
-    def dto_to_model(cls, task_dto: TaskDTO, task: Task) -> Task:
-        if task_dto.title:
-            task.title = task_dto.title
+    def list_models_to_list_dto(cls, tasks: List[Task]) -> List[TaskDTO]:
+        return [TaskMapperDTO.model_to_dto(t) for t in tasks]
+
+    @classmethod
+    def dto_to_model(
+        cls, user_id: str, task_dto: TaskDTO, task: Optional[Task] = None
+    ) -> Task:
+        if not task:
+            task = Task(user_id=user_id, title=task_dto.title)
+
         if task_dto.description:
             task.description = task_dto.description
         if task_dto.emergency:
@@ -60,3 +67,7 @@ class TaskMapperDTO:
     @classmethod
     def dto_to_dict(cls, task_dto: TaskDTO) -> dict:
         return asdict(task_dto)
+
+    @classmethod
+    def list_dto_to_dict(cls, tasks_dto: List[TaskDTO]) -> List[dict]:
+        return [asdict(task_dto) for task_dto in tasks_dto]

@@ -4,7 +4,7 @@ from flask import current_app, g, jsonify, request
 
 from vtasks.flask.utils import ResponseAPI
 from vtasks.redis import rate_limited
-from vtasks.tasks import Task
+from vtasks.tasks.hmi.dto import TaskDTO, TaskMapperDTO
 from vtasks.tasks.hmi.tasks_service import TaskService
 from vtasks.tasks.persistence import TaskDB
 from vtasks.users.hmi.flask.decorators import login_required
@@ -21,17 +21,27 @@ def tasks():
         if request.method == "GET":
             with current_app.sql.get_session() as session:
                 task_service = TaskService(session, current_app.testing)
-                data = task_service.get_user_tasks(g.user.id)
-                return ResponseAPI.get_response(data, 200)
+                tasks = task_service.get_user_tasks(g.user.id)
+                if tasks:
+                    tasks_dto = TaskMapperDTO.list_models_to_list_dto(tasks)
+                    return ResponseAPI.get_response(
+                        TaskMapperDTO.list_dto_to_dict(tasks_dto), 200
+                    )
+                else:
+                    return ResponseAPI.get_response([], 200)
 
         elif request.method == "POST":
-            payload: dict = request.get_json()
             try:
-                task: Task = Task.from_external_data(g.user.id, payload)
+                task_dto = TaskDTO(**request.get_json())
+                task = TaskMapperDTO.dto_to_model(g.user.id, task_dto)
+
                 with current_app.sql.get_session() as session:
                     task_db = TaskDB()
                     task_db.save(session, task)
-                    return ResponseAPI.get_response(task.to_external_data(), 201)
+                    task_dto = TaskMapperDTO.model_to_dto(task)
+                    return ResponseAPI.get_response(
+                        TaskMapperDTO.dto_to_dict(task_dto), 201
+                    )
             except Exception:
                 return ResponseAPI.get_error_response("Bad request", 400)
 
