@@ -78,6 +78,7 @@ class UserService(AbstractUserPort):
         return (request_change.gen_hash(), request_change.code)
 
     def _request_change(self, email: str, request_type: RequestType) -> RequestChange:
+        self.request_change_db.clean_history()
         request_change = RequestChange(request_type, email=email)
         self.request_change_db.save(self.session, request_change)
         return request_change
