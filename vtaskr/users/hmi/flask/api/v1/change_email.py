@@ -42,7 +42,6 @@ api_item = {
         }
     ],
 }
-
 openapi.register_path(f"{V1}/users/me/change-email", api_item)
 
 
@@ -89,6 +88,56 @@ def change_email():
     except Exception as e:
         logger.error(str(e))
         return ResponseAPI.get_error_response("Internal error", 500)
+
+
+api_item = {
+    "post": {
+        "description": "Register new email for an account",
+        "summary": "To set new email",
+        "operationId": "postSetNewEmail",
+        "responses": {
+            "200": {
+                "description": "no response content",
+                "content": {},
+            },
+            "400": {
+                "description": "Bad request format",
+                "content": {
+                    "application/json": {
+                        "schema": {"$ref": "#/components/schemas/APIError"}
+                    }
+                },
+            },
+        },
+    },
+    "parameters": [
+        {
+            "name": "old_email",
+            "in": "header",
+            "description": "Old email",
+            "required": True,
+        },
+        {
+            "name": "new_email",
+            "in": "header",
+            "description": "New email",
+            "required": True,
+        },
+        {
+            "name": "hash",
+            "in": "header",
+            "description": "Hash given in email link",
+            "required": True,
+        },
+        {
+            "name": "code",
+            "in": "header",
+            "description": "Code given in email content",
+            "required": True,
+        }
+    ],
+}
+openapi.register_path(f"{V1}/new-email", api_item)
 
 
 @users_bp.route(f"{V1}/new-email", methods=["POST"])
