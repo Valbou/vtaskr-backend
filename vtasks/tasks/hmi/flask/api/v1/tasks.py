@@ -1,6 +1,6 @@
 from datetime import timedelta
 
-from flask import current_app, g, request, jsonify
+from flask import current_app, g, jsonify, request
 
 from vtasks.flask.utils import ResponseAPI
 from vtasks.redis import rate_limited
@@ -9,7 +9,7 @@ from vtasks.tasks.hmi.tasks_service import TaskService
 from vtasks.tasks.persistence import TaskDB
 from vtasks.users.hmi.flask.decorators import login_required
 
-from .. import tasks_bp, logger, V1
+from .. import V1, logger, tasks_bp
 
 
 @tasks_bp.route(f"{V1}/tasks", methods=["GET", "POST"])

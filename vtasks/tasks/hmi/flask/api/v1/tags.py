@@ -1,6 +1,6 @@
-from flask import request, jsonify
+from flask import jsonify, request
 
-from .. import tasks_bp, V1
+from .. import V1, tasks_bp
 
 
 @tasks_bp.route(f"{V1}/tags", methods=["GET", "POST"])

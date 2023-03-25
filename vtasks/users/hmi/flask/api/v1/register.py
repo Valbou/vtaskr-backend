@@ -7,10 +7,10 @@ from vtasks.flask.utils import ResponseAPI
 from vtasks.notifications import NotificationService
 from vtasks.redis import rate_limited
 from vtasks.secutity.validators import PasswordComplexityError
-from vtasks.users.hmi.user_service import UserService
 from vtasks.users.hmi.flask.emails import RegisterEmail
+from vtasks.users.hmi.user_service import UserService
 
-from .. import users_bp, logger, V1
+from .. import V1, logger, users_bp
 
 
 @users_bp.route(f"{V1}/users/register", methods=["POST"])
