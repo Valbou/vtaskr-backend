@@ -44,7 +44,7 @@ api_item = {
             "example": "my@email.com",
         }
     ],
-    "security": {}
+    "security": {},
 }
 openapi.register_path(f"{V1}/forgotten-password", api_item)
 
@@ -139,7 +139,7 @@ api_item = {
             "example": "12_aB-34#Cd",
         },
     ],
-    "security": {}
+    "security": {},
 }
 openapi.register_path(f"{V1}/new-password", api_item)
 

@@ -44,7 +44,7 @@ api_item = {
             },
             "example": "new@email.com",
         }
-    ]
+    ],
 }
 openapi.register_path(f"{V1}/users/me/change-email", api_item)
 
@@ -156,7 +156,7 @@ api_item = {
             "example": "1A2b3C",
         },
     ],
-    "security": {}
+    "security": {},
 }
 openapi.register_path(f"{V1}/new-email", api_item)
 

@@ -8,7 +8,71 @@ from vtaskr.redis import rate_limited
 from vtaskr.users.hmi.flask.emails import LoginEmail
 from vtaskr.users.hmi.user_service import UserService
 
-from .. import V1, logger, users_bp
+from .. import V1, logger, openapi, users_bp
+
+api_item = {
+    "post": {
+        "description": "Endpoint for user login",
+        "summary": "To login an user",
+        "operationId": "postLogin",
+        "responses": {
+            "201": {
+                "description": "no response content",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "token": {
+                                    "type": "string"
+                                },
+                            }
+                        }
+                    }
+                },
+            },
+            "400": {
+                "description": "Bad request format",
+                "content": {
+                    "application/json": {
+                        "schema": {"$ref": "#/components/schemas/APIError"}
+                    }
+                },
+            },
+            "401": {
+                "description": "Unauthorized",
+                "content": {
+                    "application/json": {
+                        "schema": {"$ref": "#/components/schemas/APIError"}
+                    }
+                },
+            },
+        },
+    },
+    "parameters": [
+        {
+            "name": "email",
+            "in": "header",
+            "description": "User email",
+            "required": True,
+            "schema": {
+                "type": "string",
+            },
+            "example": "my@email.com",
+        },
+        {
+            "name": "password",
+            "in": "header",
+            "description": "User password",
+            "required": True,
+            "schema": {
+                "type": "string",
+            },
+            "example": "12_aB-34#Cd",
+        }
+    ],
+}
+openapi.register_path(f"{V1}/users/login", api_item)
 
 
 @users_bp.route(f"{V1}/users/login", methods=["POST"])
