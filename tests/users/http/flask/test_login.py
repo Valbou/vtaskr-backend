@@ -10,22 +10,6 @@ class TestUserV1Login(BaseTestCase):
         self.create_user()
         self.headers = self.get_json_headers()
 
-    def test_no_get(self):
-        response = self.client.get(f"{URL_API_USERS}/login", headers=self.headers)
-        self.assertEqual(response.status_code, 405)
-
-    def test_no_put(self):
-        response = self.client.put(f"{URL_API_USERS}/login", headers=self.headers)
-        self.assertEqual(response.status_code, 405)
-
-    def test_no_patch(self):
-        response = self.client.patch(f"{URL_API_USERS}/login", headers=self.headers)
-        self.assertEqual(response.status_code, 405)
-
-    def test_no_delete(self):
-        response = self.client.delete(f"{URL_API_USERS}/login", headers=self.headers)
-        self.assertEqual(response.status_code, 405)
-
     def test_post_login(self):
         payload = {
             "email": self.user.email,
@@ -66,3 +50,19 @@ class TestUserV1Login(BaseTestCase):
         self.assertEqual(
             response.text, '{"error": "Invalid credentials", "status": 401}'
         )
+
+    def test_no_get(self):
+        response = self.client.get(f"{URL_API_USERS}/login", headers=self.headers)
+        self.assertEqual(response.status_code, 405)
+
+    def test_no_put(self):
+        response = self.client.put(f"{URL_API_USERS}/login", headers=self.headers)
+        self.assertEqual(response.status_code, 405)
+
+    def test_no_patch(self):
+        response = self.client.patch(f"{URL_API_USERS}/login", headers=self.headers)
+        self.assertEqual(response.status_code, 405)
+
+    def test_no_delete(self):
+        response = self.client.delete(f"{URL_API_USERS}/login", headers=self.headers)
+        self.assertEqual(response.status_code, 405)

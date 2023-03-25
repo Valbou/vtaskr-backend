@@ -9,12 +9,12 @@ class TestUserV1Logout(BaseTestCase):
         super().setUp()
         self.headers = self.get_json_headers()
 
-    def test_no_get(self):
-        response = self.client.get(f"{URL_API_USERS}/logout", headers=self.headers)
-        self.assertEqual(response.status_code, 405)
-
     def test_no_post(self):
         response = self.client.post(f"{URL_API_USERS}/logout", headers=self.headers)
+        self.assertEqual(response.status_code, 405)
+
+    def test_no_get(self):
+        response = self.client.get(f"{URL_API_USERS}/logout", headers=self.headers)
         self.assertEqual(response.status_code, 405)
 
     def test_no_put(self):
