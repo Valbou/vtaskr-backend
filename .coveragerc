@@ -1,0 +1,8 @@
+[run]
+omit = */tests/*
+
+[report]
+# fail_under = 80
+skip_covered = True
+skip_empty = True
+sort = cover
