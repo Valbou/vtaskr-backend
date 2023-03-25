@@ -11,17 +11,20 @@ As vTaskr is an non profit project without fulltime dev, no release date can be 
 - [x] User can login securely
 - [x] User can manage tasks (create, read, update, delete)
 - [ ] User can manage tags (create, read, update, delete)
+- [x] User can't access to tasks or tags not owned
+- [ ] User can filter tasks with some basics filters
+- [ ] Add an OpenApiv3 documentation
+
+## Go to v1.1.0
 - [ ] User can manage groups (create, read, update, delete)
 - [ ] User can manage roles (create, read, update, delete)
 - [ ] User can't access to tasks not owned or not in his groups
-- [ ] User can filter tasks with some basics filters
-- [ ] User can invite another user in a group with a specific role
-
-## Go to v1.1.0
 - [ ] Reccurence
 - [ ] Weekly/Daily email with tasks of the period
 
 ## Go to v1.2.0
+- [ ] User can't modify tasks without the needed role
+- [ ] User can invite another user in a group with a specific role
 - [ ] Sub tasks
 - [ ] Tasks status (blocking) that block parent task
 - [ ] Tasks assignation to a group member

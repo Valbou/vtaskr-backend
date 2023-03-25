@@ -34,9 +34,6 @@ class Task:
     duration: Optional[timedelta] = None
     done: Optional[datetime] = None
     tags: Optional[List[Tag]] = None
-    # reccurence
-    # rappels
-    # sub tasks
 
     def __init__(
         self,
