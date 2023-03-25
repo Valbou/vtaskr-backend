@@ -92,15 +92,26 @@ def check_coverage_report(interpreter: str) -> int:
 
 def check_requirements(interpreter: str) -> int:
     """Check updated requirements"""
+    status = 0
     process = run([interpreter, "-m", "pip", "freeze"], capture_output=True)
-    content_file = ""
+    content_file_prod = ""
     with open("requirements.txt", "r") as file:
-        content_file = file.read()
+        content_file_prod = file.read()
+
+    content_file_dev = ""
+    with open("requirements-dev.txt", "r") as file:
+        content_file_dev = file.read()
 
     content_output = process.stdout.decode().replace("\\n", "\n")
-    if content_file == content_output:
+
+    for req in content_output.split("\n"):
+        if req not in content_file_prod and req not in content_file_dev:
+            print(f"missing {req} requirement")
+            status += 1
+
+    if status == 0:
         print(f"{Back.GREEN+Fore.BLACK} Requirements PASSED {Style.RESET_ALL}")
-        return 0
+        return status
     else:
         print(
             f"{Back.RED} Requirements FAIL {Style.RESET_ALL}"
@@ -108,7 +119,7 @@ def check_requirements(interpreter: str) -> int:
             sep="\n",
             file=sys.stderr,
         )
-        return 1
+        return status
 
 
 def check_git_branch_name() -> int:
