@@ -1,10 +1,10 @@
 from unittest import TestCase
-from datetime import datetime
+from datetime import datetime, timedelta
 from uuid import uuid4
 
 from faker import Faker
 
-from vtasks.users import Token
+from vtasks.users import Token, TOKEN_VALIDITY
 
 
 class TestToken(TestCase):
@@ -18,6 +18,16 @@ class TestToken(TestCase):
         self.assertEqual(Token.__annotations__.get("created_at"), datetime)
         self.assertEqual(Token.__annotations__.get("sha_token"), str)
         self.assertEqual(Token.__annotations__.get("user_id"), str)
+
+    def test_token_is_valid(self):
+        self.assertTrue(self.token.is_valid())
+
+    def test_token_old_invalid(self):
+        token = Token(
+            user_id=uuid4().hex,
+            created_at=datetime.now() - timedelta(seconds=TOKEN_VALIDITY)
+        )
+        self.assertFalse(token.is_valid())
 
     def test_token_to_string(self):
         self.assertEqual(str(self.token), f"Token {self.token.sha_token}")
