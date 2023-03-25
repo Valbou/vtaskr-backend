@@ -2,7 +2,7 @@ from unittest import TestCase
 
 from faker import Faker
 
-from vtasks.users import User, Token, PermissionControl
+from vtasks.users import PermissionControl, Token, User
 
 
 class PermissionControlTest(TestCase):
