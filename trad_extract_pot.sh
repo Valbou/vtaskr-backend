@@ -9,5 +9,10 @@
 
 source ../bin/activate
 
-# Generate PO Templates Files
-pybabel extract -F babel.cfg -o vtasks/$1/locales/messages.pot vtasks/$1
+if [ -n "$1" ]
+then
+    # Generate PO Templates Files
+    pybabel extract -F babel.cfg -o vtasks/$1/translations/$1.pot vtasks/$1
+else 
+    echo "No domain given";
+fi
