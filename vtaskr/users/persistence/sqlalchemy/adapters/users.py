@@ -1,6 +1,6 @@
 from typing import Optional
 
-from sqlalchemy import select, update
+from sqlalchemy import delete, select, update
 from sqlalchemy.orm import Session
 
 from vtaskr.users.models import User
@@ -45,3 +45,13 @@ class UserDB(AbstractUserPort):
         stmt = select(User).where(User.email == email)
         result = session.scalars(stmt).one_or_none()
         return result
+
+    def clean_unused(self, session: Session, autocommit: bool = True):
+        stmt = delete(User).where(
+            User.last_login_at == None,  # noqa E711
+            User.created_at < User.unused_before(),
+        )
+        session.execute(stmt)
+
+        if autocommit:
+            session.commit()

@@ -6,6 +6,7 @@ APP_NAME = "vtaskr"
 
 # Validators config
 PASSWORD_MIN_LENGTH = 10
+UNUSED_ACCOUNT_DELAY = 7  # 7 days
 
 # Auth token validity
 TOKEN_VALIDITY = 60 * 60 * 0.5  # 30 minutes

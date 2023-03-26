@@ -34,6 +34,7 @@ class UserService(AbstractUserPort):
 
     def clean_unused_accounts(self):
         """Clean all account whithout last_login_at"""
+        self.user_db.clean_unused(self.session)
 
     def authenticate(
         self, email: str, password: str

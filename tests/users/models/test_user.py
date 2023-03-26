@@ -4,7 +4,9 @@ from unittest import TestCase
 
 from babel import Locale
 from faker import Faker
+from pytz import utc
 
+from vtaskr.base.config import UNUSED_ACCOUNT_DELAY
 from vtaskr.users import User
 
 
@@ -62,3 +64,8 @@ class TestUser(TestCase):
         )
 
         self.assertNotEqual(user.id, self.user.id)
+
+    def test_user_unused_date(self):
+        unused_limit = User.unused_before()
+        delta = datetime.now(utc) - unused_limit
+        self.assertEqual(delta.days, UNUSED_ACCOUNT_DELAY)

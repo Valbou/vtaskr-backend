@@ -1,4 +1,9 @@
+from datetime import datetime, timedelta
+
+from pytz import utc
+
 from tests import BaseTestCase
+from vtaskr.base.config import UNUSED_ACCOUNT_DELAY
 from vtaskr.users.models import User
 from vtaskr.users.persistence import UserDB
 
@@ -56,3 +61,37 @@ class TestUserAdapter(BaseTestCase):
             self.user_db.save(session, self.user)
             user = self.user_db.find_login(session, email=self.user.email)
             self.assertEqual(user.first_name, self.user.first_name)
+
+    def test_clean_unused_accounts(self):
+        old_user = User(
+            first_name=self.fake.first_name(),
+            last_name=self.fake.last_name(),
+            email="user." + self.fake.email(domain="valbou.fr"),
+            created_at=datetime.now(utc) - timedelta(days=UNUSED_ACCOUNT_DELAY),
+        )
+
+        with self.app.sql.get_session() as session:
+            self.user_db.save(session, old_user)
+            self.user_db.save(session, self.user)
+            self.assertTrue(self.user_db.exists(session, self.user.id))
+            self.assertTrue(self.user_db.exists(session, old_user.id))
+
+            self.user_db.clean_unused(session)
+            self.assertTrue(self.user_db.exists(session, self.user.id))
+            self.assertFalse(self.user_db.exists(session, old_user.id))
+
+    def test_not_clean_used_accounts(self):
+        old_user = User(
+            first_name=self.fake.first_name(),
+            last_name=self.fake.last_name(),
+            email="user." + self.fake.email(domain="valbou.fr"),
+            created_at=datetime.now(utc) - timedelta(days=UNUSED_ACCOUNT_DELAY),
+            last_login_at=datetime.now(utc),
+        )
+
+        with self.app.sql.get_session() as session:
+            self.user_db.save(session, old_user)
+            self.assertTrue(self.user_db.exists(session, old_user.id))
+
+            self.user_db.clean_unused(session)
+            self.assertTrue(self.user_db.exists(session, old_user.id))

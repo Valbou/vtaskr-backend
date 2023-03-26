@@ -1,11 +1,11 @@
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Optional
 
 from babel import Locale
 from pytz import utc
 
-from vtaskr.base.config import LOCALE, TIMEZONE
+from vtaskr.base.config import LOCALE, TIMEZONE, UNUSED_ACCOUNT_DELAY
 from vtaskr.secutity.utils import check_password, get_id, hash_from_password
 from vtaskr.secutity.validators import PasswordChecker, get_valid_email
 
@@ -69,6 +69,10 @@ class User:
     def update_last_login(self) -> datetime:
         self.last_login_at = datetime.now(utc)
         return self.last_login_at
+
+    @classmethod
+    def unused_before(cls) -> datetime:
+        return datetime.now(utc) - timedelta(days=UNUSED_ACCOUNT_DELAY)
 
     def __str__(self) -> str:
         return self.full_name
