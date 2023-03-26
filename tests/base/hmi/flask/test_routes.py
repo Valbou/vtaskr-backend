@@ -20,7 +20,7 @@ class TestBaseRoutes(BaseTestCase):
         self.assertDictEqual(response.json, AVAILABLE_LANGUAGES)
 
     def test_api_documentation(self):
-        response = self.client.get("/api-documentation")
+        response = self.client.get("/documentation")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.content_type, "application/json")
         self.assertIn('"openapi": "3.0.3"', response.text)

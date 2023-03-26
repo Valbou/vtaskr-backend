@@ -26,7 +26,7 @@ def languages():
     return jsonify(AVAILABLE_LANGUAGES)
 
 
-@base_bp.route("/api-documentation", methods=["GET"])
+@base_bp.route("/documentation", methods=["GET"])
 def api_doc():
     """Return an OpenApi document"""
     result = render_template("openapi.json.jinja2", openapi=openapi)
