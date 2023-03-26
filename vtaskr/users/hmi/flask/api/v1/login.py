@@ -51,16 +51,21 @@ api_item = {
             "content": {
                 "application/json": {
                     "schema": {
-                        "email": {
-                            "type": "string",
-                            "required": True,
-                            "example": "my@email.com",
+                        "type": "object",
+                        "properties": {
+                            "email": {
+                                "type": "string",
+                                "example": "my@email.com",
+                            },
+                            "password": {
+                                "type": "string",
+                                "example": "12_aB-34#Cd",
+                            },
                         },
-                        "password": {
-                            "type": "string",
-                            "required": True,
-                            "example": "12_aB-34#Cd",
-                        },
+                        "required": [
+                            "email",
+                            "password",
+                        ],
                     }
                 }
             },

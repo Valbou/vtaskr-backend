@@ -32,11 +32,16 @@ api_item = {
             "content": {
                 "application/json": {
                     "schema": {
-                        "code_2FA": {
-                            "type": "string",
-                            "required": True,
-                            "example": "1A2b3C",
+                        "type": "object",
+                        "properties": {
+                            "code_2FA": {
+                                "type": "string",
+                                "example": "1A2b3C",
+                            },
                         },
+                        "required": [
+                            "code_2FA",
+                        ],
                     }
                 }
             },

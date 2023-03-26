@@ -37,12 +37,15 @@ api_item = {
             "content": {
                 "application/json": {
                     "schema": {
-                        "new_email": {
-                            "type": "string",
-                            "format": "email",
-                            "required": True,
-                            "example": "my_new@email.com",
-                        }
+                        "type": "object",
+                        "properties": {
+                            "new_email": {
+                                "type": "string",
+                                "format": "email",
+                                "example": "my_new@email.com",
+                            }
+                        },
+                        "required": ["new_email"],
                     }
                 }
             },
@@ -122,28 +125,33 @@ api_item = {
             "content": {
                 "application/json": {
                     "schema": {
-                        "new_email": {
-                            "type": "string",
-                            "format": "email",
-                            "required": True,
-                            "example": "my_new@email.com",
+                        "type": "object",
+                        "properties": {
+                            "new_email": {
+                                "type": "string",
+                                "format": "email",
+                                "example": "my_new@email.com",
+                            },
+                            "old_email": {
+                                "type": "string",
+                                "format": "email",
+                                "example": "my_old@email.com",
+                            },
+                            "hash": {
+                                "type": "string",
+                                "example": "a91776c5fbbde1910bc55e7390417d54805a99b0",
+                            },
+                            "code": {
+                                "type": "string",
+                                "example": "1A2b3C",
+                            },
                         },
-                        "old_email": {
-                            "type": "string",
-                            "format": "email",
-                            "required": True,
-                            "example": "my_old@email.com",
-                        },
-                        "hash": {
-                            "type": "string",
-                            "required": True,
-                            "example": "a91776c5fbbde1910bc55e7390417d54805a99b0",
-                        },
-                        "code": {
-                            "type": "string",
-                            "required": True,
-                            "example": "1A2b3C",
-                        },
+                        "required": [
+                            "new_email",
+                            "old_email",
+                            "hash",
+                            "code",
+                        ],
                     }
                 }
             },

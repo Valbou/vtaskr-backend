@@ -4,6 +4,7 @@ class OpenApiRegistry:
 
     https://spec.openapis.org/oas/v3.0.3
     https://swagger.io/specification/
+    Validator: https://www.postman.com/
     """
 
     def __init__(self) -> None:

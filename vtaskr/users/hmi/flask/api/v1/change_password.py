@@ -41,10 +41,12 @@ api_item = {
                             "email": {
                                 "type": "string",
                                 "format": "email",
-                                "required": True,
                                 "example": "my@email.com",
                             },
                         },
+                        "required": [
+                            "email",
+                        ],
                     }
                 }
             },
@@ -123,20 +125,22 @@ api_item = {
                             "email": {
                                 "type": "string",
                                 "format": "email",
-                                "required": True,
                                 "example": "my@email.com",
                             },
                             "hash": {
                                 "type": "string",
-                                "required": True,
                                 "example": "a91776c5fbbde1910bc55e7390417d54805a99b0",
                             },
                             "new_password": {
                                 "type": "string",
-                                "required": True,
                                 "example": "12_aB-34#Cd",
                             },
                         },
+                        "required": [
+                            "email",
+                            "hash",
+                            "new_password",
+                        ],
                     }
                 }
             },
