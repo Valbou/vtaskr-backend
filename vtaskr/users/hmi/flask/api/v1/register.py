@@ -36,7 +36,7 @@ api_item = {
                 },
             },
             "401": {
-                "description": "Unauthorized",
+                "description": "Login required",
                 "content": {
                     "application/json": {
                         "schema": {"$ref": "#/components/schemas/APIError"}

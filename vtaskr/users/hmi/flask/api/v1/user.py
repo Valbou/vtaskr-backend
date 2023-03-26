@@ -9,7 +9,34 @@ from vtaskr.users.hmi.dto import UserDTO, UserMapperDTO
 from vtaskr.users.hmi.flask.decorators import login_required
 from vtaskr.users.persistence import UserDB
 
-from .. import V1, logger, users_bp
+from .. import V1, logger, openapi, users_bp
+
+api_item = {
+    "get": {
+        "description": "Get current user data",
+        "summary": "Current user data",
+        "operationId": "getUser",
+        "responses": {
+            "200": {
+                "description": "no response content",
+                "content": {
+                    "application/json": {
+                        "schema": {"$ref": "#/components/schemas/User"}
+                    }
+                },
+            },
+            "403": {
+                "description": "Unauthorized",
+                "content": {
+                    "application/json": {
+                        "schema": {"$ref": "#/components/schemas/APIError"}
+                    }
+                },
+            },
+        },
+    },
+}
+openapi.register_path(f"{V1}/users/me", api_item)
 
 
 @users_bp.route(f"{V1}/users/me", methods=["GET"])
@@ -33,6 +60,79 @@ def me():
     except Exception as e:
         logger.error(str(e))
         return ResponseAPI.get_error_response("Internal error", 500)
+
+
+api_item = {
+    "put": {
+        "description": "Update current user",
+        "summary": "Update current user",
+        "operationId": "putUser",
+        "responses": {
+            "200": {
+                "description": "no response content",
+                "content": {
+                    "application/json": {
+                        "schema": {"$ref": "#/components/schemas/User"}
+                    }
+                },
+            },
+            "403": {
+                "description": "Unauthorized",
+                "content": {
+                    "application/json": {
+                        "schema": {"$ref": "#/components/schemas/APIError"}
+                    }
+                },
+            },
+        },
+        "requestBody": {
+            "description": "Update current user",
+            "content": {
+                "application/json": {
+                    "schema": {
+                        "$ref": "#/components/schemas/User",
+                    }
+                }
+            },
+            "required": True,
+        },
+    },
+    "patch": {
+        "description": "Update current user",
+        "summary": "Update current user",
+        "operationId": "patchUser",
+        "responses": {
+            "200": {
+                "description": "no response content",
+                "content": {
+                    "application/json": {
+                        "schema": {"$ref": "#/components/schemas/User"}
+                    }
+                },
+            },
+            "403": {
+                "description": "Unauthorized",
+                "content": {
+                    "application/json": {
+                        "schema": {"$ref": "#/components/schemas/APIError"}
+                    }
+                },
+            },
+        },
+        "requestBody": {
+            "description": "Update current user",
+            "content": {
+                "application/json": {
+                    "schema": {
+                        "$ref": "#/components/schemas/User",
+                    }
+                }
+            },
+            "required": True,
+        },
+    },
+}
+openapi.register_path(f"{V1}/users/me/update", api_item)
 
 
 @users_bp.route(f"{V1}/users/me/update", methods=["PUT", "PATCH"])
