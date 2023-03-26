@@ -23,7 +23,7 @@ api_item = {
                     "application/json": {
                         "schema": {
                             "type": "array",
-                            "items": {"$ref": "#/components/schemas/Task"}
+                            "items": {"$ref": "#/components/schemas/Task"},
                         }
                     }
                 },
@@ -106,9 +106,7 @@ api_item = {
                 "in": "path",
                 "description": "Id of the task you are looking for",
                 "required": True,
-                "schema": {
-                    "type": "string"
-                }
+                "schema": {"type": "string"},
             },
         ],
         "responses": {
@@ -132,9 +130,7 @@ api_item = {
                 "in": "path",
                 "description": "Id of the task you are looking for",
                 "required": True,
-                "schema": {
-                    "type": "string"
-                }
+                "schema": {"type": "string"},
             },
         ],
         "responses": {
@@ -158,9 +154,7 @@ api_item = {
                 "in": "path",
                 "description": "Id of the task you are looking for",
                 "required": True,
-                "schema": {
-                    "type": "string"
-                }
+                "schema": {"type": "string"},
             },
         ],
         "responses": {
@@ -184,9 +178,7 @@ api_item = {
                 "in": "path",
                 "description": "Id of the task you are looking for",
                 "required": True,
-                "schema": {
-                    "type": "string"
-                }
+                "schema": {"type": "string"},
             },
         ],
         "responses": {
