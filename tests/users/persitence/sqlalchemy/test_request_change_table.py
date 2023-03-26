@@ -71,6 +71,7 @@ class TestRequestChangeAdapter(BaseTestCase):
     def test_not_in_history(self):
         self.request_change.created_at = datetime.now() - timedelta(
             days=REQUEST_DAYS_HISTORY
+            + 1  # To avoid unaccurate hours between winter and summer
         )
 
         with self.app.sql.get_session() as session:

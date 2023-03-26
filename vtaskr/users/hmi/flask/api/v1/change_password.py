@@ -10,7 +10,52 @@ from vtaskr.users.hmi.flask.emails import ChangePasswordEmail
 from vtaskr.users.hmi.user_service import UserService
 from vtaskr.users.persistence import UserDB
 
-from .. import V1, logger, users_bp
+from .. import V1, logger, openapi, users_bp
+
+api_item = {
+    "post": {
+        "description": "Allow request to change password",
+        "summary": "To change password",
+        "operationId": "postRequestChangePassword",
+        "responses": {
+            "200": {
+                "description": "no response content",
+                "content": {},
+            },
+            "400": {
+                "description": "Bad request format",
+                "content": {
+                    "application/json": {
+                        "schema": {"$ref": "#/components/schemas/APIError"}
+                    }
+                },
+            },
+        },
+        "requestBody": {
+            "description": "Email used to login",
+            "content": {
+                "application/json": {
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "email": {
+                                "type": "string",
+                                "format": "email",
+                                "example": "my@email.com",
+                            },
+                        },
+                        "required": [
+                            "email",
+                        ],
+                    }
+                }
+            },
+            "required": True,
+        },
+        "security": [],
+    },
+}
+openapi.register_path(f"{V1}/forgotten-password", api_item)
 
 
 @users_bp.route(f"{V1}/forgotten-password", methods=["POST"])
@@ -49,6 +94,62 @@ def forgotten_password():
     except Exception as e:
         logger.error(str(e))
         return ResponseAPI.get_response(data, 200)
+
+
+api_item = {
+    "post": {
+        "description": "Allow request to change password",
+        "summary": "To set a new password",
+        "operationId": "postSetNewPassword",
+        "responses": {
+            "200": {
+                "description": "no response content",
+                "content": {},
+            },
+            "400": {
+                "description": "Bad request format",
+                "content": {
+                    "application/json": {
+                        "schema": {"$ref": "#/components/schemas/APIError"}
+                    }
+                },
+            },
+        },
+        "requestBody": {
+            "description": "To set the new password",
+            "content": {
+                "application/json": {
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "email": {
+                                "type": "string",
+                                "format": "email",
+                                "example": "my@email.com",
+                            },
+                            "hash": {
+                                "type": "string",
+                                "example": "a91776c5fbbde1910bc55e7390417d54805a99b0",
+                            },
+                            "new_password": {
+                                "type": "string",
+                                "example": "12_aB-34#Cd",
+                            },
+                        },
+                        "required": [
+                            "email",
+                            "hash",
+                            "new_password",
+                        ],
+                    }
+                }
+            },
+            "required": True,
+        },
+        "security": [],
+    },
+}
+openapi.register_path(f"{V1}/new-password", api_item)
 
 
 @users_bp.route(f"{V1}/new-password", methods=["POST"])

@@ -1,6 +1,10 @@
+from json import loads
+
 from flask import Blueprint, jsonify, render_template
 
 from vtaskr.base.config import AVAILABLE_LANGUAGES
+from vtaskr.flask.utils import ResponseAPI
+from vtaskr.openapi.base import openapi
 
 base_bp = Blueprint(
     name="base_bp",
@@ -20,3 +24,11 @@ def hello():
 def languages():
     """Return all available languages"""
     return jsonify(AVAILABLE_LANGUAGES)
+
+
+@base_bp.route("/api-documentation", methods=["GET"])
+def api_doc():
+    """Return an OpenApi document"""
+    result = render_template("openapi.json.jinja2", openapi=openapi)
+    data = loads(result)
+    return ResponseAPI.get_response(data, 200)

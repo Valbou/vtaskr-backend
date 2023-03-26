@@ -11,7 +11,49 @@ from vtaskr.users.hmi.flask.decorators import login_required
 from vtaskr.users.hmi.flask.emails import ChangeEmailToNewEmail, ChangeEmailToOldEmail
 from vtaskr.users.hmi.user_service import EmailAlreadyUsedError, UserService
 
-from .. import V1, logger, users_bp
+from .. import V1, logger, openapi, users_bp
+
+api_item = {
+    "post": {
+        "description": "Allow request to change email",
+        "summary": "To change email",
+        "operationId": "postRequestChangeEmail",
+        "responses": {
+            "200": {
+                "description": "no response content",
+                "content": {},
+            },
+            "400": {
+                "description": "Bad request format",
+                "content": {
+                    "application/json": {
+                        "schema": {"$ref": "#/components/schemas/APIError"}
+                    }
+                },
+            },
+        },
+        "requestBody": {
+            "description": "Change for this new email",
+            "content": {
+                "application/json": {
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "new_email": {
+                                "type": "string",
+                                "format": "email",
+                                "example": "my_new@email.com",
+                            }
+                        },
+                        "required": ["new_email"],
+                    }
+                }
+            },
+            "required": True,
+        },
+    },
+}
+openapi.register_path(f"{V1}/users/me/change-email", api_item)
 
 
 @users_bp.route(f"{V1}/users/me/change-email", methods=["POST"])
@@ -57,6 +99,68 @@ def change_email():
     except Exception as e:
         logger.error(str(e))
         return ResponseAPI.get_error_response("Internal error", 500)
+
+
+api_item = {
+    "post": {
+        "description": "Register new email for an account",
+        "summary": "To set new email",
+        "operationId": "postSetNewEmail",
+        "responses": {
+            "200": {
+                "description": "no response content",
+                "content": {},
+            },
+            "400": {
+                "description": "Bad request format",
+                "content": {
+                    "application/json": {
+                        "schema": {"$ref": "#/components/schemas/APIError"}
+                    }
+                },
+            },
+        },
+        "requestBody": {
+            "description": "To set the new email to the correct user",
+            "content": {
+                "application/json": {
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "new_email": {
+                                "type": "string",
+                                "format": "email",
+                                "example": "my_new@email.com",
+                            },
+                            "old_email": {
+                                "type": "string",
+                                "format": "email",
+                                "example": "my_old@email.com",
+                            },
+                            "hash": {
+                                "type": "string",
+                                "example": "a91776c5fbbde1910bc55e7390417d54805a99b0",
+                            },
+                            "code": {
+                                "type": "string",
+                                "example": "1A2b3C",
+                            },
+                        },
+                        "required": [
+                            "new_email",
+                            "old_email",
+                            "hash",
+                            "code",
+                        ],
+                    }
+                }
+            },
+            "required": True,
+        },
+        "security": [],
+    },
+}
+openapi.register_path(f"{V1}/new-email", api_item)
 
 
 @users_bp.route(f"{V1}/new-email", methods=["POST"])

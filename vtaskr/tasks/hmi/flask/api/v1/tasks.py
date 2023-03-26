@@ -9,7 +9,52 @@ from vtaskr.tasks.hmi.tasks_service import TaskService
 from vtaskr.tasks.persistence import TaskDB
 from vtaskr.users.hmi.flask.decorators import login_required
 
-from .. import V1, logger, tasks_bp
+from .. import V1, logger, openapi, tasks_bp
+
+api_item = {
+    "get": {
+        "description": "Get all current user's tasks",
+        "summary": "Get user's tasks",
+        "operationId": "getUserTasks",
+        "responses": {
+            "200": {
+                "description": "Task list",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "array",
+                            "items": {"$ref": "#/components/schemas/Task"},
+                        }
+                    }
+                },
+            },
+        },
+    },
+    "post": {
+        "description": "Create task for the current user",
+        "summary": "Create a nex task",
+        "operationId": "getUser",
+        "responses": {
+            "201": {
+                "description": "Created task",
+                "content": {
+                    "application/json": {
+                        "schema": {"$ref": "#/components/schemas/Task"}
+                    }
+                },
+            },
+            "400": {
+                "description": "Bad request",
+                "content": {
+                    "application/json": {
+                        "schema": {"$ref": "#/components/schemas/APIError"}
+                    }
+                },
+            },
+        },
+    },
+}
+openapi.register_path(f"{V1}/tasks", api_item)
 
 
 @tasks_bp.route(f"{V1}/tasks", methods=["GET", "POST"])
@@ -48,6 +93,103 @@ def tasks():
     except Exception as e:
         logger.error(str(e))
         return ResponseAPI.get_error_response("Internal error", 500)
+
+
+api_item = {
+    "get": {
+        "description": "Get the task with specified id",
+        "summary": "Get a task",
+        "operationId": "getTask",
+        "parameters": [
+            {
+                "name": "task_id",
+                "in": "path",
+                "description": "Id of the task you are looking for",
+                "required": True,
+                "schema": {"type": "string"},
+            },
+        ],
+        "responses": {
+            "200": {
+                "description": "Created task",
+                "content": {
+                    "application/json": {
+                        "schema": {"$ref": "#/components/schemas/Task"}
+                    }
+                },
+            },
+        },
+    },
+    "put": {
+        "description": "Update the task with specified id",
+        "summary": "Update a task",
+        "operationId": "putTask",
+        "parameters": [
+            {
+                "name": "task_id",
+                "in": "path",
+                "description": "Id of the task you are looking for",
+                "required": True,
+                "schema": {"type": "string"},
+            },
+        ],
+        "responses": {
+            "200": {
+                "description": "Updated task",
+                "content": {
+                    "application/json": {
+                        "schema": {"$ref": "#/components/schemas/Task"}
+                    }
+                },
+            },
+        },
+    },
+    "patch": {
+        "description": "Update the task with specified id",
+        "summary": "Update a task",
+        "operationId": "patchTask",
+        "parameters": [
+            {
+                "name": "task_id",
+                "in": "path",
+                "description": "Id of the task you are looking for",
+                "required": True,
+                "schema": {"type": "string"},
+            },
+        ],
+        "responses": {
+            "200": {
+                "description": "Updated task",
+                "content": {
+                    "application/json": {
+                        "schema": {"$ref": "#/components/schemas/Task"}
+                    }
+                },
+            },
+        },
+    },
+    "delete": {
+        "description": "Delete the task with specified id",
+        "summary": "Delete a task",
+        "operationId": "deleteTask",
+        "parameters": [
+            {
+                "name": "task_id",
+                "in": "path",
+                "description": "Id of the task you are looking for",
+                "required": True,
+                "schema": {"type": "string"},
+            },
+        ],
+        "responses": {
+            "204": {
+                "description": "no content",
+                "content": {},
+            },
+        },
+    },
+}
+openapi.register_path(f"{V1}/task/{{task_id}}", api_item)
 
 
 @tasks_bp.route(

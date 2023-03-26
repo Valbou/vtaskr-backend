@@ -1,0 +1,19 @@
+{
+  "openapi": "3.0.3",
+  "info": {{ openapi.infos|tojson }},
+  "servers": [
+    {% for server in openapi.servers %}
+      {{ server|tojson }}{% if not loop.last %},{% endif %}
+    {% endfor %}
+  ],
+  "tags": [
+    {% for tag in openapi.tags %}
+      {{ tag|tojson }}{% if not loop.last %},{% endif %}
+    {% endfor %}
+  ],
+  "paths": {{ openapi.paths|tojson }},
+  "components": {{ openapi.components|tojson }},
+  "security": [
+    {"bearerAuth": []}
+  ]
+}
