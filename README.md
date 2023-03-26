@@ -6,8 +6,8 @@ You can follow the [Roadmap](https://github.com/Valbou/vtaskr-backend/blob/maste
 
 ![License LGPLv3](https://img.shields.io/badge/license-LGPLv3-blue "License LGPLv3")
 ![Python v3.8](https://img.shields.io/badge/python-v3.8-blue "Python v3.8")
-![Tests 184 passed](https://img.shields.io/badge/tests-184%20passed-green "Tests 184 passed")
-![Coverage 94%](https://img.shields.io/badge/coverage-94%25-green "Coverage 94%")
+![Tests 196 passed](https://img.shields.io/badge/tests-196%20passed-green "Tests 196 passed")
+![Coverage 93%](https://img.shields.io/badge/coverage-93%25-green "Coverage 93%")
 ![Code quality A](https://img.shields.io/badge/code%20quality-A-green "Code quality A")
 
 ### Translations
