@@ -70,7 +70,7 @@ def register():
     URL to register a new user
 
     Need: email, password, first_name, last_name
-    Return the jsonify user created
+    Return the created user
     """
 
     payload: dict = request.get_json()

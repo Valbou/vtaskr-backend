@@ -70,26 +70,6 @@ class User:
         self.last_login_at = datetime.now(utc)
         return self.last_login_at
 
-    def from_external_data(self, user_dict: dict):
-        self.first_name = user_dict.get("first_name", self.first_name)
-        self.last_name = user_dict.get("last_name", self.last_name)
-        self.locale = Locale.parse(user_dict.get("locale")) or self.locale
-        self.timezone = user_dict.get("timezone", self.timezone)
-
-    def to_external_data(self) -> dict:
-        return {
-            "id": self.id,
-            "first_name": self.first_name,
-            "last_name": self.last_name,
-            "email": self.email,
-            "created_at": self.created_at.isoformat(),
-            "last_login_at": self.last_login_at.isoformat()
-            if self.last_login_at
-            else None,
-            "locale": str(self.locale),
-            "timezone": self.timezone,
-        }
-
     def __str__(self) -> str:
         return self.full_name
 

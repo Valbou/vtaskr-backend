@@ -49,14 +49,10 @@ class UserMapperDTO:
 
     @classmethod
     def dto_to_model(cls, user_dto: UserDTO, user: User) -> User:
-        if user_dto.first_name:
-            user.first_name = user_dto.first_name
-        if user_dto.last_name:
-            user.last_name = user_dto.last_name
-        if user_dto.locale:
-            user.locale = Locale.parse(user_dto.locale)
-        if user_dto.timezone:
-            user.timezone = user_dto.timezone
+        user.first_name = user_dto.first_name
+        user.last_name = user_dto.last_name
+        user.locale = Locale.parse(user_dto.locale)
+        user.timezone = user_dto.timezone
         return user
 
     @classmethod

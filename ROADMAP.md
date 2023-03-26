@@ -13,7 +13,7 @@ As vTaskr is an non profit project without fulltime dev, no release date can be 
 - [ ] User can manage tags (create, read, update, delete)
 - [x] User can't access to tasks or tags not owned
 - [ ] User can filter tasks with some basics filters
-- [ ] Add an OpenApiv3 documentation
+- [x] Add an OpenApiv3 documentation
 
 ## Go to v1.1.0
 - [ ] User can manage groups (create, read, update, delete)

@@ -19,7 +19,12 @@ class TestUserV1Update(BaseTestCase):
     def test_put_user(self):
         new_first_name = self.fake.first_name()
         headers = self.get_token_headers()
-        payload = {"first_name": new_first_name}
+        payload = {
+            "first_name": new_first_name,
+            "last_name": self.user.last_name,
+            "locale": str(self.user.locale),
+            "timezone": self.user.timezone,
+        }
         response = self.client.put(
             f"{URL_API_USERS}/me/update", headers=headers, json=payload
         )
@@ -27,12 +32,19 @@ class TestUserV1Update(BaseTestCase):
         self.assertEqual(response.content_type, "application/json")
         self.assertEqual(response.json.get("first_name"), new_first_name)
         self.assertEqual(response.json.get("last_name"), self.user.last_name)
+        self.assertEqual(response.json.get("locale"), str(self.user.locale))
+        self.assertEqual(response.json.get("timezone"), self.user.timezone)
         self.assertIsNone(response.json.get("hash_password"))
 
     def test_patch_user(self):
         new_last_name = self.fake.last_name()
         headers = self.get_token_headers()
-        payload = {"last_name": new_last_name}
+        payload = {
+            "first_name": self.user.first_name,
+            "last_name": new_last_name,
+            "locale": str(self.user.locale),
+            "timezone": self.user.timezone,
+        }
         response = self.client.patch(
             f"{URL_API_USERS}/me/update", headers=headers, json=payload
         )
@@ -40,6 +52,8 @@ class TestUserV1Update(BaseTestCase):
         self.assertEqual(response.content_type, "application/json")
         self.assertEqual(response.json.get("first_name"), self.user.first_name)
         self.assertEqual(response.json.get("last_name"), new_last_name)
+        self.assertEqual(response.json.get("locale"), str(self.user.locale))
+        self.assertEqual(response.json.get("timezone"), self.user.timezone)
         self.assertIsNone(response.json.get("hash_password"))
 
     def test_no_delete(self):
