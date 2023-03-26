@@ -10,5 +10,9 @@ class AbstractUserPort(AbstractPort, ABC):
         raise NotImplementedError()
 
     @abstractmethod
+    def clean_unused(self) -> User:
+        raise NotImplementedError()
+
+    @abstractmethod
     def update(self, user: User) -> bool:
         raise NotImplementedError()

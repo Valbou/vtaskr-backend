@@ -79,6 +79,7 @@ def register():
             auth_service = UserService(session, testing=current_app.testing)
             password = payload.pop("password")
             user_dto = UserDTO(**payload)
+            auth_service.clean_unused_accounts()
             user = auth_service.register(user_dto, password)
 
             with current_app.trans.get_translation_session(
