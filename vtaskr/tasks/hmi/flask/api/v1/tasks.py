@@ -32,8 +32,8 @@ api_item = {
     },
     "post": {
         "description": "Create task for the current user",
-        "summary": "Create a nex task",
-        "operationId": "getUser",
+        "summary": "Create a task",
+        "operationId": "postTask",
         "responses": {
             "201": {
                 "description": "Created task",
