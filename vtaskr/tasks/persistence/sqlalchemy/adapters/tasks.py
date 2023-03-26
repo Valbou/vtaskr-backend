@@ -3,7 +3,7 @@ from typing import List, Optional
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from vtaskr.tasks import Task
+from vtaskr.tasks import Tag, Task
 from vtaskr.tasks.persistence.ports import AbstractTaskPort
 
 
@@ -25,6 +25,11 @@ class TaskDB(AbstractTaskPort):
 
     def exists(self, session: Session, id: str) -> bool:
         return session.query(select(Task).where(Task.id == id).exists()).scalar()
+
+    def add_tag(self, session: Session, task: Task, tag: Tag, autocommit: bool = True):
+        task.tags.append(tag)
+        if autocommit:
+            session.commit()
 
     def user_tasks(self, session: Session, user_id: str) -> List[Task]:
         # TODO: need a better control on where clause, limit and ordering
