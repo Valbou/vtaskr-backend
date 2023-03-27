@@ -66,6 +66,12 @@ class Tag:
         self.color = color or Color("#000000", "#FFFFFF")
         self.tasks = tasks or []
 
+    def add_tasks(self, tasks: list):
+        self.tasks.extend(tasks)
+
+    def remove_tasks(self, tasks_id: List[str]):
+        self.tasks = [t for t in self.tasks if t.id not in tasks_id]
+
     def __str__(self) -> str:
         return self.title
 

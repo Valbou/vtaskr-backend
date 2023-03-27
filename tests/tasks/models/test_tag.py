@@ -4,15 +4,16 @@ from unittest import TestCase
 
 from faker import Faker
 
-from vtaskr.tasks import Color, Tag
+from vtaskr.tasks import Color, Tag, Task
 
 
 class TestTag(TestCase):
     def setUp(self) -> None:
         super().setUp()
         self.fake = Faker()
+        self.user_id = "1234abcd"
         self.tag = Tag(
-            user_id="1234abcd",
+            user_id=self.user_id,
             title=self.fake.text(max_nb_chars=50),
         )
 
@@ -22,6 +23,16 @@ class TestTag(TestCase):
         self.assertEqual(Tag.__annotations__.get("user_id"), str)
         self.assertEqual(Tag.__annotations__.get("color"), Optional[Color])
         self.assertEqual(Tag.__annotations__.get("created_at"), Optional[datetime])
+
+    def test_add_and_remove_tasks(self):
+        task_1 = Task(self.user_id, self.fake.text(max_nb_chars=50))
+        task_2 = Task(self.user_id, self.fake.text(max_nb_chars=50))
+        self.tag.add_tasks([task_1, task_2])
+        self.assertEqual(len(self.tag.tasks), 2)
+
+        self.tag.remove_tasks([task_2.id])
+        self.assertEqual(len(self.tag.tasks), 1)
+        self.assertEqual(self.tag.tasks[0].id, task_1.id)
 
 
 class TestColor(TestCase):

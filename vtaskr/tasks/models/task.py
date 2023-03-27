@@ -72,6 +72,12 @@ class Task:
             return EisenhowerFlag.DELEGATE
         return EisenhowerFlag.DELETE
 
+    def add_tags(self, tags: List[Tag]):
+        self.tags.extend(tags)
+
+    def remove_tags(self, tags_id: List[str]):
+        self.tags = [t for t in self.tags if t.id not in tags_id]
+
     def __str__(self) -> str:
         return self.title
 
