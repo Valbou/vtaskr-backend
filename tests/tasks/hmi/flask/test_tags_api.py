@@ -49,19 +49,13 @@ class TestTagsAPI(BaseTestCase):
             self.assertEqual(result[0].get("id"), tag.id)
 
     def test_no_put(self):
-        response = self.client.put(
-            f"{URL_API}/tags", headers=self.headers
-        )
+        response = self.client.put(f"{URL_API}/tags", headers=self.headers)
         self.assertEqual(response.status_code, 405)
 
     def test_no_patch(self):
-        response = self.client.patch(
-            f"{URL_API}/tags", headers=self.headers
-        )
+        response = self.client.patch(f"{URL_API}/tags", headers=self.headers)
         self.assertEqual(response.status_code, 405)
 
     def test_no_delete(self):
-        response = self.client.delete(
-            f"{URL_API}/tags", headers=self.headers
-        )
+        response = self.client.delete(f"{URL_API}/tags", headers=self.headers)
         self.assertEqual(response.status_code, 405)
