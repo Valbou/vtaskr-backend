@@ -27,7 +27,7 @@ class TestUserV1ForgottenPassword(BaseTestCase):
 
     def test_forgotten_password_unknown_email(self):
         self.create_user()
-        user_data = {"email": "pass." + self.fake.email(domain="valbou.fr")}
+        user_data = {"email": self.generate_email()}
         response = self.client.post(
             f"{URL_API}/forgotten-password", json=user_data, headers=self.headers
         )
@@ -111,7 +111,7 @@ class TestUserV1NewPassword(BaseTestCase):
     def test_set_new_password_bad_email(self):
         request_change = self._create_request_change_password()
         user_data = {
-            "email": "pass." + self.fake.email(domain="pass.valbou.fr"),
+            "email": self.generate_email(),
             "hash": request_change.gen_hash(),
             "new_password": self.new_password,
         }

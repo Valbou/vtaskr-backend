@@ -17,7 +17,7 @@ class TestUser(TestCase):
         self.user = User(  # nosec
             first_name=self.fake.first_name(),
             last_name=self.fake.last_name(),
-            email="user." + self.fake.email(domain="valbou.fr"),
+            email=self.fake.email(domain="valbou.fr"),
             hash_password="1234",
         )
 
@@ -59,7 +59,7 @@ class TestUser(TestCase):
         user = User(  # nosec
             first_name="A",
             last_name="B",
-            email="user." + self.fake.email(domain="valbou.fr"),
+            email=self.fake.email(domain="valbou.fr"),
             hash_password="azerty",
         )
 

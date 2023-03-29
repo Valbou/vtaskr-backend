@@ -13,7 +13,7 @@ class PermissionControlTest(TestCase):
         self.user = User(
             first_name=self.fake.first_name(),
             last_name=self.fake.last_name(),
-            email="control." + self.fake.email(domain="valbou.fr"),
+            email=self.fake.email(domain="valbou.fr"),
         )
 
     def test_is_owner(self):
