@@ -226,7 +226,7 @@ api_item = {
                     "application/json": {
                         "schema": {
                             "type": "array",
-                            "items": {"$ref": "#/components/schemas/Tasks"},
+                            "items": {"$ref": "#/components/schemas/Task"},
                         }
                     }
                 },

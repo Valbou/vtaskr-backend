@@ -4,8 +4,8 @@ from flask import current_app, g, request
 
 from vtaskr.flask.utils import ResponseAPI
 from vtaskr.redis import rate_limited
-from vtaskr.tasks.hmi.dto import TaskDTO, TaskMapperDTO
-from vtaskr.tasks.hmi.tasks_service import TaskService
+from vtaskr.tasks.hmi.dto import TaskDTO, TaskMapperDTO, TagMapperDTO
+from vtaskr.tasks.hmi import TaskService, TagService
 from vtaskr.tasks.persistence import TaskDB
 from vtaskr.users.hmi.flask.decorators import login_required
 
@@ -225,3 +225,47 @@ def task(task_id: str):
 
         else:
             return ResponseAPI.get_error_response({}, 404)
+
+
+api_item = {
+    "get": {
+        "description": "Get all tags associated to this task",
+        "summary": "Get tags with this task",
+        "operationId": "getTaskTags",
+        "responses": {
+            "200": {
+                "description": "Tag list",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "array",
+                            "items": {"$ref": "#/components/schemas/Tag"},
+                        }
+                    }
+                },
+            },
+        },
+    }
+}
+openapi.register_path(f"{V1}/task/{{task_id}}/tags", api_item)
+
+
+@tasks_bp.route(f"{V1}/task/<string:task_id>/tags", methods=["GET"])
+@login_required(logger)
+@rate_limited(logger=logger, hit=5, period=timedelta(seconds=1))
+def task_tags(task_id: str):
+    """Give all tags associated to a specific task"""
+    if request.method == "GET":
+        with current_app.sql.get_session() as session:
+            task_service = TaskService(session, current_app.testing)
+            task = task_service.get_user_task(g.user.id, task_id)
+            if task:
+                tag_service = TagService(session, current_app.testing)
+                tags_dto = TagMapperDTO.list_models_to_list_dto(
+                    tag_service.get_user_task_tags(g.user.id, task.id)
+                )
+                return ResponseAPI.get_response(
+                    TaskMapperDTO.list_dto_to_dict(tags_dto), 200
+                )
+    else:
+        return ResponseAPI.get_error_response({}, 405)
