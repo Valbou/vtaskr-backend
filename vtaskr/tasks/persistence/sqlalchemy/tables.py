@@ -52,7 +52,13 @@ mapper_registry.map_imperatively(
     Tag,
     tag_table,
     properties={
-        "tasks": relationship(Task, secondary=tasktag_table, back_populates="tags")
+        "tasks": relationship(
+            Task,
+            secondary=tasktag_table,
+            back_populates="tags",
+            lazy="subquery",
+            join_depth=1,
+        )
     },
 )
 
@@ -77,6 +83,12 @@ mapper_registry.map_imperatively(
     Task,
     tasks_table,
     properties={
-        "tags": relationship(Tag, secondary=tasktag_table, back_populates="tasks")
+        "tags": relationship(
+            Tag,
+            secondary=tasktag_table,
+            back_populates="tasks",
+            lazy="subquery",
+            join_depth=1,
+        )
     },
 )

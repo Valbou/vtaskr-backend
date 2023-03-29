@@ -4,8 +4,9 @@ from flask import current_app, g, request
 
 from vtaskr.flask.utils import ResponseAPI
 from vtaskr.redis import rate_limited
-from vtaskr.tasks.hmi.dto import TagDTO, TagMapperDTO
+from vtaskr.tasks.hmi.dto import TagDTO, TagMapperDTO, TaskMapperDTO
 from vtaskr.tasks.hmi.tags_service import TagService
+from vtaskr.tasks.hmi.tasks_service import TaskService
 from vtaskr.tasks.persistence import TagDB
 from vtaskr.users.hmi.flask.decorators import login_required
 
@@ -211,3 +212,47 @@ def tag(tag_id: str):
 
         else:
             return ResponseAPI.get_error_response({}, 404)
+
+
+api_item = {
+    "get": {
+        "description": "Get all tasks associated to this tag",
+        "summary": "Get tasks with this tag",
+        "operationId": "getTagTasks",
+        "responses": {
+            "200": {
+                "description": "Task list",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "array",
+                            "items": {"$ref": "#/components/schemas/Tasks"},
+                        }
+                    }
+                },
+            },
+        },
+    }
+}
+openapi.register_path(f"{V1}/tag/{{tag_id}}/tasks", api_item)
+
+
+@tasks_bp.route(f"{V1}/tag/<string:tag_id>/tasks", methods=["GET"])
+@login_required(logger)
+@rate_limited(logger=logger, hit=5, period=timedelta(seconds=1))
+def tag_tasks(tag_id: str):
+    """Give all tasks associated to a specific tag"""
+    if request.method == "GET":
+        with current_app.sql.get_session() as session:
+            tag_service = TagService(session, current_app.testing)
+            tag = tag_service.get_user_tag(g.user.id, tag_id)
+            if tag:
+                task_service = TaskService(session, current_app.testing)
+                tasks_dto = TaskMapperDTO.list_models_to_list_dto(
+                    task_service.get_user_tag_tasks(g.user.id, tag.id)
+                )
+                return ResponseAPI.get_response(
+                    TagMapperDTO.list_dto_to_dict(tasks_dto), 200
+                )
+    else:
+        return ResponseAPI.get_error_response({}, 405)

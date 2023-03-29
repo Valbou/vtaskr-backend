@@ -3,7 +3,7 @@ from typing import List, Optional
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from vtaskr.tasks.models import Tag
+from vtaskr.tasks.models import Tag, Task
 from vtaskr.tasks.persistence.ports import AbstractTagPort
 
 
@@ -29,4 +29,13 @@ class TagDB(AbstractTagPort):
     def user_tags(self, session: Session, user_id: str) -> List[Tag]:
         # TODO: need a better control on where clause, limit and ordering
         stmt = select(Tag).where(Tag.user_id == user_id).limit(100)
+        return session.execute(stmt).scalars().all()
+
+    def user_task_tags(self, session: Session, user_id: str, task_id: str) -> List[Tag]:
+        # TODO: need a better control on where clause, limit and ordering
+        stmt = (
+            select(Tag)
+            .where(Tag.user_id == user_id, Tag.tasks.any(Task.id == task_id))
+            .limit(100)
+        )
         return session.execute(stmt).scalars().all()

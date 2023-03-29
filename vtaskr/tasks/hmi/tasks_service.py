@@ -21,6 +21,9 @@ class TaskService(AbstractTaskPort):
         task = self.task_db.load(self.session, task_id)
         return task if self.control.is_owner(user_id, task.user_id) else None
 
+    def get_user_tag_tasks(self, user_id: str, tag_id: str) -> List[Task]:
+        return self.task_db.user_tag_tasks(self.session, user_id, tag_id)
+
     def update_user_task(self, user_id: str, task: Task):
         if self.control.is_owner(user_id, task.user_id):
             self.task_db.save(self.session, task)
