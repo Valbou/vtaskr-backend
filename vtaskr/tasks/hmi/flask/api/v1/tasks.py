@@ -250,7 +250,9 @@ api_item = {
 openapi.register_path(f"{V1}/task/{{task_id}}/tags", api_item)
 
 
-@tasks_bp.route(f"{V1}/task/<string:task_id>/tags", methods=["GET", "PUT", "POST", "DELETE"])
+@tasks_bp.route(
+    f"{V1}/task/<string:task_id>/tags", methods=["GET", "PUT", "POST", "DELETE"]
+)
 @login_required(logger)
 @rate_limited(logger=logger, hit=5, period=timedelta(seconds=1))
 def task_tags(task_id: str):
