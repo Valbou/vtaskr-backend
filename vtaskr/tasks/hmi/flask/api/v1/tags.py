@@ -254,5 +254,7 @@ def tag_tasks(tag_id: str):
                 return ResponseAPI.get_response(
                     TagMapperDTO.list_dto_to_dict(tasks_dto), 200
                 )
+            else:
+                return ResponseAPI.get_error_response("Tag not found", 404)
     else:
         return ResponseAPI.get_error_response({}, 405)

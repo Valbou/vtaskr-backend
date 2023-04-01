@@ -250,7 +250,7 @@ api_item = {
 openapi.register_path(f"{V1}/task/{{task_id}}/tags", api_item)
 
 
-@tasks_bp.route(f"{V1}/task/<string:task_id>/tags", methods=["GET"])
+@tasks_bp.route(f"{V1}/task/<string:task_id>/tags", methods=["GET", "PUT", "POST", "DELETE"])
 @login_required(logger)
 @rate_limited(logger=logger, hit=5, period=timedelta(seconds=1))
 def task_tags(task_id: str):
@@ -267,5 +267,7 @@ def task_tags(task_id: str):
                 return ResponseAPI.get_response(
                     TaskMapperDTO.list_dto_to_dict(tags_dto), 200
                 )
+            else:
+                return ResponseAPI.get_error_response("Task not found", 404)
     else:
         return ResponseAPI.get_error_response({}, 405)
