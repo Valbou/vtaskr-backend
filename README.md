@@ -6,7 +6,7 @@ You can follow the [Roadmap](https://github.com/Valbou/vtaskr-backend/blob/maste
 
 ![License LGPLv3](https://img.shields.io/badge/license-LGPLv3-blue "License LGPLv3")
 ![Python v3.8](https://img.shields.io/badge/python-v3.8-blue "Python v3.8")
-![Tests 196 passed](https://img.shields.io/badge/tests-196%20passed-green "Tests 196 passed")
+![Tests 221 passed](https://img.shields.io/badge/tests-221%20passed-green "Tests 221 passed")
 ![Coverage 93%](https://img.shields.io/badge/coverage-93%25-green "Coverage 93%")
 ![Code quality A](https://img.shields.io/badge/code%20quality-A-green "Code quality A")
 
@@ -19,13 +19,16 @@ Translations were made automatically by [Deepl](https://www.deepl.com) and [PoEd
 ### Install project
 
 ```bash
-apt install git python3-venv
+apt install postgresql, postgresql-server, postgresql-client lsb-release redis
+apt install git python3-venv python3-pip
 
 python3 -m venv vtaskr-project
 cd vtaskr-project
 git clone git@github.com:Valbou/vtaskr-backend.git
 cd vtaskr-backend
 ```
+
+Config your own .env file (based on template.env file in project folder)
 
 ### Install dependencies
 
