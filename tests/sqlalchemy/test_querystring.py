@@ -1,15 +1,20 @@
+from dataclasses import dataclass
+from datetime import date, datetime
+from typing import Optional
 from unittest import TestCase
 
 from vtaskr.sqlalchemy.querystring import Filter, Operations, QueryStringFilter
 
 
-class TestQueryStringFilter(TestCase):
+class QSTestMixin(TestCase):
     def assertFilter(self, filter, field, operation, value):
         self.assertIsInstance(filter, Filter)
         self.assertEqual(filter.field, field)
         self.assertEqual(filter.operation, operation)
         self.assertEqual(filter.value, value)
 
+
+class TestQueryStringFilter(QSTestMixin):
     def test_order_by_asc_filter(self):
         qs = "orderby=name"
         qs_filter = QueryStringFilter(query_string=qs)
@@ -182,3 +187,58 @@ class TestQueryStringFilter(TestCase):
         filters = qs_filter.get_filters()
         self.assertEqual(len(filters), 1)
         self.assertFilter(filters[0], "name", Operations.NENDSWITH, "val")
+
+
+@dataclass
+class TestDTO:
+    string: str = "foo"
+    integer: int = 42
+    floating: float = 0.0
+    boolean: bool = False
+    opt_str: Optional[str] = None
+    opt_int: Optional[int] = None
+    datation: datetime = datetime.now()
+    opt_datation: Optional[date] = date.today()
+
+
+class TestQueryStringFilterLimited(QSTestMixin):
+    def setUp(self) -> None:
+        super().setUp()
+        self.dto = TestDTO()
+
+    def test_filter_on_dto_field(self):
+        qs = "opt_int_eq=42"
+        qs_filter = QueryStringFilter(query_string=qs, dto=self.dto)
+        filters = qs_filter.get_filters()
+        self.assertEqual(len(filters), 1)
+        self.assertFilter(filters[0], "opt_int", Operations.EQ, 42)
+        self.assertIsInstance(filters[0].value, int)
+
+    def test_filter_out_of_dto_fields(self):
+        qs = "name_eq=val"
+        qs_filter = QueryStringFilter(query_string=qs, dto=self.dto)
+        filters = qs_filter.get_filters()
+        self.assertEqual(len(filters), 0)
+
+    def test_cast_datetime_from_dto(self):
+        qs = "datation_eq=2023-04-02T18:56:55.763324%2B00:00"
+        qs_filter = QueryStringFilter(query_string=qs, dto=self.dto)
+        filters = qs_filter.get_filters()
+        self.assertEqual(len(filters), 1)
+        self.assertFilter(
+            filters[0],
+            "datation",
+            Operations.EQ,
+            datetime.fromisoformat("2023-04-02T18:56:55.763324+00:00"),
+        )
+        self.assertIsInstance(filters[0].value, datetime)
+
+    def test_cast_optional_date_from_dto(self):
+        qs = "opt_datation_lt=2023-04-02"
+        qs_filter = QueryStringFilter(query_string=qs, dto=self.dto)
+        filters = qs_filter.get_filters()
+        self.assertEqual(len(filters), 1)
+        self.assertFilter(
+            filters[0], "opt_datation", Operations.LT, date.fromisoformat("2023-04-02")
+        )
+        self.assertIsInstance(filters[0].value, date)
