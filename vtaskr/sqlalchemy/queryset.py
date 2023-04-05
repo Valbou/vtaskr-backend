@@ -1,6 +1,6 @@
 from typing import List, TypeVar
 
-from sqlalchemy import select
+from sqlalchemy import delete, select, update
 
 from .querystring import Filter, Operations
 
@@ -15,12 +15,38 @@ class Queryset:
 
     def __init__(self, qs_class):
         self.qs_class = qs_class
-        self.query = select(qs_class)
+        self._query = None
+        self.select()
+
+    @property
+    def statement(self):
+        statement = self._query
+        self.clean()
+        return statement
+
+    def clean(self):
+        self.select()
+
+    def select(self) -> TQueryset:
+        self._query = select(self.qs_class)
+        return self
+
+    def update(self) -> TQueryset:
+        self._query = update(self.qs_class)
+        return self
+
+    def delete(self) -> TQueryset:
+        self._query = delete(self.qs_class)
+        return self
+
+    def values(self, **kwargs):
+        self._query = self._query.values(**kwargs)
+        return self
 
     def page(self, page_number: int, per_page: int = 100) -> TQueryset:
         """A simple paginator"""
         offset = (page_number - 1) * per_page
-        self.query = self.query.offset(offset).limit(per_page)
+        self._query = self._query.offset(offset).limit(per_page)
         return self
 
     def from_filters(self, filters: List[Filter]) -> TQueryset:
@@ -48,27 +74,27 @@ class Queryset:
 
     def _add_simple_where_clause(self, f: Filter):
         if f.operation == Operations.EQ:
-            self.query = self.query.where(getattr(self.qs_class, f.field) == f.value)
+            self._query = self._query.where(getattr(self.qs_class, f.field) == f.value)
         elif f.operation == Operations.NEQ:
-            self.query = self.query.where(getattr(self.qs_class, f.field) != f.value)
+            self._query = self._query.where(getattr(self.qs_class, f.field) != f.value)
         elif f.operation == Operations.LT:
-            self.query = self.query.where(getattr(self.qs_class, f.field) < f.value)
+            self._query = self._query.where(getattr(self.qs_class, f.field) < f.value)
         elif f.operation == Operations.LTE:
-            self.query = self.query.where(getattr(self.qs_class, f.field) <= f.value)
+            self._query = self._query.where(getattr(self.qs_class, f.field) <= f.value)
         elif f.operation == Operations.GT:
-            self.query = self.query.where(getattr(self.qs_class, f.field) > f.value)
+            self._query = self._query.where(getattr(self.qs_class, f.field) > f.value)
         elif f.operation == Operations.GTE:
-            self.query = self.query.where(getattr(self.qs_class, f.field) >= f.value)
+            self._query = self._query.where(getattr(self.qs_class, f.field) >= f.value)
         elif f.operation == Operations.CONTAINS:
-            self.query = self.query.where(
+            self._query = self._query.where(
                 getattr(self.qs_class, f.field).contains(f.value)
             )
         elif f.operation == Operations.STARTSWITH:
-            self.query = self.query.where(
+            self._query = self._query.where(
                 getattr(self.qs_class, f.field).startswith(f.value)
             )
         elif f.operation == Operations.ENDSWITH:
-            self.query = self.query.where(
+            self._query = self._query.where(
                 getattr(self.qs_class, f.field).endswith(f.value)
             )
 
@@ -77,9 +103,11 @@ class Queryset:
         for field in fields:
             values = [f.value for f in fs if f.field == field]
             if operation == Operations.IN:
-                self.query = self.query.where(getattr(self.qs_class, field).in_(values))
+                self._query = self._query.where(
+                    getattr(self.qs_class, field).in_(values)
+                )
             elif operation == Operations.NIN:
-                self.query = self.query.where(
+                self._query = self._query.where(
                     getattr(self.qs_class, field).notin_(values)
                 )
 
@@ -91,11 +119,11 @@ class Queryset:
         ]
         for order in order_by_filters:
             if order.operation == Operations.DESC:
-                self.query = self.query.order_by(
+                self._query = self._query.order_by(
                     getattr(self.qs_class, order.field).desc()
                 )
             else:
-                self.query = self.query.order_by(
+                self._query = self._query.order_by(
                     getattr(self.qs_class, order.field).asc()
                 )
 
@@ -119,4 +147,4 @@ class Queryset:
         if len(page_filter) > 0:
             offset = (int(page_filter[0].value) - 1) * limit
 
-        self.query = self.query.offset(offset).limit(limit)
+        self._query = self._query.offset(offset).limit(limit)

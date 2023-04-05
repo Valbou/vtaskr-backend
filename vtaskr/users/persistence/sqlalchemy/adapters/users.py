@@ -1,30 +1,31 @@
 from typing import Optional
 
-from sqlalchemy import delete, select, update
 from sqlalchemy.orm import Session
 
 from vtaskr.users.models import User
 from vtaskr.users.persistence.ports import AbstractUserPort
+from vtaskr.users.persistence.sqlalchemy.querysets.users import UserQueryset
 
 
 class UserDB(AbstractUserPort):
+    def __init__(self) -> None:
+        super().__init__()
+        self.qs = UserQueryset()
+
     def load(self, session: Session, id: str) -> Optional[User]:
-        stmt = select(User).where(User.id == id)
-        result = session.scalars(stmt).one_or_none()
+        self.qs.user(id)
+        result = session.scalars(self.qs.statement).one_or_none()
         return result
 
     def update(self, session: Session, user: User, autocommit: bool = True):
-        stmt = (
-            update(User)
-            .where(User.id == user.id)
-            .values(
-                first_name=user.first_name,
-                last_name=user.last_name,
-                email=user.email,
-                hash_password=user.hash_password,
-            )
+        self.qs.update().user(user.id).values(
+            first_name=user.first_name,
+            last_name=user.last_name,
+            email=user.email,
+            hash_password=user.hash_password,
         )
-        session.execute(stmt)
+
+        session.execute(self.qs.statement)
         if autocommit:
             session.commit()
 
@@ -39,19 +40,17 @@ class UserDB(AbstractUserPort):
             session.commit()
 
     def exists(self, session: Session, id: str) -> bool:
-        return session.query(select(User).where(User.id == id).exists()).scalar()
+        self.qs.user(id)
+        return session.query(self.qs.statement.exists()).scalar()
 
     def find_login(self, session: Session, email: str) -> Optional[User]:
-        stmt = select(User).where(User.email == email)
-        result = session.scalars(stmt).one_or_none()
+        self.qs.with_email(email)
+        result = session.scalars(self.qs.statement).one_or_none()
         return result
 
     def clean_unused(self, session: Session, autocommit: bool = True):
-        stmt = delete(User).where(
-            User.last_login_at == None,  # noqa E711
-            User.created_at < User.unused_before(),
-        )
-        session.execute(stmt)
+        self.qs.delete().unused()
+        session.execute(self.qs.statement)
 
         if autocommit:
             session.commit()
