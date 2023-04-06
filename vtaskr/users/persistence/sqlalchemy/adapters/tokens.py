@@ -1,30 +1,32 @@
 from typing import Optional
 
-from sqlalchemy import and_, delete, or_, select, update
 from sqlalchemy.orm import Session
 
 from vtaskr.users.models import Token
 from vtaskr.users.persistence.ports import AbstractTokenPort
+from vtaskr.users.persistence.sqlalchemy.querysets import TokenQueryset
 
 
 class TokenDB(AbstractTokenPort):
+    def __init__(self) -> None:
+        super().__init__()
+        self.token_qs = TokenQueryset()
+
     def load(self, session: Session, id: str) -> Optional[Token]:
-        stmt = select(Token).where(Token.id == id)
-        result = session.scalars(stmt).one_or_none()
+        self.token_qs.id(id)
+        result = session.scalars(self.token_qs.statement).one_or_none()
         return result
 
     def get_token(self, session: Session, sha_token: str) -> Optional[Token]:
-        stmt = select(Token).where(Token.sha_token == sha_token)
-        result = session.scalars(stmt).one_or_none()
+        self.token_qs.by_sha(sha_token)
+        result = session.scalars(self.token_qs.statement).one_or_none()
         return result
 
     def activity_update(self, session: Session, token: Token, autocommit: bool = True):
-        stmt = (
-            update(Token)
-            .where(Token.id == token.id)
-            .values(last_activity_at=token.update_last_activity())
+        self.token_qs.update().id(token.id).values(
+            last_activity_at=token.update_last_activity()
         )
-        session.execute(stmt)
+        session.execute(self.token_qs.statement)
         if autocommit:
             session.commit()
 
@@ -34,16 +36,8 @@ class TokenDB(AbstractTokenPort):
             session.commit()
 
     def clean_expired(self, session: Session, autocommit: bool = True):
-        stmt = delete(Token).where(
-            or_(
-                Token.last_activity_at < Token.expired_before(),
-                and_(
-                    Token.created_at < Token.expired_temp_before(),
-                    Token.temp == True,  # noqa: E712
-                ),
-            )
-        )
-        session.execute(stmt)
+        self.token_qs.delete().expired()
+        session.execute(self.token_qs.statement)
         if autocommit:
             session.commit()
 
@@ -53,4 +47,5 @@ class TokenDB(AbstractTokenPort):
             session.commit()
 
     def exists(self, session: Session, id: str) -> bool:
-        return session.query(select(Token).where(Token.id == id).exists()).scalar()
+        self.token_qs.select().id(id)
+        return session.query(self.token_qs.statement.exists()).scalar()

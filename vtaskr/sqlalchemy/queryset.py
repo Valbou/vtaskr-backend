@@ -43,6 +43,14 @@ class Queryset:
         self._query = self._query.values(**kwargs)
         return self
 
+    def id(self, id: str):
+        self._query = self._query.where(self.qs_class.id == id)
+        return self
+
+    def ids(self, ids: List[str]):
+        self._query = self._query.where(self.qs_class.in_(ids))
+        return self
+
     def page(self, page_number: int, per_page: int = 100) -> TQueryset:
         """A simple paginator"""
         offset = (page_number - 1) * per_page

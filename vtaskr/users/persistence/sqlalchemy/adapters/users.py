@@ -4,28 +4,28 @@ from sqlalchemy.orm import Session
 
 from vtaskr.users.models import User
 from vtaskr.users.persistence.ports import AbstractUserPort
-from vtaskr.users.persistence.sqlalchemy.querysets.users import UserQueryset
+from vtaskr.users.persistence.sqlalchemy.querysets import UserQueryset
 
 
 class UserDB(AbstractUserPort):
     def __init__(self) -> None:
         super().__init__()
-        self.qs = UserQueryset()
+        self.user_qs = UserQueryset()
 
     def load(self, session: Session, id: str) -> Optional[User]:
-        self.qs.user(id)
-        result = session.scalars(self.qs.statement).one_or_none()
+        self.user_qs.id(id)
+        result = session.scalars(self.user_qs.statement).one_or_none()
         return result
 
     def update(self, session: Session, user: User, autocommit: bool = True):
-        self.qs.update().user(user.id).values(
+        self.user_qs.update().id(user.id).values(
             first_name=user.first_name,
             last_name=user.last_name,
             email=user.email,
             hash_password=user.hash_password,
         )
 
-        session.execute(self.qs.statement)
+        session.execute(self.user_qs.statement)
         if autocommit:
             session.commit()
 
@@ -40,17 +40,17 @@ class UserDB(AbstractUserPort):
             session.commit()
 
     def exists(self, session: Session, id: str) -> bool:
-        self.qs.user(id)
-        return session.query(self.qs.statement.exists()).scalar()
+        self.user_qs.id(id)
+        return session.query(self.user_qs.statement.exists()).scalar()
 
     def find_login(self, session: Session, email: str) -> Optional[User]:
-        self.qs.with_email(email)
-        result = session.scalars(self.qs.statement).one_or_none()
+        self.user_qs.by_email(email)
+        result = session.scalars(self.user_qs.statement).one_or_none()
         return result
 
     def clean_unused(self, session: Session, autocommit: bool = True):
-        self.qs.delete().unused()
-        session.execute(self.qs.statement)
+        self.user_qs.delete().unused()
+        session.execute(self.user_qs.statement)
 
         if autocommit:
             session.commit()
