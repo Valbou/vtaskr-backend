@@ -28,8 +28,8 @@ class TestTagAdapter(BaseTestCase):
             self.assertFalse(self.tag_db.exists(session, self.tag.id))
 
     def test_add_new_task(self):
-        task_1 = Task(self.user.id, self.fake.sentence(nb_words=2)[:50])
-        task_2 = Task(self.user.id, self.fake.sentence(nb_words=2)[:50])
+        task_1 = Task(self.user.id, self.fake.text(max_nb_chars=50))
+        task_2 = Task(self.user.id, self.fake.text(max_nb_chars=50))
         with self.app.sql.get_session() as session:
             self.tag.add_tasks([task_1, task_2])
             self.tag_db.save(session, self.tag)

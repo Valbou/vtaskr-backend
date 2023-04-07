@@ -20,7 +20,7 @@ class TestTagsAPI(BaseTestCase):
 
     def test_create_tag(self):
         headers = self.get_token_headers()
-        title = self.fake.sentence(nb_words=4)
+        title = self.fake.text(max_nb_chars=50)
         tag_data = {
             "title": title,
         }
@@ -37,7 +37,7 @@ class TestTagsAPI(BaseTestCase):
 
     def test_get_tags(self):
         headers = self.get_token_headers()
-        tag = Tag(user_id=self.user.id, title=self.fake.sentence(nb_words=4))
+        tag = Tag(user_id=self.user.id, title=self.fake.text(max_nb_chars=50))
         with self.app.sql.get_session() as session:
             self.tag_db.save(session, tag)
 

@@ -13,7 +13,7 @@ class TestTagAPI(BaseTestCase):
 
     def test_get_tag_no_login(self):
         self.create_user()
-        tag = Tag(self.user.id, self.fake.sentence(nb_words=4))
+        tag = Tag(self.user.id, self.fake.text(max_nb_chars=50))
         with self.app.sql.get_session() as session:
             self.tag_db.save(session, tag)
 
@@ -22,7 +22,7 @@ class TestTagAPI(BaseTestCase):
 
     def test_get_tag(self):
         headers = self.get_token_headers()
-        tag = Tag(self.user.id, self.fake.sentence(nb_words=4))
+        tag = Tag(self.user.id, self.fake.text(max_nb_chars=50))
         with self.app.sql.get_session() as session:
             self.tag_db.save(session, tag)
 
@@ -31,11 +31,11 @@ class TestTagAPI(BaseTestCase):
 
     def test_update_tag_put(self):
         headers = self.get_token_headers()
-        tag = Tag(self.user.id, self.fake.sentence(nb_words=4))
+        tag = Tag(self.user.id, self.fake.text(max_nb_chars=50))
         with self.app.sql.get_session() as session:
             self.tag_db.save(session, tag)
 
-            new_title = self.fake.sentence(nb_words=5)
+            new_title = self.fake.text(max_nb_chars=50)
             background = self.fake.color()
             data = {
                 "title": new_title,
@@ -55,11 +55,11 @@ class TestTagAPI(BaseTestCase):
 
     def test_update_tag_patch(self):
         headers = self.get_token_headers()
-        tag = Tag(self.user.id, self.fake.sentence(nb_words=4))
+        tag = Tag(self.user.id, self.fake.text(max_nb_chars=50))
         with self.app.sql.get_session() as session:
             self.tag_db.save(session, tag)
 
-            new_title = self.fake.sentence(nb_words=5)
+            new_title = self.fake.text(max_nb_chars=50)
             foreground = self.fake.color()
             data = {
                 "title": new_title,
@@ -79,7 +79,7 @@ class TestTagAPI(BaseTestCase):
 
     def test_delete_tag(self):
         headers = self.get_token_headers()
-        tag = Tag(self.user.id, self.fake.sentence(nb_words=4))
+        tag = Tag(self.user.id, self.fake.text(max_nb_chars=50))
         with self.app.sql.get_session() as session:
             self.tag_db.save(session, tag)
 

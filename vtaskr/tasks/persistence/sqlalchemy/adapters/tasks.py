@@ -1,16 +1,20 @@
 from typing import List, Optional
 
-from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from vtaskr.tasks import Tag, Task
+from vtaskr.tasks import Task
 from vtaskr.tasks.persistence.ports import AbstractTaskPort
+from vtaskr.tasks.persistence.sqlalchemy.querysets import TaskQueryset
 
 
 class TaskDB(AbstractTaskPort):
+    def __init__(self) -> None:
+        super().__init__()
+        self.task_qs = TaskQueryset()
+
     def load(self, session: Session, id: str) -> Optional[Task]:
-        stmt = select(Task).where(Task.id == id)
-        result = session.scalars(stmt).one_or_none()
+        self.task_qs.id(id)
+        result = session.scalars(self.task_qs.statement).one_or_none()
         return result
 
     def save(self, session: Session, task: Task, autocommit: bool = True):
@@ -24,18 +28,15 @@ class TaskDB(AbstractTaskPort):
             session.commit()
 
     def exists(self, session: Session, id: str) -> bool:
-        return session.query(select(Task).where(Task.id == id).exists()).scalar()
+        self.task_qs.id(id)
+        return session.query(self.task_qs.statement.exists()).scalar()
 
     def user_tasks(self, session: Session, user_id: str) -> List[Task]:
         # TODO: need a better control on where clause, limit and ordering
-        stmt = select(Task).where(Task.user_id == user_id).limit(100)
-        return session.execute(stmt).scalars().all()
+        self.task_qs.user(user_id)
+        return session.execute(self.task_qs.statement.limit(100)).scalars().all()
 
     def user_tag_tasks(self, session: Session, user_id: str, tag_id: str) -> List[Task]:
         # TODO: need a better control on where clause, limit and ordering
-        stmt = (
-            select(Task)
-            .where(Task.user_id == user_id, Task.tags.any(Tag.id == tag_id))
-            .limit(100)
-        )
-        return session.execute(stmt).scalars().all()
+        self.task_qs.user(user_id).tag(tag_id)
+        return session.execute(self.task_qs.statement.limit(100)).scalars().all()
