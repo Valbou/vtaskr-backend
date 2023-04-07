@@ -1,5 +1,5 @@
 from vtaskr.sqlalchemy.queryset import Queryset
-from vtaskr.tasks.models import Task, Tag
+from vtaskr.tasks.models import Tag, Task
 
 
 class TaskQueryset(Queryset):
