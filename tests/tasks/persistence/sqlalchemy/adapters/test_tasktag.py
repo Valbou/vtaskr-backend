@@ -53,3 +53,18 @@ class TestTaskTagAssociation(BaseTestCase):
         with self.app.sql.get_session() as session:
             saved_tag = self.tag_db.load(session, tag_id)
             self.assertEqual(len(saved_tag.tasks), 2)
+
+    def test_add_many_tags_to_a_task(self):
+        with self.app.sql.get_session() as session:
+            tags = [self._create_tag() for _ in range(5)]
+            [self.tag_db.save(session, t, autocommit=False) for t in tags]
+            task = self._create_task()
+            self.task_db.save(session, task)
+
+            tags_id = [t.id for t in tags]
+            self.task_db.user_add_tags(session, self.user.id, task.id, tags_id)
+            task_id = task.id
+
+        with self.app.sql.get_session() as session:
+            task = self.task_db.load(session, task_id)
+            self.assertEqual(len(task.tags), 5)
