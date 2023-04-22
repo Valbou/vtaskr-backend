@@ -54,9 +54,7 @@ api_item = {
         "requestBody": {
             "description": "Tag to create",
             "content": {
-                "application/json": {
-                    "schema": {"$ref": "#/components/schemas/Tag"}
-                }
+                "application/json": {"schema": {"$ref": "#/components/schemas/Tag"}}
             },
             "required": True,
         },
@@ -150,9 +148,7 @@ api_item = {
         "requestBody": {
             "description": "Tag to update",
             "content": {
-                "application/json": {
-                    "schema": {"$ref": "#/components/schemas/Tag"}
-                }
+                "application/json": {"schema": {"$ref": "#/components/schemas/Tag"}}
             },
             "required": True,
         },
@@ -181,9 +177,7 @@ api_item = {
         "requestBody": {
             "description": "Tag to update",
             "content": {
-                "application/json": {
-                    "schema": {"$ref": "#/components/schemas/Tag"}
-                }
+                "application/json": {"schema": {"$ref": "#/components/schemas/Tag"}}
             },
             "required": True,
         },
