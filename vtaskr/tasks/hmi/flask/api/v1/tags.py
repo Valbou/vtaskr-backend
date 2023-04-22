@@ -51,6 +51,15 @@ api_item = {
                 },
             },
         },
+        "requestBody": {
+            "description": "Tag to create",
+            "content": {
+                "application/json": {
+                    "schema": {"$ref": "#/components/schemas/Tag"}
+                }
+            },
+            "required": True,
+        },
     },
 }
 openapi.register_path(f"{V1}/tags", api_item)
@@ -138,6 +147,15 @@ api_item = {
                 },
             },
         },
+        "requestBody": {
+            "description": "Tag to update",
+            "content": {
+                "application/json": {
+                    "schema": {"$ref": "#/components/schemas/Tag"}
+                }
+            },
+            "required": True,
+        },
     },
     "patch": {
         "description": "Update the tag with specified id",
@@ -159,6 +177,15 @@ api_item = {
                     "application/json": {"schema": {"$ref": "#/components/schemas/Tag"}}
                 },
             },
+        },
+        "requestBody": {
+            "description": "Tag to update",
+            "content": {
+                "application/json": {
+                    "schema": {"$ref": "#/components/schemas/Tag"}
+                }
+            },
+            "required": True,
         },
     },
     "delete": {
