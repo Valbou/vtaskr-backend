@@ -63,7 +63,7 @@ class TestTaskTagAssociation(BaseTestCase):
             self.task_db.save(session, task)
 
             tags_id = [t.id for t in tags]
-            self.task_db.user_add_tags(session, self.user.id, task.id, tags_id)
+            self.task_db.user_add_tags(session, self.user.id, task, tags_id)
 
         with self.app.sql.get_session() as session:
             task = self.task_db.load(session, task_id)
@@ -78,14 +78,14 @@ class TestTaskTagAssociation(BaseTestCase):
             self.task_db.save(session, task)
 
             tags_id = [t.id for t in tags]
-            self.task_db.user_add_tags(session, self.user.id, task.id, tags_id)
+            self.task_db.user_add_tags(session, self.user.id, task, tags_id)
 
         with self.app.sql.get_session() as session:
             tags_2 = [self._create_tag() for _ in range(2)]
             [self.tag_db.save(session, t, autocommit=False) for t in tags_2]
             task = self.task_db.load(session, task_id)
             tags_id_2 = [t.id for t in tags_2]
-            self.task_db.user_add_tags(session, self.user.id, task.id, tags_id_2)
+            self.task_db.user_add_tags(session, self.user.id, task, tags_id_2)
 
         with self.app.sql.get_session() as session:
             task = self.task_db.load(session, task_id)

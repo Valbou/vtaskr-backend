@@ -47,7 +47,7 @@ class TaskDB(AbstractTaskPort):
         self,
         session: Session,
         user_id: str,
-        task_id: str,
+        task: Task,
         tags_id: List[str],
         autocommit: bool = True,
     ):
@@ -56,8 +56,16 @@ class TaskDB(AbstractTaskPort):
         tag_qs = TagQueryset()
         tag_qs = tag_qs.user(user_id).ids(tags_id)
         tags = session.execute(tag_qs.statement).scalars().all()
-        self.task_qs.user(user_id).id(task_id)
-        task: Task = session.scalars(self.task_qs.statement).one_or_none()
+
         task.tags = tags
+        if autocommit:
+            session.commit()
+
+    def clean_tags(
+        self, session: Session, user_id: str, task: Task, autocommit: bool = True
+    ):
+        """Clean all associations with tags"""
+
+        task.tags = []
         if autocommit:
             session.commit()
