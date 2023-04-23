@@ -15,7 +15,7 @@ class TestUserAdapter(BaseTestCase):
         self.user = User(
             first_name=self.fake.first_name(),
             last_name=self.fake.last_name(),
-            email="user." + self.fake.email(domain="valbou.fr"),
+            email=self.generate_email(),
             hash_password=self.fake.password(),
         )
 
@@ -43,7 +43,7 @@ class TestUserAdapter(BaseTestCase):
         old_user = User(
             first_name=self.fake.first_name(),
             last_name=self.fake.last_name(),
-            email="user." + self.fake.email(domain="valbou.fr"),
+            email=self.generate_email(),
             created_at=datetime.now(utc) - timedelta(days=UNUSED_ACCOUNT_DELAY),
         )
 
@@ -61,7 +61,7 @@ class TestUserAdapter(BaseTestCase):
         old_user = User(
             first_name=self.fake.first_name(),
             last_name=self.fake.last_name(),
-            email="user." + self.fake.email(domain="valbou.fr"),
+            email=self.generate_email(),
             created_at=datetime.now(utc) - timedelta(days=UNUSED_ACCOUNT_DELAY),
             last_login_at=datetime.now(utc),
         )

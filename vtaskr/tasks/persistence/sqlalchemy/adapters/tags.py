@@ -1,16 +1,20 @@
 from typing import List, Optional
 
-from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from vtaskr.tasks.models import Tag, Task
+from vtaskr.tasks.models import Tag
 from vtaskr.tasks.persistence.ports import AbstractTagPort
+from vtaskr.tasks.persistence.sqlalchemy.querysets import TagQueryset
 
 
 class TagDB(AbstractTagPort):
+    def __init__(self) -> None:
+        super().__init__()
+        self.tag_qs = TagQueryset()
+
     def load(self, session: Session, id: str) -> Optional[Tag]:
-        stmt = select(Tag).where(Tag.id == id)
-        result = session.scalars(stmt).one_or_none()
+        self.tag_qs.id(id)
+        result = session.scalars(self.tag_qs.statement).one_or_none()
         return result
 
     def save(self, session: Session, tag: Tag, autocommit: bool = True):
@@ -24,14 +28,15 @@ class TagDB(AbstractTagPort):
             session.commit()
 
     def exists(self, session: Session, id: str) -> bool:
-        return session.query(select(Tag).where(Tag.id == id).exists()).scalar()
-
-    def add_task(self, session: Session, tag: Tag, task: Task, autocommit: bool = True):
-        tag.tasks.append(task)
-        if autocommit:
-            session.commit()
+        self.tag_qs.id(id)
+        return session.query(self.tag_qs.statement.exists()).scalar()
 
     def user_tags(self, session: Session, user_id: str) -> List[Tag]:
         # TODO: need a better control on where clause, limit and ordering
-        stmt = select(Tag).where(Tag.user_id == user_id).limit(100)
-        return session.execute(stmt).scalars().all()
+        self.tag_qs.user(user_id)
+        return session.execute(self.tag_qs.statement.limit(100)).scalars().all()
+
+    def user_task_tags(self, session: Session, user_id: str, task_id: str) -> List[Tag]:
+        # TODO: need a better control on where clause, limit and ordering
+        self.tag_qs.user(user_id).task(task_id)
+        return session.execute(self.tag_qs.statement.limit(100)).scalars().all()

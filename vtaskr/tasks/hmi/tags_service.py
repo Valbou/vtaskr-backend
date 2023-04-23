@@ -21,6 +21,9 @@ class TagService(AbstractTagPort):
         tag = self.tag_db.load(self.session, tag_id)
         return tag if self.control.is_owner(user_id, tag.user_id) else None
 
+    def get_user_task_tags(self, user_id: str, task_id: str) -> List[Tag]:
+        return self.tag_db.user_task_tags(self.session, user_id, task_id)
+
     def update_user_tag(self, user_id: str, tag: Tag):
         if self.control.is_owner(user_id, tag.user_id):
             self.tag_db.save(self.session, tag)

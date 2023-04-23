@@ -1,29 +1,41 @@
+from dataclasses import dataclass
 from typing import Optional
 from unittest import TestCase
 
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from sqlalchemy import Column, Integer, String, Table
 
+from vtaskr.sqlalchemy.base import mapper_registry
 from vtaskr.sqlalchemy.queryset import Queryset
 from vtaskr.sqlalchemy.querystring import QueryStringFilter
 
 
-class Base(DeclarativeBase):
-    pass
+@dataclass
+class TestUser:
+    id: int
+    name: str
+    age: int
+    fullname: Optional[str]
 
 
-class User(Base):
-    __tablename__ = "user"
+test_table = Table(
+    "test_user",
+    mapper_registry.metadata,
+    Column("id", String, primary_key=True),
+    Column("name", String()),
+    Column("age", Integer()),
+    Column("fullname", String(), nullable=True, default=None),
+)
 
-    id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str]
-    age: Mapped[int]
-    fullname: Mapped[Optional[str]]
+mapper_registry.map_imperatively(
+    TestUser,
+    test_table,
+)
 
 
 class TestQueryset(TestCase):
     def setUp(self) -> None:
         super().setUp()
-        self.queryset = Queryset(User)
+        self.queryset = Queryset(TestUser)
 
     def assertInStatment(self, stmt: str, *args: str):
         for arg in args:
@@ -38,15 +50,15 @@ class TestQueryset(TestCase):
     def test_page(self):
         self.queryset.page(2)
         self.assertInStatment(
-            str(self.queryset.query), "SELECT", "FROM", "OFFSET", "LIMIT"
+            str(self.queryset.statement), "SELECT", "FROM", "OFFSET", "LIMIT"
         )
-        self.assertNotIn(str(self.queryset.query), "WHERE")
+        self.assertNotIn(str(self.queryset.statement), "WHERE")
 
     def test_from_filters(self):
         qsf = QueryStringFilter("name_in=val,bou&orderby=-name&age_gte=18&page=2")
         self.queryset.from_filters(qsf.get_filters())
         self.assertInStatment(
-            str(self.queryset.query),
+            str(self.queryset.statement),
             "SELECT",
             "FROM",
             "WHERE",

@@ -1,31 +1,25 @@
 from typing import Optional
 
-from sqlalchemy import delete, select
 from sqlalchemy.orm import Session
 
 from vtaskr.users.models import RequestChange
 from vtaskr.users.persistence.ports import AbstractRequestChangePort
+from vtaskr.users.persistence.sqlalchemy.querysets import RequestChangeQueryset
 
 
 class RequestChangeDB(AbstractRequestChangePort):
+    def __init__(self) -> None:
+        super().__init__()
+        self.req_change_qs = RequestChangeQueryset()
+
     def load(self, session: Session, id: str) -> Optional[RequestChange]:
-        stmt = select(RequestChange).where(RequestChange.id == id)
-        result = session.scalars(stmt).one_or_none()
+        self.req_change_qs.id(id)
+        result = session.scalars(self.req_change_qs.statement).one_or_none()
         return result
 
-    def find_request(
-        self, session: Session, email: str, autocommit: bool = True
-    ) -> Optional[RequestChange]:
-        stmt = (
-            select(RequestChange)
-            .where(
-                RequestChange.email == email,
-                RequestChange.created_at > RequestChange.valid_after(),
-            )
-            .order_by(RequestChange.created_at.desc())
-            .limit(1)
-        )
-        result = session.scalars(stmt).one_or_none()
+    def find_request(self, session: Session, email: str) -> Optional[RequestChange]:
+        self.req_change_qs.valid_for(email).last()
+        result = session.scalars(self.req_change_qs.statement).one_or_none()
         return result
 
     def save(
@@ -36,10 +30,8 @@ class RequestChangeDB(AbstractRequestChangePort):
             session.commit()
 
     def clean_history(self, session: Session, autocommit: bool = True):
-        stmt = delete(RequestChange).where(
-            RequestChange.created_at < RequestChange.history_expired_before()
-        )
-        session.execute(stmt)
+        self.req_change_qs.delete().expired()
+        session.execute(self.req_change_qs.statement)
         if autocommit:
             session.commit()
 
@@ -51,6 +43,5 @@ class RequestChangeDB(AbstractRequestChangePort):
             session.commit()
 
     def exists(self, session: Session, id: str) -> bool:
-        return session.query(
-            select(RequestChange).where(RequestChange.id == id).exists()
-        ).scalar()
+        self.req_change_qs.id(id)
+        return session.query(self.req_change_qs.statement.exists()).scalar()

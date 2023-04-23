@@ -29,11 +29,11 @@ class TestTaskTagAssociation(BaseTestCase):
             tag_1 = self._create_tag()
             tag_2 = self._create_tag()
             task = self._create_task()
+            task_id = task.id
             self.task_db.save(session, task)
             task.tags.append(tag_1)
             task.tags.append(tag_2)
             session.commit()
-            task_id = task.id
 
         with self.app.sql.get_session() as session:
             saved_task = self.task_db.load(session, task_id)
@@ -53,3 +53,40 @@ class TestTaskTagAssociation(BaseTestCase):
         with self.app.sql.get_session() as session:
             saved_tag = self.tag_db.load(session, tag_id)
             self.assertEqual(len(saved_tag.tasks), 2)
+
+    def test_add_many_tags_to_a_task(self):
+        with self.app.sql.get_session() as session:
+            tags = [self._create_tag() for _ in range(5)]
+            [self.tag_db.save(session, t, autocommit=False) for t in tags]
+            task = self._create_task()
+            task_id = task.id
+            self.task_db.save(session, task)
+
+            tags_id = [t.id for t in tags]
+            self.task_db.user_add_tags(session, self.user.id, task, tags_id)
+
+        with self.app.sql.get_session() as session:
+            task = self.task_db.load(session, task_id)
+            self.assertEqual(len(task.tags), 5)
+
+    def test_overwrite_task_tags(self):
+        with self.app.sql.get_session() as session:
+            tags = [self._create_tag() for _ in range(5)]
+            [self.tag_db.save(session, t, autocommit=False) for t in tags]
+            task = self._create_task()
+            task_id = task.id
+            self.task_db.save(session, task)
+
+            tags_id = [t.id for t in tags]
+            self.task_db.user_add_tags(session, self.user.id, task, tags_id)
+
+        with self.app.sql.get_session() as session:
+            tags_2 = [self._create_tag() for _ in range(2)]
+            [self.tag_db.save(session, t, autocommit=False) for t in tags_2]
+            task = self.task_db.load(session, task_id)
+            tags_id_2 = [t.id for t in tags_2]
+            self.task_db.user_add_tags(session, self.user.id, task, tags_id_2)
+
+        with self.app.sql.get_session() as session:
+            task = self.task_db.load(session, task_id)
+            self.assertEqual(len(task.tags), 2)

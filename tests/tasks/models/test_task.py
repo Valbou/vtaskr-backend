@@ -5,15 +5,16 @@ from unittest import TestCase
 from faker import Faker
 from pytz import utc
 
-from vtaskr.tasks import EisenhowerFlag, Task
+from vtaskr.tasks import EisenhowerFlag, Tag, Task
 
 
 class TestTask(TestCase):
     def setUp(self) -> None:
         super().setUp()
         self.fake = Faker()
+        self.user_id = "1234abcd"
         self.task = Task(
-            user_id="1234abcd",
+            user_id=self.user_id,
             title=self.fake.sentence(),
         )
 
@@ -42,3 +43,13 @@ class TestTask(TestCase):
         self.assertEqual(self.task.get_eisenhower_flag(), EisenhowerFlag.DO)
         self.task.emergency = False
         self.assertEqual(self.task.get_eisenhower_flag(), EisenhowerFlag.SCHEDULE)
+
+    def test_add_and_remove_tags(self):
+        tag_1 = Tag(self.user_id, self.fake.text(max_nb_chars=50))
+        tag_2 = Tag(self.user_id, self.fake.text(max_nb_chars=50))
+        self.task.add_tags([tag_1, tag_2])
+        self.assertEqual(len(self.task.tags), 2)
+
+        self.task.remove_tags([tag_2.id])
+        self.assertEqual(len(self.task.tags), 1)
+        self.assertEqual(self.task.tags[0].id, tag_1.id)

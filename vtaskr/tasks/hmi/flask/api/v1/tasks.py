@@ -4,8 +4,8 @@ from flask import current_app, g, request
 
 from vtaskr.flask.utils import ResponseAPI
 from vtaskr.redis import rate_limited
-from vtaskr.tasks.hmi.dto import TaskDTO, TaskMapperDTO
-from vtaskr.tasks.hmi.tasks_service import TaskService
+from vtaskr.tasks.hmi import TagService, TaskService
+from vtaskr.tasks.hmi.dto import TagMapperDTO, TaskDTO, TaskMapperDTO
 from vtaskr.tasks.persistence import TaskDB
 from vtaskr.users.hmi.flask.decorators import login_required
 
@@ -51,6 +51,13 @@ api_item = {
                     }
                 },
             },
+        },
+        "requestBody": {
+            "description": "Task to create",
+            "content": {
+                "application/json": {"schema": {"$ref": "#/components/schemas/Task"}}
+            },
+            "required": True,
         },
     },
 }
@@ -143,6 +150,13 @@ api_item = {
                 },
             },
         },
+        "requestBody": {
+            "description": "Task to update",
+            "content": {
+                "application/json": {"schema": {"$ref": "#/components/schemas/Task"}}
+            },
+            "required": True,
+        },
     },
     "patch": {
         "description": "Update the task with specified id",
@@ -166,6 +180,13 @@ api_item = {
                     }
                 },
             },
+        },
+        "requestBody": {
+            "description": "Task to update",
+            "content": {
+                "application/json": {"schema": {"$ref": "#/components/schemas/Task"}}
+            },
+            "required": True,
         },
     },
     "delete": {
@@ -225,3 +246,149 @@ def task(task_id: str):
 
         else:
             return ResponseAPI.get_error_response({}, 404)
+
+
+api_item = {
+    "get": {
+        "description": "Get all tags associated to this task",
+        "summary": "Get tags with this task",
+        "operationId": "getTaskTags",
+        "responses": {
+            "200": {
+                "description": "Tag list",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "array",
+                            "items": {"$ref": "#/components/schemas/Tag"},
+                        }
+                    }
+                },
+            },
+        },
+    }
+}
+openapi.register_path(f"{V1}/task/{{task_id}}/tags", api_item)
+
+
+@tasks_bp.route(f"{V1}/task/<string:task_id>/tags", methods=["GET"])
+@login_required(logger)
+@rate_limited(logger=logger, hit=5, period=timedelta(seconds=1))
+def task_tags(task_id: str):
+    """Get all associated tags to a specific task"""
+
+    if request.method == "GET":
+        with current_app.sql.get_session() as session:
+            task_service = TaskService(session, current_app.testing)
+            task = task_service.get_user_task(g.user.id, task_id)
+            if task:
+                tag_service = TagService(session, current_app.testing)
+                tags_dto = TagMapperDTO.list_models_to_list_dto(
+                    tag_service.get_user_task_tags(g.user.id, task.id)
+                )
+                return ResponseAPI.get_response(
+                    TaskMapperDTO.list_dto_to_dict(tags_dto), 200
+                )
+            else:
+                return ResponseAPI.get_error_response("Task not found", 404)
+    else:
+        return ResponseAPI.get_error_response({}, 405)
+
+
+api_item = {
+    "put": {
+        "description": "Set tags associated to this task",
+        "summary": "Set tags to this task",
+        "operationId": "setTaskTags",
+        "responses": {
+            "201": {
+                "description": "Tags associated",
+                "content": {},
+            },
+        },
+        "requestBody": {
+            "description": "Tags id list",
+            "content": {
+                "application/json": {
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "tags": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string",
+                                },
+                            }
+                        },
+                    }
+                }
+            },
+            "required": True,
+        },
+    },
+}
+openapi.register_path(f"{V1}/task/{{task_id}}/tags/set", api_item)
+
+
+@tasks_bp.route(f"{V1}/task/<string:task_id>/tags/set", methods=["PUT"])
+@login_required(logger)
+@rate_limited(logger=logger, hit=5, period=timedelta(seconds=1))
+def task_tags_set(task_id: str):
+    """Set all associated tags ids to a specific task"""
+
+    data = request.get_json()
+    tags_id = data.get("tags")
+    if not isinstance(tags_id, list):
+        return ResponseAPI.get_error_response("Bad request", 400)
+
+    if request.method == "PUT":
+        with current_app.sql.get_session() as session:
+            task_service = TaskService(session, current_app.testing)
+            task = task_service.get_user_task(g.user.id, task_id)
+            try:
+                task_service.set_task_tags(g.user.id, task, tags_id)
+            except Exception as e:
+                logger.info(str(e))
+                return ResponseAPI.get_error_response("Bad request", 400)
+            return ResponseAPI.get_response({}, 201)
+
+    else:
+        return ResponseAPI.get_error_response({}, 405)
+
+
+api_item = {
+    "delete": {
+        "description": "Clean associated tags to this task",
+        "summary": "Clean task's tags",
+        "operationId": "cleanTaskTags",
+        "responses": {
+            "204": {
+                "description": "Delete all associations",
+                "content": {},
+            },
+        },
+        "requestBody": {"description": "Delete all associations", "content": {}},
+    },
+}
+openapi.register_path(f"{V1}/task/{{task_id}}/tags/clean", api_item)
+
+
+@tasks_bp.route(f"{V1}/task/<string:task_id>/tags/clean", methods=["DELETE"])
+@login_required(logger)
+@rate_limited(logger=logger, hit=1, period=timedelta(seconds=1))
+def task_tags_clean(task_id: str):
+    """Remove all associated tags to a specific task"""
+
+    if request.method == "DELETE":
+        with current_app.sql.get_session() as session:
+            task_service = TaskService(session, current_app.testing)
+            task = task_service.get_user_task(g.user.id, task_id)
+            try:
+                task_service.clean_task_tags(g.user.id, task)
+            except Exception as e:
+                logger.error(str(e))
+                return ResponseAPI.get_error_response("Internal error", 500)
+            return ResponseAPI.get_response({}, 204)
+
+    else:
+        return ResponseAPI.get_error_response({}, 405)

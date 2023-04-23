@@ -64,12 +64,17 @@ class BaseTestCase(TestCase):
                     result, f"Column {column_name} doesn't exists in {table_name} Table"
                 )
 
+    def generate_email(self):
+        return self.fake.bothify("???###?#-").lower() + self.fake.email(
+            domain="valbou.fr"
+        )
+
     def create_user(self):
         self.password = self.fake.password() + "Aa1#"
         self.user = User(
             first_name=self.fake.first_name(),
             last_name=self.fake.last_name(),
-            email="base." + self.fake.email(domain="valbou.fr"),
+            email=self.generate_email(),
         )
         self.user.set_password(self.password)
 
