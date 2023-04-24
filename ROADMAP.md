@@ -15,7 +15,6 @@ As vTaskr is an non profit project without fulltime dev, no release date can be 
 - [ ] User can filter tasks with some basics filters
 - [x] Add an OpenApiv3 documentation
 - [X] User can associate Task and Tags together
-- [ ] Add coverage on adapters and DTO mappers
 
 ## Go to v1.1.0
 - [ ] User can manage groups (create, read, update, delete)
