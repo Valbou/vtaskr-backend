@@ -1,7 +1,7 @@
 # vTaskr Backend
 An open-source to do list application for personnal use.
 
-Development in progress... Not ready for use. We aim to use the hexagonal architecture, and assume it, even if it seems overkill/overengineering for a small app.
+Development in progress... We aim to use the hexagonal architecture, and assume it, even if it seems overkill/overengineering for a small app.
 You can follow the [Roadmap](https://github.com/Valbou/vtaskr-backend/blob/master/ROADMAP.md).
 
 ![License LGPLv3](https://img.shields.io/badge/license-LGPLv3-blue "License LGPLv3")

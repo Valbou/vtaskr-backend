@@ -20,11 +20,11 @@ As vTaskr is an non profit project without fulltime dev, no release date can be 
 - [ ] User can manage groups (create, read, update, delete)
 - [ ] User can manage roles (create, read, update, delete)
 - [ ] User can't access to tasks not owned or not in his groups
-- [ ] Reccurence
+- [ ] Task reccurence
 - [ ] Weekly/Daily email with tasks of the period
 
 ## Go to v1.2.0
-- [ ] User can't modify tasks without the needed role
+- [ ] User can't modify tasks without the required role
 - [ ] User can invite another user in a group with a specific role
 - [ ] Sub tasks
 - [ ] Tasks status (blocking) that block parent task
@@ -34,4 +34,4 @@ As vTaskr is an non profit project without fulltime dev, no release date can be 
 - [ ] Code events developments
 - [ ] Reminders/Alerts - Telegram/Email
 
-More in futur...
+More in the futur...
