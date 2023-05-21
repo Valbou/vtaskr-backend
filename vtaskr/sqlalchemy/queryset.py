@@ -2,7 +2,7 @@ from typing import List, TypeVar
 
 from sqlalchemy import delete, select, update
 
-from .querystring import Filter, Operations
+from ..flask.querystring import Filter, Operations
 
 TQueryset = TypeVar("TQueryset", bound="Queryset")
 
