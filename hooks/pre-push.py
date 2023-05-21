@@ -108,8 +108,8 @@ def check_requirements(interpreter: str) -> int:
     for req in content_output.split("\n"):
         if (
             req != package_bug
-            and req not in content_file_prod
-            and req not in content_file_dev
+            and req.replace("==", ">=") not in content_file_prod
+            and req.replace("==", ">=") not in content_file_dev
         ):
             print(f"missing {req} requirement")
             status += 1
