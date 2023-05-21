@@ -2,6 +2,7 @@ from datetime import timedelta
 
 from flask import current_app, g, request
 
+from vtaskr.flask.querystring import QueryStringFilter
 from vtaskr.flask.utils import ResponseAPI
 from vtaskr.redis import rate_limited
 from vtaskr.tasks.hmi import TagService, TaskService
@@ -72,8 +73,12 @@ def tasks():
     try:
         if request.method == "GET":
             with current_app.sql.get_session() as session:
+                qsf = QueryStringFilter(
+                    query_string=request.query_string.decode(), dto=TaskDTO
+                )
+
                 task_service = TaskService(session, current_app.testing)
-                tasks = task_service.get_user_tasks(g.user.id)
+                tasks = task_service.get_user_tasks(g.user.id, qsf.get_filters())
                 if tasks:
                     tasks_dto = TaskMapperDTO.list_models_to_list_dto(tasks)
                     return ResponseAPI.get_response(

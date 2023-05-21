@@ -2,9 +2,10 @@ from datetime import timedelta
 
 from flask import current_app, g, request
 
+from vtaskr.flask.querystring import QueryStringFilter
 from vtaskr.flask.utils import ResponseAPI
 from vtaskr.redis import rate_limited
-from vtaskr.tasks.hmi.dto import TagDTO, TagMapperDTO, TaskMapperDTO
+from vtaskr.tasks.hmi.dto import TagDTO, TagMapperDTO, TaskDTO, TaskMapperDTO
 from vtaskr.tasks.hmi.tags_service import TagService
 from vtaskr.tasks.hmi.tasks_service import TaskService
 from vtaskr.tasks.persistence import TagDB
@@ -265,12 +266,18 @@ def tag_tasks(tag_id: str):
     """Give all tasks associated to a specific tag"""
     if request.method == "GET":
         with current_app.sql.get_session() as session:
+            qsf = QueryStringFilter(
+                query_string=request.query_string.decode(), dto=TaskDTO
+            )
+
             tag_service = TagService(session, current_app.testing)
             tag = tag_service.get_user_tag(g.user.id, tag_id)
             if tag:
                 task_service = TaskService(session, current_app.testing)
                 tasks_dto = TaskMapperDTO.list_models_to_list_dto(
-                    task_service.get_user_tag_tasks(g.user.id, tag.id)
+                    task_service.get_user_tag_tasks(
+                        g.user.id, tag.id, qsf.get_filters()
+                    )
                 )
                 return ResponseAPI.get_response(
                     TagMapperDTO.list_dto_to_dict(tasks_dto), 200

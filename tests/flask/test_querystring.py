@@ -3,7 +3,7 @@ from datetime import date, datetime
 from typing import Optional
 from unittest import TestCase
 
-from vtaskr.sqlalchemy.querystring import Filter, Operations, QueryStringFilter
+from vtaskr.flask.querystring import Filter, Operations, QueryStringFilter
 
 
 class QSTestMixin(TestCase):

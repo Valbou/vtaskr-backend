@@ -2,6 +2,7 @@ from typing import List, Optional
 
 from sqlalchemy.orm import Session
 
+from vtaskr.flask.querystring import Filter
 from vtaskr.tasks import Task
 from vtaskr.tasks.persistence.ports import AbstractTaskPort
 from vtaskr.tasks.persistence.sqlalchemy.querysets import TagQueryset, TaskQueryset
@@ -31,15 +32,31 @@ class TaskDB(AbstractTaskPort):
         self.task_qs.id(id)
         return session.query(self.task_qs.statement.exists()).scalar()
 
-    def user_tasks(self, session: Session, user_id: str) -> List[Task]:
+    def user_tasks(
+        self, session: Session, user_id: str, filters: Optional[List[Filter]] = None
+    ) -> List[Task]:
         """Retrieve all user's tasks"""
-        # TODO: need a better control on where clause, limit and ordering
+
+        filters = filters or []
+        if filters:
+            self.task_qs.from_filters(filters)
+
         self.task_qs.user(user_id)
         return session.execute(self.task_qs.statement.limit(100)).scalars().all()
 
-    def user_tag_tasks(self, session: Session, user_id: str, tag_id: str) -> List[Task]:
+    def user_tag_tasks(
+        self,
+        session: Session,
+        user_id: str,
+        tag_id: str,
+        filters: Optional[List[Filter]] = None,
+    ) -> List[Task]:
         """Retrieve all user's tasks with this tag"""
-        # TODO: need a better control on where clause, limit and ordering
+
+        filters = filters or []
+        if filters:
+            self.task_qs.from_filters(filters)
+
         self.task_qs.user(user_id).tag(tag_id)
         return session.execute(self.task_qs.statement.limit(100)).scalars().all()
 
