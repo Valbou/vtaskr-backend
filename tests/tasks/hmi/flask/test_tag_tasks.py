@@ -35,3 +35,20 @@ class TestTagTasksAPI(BaseTestCase):
         for task in result:
             with self.subTest(task.get("id")):
                 self.assertIn(task.get("id"), [self.task_1.id, self.task_2.id])
+
+    def test_tag_tasks_with_filter(self):
+        headers = self.get_token_headers()
+        with self.app.sql.get_session() as session:
+            self.create_data(session)
+
+            response = self.client.get(
+                f"{URL_API}/tag/{self.tag.id}/tasks?limit=1", headers=headers
+            )
+            self.assertEqual(response.status_code, 200)
+
+        result = response.json
+        self.assertIsInstance(result, list)
+        self.assertEqual(len(result), 1)
+        for task in result:
+            with self.subTest(task.get("id")):
+                self.assertIn(task.get("id"), [self.task_1.id, self.task_2.id])

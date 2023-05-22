@@ -33,6 +33,9 @@ class Filter:
     operation: Operations
     value: str
 
+    def __str__(self) -> str:
+        return f"{self.field} {self.operation.value} {self.value}"
+
 
 class QueryStringFilter:
     _filters: list = []
@@ -142,3 +145,6 @@ class QueryStringFilter:
 
     def get_filters(self) -> List[Filter]:
         return self._filters
+
+    def __str__(self) -> str:
+        return "Filters: [" + ", ".join([str(f) for f in self.get_filters()]) + "]"

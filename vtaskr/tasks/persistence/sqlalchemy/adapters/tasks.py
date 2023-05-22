@@ -42,7 +42,7 @@ class TaskDB(AbstractTaskPort):
             self.task_qs.from_filters(filters)
 
         self.task_qs.user(user_id)
-        return session.execute(self.task_qs.statement.limit(100)).scalars().all()
+        return session.execute(self.task_qs.statement).scalars().all()
 
     def user_tag_tasks(
         self,
@@ -58,7 +58,7 @@ class TaskDB(AbstractTaskPort):
             self.task_qs.from_filters(filters)
 
         self.task_qs.user(user_id).tag(tag_id)
-        return session.execute(self.task_qs.statement.limit(100)).scalars().all()
+        return session.execute(self.task_qs.statement).scalars().all()
 
     def user_add_tags(
         self,

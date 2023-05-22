@@ -48,6 +48,20 @@ class TestTasksAPI(BaseTestCase):
             self.assertEqual(len(result), 1)
             self.assertEqual(result[0].get("id"), task.id)
 
+    def test_get_tasks_with_filter(self):
+        headers = self.get_token_headers()
+        task = Task(user_id=self.user.id, title=self.fake.sentence(nb_words=8))
+        with self.app.sql.get_session() as session:
+            self.task_db.save(session, task)
+
+            response = self.client.get(
+                f"{URL_API}/tasks?title_ncontains={task.title}", headers=headers
+            )
+            self.assertEqual(response.status_code, 200)
+            result = response.json
+            self.assertIsInstance(result, list)
+            self.assertEqual(len(result), 0)
+
     def test_no_put(self):
         response = self.client.put(f"{URL_API}/tasks", headers=self.headers)
         self.assertEqual(response.status_code, 405)

@@ -1,6 +1,6 @@
 from typing import List, TypeVar
 
-from sqlalchemy import delete, select, update
+from sqlalchemy import delete, not_, select, update
 
 from ..flask.querystring import Filter, Operations
 
@@ -97,13 +97,25 @@ class Queryset:
             self._query = self._query.where(
                 getattr(self.qs_class, f.field).contains(f.value)
             )
+        elif f.operation == Operations.NCONTAINS:
+            self._query = self._query.where(
+                not_(getattr(self.qs_class, f.field).contains(f.value))
+            )
         elif f.operation == Operations.STARTSWITH:
             self._query = self._query.where(
                 getattr(self.qs_class, f.field).startswith(f.value)
             )
+        elif f.operation == Operations.NSTARTSWITH:
+            self._query = self._query.where(
+                not_(getattr(self.qs_class, f.field).startswith(f.value))
+            )
         elif f.operation == Operations.ENDSWITH:
             self._query = self._query.where(
                 getattr(self.qs_class, f.field).endswith(f.value)
+            )
+        elif f.operation == Operations.NENDSWITH:
+            self._query = self._query.where(
+                not_(getattr(self.qs_class, f.field).endswith(f.value))
             )
 
     def _add_composed_where_clause(self, fs: List[Filter], operation: Operations):
