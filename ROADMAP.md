@@ -16,6 +16,12 @@ As vTaskr is an non profit project without fulltime dev, no release date can be 
 - [x] Add an OpenApiv3 documentation
 - [X] User can associate Task and Tags together
 
+## Go to v1.0.1
+- [ ] Add alembic migrations
+- [ ] Check code organisation
+- [ ] Add gunicorn/uvicorn
+- [ ] Start a frontend developpement in an other git repository
+
 ## Go to v1.1.0
 - [ ] User can manage groups (create, read, update, delete)
 - [ ] User can manage roles (create, read, update, delete)
