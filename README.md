@@ -19,7 +19,7 @@ Translations were made automatically by [Deepl](https://www.deepl.com) and [PoEd
 ### Install project
 
 ```bash
-apt install postgresql, postgresql-server, postgresql-client lsb-release redis
+apt install postgresql lsb-release redis
 apt install git python3-venv python3-pip
 
 python3 -m venv vtaskr-project
