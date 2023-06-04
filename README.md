@@ -43,6 +43,12 @@ chmod +x trad_*
 ./trad_compile_mo.sh users
 ```
 
+### Run migrations
+
+```bash
+alembic upgrade head
+```
+
 ### To run flask
 ```bash
 flask --app vtaskr run
