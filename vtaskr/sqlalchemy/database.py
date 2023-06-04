@@ -38,16 +38,7 @@ class SQLService:
 
     def mapping(self):
         """Import all sqlalchemy tables here to set registry mapping"""
-        from vtaskr.tasks.persistence.sqlalchemy.tables import (
-            tag_table,
-            tasks_table,
-            tasktag_table,
-        )
-        from vtaskr.users.persistence.sqlalchemy.tables import (
-            request_change_table,
-            token_table,
-            user_table,
-        )
+        from .declare_tables import INIT
 
     def get_engine(self) -> Engine:
         return create_engine(self.get_database_url(), pool_size=20, echo=self.echo)

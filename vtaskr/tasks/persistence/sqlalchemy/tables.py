@@ -19,7 +19,7 @@ from vtaskr.tasks import Color, Tag, Task
 
 
 class ColorType(types.TypeDecorator):
-    impl = String
+    impl = String(20)
     cache_ok = True
 
     def process_bind_param(self, value: Color, dialect: Dialect) -> str:
