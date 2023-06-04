@@ -17,7 +17,7 @@ As vTaskr is an non profit project without fulltime dev, no release date can be 
 - [X] User can associate Task and Tags together
 
 ## Go to v1.0.1
-- [ ] Add alembic migrations
+- [x] Add alembic migrations
 - [ ] Check code organisation
 - [ ] Add gunicorn/uvicorn
 - [ ] Start a frontend developpement in an other git repository
