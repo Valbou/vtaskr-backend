@@ -271,6 +271,15 @@ api_item = {
                 },
             },
         },
+        "parameters": [
+            {
+                "name": "task_id",
+                "in": "path",
+                "description": "Id of the task you are looking for",
+                "required": True,
+                "schema": {"type": "string"},
+            },
+        ],
     }
 }
 openapi.register_path(f"{V1}/task/{{task_id}}/tags", api_item)
@@ -330,6 +339,15 @@ api_item = {
             },
             "required": True,
         },
+        "parameters": [
+            {
+                "name": "task_id",
+                "in": "path",
+                "description": "Id of the task you are looking for",
+                "required": True,
+                "schema": {"type": "string"},
+            },
+        ],
     },
 }
 openapi.register_path(f"{V1}/task/{{task_id}}/tags/set", api_item)
@@ -373,6 +391,15 @@ api_item = {
             },
         },
         "requestBody": {"description": "Delete all associations", "content": {}},
+        "parameters": [
+            {
+                "name": "task_id",
+                "in": "path",
+                "description": "Id of the task you are looking for",
+                "required": True,
+                "schema": {"type": "string"},
+            },
+        ],
     },
 }
 openapi.register_path(f"{V1}/task/{{task_id}}/tags/clean", api_item)

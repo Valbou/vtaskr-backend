@@ -254,6 +254,15 @@ api_item = {
                 },
             },
         },
+        "parameters": [
+            {
+                "name": "tag_id",
+                "in": "path",
+                "description": "Id of the tag you are looking for",
+                "required": True,
+                "schema": {"type": "string"},
+            },
+        ],
     }
 }
 openapi.register_path(f"{V1}/tag/{{tag_id}}/tasks", api_item)
