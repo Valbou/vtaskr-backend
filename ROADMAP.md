@@ -19,7 +19,7 @@ As vTaskr is an non profit project without fulltime dev, no release date can be 
 ## Go to v1.0.1
 - [x] Add alembic migrations
 - [ ] Check code organisation
-- [ ] Add gunicorn/uvicorn
+- [X] Add gunicorn/uvicorn
 - [ ] Start a frontend developpement in an other git repository
 
 ## Go to v1.1.0
