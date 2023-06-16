@@ -26,18 +26,25 @@ As vTaskr is an non profit project without fulltime dev, no release date can be 
 - [ ] User can manage groups (create, read, update, delete)
 - [ ] User can manage roles (create, read, update, delete)
 - [ ] User can't access to tasks not owned or not in his groups
+- [ ] Add Keycloak integration
+
+## Go to v1.2.0
 - [ ] Task reccurence
 - [ ] Weekly/Daily email with tasks of the period
 
-## Go to v1.2.0
+## Go to v1.3.0
 - [ ] User can't modify tasks without the required role
 - [ ] User can invite another user in a group with a specific role
 - [ ] Sub tasks
 - [ ] Tasks status (blocking) that block parent task
 - [ ] Tasks assignation to a group member
 
-## Go to v1.3.0
+## Go to v1.4.0
 - [ ] Code events developments
 - [ ] Reminders/Alerts - Telegram/Email
+- [ ] Add ICS generator
+
+## Go to v1.5.0
+- [ ] Add hooks for external integration
 
 More in the futur...
