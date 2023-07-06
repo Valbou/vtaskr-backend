@@ -44,6 +44,8 @@ class TestSQLService(TestCase):
             mock.assert_called_once()
 
     def test_drop_tables(self):
-        with patch("vtaskr.libs.sqlalchemy.base.mapper_registry.metadata.drop_all") as mock:
+        with patch(
+            "vtaskr.libs.sqlalchemy.base.mapper_registry.metadata.drop_all"
+        ) as mock:
             self.sql_test.drop_tables()
             mock.assert_called_once()

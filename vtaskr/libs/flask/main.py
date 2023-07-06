@@ -3,9 +3,9 @@ import os
 from flask import Flask
 from jinja2 import ChoiceLoader, FileSystemLoader
 
-from vtaskr.libs.babel.translations import TranslationService
 from vtaskr.base.config import AVAILABLE_LANGUAGES
 from vtaskr.base.hmi.flask import base_bp
+from vtaskr.libs.babel.translations import TranslationService
 from vtaskr.libs.redis.database import NoSQLService
 from vtaskr.libs.sqlalchemy.database import SQLService
 from vtaskr.tasks.hmi.flask.api import tasks_bp
