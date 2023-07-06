@@ -76,6 +76,7 @@ def confirm_2fa():
         with current_app.sql.get_session() as session:
             token_db = TokenDB()
             token = token_db.get_token(session, sha_token)
+
             if code and token.is_temp_valid() and token.validate_token(code):
                 session.commit()
                 data = {}

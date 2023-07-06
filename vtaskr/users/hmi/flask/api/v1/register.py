@@ -4,7 +4,6 @@ from email_validator import EmailSyntaxError
 from flask import current_app, request
 
 from vtaskr.libs.flask.utils import ResponseAPI
-from vtaskr.libs.notifications import NotificationService
 from vtaskr.libs.redis import rate_limited
 from vtaskr.libs.secutity.validators import PasswordComplexityError
 from vtaskr.users.hmi.dto.user import UserDTO, UserMapperDTO
@@ -76,7 +75,7 @@ def register():
     payload: dict = request.get_json()
     try:
         with current_app.sql.get_session() as session:
-            auth_service = UserService(session, testing=current_app.testing)
+            auth_service = UserService(session)
             password = payload.pop("password")
             user_dto = UserDTO(**payload)
             auth_service.clean_unused_accounts()
@@ -86,9 +85,9 @@ def register():
                 "users", user.locale
             ) as trans:
                 register_email = RegisterEmail(trans, [user.email], user.first_name)
-            notification = NotificationService(testing=current_app.testing)
-            notification.add_message(register_email)
-            notification.notify_all()
+
+            current_app.notification.add_message(register_email)
+            current_app.notification.notify_all()
 
             user_dto = UserMapperDTO.model_to_dto(user)
             return ResponseAPI.get_response(UserMapperDTO.dto_to_dict(user_dto), 201)

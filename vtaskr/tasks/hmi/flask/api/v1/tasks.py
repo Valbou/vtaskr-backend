@@ -77,7 +77,7 @@ def tasks():
                     query_string=request.query_string.decode(), dto=TaskDTO
                 )
 
-                task_service = TaskService(session, current_app.testing)
+                task_service = TaskService(session)
                 tasks = task_service.get_user_tasks(g.user.id, qsf.get_filters())
                 if tasks:
                     tasks_dto = TaskMapperDTO.list_models_to_list_dto(tasks)
@@ -226,7 +226,7 @@ openapi.register_path(f"{V1}/task/{{task_id}}", api_item)
 def task(task_id: str):
     """URL to current user task - Token required"""
     with current_app.sql.get_session() as session:
-        task_service = TaskService(session, current_app.testing)
+        task_service = TaskService(session)
         task = task_service.get_user_task(g.user.id, task_id)
         if task:
             if request.method == "GET":
@@ -293,10 +293,10 @@ def task_tags(task_id: str):
 
     if request.method == "GET":
         with current_app.sql.get_session() as session:
-            task_service = TaskService(session, current_app.testing)
+            task_service = TaskService(session)
             task = task_service.get_user_task(g.user.id, task_id)
             if task:
-                tag_service = TagService(session, current_app.testing)
+                tag_service = TagService(session)
                 tags_dto = TagMapperDTO.list_models_to_list_dto(
                     tag_service.get_user_task_tags(g.user.id, task.id)
                 )
@@ -366,7 +366,7 @@ def task_tags_set(task_id: str):
 
     if request.method == "PUT":
         with current_app.sql.get_session() as session:
-            task_service = TaskService(session, current_app.testing)
+            task_service = TaskService(session)
             task = task_service.get_user_task(g.user.id, task_id)
             try:
                 task_service.set_task_tags(g.user.id, task, tags_id)
@@ -413,7 +413,7 @@ def task_tags_clean(task_id: str):
 
     if request.method == "DELETE":
         with current_app.sql.get_session() as session:
-            task_service = TaskService(session, current_app.testing)
+            task_service = TaskService(session)
             task = task_service.get_user_task(g.user.id, task_id)
             try:
                 task_service.clean_task_tags(g.user.id, task)

@@ -16,19 +16,11 @@ class NoSQLSession:
 
 
 class NoSQLService:
-    def __init__(
-        self,
-        testing: bool = False,
-    ) -> None:
-        self.testing = testing
-
     def get_database_url(self) -> str:
         CACHE_TYPE = os.getenv("CACHE_TYPE")
         CACHE_HOST = os.getenv("CACHE_HOST")
         CACHE_PORT = os.getenv("CACHE_PORT")
-        CACHE_NAME = (
-            os.getenv("CACHE_TEST") if self.testing else os.getenv("CACHE_NAME")
-        )
+        CACHE_NAME = os.getenv("CACHE_NAME")
 
         return f"{CACHE_TYPE}://{CACHE_HOST}:{CACHE_PORT}/{CACHE_NAME}"
 
@@ -37,3 +29,13 @@ class NoSQLService:
 
     def get_session(self) -> NoSQLSession:
         return NoSQLSession(self.get_engine())
+
+
+class TestNoSQLService(NoSQLService):
+    def get_database_url(self) -> str:
+        CACHE_TYPE = os.getenv("CACHE_TYPE")
+        CACHE_HOST = os.getenv("CACHE_HOST")
+        CACHE_PORT = os.getenv("CACHE_PORT")
+        CACHE_NAME = os.getenv("CACHE_TEST")
+
+        return f"{CACHE_TYPE}://{CACHE_HOST}:{CACHE_PORT}/{CACHE_NAME}"

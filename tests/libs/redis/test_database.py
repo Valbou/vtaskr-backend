@@ -2,14 +2,14 @@ from unittest import TestCase
 
 from redis import Redis
 
-from vtaskr.libs.redis.database import NoSQLService, NoSQLSession
+from vtaskr.libs.redis.database import NoSQLService, NoSQLSession, TestNoSQLService
 
 
-class TestNoSQLService(TestCase):
+class TestFakeNoSQLService(TestCase):
     def setUp(self) -> None:
         super().setUp()
-        self.nosql_test = NoSQLService(testing=True)
-        self.nosql_prod = NoSQLService(testing=False)
+        self.nosql_test = TestNoSQLService()
+        self.nosql_prod = NoSQLService()
 
     def test_db_test_not_equal_to_prod(self):
         self.assertNotEqual(

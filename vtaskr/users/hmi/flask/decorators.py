@@ -19,7 +19,7 @@ def login_required(logger: Logger):
 
                 with current_app.sql.get_session() as session:
                     session.expire_on_commit = False
-                    auth_service = UserService(session, testing=current_app.testing)
+                    auth_service = UserService(session)
                     user = auth_service.user_from_token(sha_token)
                     if user:
                         g.token = sha_token

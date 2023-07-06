@@ -10,7 +10,7 @@ from vtaskr.users import PermissionControl
 
 
 class TaskService(AbstractTaskPort):
-    def __init__(self, session: Session, testing: bool = False) -> None:
+    def __init__(self, session: Session) -> None:
         self.session: Session = session
         self.task_db = TaskDB()
         self.control = PermissionControl()

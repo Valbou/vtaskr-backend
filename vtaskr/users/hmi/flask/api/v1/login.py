@@ -3,7 +3,6 @@ from datetime import timedelta
 from flask import current_app, request
 
 from vtaskr.libs.flask.utils import ResponseAPI
-from vtaskr.libs.notifications import NotificationService
 from vtaskr.libs.redis import rate_limited
 from vtaskr.users.hmi.flask.emails import LoginEmail
 from vtaskr.users.hmi.user_service import UserService
@@ -96,7 +95,7 @@ def login():
 
     try:
         with current_app.sql.get_session() as session:
-            auth_service = UserService(session, testing=current_app.testing)
+            auth_service = UserService(session)
             token, user = auth_service.authenticate(email, password)
 
             if token is not None:
@@ -106,9 +105,9 @@ def login():
                     login_email = LoginEmail(
                         trans, [user.email], user.first_name, token.temp_code
                     )
-                notification = NotificationService(testing=current_app.testing)
-                notification.add_message(login_email)
-                notification.notify_all()
+
+                current_app.notification.add_message(login_email)
+                current_app.notification.notify_all()
 
                 data = {"token": token.sha_token}
                 return ResponseAPI.get_response(data, 201)

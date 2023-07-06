@@ -5,14 +5,14 @@ from sqlalchemy import Engine
 from sqlalchemy.orm import Session
 
 from tests.utils.db_utils import check_connection_query
-from vtaskr.libs.sqlalchemy.database import SQLService
+from vtaskr.libs.sqlalchemy.database import SQLService, TestSQLService
 
 
-class TestSQLService(TestCase):
+class TestFakeSQLService(TestCase):
     def setUp(self) -> None:
         super().setUp()
-        self.sql_test = SQLService(testing=True)
-        self.sql_prod = SQLService(testing=False)
+        self.sql_test = TestSQLService()
+        self.sql_prod = SQLService()
 
     def test_db_test_not_equal_to_prod(self):
         self.assertNotEqual(

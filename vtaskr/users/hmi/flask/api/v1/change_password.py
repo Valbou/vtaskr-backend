@@ -3,7 +3,6 @@ from datetime import timedelta
 from flask import current_app, request
 
 from vtaskr.libs.flask.utils import ResponseAPI
-from vtaskr.libs.notifications import NotificationService
 from vtaskr.libs.redis import rate_limited
 from vtaskr.libs.secutity.validators import PasswordComplexityError
 from vtaskr.users.hmi.flask.emails import ChangePasswordEmail
@@ -79,18 +78,21 @@ def forgotten_password():
         with current_app.sql.get_session() as session:
             user = user_db.find_login(session, email)
             if user:
-                user_service = UserService(session, testing=current_app.testing)
+                user_service = UserService(session)
                 request_hash = user_service.request_password_change(user)
+
                 with current_app.trans.get_translation_session(
                     "users", user.locale
                 ) as trans:
                     change_password_email = ChangePasswordEmail(
                         trans, [user.email], user.first_name, request_hash
                     )
-                notification = NotificationService(testing=current_app.testing)
-                notification.add_message(change_password_email)
-                notification.notify_all()
+
+                current_app.notification.add_message(change_password_email)
+                current_app.notification.notify_all()
+
         return ResponseAPI.get_response(data, 200)
+
     except Exception as e:
         logger.error(str(e))
         return ResponseAPI.get_response(data, 200)
@@ -171,7 +173,7 @@ def new_password():
 
     try:
         with current_app.sql.get_session() as session:
-            user_service = UserService(session, testing=current_app.testing)
+            user_service = UserService(session)
             try:
                 if (
                     email

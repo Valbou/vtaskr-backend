@@ -112,6 +112,8 @@ class MultiSMTPEmail:
             server.sendmail(
                 email.from_email, email.to_emails, email.message.as_string()
             )
+
+        self.emails = []
         server.quit()
 
     @property

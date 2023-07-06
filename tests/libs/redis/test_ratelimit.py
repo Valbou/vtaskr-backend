@@ -1,14 +1,14 @@
 from datetime import timedelta
 from unittest import TestCase
 
-from vtaskr.libs.redis.database import NoSQLService
+from vtaskr.libs.redis.database import TestNoSQLService
 from vtaskr.libs.redis.ratelimit import LimitExceededError, RateLimit
 
 
 class TestRateLimit(TestCase):
     def setUp(self) -> None:
         super().setUp()
-        self.nosql = NoSQLService(testing=True)
+        self.nosql = TestNoSQLService()
         self.redis = self.nosql.get_engine()
 
     def test_simple_call_do_nothing(self):

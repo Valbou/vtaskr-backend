@@ -45,7 +45,7 @@ def logout():
     """
     try:
         with current_app.sql.get_session() as session:
-            auth_service = UserService(session, testing=current_app.testing)
+            auth_service = UserService(session)
             if auth_service.logout(g.token):
                 data = {}
                 return ResponseAPI.get_response(data, 204)
