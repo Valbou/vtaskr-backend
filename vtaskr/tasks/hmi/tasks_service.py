@@ -2,7 +2,7 @@ from typing import List, Optional
 
 from sqlalchemy.orm import Session
 
-from vtaskr.flask.querystring import Filter
+from vtaskr.libs.flask.querystring import Filter
 from vtaskr.tasks.hmi.ports import AbstractTaskPort
 from vtaskr.tasks.models import Task
 from vtaskr.tasks.persistence import TaskDB
@@ -10,7 +10,7 @@ from vtaskr.users import PermissionControl
 
 
 class TaskService(AbstractTaskPort):
-    def __init__(self, session: Session, testing: bool = False) -> None:
+    def __init__(self, session: Session) -> None:
         self.session: Session = session
         self.task_db = TaskDB()
         self.control = PermissionControl()

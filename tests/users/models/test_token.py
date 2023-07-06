@@ -5,7 +5,7 @@ from faker import Faker
 from pytz import utc
 
 from vtaskr.base.config import TOKEN_TEMP_VALIDITY, TOKEN_VALIDITY
-from vtaskr.secutity.utils import get_id
+from vtaskr.libs.secutity.utils import get_id
 from vtaskr.users import Token
 
 

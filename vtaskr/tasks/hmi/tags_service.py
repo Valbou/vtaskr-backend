@@ -9,7 +9,7 @@ from vtaskr.users import PermissionControl
 
 
 class TagService(AbstractTagPort):
-    def __init__(self, session: Session, testing: bool = False) -> None:
+    def __init__(self, session: Session) -> None:
         self.session: Session = session
         self.tag_db = TagDB()
         self.control = PermissionControl()

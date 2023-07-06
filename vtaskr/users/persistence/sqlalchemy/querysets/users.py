@@ -1,4 +1,4 @@
-from vtaskr.sqlalchemy.queryset import Queryset
+from vtaskr.libs.sqlalchemy.queryset import Queryset
 from vtaskr.users.models import User
 
 

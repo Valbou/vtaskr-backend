@@ -3,7 +3,7 @@ from datetime import datetime
 from pytz import utc
 from sqlalchemy import Boolean, Column, DateTime, Enum, String, Table
 
-from vtaskr.sqlalchemy.base import mapper_registry
+from vtaskr.libs.sqlalchemy.base import mapper_registry
 from vtaskr.users.models import RequestChange, RequestType
 
 request_change_table = Table(

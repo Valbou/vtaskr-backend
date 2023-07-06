@@ -13,7 +13,7 @@ class EmailAlreadyUsedError(Exception):
 
 
 class UserService(AbstractUserPort):
-    def __init__(self, session: Session, testing: bool = False) -> None:
+    def __init__(self, session: Session) -> None:
         self.session: Session = session
         self.user_db = UserDB()
         self.token_db = TokenDB()

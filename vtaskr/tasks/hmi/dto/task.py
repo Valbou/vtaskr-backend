@@ -2,7 +2,7 @@ from dataclasses import asdict, dataclass
 from datetime import datetime, timedelta
 from typing import List, Optional
 
-from vtaskr.openapi.base import openapi
+from vtaskr.libs.openapi.base import openapi
 from vtaskr.tasks.models import Task
 
 task_component = {

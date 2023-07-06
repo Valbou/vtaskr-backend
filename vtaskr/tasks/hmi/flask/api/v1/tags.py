@@ -2,9 +2,9 @@ from datetime import timedelta
 
 from flask import current_app, g, request
 
-from vtaskr.flask.querystring import QueryStringFilter
-from vtaskr.flask.utils import ResponseAPI
-from vtaskr.redis import rate_limited
+from vtaskr.libs.flask.querystring import QueryStringFilter
+from vtaskr.libs.flask.utils import ResponseAPI
+from vtaskr.libs.redis import rate_limited
 from vtaskr.tasks.hmi.dto import TagDTO, TagMapperDTO, TaskDTO, TaskMapperDTO
 from vtaskr.tasks.hmi.tags_service import TagService
 from vtaskr.tasks.hmi.tasks_service import TaskService
@@ -72,7 +72,7 @@ def tags():
     try:
         if request.method == "GET":
             with current_app.sql.get_session() as session:
-                tag_service = TagService(session, current_app.testing)
+                tag_service = TagService(session)
                 tags = tag_service.get_user_tags(g.user.id)
                 if tags:
                     tags_dto = TagMapperDTO.list_models_to_list_dto(tags)
@@ -213,7 +213,7 @@ openapi.register_path(f"{V1}/tag/{{tag_id}}", api_item)
 def tag(tag_id: str):
     """URL to current user tag - Token required"""
     with current_app.sql.get_session() as session:
-        tag_service = TagService(session, current_app.testing)
+        tag_service = TagService(session)
         tag = tag_service.get_user_tag(g.user.id, tag_id)
         if tag:
             if request.method == "GET":
@@ -279,10 +279,10 @@ def tag_tasks(tag_id: str):
                 query_string=request.query_string.decode(), dto=TaskDTO
             )
 
-            tag_service = TagService(session, current_app.testing)
+            tag_service = TagService(session)
             tag = tag_service.get_user_tag(g.user.id, tag_id)
             if tag:
-                task_service = TaskService(session, current_app.testing)
+                task_service = TaskService(session)
                 tasks_dto = TaskMapperDTO.list_models_to_list_dto(
                     task_service.get_user_tag_tasks(
                         g.user.id, tag.id, qsf.get_filters()

@@ -6,8 +6,8 @@ from babel import Locale
 from pytz import utc
 
 from vtaskr.base.config import LOCALE, TIMEZONE, UNUSED_ACCOUNT_DELAY
-from vtaskr.secutity.utils import check_password, get_id, hash_from_password
-from vtaskr.secutity.validators import PasswordChecker, get_valid_email
+from vtaskr.libs.secutity.utils import check_password, get_id, hash_from_password
+from vtaskr.libs.secutity.validators import PasswordChecker, get_valid_email
 
 
 @dataclass

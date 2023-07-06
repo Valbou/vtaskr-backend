@@ -1,7 +1,7 @@
 from dataclasses import asdict, dataclass
 from typing import List, Optional
 
-from vtaskr.openapi.base import openapi
+from vtaskr.libs.openapi.base import openapi
 from vtaskr.tasks.models import Color, Tag
 
 tag_component = {

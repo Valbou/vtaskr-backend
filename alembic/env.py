@@ -4,8 +4,8 @@ from dotenv import load_dotenv
 from sqlalchemy import engine_from_config, pool
 
 from alembic import context
-from vtaskr.sqlalchemy.base import mapper_registry
-from vtaskr.sqlalchemy.database import SQLService
+from vtaskr.libs.sqlalchemy.base import mapper_registry
+from vtaskr.libs.sqlalchemy.database import SQLService
 
 load_dotenv()
 

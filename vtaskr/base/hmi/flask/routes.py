@@ -3,8 +3,8 @@ from json import loads
 from flask import Blueprint, jsonify, render_template
 
 from vtaskr.base.config import AVAILABLE_LANGUAGES
-from vtaskr.flask.utils import ResponseAPI
-from vtaskr.openapi.base import openapi
+from vtaskr.libs.flask.utils import ResponseAPI
+from vtaskr.libs.openapi.base import openapi
 
 base_bp = Blueprint(
     name="base_bp",

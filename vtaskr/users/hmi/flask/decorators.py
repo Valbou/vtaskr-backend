@@ -4,7 +4,7 @@ from typing import Callable
 
 from flask import current_app, g, request
 
-from vtaskr.flask.utils import ResponseAPI, get_bearer_token
+from vtaskr.libs.flask.utils import ResponseAPI, get_bearer_token
 from vtaskr.users.hmi.user_service import UserService
 
 
@@ -19,7 +19,7 @@ def login_required(logger: Logger):
 
                 with current_app.sql.get_session() as session:
                     session.expire_on_commit = False
-                    auth_service = UserService(session, testing=current_app.testing)
+                    auth_service = UserService(session)
                     user = auth_service.user_from_token(sha_token)
                     if user:
                         g.token = sha_token

@@ -3,10 +3,9 @@ from datetime import timedelta
 from email_validator import EmailSyntaxError
 from flask import current_app, g, request
 
-from vtaskr.flask.utils import ResponseAPI
-from vtaskr.notifications import NotificationService
-from vtaskr.redis import rate_limited
-from vtaskr.secutity.validators import get_valid_email
+from vtaskr.libs.flask.utils import ResponseAPI
+from vtaskr.libs.redis import rate_limited
+from vtaskr.libs.secutity.validators import get_valid_email
 from vtaskr.users.hmi.flask.decorators import login_required
 from vtaskr.users.hmi.flask.emails import ChangeEmailToNewEmail, ChangeEmailToOldEmail
 from vtaskr.users.hmi.user_service import EmailAlreadyUsedError, UserService
@@ -72,7 +71,7 @@ def change_email():
             try:
                 new_email = payload.get("new_email", "")
                 new_email = get_valid_email(new_email)
-                auth_service = UserService(session, testing=current_app.testing)
+                auth_service = UserService(session)
                 req_hash, req_code = auth_service.request_email_change(
                     g.user, new_email
                 )
@@ -90,10 +89,11 @@ def change_email():
                 new_email_message = ChangeEmailToNewEmail(
                     trans, [new_email], g.user.first_name, req_hash
                 )
-            notification = NotificationService(testing=current_app.testing)
-            notification.add_message(old_email_message)
-            notification.add_message(new_email_message)
-            notification.notify_all()
+
+            current_app.notification.add_message(old_email_message)
+            current_app.notification.add_message(new_email_message)
+            current_app.notification.notify_all()
+
             return ResponseAPI.get_response(data, 200)
 
     except Exception as e:
@@ -184,7 +184,7 @@ def new_email():
 
     try:
         with current_app.sql.get_session() as session:
-            user_service = UserService(session, testing=current_app.testing)
+            user_service = UserService(session)
             try:
                 if (
                     old_email

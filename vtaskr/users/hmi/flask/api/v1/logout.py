@@ -2,8 +2,8 @@ from datetime import timedelta
 
 from flask import current_app, g
 
-from vtaskr.flask.utils import ResponseAPI
-from vtaskr.redis import rate_limited
+from vtaskr.libs.flask.utils import ResponseAPI
+from vtaskr.libs.redis import rate_limited
 from vtaskr.users.hmi.flask.decorators import login_required
 from vtaskr.users.hmi.user_service import UserService
 
@@ -45,7 +45,7 @@ def logout():
     """
     try:
         with current_app.sql.get_session() as session:
-            auth_service = UserService(session, testing=current_app.testing)
+            auth_service = UserService(session)
             if auth_service.logout(g.token):
                 data = {}
                 return ResponseAPI.get_response(data, 204)

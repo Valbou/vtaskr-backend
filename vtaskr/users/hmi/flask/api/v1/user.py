@@ -2,9 +2,9 @@ from datetime import timedelta
 
 from flask import current_app, g, request
 
-from vtaskr.flask.utils import ResponseAPI
-from vtaskr.redis import rate_limited
-from vtaskr.secutity.validators import PasswordComplexityError
+from vtaskr.libs.flask.utils import ResponseAPI
+from vtaskr.libs.redis import rate_limited
+from vtaskr.libs.secutity.validators import PasswordComplexityError
 from vtaskr.users.hmi.dto import UserDTO, UserMapperDTO
 from vtaskr.users.hmi.flask.decorators import login_required
 from vtaskr.users.persistence import UserDB

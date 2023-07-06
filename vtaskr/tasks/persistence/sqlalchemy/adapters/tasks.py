@@ -2,7 +2,7 @@ from typing import List, Optional
 
 from sqlalchemy.orm import Session
 
-from vtaskr.flask.querystring import Filter
+from vtaskr.libs.flask.querystring import Filter
 from vtaskr.tasks import Task
 from vtaskr.tasks.persistence.ports import AbstractTaskPort
 from vtaskr.tasks.persistence.sqlalchemy.querysets import TagQueryset, TaskQueryset

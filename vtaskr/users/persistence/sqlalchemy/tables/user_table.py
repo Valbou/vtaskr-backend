@@ -5,7 +5,7 @@ from pytz import utc
 from sqlalchemy import Column, DateTime, Dialect, String, Table, types
 from sqlalchemy.orm import relationship
 
-from vtaskr.sqlalchemy.base import mapper_registry
+from vtaskr.libs.sqlalchemy.base import mapper_registry
 from vtaskr.users.models import User
 
 

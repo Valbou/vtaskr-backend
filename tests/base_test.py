@@ -5,11 +5,11 @@ from faker import Faker
 from flask import Flask, template_rendered
 
 from tests.utils.db_utils import text_query_column_exists, text_query_table_exists
-from vtaskr.flask.main import create_flask_app
-from vtaskr.sqlalchemy.database import SQLService
 from vtaskr.users import User
 from vtaskr.users.hmi.user_service import UserService
 from vtaskr.users.persistence import UserDB
+
+from . import APP
 
 
 class FlaskTemplateCapture:
@@ -32,14 +32,14 @@ class FlaskTemplateCapture:
 
 
 class BaseTestCase(TestCase):
+    app: Flask = APP
+
     def setUp(self) -> None:
         super().setUp()
 
         self.fake = Faker()
-        self.app: Flask = create_flask_app(testing=True)
         self.client = self.app.test_client()
         self.cli = self.app.test_cli_runner()
-        self.app.sql = SQLService(testing=True, echo=False)
 
     def assertTemplateUsed(self, template_name: str, recorded_templates: List[str]):
         self.assertIn(template_name, recorded_templates)
@@ -90,7 +90,7 @@ class BaseTestCase(TestCase):
         self.create_user()
         with self.app.sql.get_session() as session:
             session.expire_on_commit = False
-            auth_service = UserService(session, testing=True)
+            auth_service = UserService(session)
             self.token, _ = auth_service.authenticate(
                 email=self.user.email, password=self.password
             )
