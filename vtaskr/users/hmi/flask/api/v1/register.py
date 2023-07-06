@@ -3,10 +3,10 @@ from datetime import timedelta
 from email_validator import EmailSyntaxError
 from flask import current_app, request
 
-from vtaskr.flask.utils import ResponseAPI
-from vtaskr.notifications import NotificationService
-from vtaskr.redis import rate_limited
-from vtaskr.secutity.validators import PasswordComplexityError
+from vtaskr.libs.flask.utils import ResponseAPI
+from vtaskr.libs.notifications import NotificationService
+from vtaskr.libs.redis import rate_limited
+from vtaskr.libs.secutity.validators import PasswordComplexityError
 from vtaskr.users.hmi.dto.user import UserDTO, UserMapperDTO
 from vtaskr.users.hmi.flask.emails import RegisterEmail
 from vtaskr.users.hmi.user_service import UserService

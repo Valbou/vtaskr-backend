@@ -5,8 +5,8 @@ from faker import Faker
 from flask import Flask, template_rendered
 
 from tests.utils.db_utils import text_query_column_exists, text_query_table_exists
-from vtaskr.flask.main import create_flask_app
-from vtaskr.sqlalchemy.database import SQLService
+from vtaskr.libs.flask.main import create_flask_app
+from vtaskr.libs.sqlalchemy.database import SQLService
 from vtaskr.users import User
 from vtaskr.users.hmi.user_service import UserService
 from vtaskr.users.persistence import UserDB

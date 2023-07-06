@@ -1,6 +1,6 @@
 import os
 
-from vtaskr.secutity.utils import file_to_base64
+from vtaskr.libs.secutity.utils import file_to_base64
 
 APP_NAME = "vtaskr"
 
@@ -33,5 +33,5 @@ TIMEZONE = os.getenv("TIMEZONE", "Europe/London")
 
 # Emails config
 EMAIL_LOGO = f"""data:image/svg+xml;base64,{
-    file_to_base64("vtaskr/flask/static/vtaskr-logo-light.svg")
+    file_to_base64("vtaskr/static/vtaskr-logo-light.svg")
 }"""

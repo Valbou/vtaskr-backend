@@ -1,6 +1,6 @@
 from dotenv import load_dotenv
 
-from .flask.main import create_flask_app
+from .libs.flask.main import create_flask_app
 
 load_dotenv()
 

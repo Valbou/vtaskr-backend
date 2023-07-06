@@ -4,7 +4,7 @@ from typing import Callable
 
 from flask import current_app, g, request
 
-from vtaskr.flask.utils import ResponseAPI, get_bearer_token
+from vtaskr.libs.flask.utils import ResponseAPI, get_bearer_token
 from vtaskr.users.hmi.user_service import UserService
 
 

@@ -2,9 +2,9 @@ from unittest import TestCase
 
 from flask import Flask
 
-from vtaskr.flask.main import create_flask_app
-from vtaskr.redis.database import NoSQLService
-from vtaskr.sqlalchemy.database import SQLService
+from vtaskr.libs.flask.main import create_flask_app
+from vtaskr.libs.redis.database import NoSQLService
+from vtaskr.libs.sqlalchemy.database import SQLService
 
 
 class TestCreateFlaskApp(TestCase):

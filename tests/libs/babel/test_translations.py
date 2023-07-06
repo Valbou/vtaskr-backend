@@ -1,7 +1,7 @@
 from gettext import GNUTranslations
 from unittest import TestCase
 
-from vtaskr.babel.translations import (
+from vtaskr.libs.babel.translations import (
     TranslationService,
     TranslationSession,
     TranslationsInvalidDomainError,

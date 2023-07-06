@@ -4,7 +4,7 @@ from typing import List, Tuple
 from flask import render_template
 
 from vtaskr.base.config import EMAIL_LOGO
-from vtaskr.notifications import AbstractBaseEmailContent
+from vtaskr.libs.notifications import AbstractBaseEmailContent
 
 
 class RegisterEmail(AbstractBaseEmailContent):

@@ -5,8 +5,8 @@ from typing import Callable
 
 from flask import current_app, g, request
 
-from vtaskr.flask.utils import ResponseAPI, get_ip
-from vtaskr.redis.ratelimit import LimitExceededError, RateLimit
+from vtaskr.libs.flask.utils import ResponseAPI, get_ip
+from vtaskr.libs.redis.ratelimit import LimitExceededError, RateLimit
 
 
 def rate_limited(

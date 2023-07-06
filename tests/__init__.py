@@ -1,7 +1,7 @@
 from dotenv import load_dotenv
 
-from vtaskr.redis.database import NoSQLService
-from vtaskr.sqlalchemy.database import SQLService
+from vtaskr.libs.redis.database import NoSQLService
+from vtaskr.libs.sqlalchemy.database import SQLService
 
 from .base_test import BaseTestCase, FlaskTemplateCapture
 

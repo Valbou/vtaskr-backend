@@ -2,7 +2,7 @@ from dataclasses import asdict, dataclass
 
 from babel import Locale
 
-from vtaskr.openapi.base import openapi
+from vtaskr.libs.openapi.base import openapi
 from vtaskr.users.models import User
 
 user_component = {

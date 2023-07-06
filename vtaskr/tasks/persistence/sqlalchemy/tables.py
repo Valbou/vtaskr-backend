@@ -14,7 +14,7 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import relationship
 
-from vtaskr.sqlalchemy.base import mapper_registry
+from vtaskr.libs.sqlalchemy.base import mapper_registry
 from vtaskr.tasks import Color, Tag, Task
 
 

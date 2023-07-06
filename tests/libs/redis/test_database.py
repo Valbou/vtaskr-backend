@@ -2,7 +2,7 @@ from unittest import TestCase
 
 from redis import Redis
 
-from vtaskr.redis.database import NoSQLService, NoSQLSession
+from vtaskr.libs.redis.database import NoSQLService, NoSQLSession
 
 
 class TestNoSQLService(TestCase):

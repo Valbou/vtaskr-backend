@@ -1,7 +1,7 @@
 from abc import ABC
 from typing import List, Optional
 
-from vtaskr.notifications.message import AbstractMessage
+from vtaskr.libs.notifications.message import AbstractMessage
 
 
 class AbstractBaseEmailContent(AbstractMessage, ABC):

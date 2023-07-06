@@ -2,9 +2,9 @@ from datetime import timedelta
 
 from flask import current_app, g, request
 
-from vtaskr.flask.querystring import QueryStringFilter
-from vtaskr.flask.utils import ResponseAPI
-from vtaskr.redis import rate_limited
+from vtaskr.libs.flask.querystring import QueryStringFilter
+from vtaskr.libs.flask.utils import ResponseAPI
+from vtaskr.libs.redis import rate_limited
 from vtaskr.tasks.hmi import TagService, TaskService
 from vtaskr.tasks.hmi.dto import TagMapperDTO, TaskDTO, TaskMapperDTO
 from vtaskr.tasks.persistence import TaskDB

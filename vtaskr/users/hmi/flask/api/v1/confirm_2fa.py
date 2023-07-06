@@ -2,8 +2,8 @@ from datetime import timedelta
 
 from flask import current_app, request
 
-from vtaskr.flask.utils import ResponseAPI, get_bearer_token
-from vtaskr.redis import rate_limited
+from vtaskr.libs.flask.utils import ResponseAPI, get_bearer_token
+from vtaskr.libs.redis import rate_limited
 from vtaskr.users.persistence import TokenDB
 
 from .. import V1, logger, openapi, users_bp

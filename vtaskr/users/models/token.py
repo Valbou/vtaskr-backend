@@ -5,7 +5,7 @@ from typing import Optional
 from pytz import utc
 
 from vtaskr.base.config import TOKEN_TEMP_VALIDITY, TOKEN_VALIDITY
-from vtaskr.secutity.utils import get_2FA, get_id, get_token
+from vtaskr.libs.secutity.utils import get_2FA, get_id, get_token
 
 
 @dataclass
