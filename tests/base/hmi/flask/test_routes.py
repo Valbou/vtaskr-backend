@@ -1,4 +1,4 @@
-from tests import BaseTestCase, FlaskTemplateCapture
+from tests.base_test import BaseTestCase, FlaskTemplateCapture
 from vtaskr.base.config import AVAILABLE_LANGUAGES
 
 

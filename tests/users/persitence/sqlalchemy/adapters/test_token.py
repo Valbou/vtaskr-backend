@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from hashlib import sha256
 
-from tests import BaseTestCase
+from tests.base_test import BaseTestCase
 from vtaskr.base.config import TOKEN_TEMP_VALIDITY, TOKEN_VALIDITY
 from vtaskr.users.models import Token, User
 from vtaskr.users.persistence import TokenDB, UserDB

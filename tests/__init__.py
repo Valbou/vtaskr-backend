@@ -1,11 +1,9 @@
-from dotenv import load_dotenv
+from flask import Flask
 
+from vtaskr.libs.flask.main import create_flask_app
+from vtaskr.libs.notifications import TestNotificationService
 from vtaskr.libs.redis.database import TestNoSQLService
 from vtaskr.libs.sqlalchemy.database import TestSQLService
-
-from .base_test import BaseTestCase, FlaskTemplateCapture
-
-load_dotenv()
 
 # Clean cache
 nosql_test = TestNoSQLService()
@@ -18,4 +16,9 @@ sql_test = TestSQLService(echo=False)
 sql_test.drop_tables()
 sql_test.create_tables()
 
-# Set fixtures
+# Set APP
+APP: Flask = create_flask_app(
+    sql_class=TestSQLService,
+    nosql_class=TestNoSQLService,
+    notification_class=TestNotificationService,
+)

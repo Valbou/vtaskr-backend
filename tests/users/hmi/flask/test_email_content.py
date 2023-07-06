@@ -1,4 +1,4 @@
-from tests import BaseTestCase, FlaskTemplateCapture
+from tests.base_test import BaseTestCase, FlaskTemplateCapture
 from vtaskr.base.config import LINK_TO_CHANGE_EMAIL, LINK_TO_CHANGE_PASSWORD
 from vtaskr.users.hmi.flask.emails import (
     ChangeEmailToNewEmail,

@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 
-from tests import BaseTestCase
+from tests.base_test import BaseTestCase
 from vtaskr.base.config import REQUEST_DAYS_HISTORY
 from vtaskr.users.models import RequestChange, RequestType
 from vtaskr.users.persistence import RequestChangeDB

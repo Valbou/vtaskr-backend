@@ -51,7 +51,11 @@ alembic upgrade head
 
 ### To run flask
 ```bash
-flask --app vtaskr run
+# With Werkzeug (dev :5000)
+flask --app vtaskr.flask run
+
+# With Gunicorn (prod :8000)
+gunicorn vtaskr.flask:app
 ```
 
 ## Technical informations for developpers

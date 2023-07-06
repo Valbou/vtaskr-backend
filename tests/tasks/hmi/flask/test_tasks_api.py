@@ -1,4 +1,4 @@
-from tests import BaseTestCase
+from tests.base_test import BaseTestCase
 from vtaskr.tasks.models import Task
 from vtaskr.tasks.persistence import TaskDB
 

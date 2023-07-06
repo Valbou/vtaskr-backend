@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 
 from pytz import utc
 
-from tests import BaseTestCase
+from tests.base_test import BaseTestCase
 from vtaskr.base.config import UNUSED_ACCOUNT_DELAY
 from vtaskr.users.models import User
 from vtaskr.users.persistence import UserDB

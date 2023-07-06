@@ -1,4 +1,4 @@
-from tests import BaseTestCase
+from tests.base_test import BaseTestCase
 
 
 class TestTaskTagTable(BaseTestCase):
