@@ -59,7 +59,9 @@ class User:
         return True
 
     def check_password(self, password: str) -> bool:
-        return check_password(self.hash_password, password)
+        if self.hash_password:
+            return check_password(self.hash_password, password)
+        return False
 
     def _check_password_complexity(self, password: str) -> bool:
         password_checker = PasswordChecker()
