@@ -1,3 +1,3 @@
 source ../bin/activate
 
-gunicorn vtaskr:app
+gunicorn vtaskr.flask:app
