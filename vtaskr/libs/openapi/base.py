@@ -20,7 +20,7 @@ if openapi.infos is None:
     openapi.register_infos(infos)
 
     openapi.register_server("https://api.vtaskr.com", "Production API")
-    openapi.register_server("https://test-api.vtaskr.com", "Test API")
+    # openapi.register_server("https://test-api.vtaskr.com", "Test API")
 
     api_error = {
         "type": "object",
