@@ -5,6 +5,8 @@ An open-source to do list application for personnal use.
 Development in progress... We aim to use the hexagonal architecture, and assume it, even if it seems overkill/overengineering for a small app.
 You can follow the [Roadmap](https://github.com/Valbou/vtaskr-backend/blob/master/ROADMAP.md).
 
+[vTaskr Frontend](https://github.com/Valbou/vtaskr-frontend)
+
 ![License LGPLv3](https://img.shields.io/badge/license-LGPLv3-blue "License LGPLv3")
 ![Python v3.8](https://img.shields.io/badge/python-v3.8-blue "Python v3.8")
 ![Tests 237 passed](https://img.shields.io/badge/tests-237%20passed-green "Tests 237 passed")

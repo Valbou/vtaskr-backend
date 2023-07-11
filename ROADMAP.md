@@ -20,7 +20,7 @@ As vTaskr is an non profit project without fulltime dev, no release date can be 
 - [x] Add alembic migrations
 - [X] Check code organisation
 - [X] Add gunicorn/uvicorn
-- [ ] Start a frontend developpement in an other git repository
+- [X] Start a frontend developpement in an other git repository
 
 ## Go to v1.1.0
 - [ ] User can manage groups (create, read, update, delete)
