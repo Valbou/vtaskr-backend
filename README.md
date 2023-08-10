@@ -11,7 +11,7 @@ You can follow the [Roadmap](https://github.com/Valbou/vtaskr-backend/blob/maste
 ![Python v3.8](https://img.shields.io/badge/python-v3.8-blue "Python v3.8")
 ![Tests 237 passed](https://img.shields.io/badge/tests-237%20passed-green "Tests 237 passed")
 ![Coverage 93%](https://img.shields.io/badge/coverage-93%25-green "Coverage 93%")
-![Code quality A](https://img.shields.io/badge/code%20quality-A-green "Code quality A")
+[![CodeFactor](https://www.codefactor.io/repository/github/valbou/vtaskr-backend/badge)](https://www.codefactor.io/repository/github/valbou/vtaskr-backend)
 
 ### Translations
 vTaskr is available in some languages (europeans): EN, ES, DE, FR, IT, PT.
