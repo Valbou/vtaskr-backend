@@ -128,7 +128,9 @@ def check_requirements(interpreter: str) -> int:
 
 
 def check_git_branch_name() -> int:
-    process = run(["git", "rev-parse", "--abbrev-ref", "HEAD"], capture_output=True)
+    process = run(
+        ["/bin/git", "rev-parse", "--abbrev-ref", "HEAD"], capture_output=True
+    )
     branch_name = process.stdout
     if re.match(r"^(bug|feature)-([\w]+)$", branch_name.decode()):
         print(f"{Back.GREEN+Fore.BLACK} Branch name PASSED {Style.RESET_ALL}")
