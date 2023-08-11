@@ -81,10 +81,15 @@ class QueryStringFilter:
         elif field_type == timedelta:
             filter.value = timedelta(seconds=filter.value)
 
-        elif field_type == type(None) and filter.value.lower() in [  # noqa: E721
-            "none",
-            "null",
-        ]:
+        elif (
+            field_type == type(None)  # noqa: E721
+            and isinstance(filter.value, str)
+            and filter.value.lower()
+            in [
+                "none",
+                "null",
+            ]
+        ):
             filter.value = None
 
         # Attempt to infer Optional and Union recursively
@@ -111,12 +116,11 @@ class QueryStringFilter:
             )
         ):
             filtr = Filter(field=field, operation=op, value=value)
+
             if self._dto_fields:
                 field_type = self._dto_data[filtr.field]
-                try:  # nosec
-                    self._cast_filter_value(filtr, field_type)
-                except Exception:
-                    pass
+                self._cast_filter_value(filtr, field_type)
+
             self._filters.append(filtr)
 
     def _parse_key(self, key: str, value: str):
