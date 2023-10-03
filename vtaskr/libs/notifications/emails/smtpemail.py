@@ -2,7 +2,7 @@ import os
 import ssl
 from email.message import EmailMessage
 from smtplib import SMTP_SSL
-from typing import List, Optional, Union
+from typing import Optional, Union
 
 from .base_email import AbstractBaseEmailContent
 
@@ -32,12 +32,12 @@ class SMTPEmail:
     def __init__(
         self,
         from_email: str,
-        to_emails: Union[List[str], str],
+        to_emails: Union[list[str], str],
         subject: str,
         text: str = "",
         html: str = "",
-        cc_emails: Optional[List[str]] = None,
-        bcc_emails: Optional[List[str]] = None,
+        cc_emails: Optional[list[str]] = None,
+        bcc_emails: Optional[list[str]] = None,
     ) -> None:
         if not text and not html:
             raise NoEmailContentError("Error: Email as no content !")

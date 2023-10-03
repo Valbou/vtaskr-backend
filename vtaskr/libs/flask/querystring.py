@@ -1,7 +1,7 @@
 from dataclasses import dataclass, fields, is_dataclass
 from datetime import date, datetime, time, timedelta
 from enum import Enum
-from typing import Any, List, Optional, _GenericAlias
+from typing import Any, Optional, _GenericAlias
 from urllib.parse import parse_qs
 
 
@@ -40,7 +40,7 @@ class Filter:
 class QueryStringFilter:
     _filters: list = []
     _dto_data: Optional[dict] = None
-    _dto_fields: Optional[List[str]] = None
+    _dto_fields: Optional[list[str]] = None
 
     def __init__(self, query_string: str, dto: Optional[Any] = None):
         """
@@ -97,7 +97,7 @@ class QueryStringFilter:
             for t in field_type.__args__:
                 self._cast_filter_value(filter, t)
 
-    def _separate_values(self, values: List[str]) -> List[str]:
+    def _separate_values(self, values: list[str]) -> list[str]:
         """Split grouped values in many"""
         new_values = []
         for value in values:
@@ -147,7 +147,7 @@ class QueryStringFilter:
 
         return None, None
 
-    def get_filters(self) -> List[Filter]:
+    def get_filters(self) -> list[Filter]:
         return self._filters
 
     def __str__(self) -> str:

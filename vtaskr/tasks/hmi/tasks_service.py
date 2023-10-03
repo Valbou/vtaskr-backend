@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import Optional
 
 from sqlalchemy.orm import Session
 
@@ -16,8 +16,8 @@ class TaskService(AbstractTaskPort):
         self.control = PermissionControl()
 
     def get_user_tasks(
-        self, user_id: str, qs_filters: Optional[List[Filter]] = None
-    ) -> List[dict]:
+        self, user_id: str, qs_filters: Optional[list[Filter]] = None
+    ) -> list[dict]:
         return self.task_db.user_tasks(self.session, user_id, qs_filters)
 
     def get_user_task(self, user_id: str, task_id: str) -> Optional[Task]:
@@ -25,11 +25,11 @@ class TaskService(AbstractTaskPort):
         return task if self.control.is_owner(user_id, task.user_id) else None
 
     def get_user_tag_tasks(
-        self, user_id: str, tag_id: str, qs_filters: Optional[List[Filter]] = None
-    ) -> List[Task]:
+        self, user_id: str, tag_id: str, qs_filters: Optional[list[Filter]] = None
+    ) -> list[Task]:
         return self.task_db.user_tag_tasks(self.session, user_id, tag_id, qs_filters)
 
-    def set_task_tags(self, user_id: str, task: Task, tags_id: List[str]):
+    def set_task_tags(self, user_id: str, task: Task, tags_id: list[str]):
         if self.control.is_owner(user_id, task.user_id):
             self.task_db.user_add_tags(self.session, user_id, task, tags_id)
 

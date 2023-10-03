@@ -1,5 +1,5 @@
 from dataclasses import asdict, dataclass
-from typing import List, Optional
+from typing import Optional
 
 from vtaskr.libs.openapi.base import openapi
 from vtaskr.tasks.models import Color, Tag
@@ -41,7 +41,7 @@ class TagMapperDTO:
         )
 
     @classmethod
-    def list_models_to_list_dto(cls, tags: List[Tag]) -> List[TagDTO]:
+    def list_models_to_list_dto(cls, tags: list[Tag]) -> list[TagDTO]:
         return [TagMapperDTO.model_to_dto(t) for t in tags]
 
     @classmethod
@@ -61,5 +61,5 @@ class TagMapperDTO:
         return asdict(tag_dto)
 
     @classmethod
-    def list_dto_to_dict(cls, tags_dto: List[TagDTO]) -> List[dict]:
+    def list_dto_to_dict(cls, tags_dto: list[TagDTO]) -> list[dict]:
         return [asdict(tag_dto) for tag_dto in tags_dto]

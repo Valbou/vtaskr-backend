@@ -1,5 +1,5 @@
 from gettext import GNUTranslations
-from typing import List, Tuple
+from typing import Tuple
 
 from flask import render_template
 
@@ -10,7 +10,7 @@ from vtaskr.libs.notifications import AbstractBaseEmailContent
 class RegisterEmail(AbstractBaseEmailContent):
     logo = EMAIL_LOGO
 
-    def __init__(self, trans: GNUTranslations, to: List[str], first_name: str) -> None:
+    def __init__(self, trans: GNUTranslations, to: list[str], first_name: str) -> None:
         self._ = trans.gettext
         self.html = render_template(
             "emails/simple_text.html", **self.email_context(first_name)

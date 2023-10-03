@@ -1,6 +1,6 @@
 from dataclasses import asdict, dataclass
 from datetime import datetime, timedelta
-from typing import List, Optional
+from typing import Optional
 
 from vtaskr.libs.openapi.base import openapi
 from vtaskr.tasks.models import Task
@@ -50,7 +50,7 @@ class TaskMapperDTO:
         )
 
     @classmethod
-    def list_models_to_list_dto(cls, tasks: List[Task]) -> List[TaskDTO]:
+    def list_models_to_list_dto(cls, tasks: list[Task]) -> list[TaskDTO]:
         return [TaskMapperDTO.model_to_dto(t) for t in tasks]
 
     @classmethod
@@ -87,5 +87,5 @@ class TaskMapperDTO:
         return asdict(task_dto)
 
     @classmethod
-    def list_dto_to_dict(cls, tasks_dto: List[TaskDTO]) -> List[dict]:
+    def list_dto_to_dict(cls, tasks_dto: list[TaskDTO]) -> list[dict]:
         return [asdict(task_dto) for task_dto in tasks_dto]

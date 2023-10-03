@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 from enum import Enum
-from typing import List, Optional, TypeVar
+from typing import Optional, TypeVar
 
 from pytz import utc
 
@@ -32,7 +32,7 @@ class Task:
     scheduled_at: Optional[datetime] = None
     duration: Optional[timedelta] = None
     done: Optional[datetime] = None
-    tags: Optional[List[Tag]] = None
+    tags: Optional[list[Tag]] = None
 
     def __init__(
         self,
@@ -46,7 +46,7 @@ class Task:
         done: Optional[datetime] = None,
         id: str = "",
         created_at: Optional[datetime] = None,
-        tags: Optional[List[Tag]] = None,
+        tags: Optional[list[Tag]] = None,
     ) -> None:
         self.id = id or get_id()
         self.created_at = created_at or datetime.now(utc)
@@ -72,10 +72,10 @@ class Task:
             return EisenhowerFlag.DELEGATE
         return EisenhowerFlag.DELETE
 
-    def add_tags(self, tags: List[Tag]):
+    def add_tags(self, tags: list[Tag]):
         self.tags.extend(tags)
 
-    def remove_tags(self, tags_id: List[str]):
+    def remove_tags(self, tags_id: list[str]):
         self.tags = [t for t in self.tags if t.id not in tags_id]
 
     def __str__(self) -> str:

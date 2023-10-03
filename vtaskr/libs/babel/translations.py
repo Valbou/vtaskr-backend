@@ -1,6 +1,6 @@
 import os
 from gettext import GNUTranslations, translation
-from typing import List, Union
+from typing import Union
 
 from babel import Locale
 
@@ -82,12 +82,12 @@ class TranslationService:
     def jinja_install_translation(self, jinja_env, translation: GNUTranslations):
         jinja_env.install_gettext_translations(translation)
 
-    def add_languages(self, languages: Union[List[str], str]):
+    def add_languages(self, languages: Union[list[str], str]):
         if isinstance(languages, str):
             languages = [languages]
         self.languages.extend(languages)
 
-    def add_domains(self, domains: Union[List[str], str]):
+    def add_domains(self, domains: Union[list[str], str]):
         if isinstance(domains, str):
             domains = [domains]
         self.domains.extend(domains)

@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import Optional
 
 from sqlalchemy.orm import Session
 
@@ -33,8 +33,8 @@ class TagDB(AbstractTagPort):
         return session.query(self.tag_qs.statement.exists()).scalar()
 
     def user_tags(
-        self, session: Session, user_id: str, filters: Optional[List[Filter]] = None
-    ) -> List[Tag]:
+        self, session: Session, user_id: str, filters: Optional[list[Filter]] = None
+    ) -> list[Tag]:
         """Retrieve all user's tags"""
 
         filters = filters or []
@@ -49,8 +49,8 @@ class TagDB(AbstractTagPort):
         session: Session,
         user_id: str,
         task_id: str,
-        filters: Optional[List[Filter]] = None,
-    ) -> List[Tag]:
+        filters: Optional[list[Filter]] = None,
+    ) -> list[Tag]:
         """Retrieve all user's tags for this task"""
 
         filters = filters or []

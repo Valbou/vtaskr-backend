@@ -1,4 +1,3 @@
-from typing import List
 from unittest import TestCase
 
 from faker import Faker
@@ -14,7 +13,7 @@ from . import APP
 
 class FlaskTemplateCapture:
     def __init__(self, app: Flask) -> None:
-        self.recorded_templates: List[str] = []
+        self.recorded_templates: list[str] = []
         self.app = app
 
     def __enter__(self):
@@ -41,7 +40,7 @@ class BaseTestCase(TestCase):
         self.client = self.app.test_client()
         self.cli = self.app.test_cli_runner()
 
-    def assertTemplateUsed(self, template_name: str, recorded_templates: List[str]):
+    def assertTemplateUsed(self, template_name: str, recorded_templates: list[str]):
         self.assertIn(template_name, recorded_templates)
 
     def assertTableExists(self, table_name: str):
@@ -51,7 +50,7 @@ class BaseTestCase(TestCase):
             result = session.execute(stmt, params=params).scalar_one_or_none()
             self.assertTrue(result, f"Table {table_name} doesn't exists")
 
-    def assertColumnsExists(self, table_name: str, columns_name: List[str]):
+    def assertColumnsExists(self, table_name: str, columns_name: list[str]):
         with self.app.sql.get_session() as session:
             for column_name in columns_name:
                 params = {

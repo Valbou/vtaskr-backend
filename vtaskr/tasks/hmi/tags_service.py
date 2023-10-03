@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import Optional
 
 from sqlalchemy.orm import Session
 
@@ -14,14 +14,14 @@ class TagService(AbstractTagPort):
         self.tag_db = TagDB()
         self.control = PermissionControl()
 
-    def get_user_tags(self, user_id: str) -> List[dict]:
+    def get_user_tags(self, user_id: str) -> list[dict]:
         return self.tag_db.user_tags(self.session, user_id)
 
     def get_user_tag(self, user_id: str, tag_id: str) -> Optional[Tag]:
         tag = self.tag_db.load(self.session, tag_id)
         return tag if self.control.is_owner(user_id, tag.user_id) else None
 
-    def get_user_task_tags(self, user_id: str, task_id: str) -> List[Tag]:
+    def get_user_task_tags(self, user_id: str, task_id: str) -> list[Tag]:
         return self.tag_db.user_task_tags(self.session, user_id, task_id)
 
     def update_user_tag(self, user_id: str, tag: Tag):

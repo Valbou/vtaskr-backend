@@ -1,4 +1,4 @@
-from typing import List, TypeVar
+from typing import TypeVar
 
 from sqlalchemy import delete, not_, select, update
 
@@ -47,7 +47,7 @@ class Queryset:
         self._query = self._query.where(self.qs_class.id == id)
         return self
 
-    def ids(self, ids: List[str]):
+    def ids(self, ids: list[str]):
         self._query = self._query.where(self.qs_class.id.in_(ids))
         return self
 
@@ -57,7 +57,7 @@ class Queryset:
         self._query = self._query.offset(offset).limit(per_page)
         return self
 
-    def from_filters(self, filters: List[Filter]) -> TQueryset:
+    def from_filters(self, filters: list[Filter]) -> TQueryset:
         """
         Build a query statement from query string filters
         """
@@ -66,7 +66,7 @@ class Queryset:
         self._add_page(filters)
         return self
 
-    def _add_where(self, filters: List[Filter]) -> None:
+    def _add_where(self, filters: list[Filter]) -> None:
         """Apply a where clause according to filters"""
         [
             self._add_simple_where_clause(f)
@@ -118,7 +118,7 @@ class Queryset:
                 not_(getattr(self.qs_class, f.field).endswith(f.value))
             )
 
-    def _add_composed_where_clause(self, fs: List[Filter], operation: Operations):
+    def _add_composed_where_clause(self, fs: list[Filter], operation: Operations):
         fields = {f.field for f in fs}
         for field in fields:
             values = [f.value for f in fs if f.field == field]
@@ -131,7 +131,7 @@ class Queryset:
                     getattr(self.qs_class, field).notin_(values)
                 )
 
-    def _add_order_by(self, filters: List[Filter]) -> None:
+    def _add_order_by(self, filters: list[Filter]) -> None:
         """Apply order by clauses found in filters"""
 
         order_by_filters = [
@@ -147,7 +147,7 @@ class Queryset:
                     getattr(self.qs_class, order.field).asc()
                 )
 
-    def _add_page(self, filters: List[Filter]) -> None:
+    def _add_page(self, filters: list[Filter]) -> None:
         """
         Apply pagination constraints
         offset and page cannot be used together

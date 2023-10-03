@@ -1,6 +1,6 @@
 from gettext import gettext as _
 from string import ascii_lowercase, ascii_uppercase, digits, punctuation
-from typing import List, Optional
+from typing import Optional
 
 from email_validator import validate_email
 
@@ -17,7 +17,7 @@ class PasswordComplexityError(Exception):
 
 
 class PasswordChecker:
-    errors: List[str] = []
+    errors: list[str] = []
 
     def check_complexity(self, password: str) -> bool:
         self.errors = []

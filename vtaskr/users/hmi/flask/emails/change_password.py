@@ -1,5 +1,5 @@
 from gettext import GNUTranslations
-from typing import List, Tuple
+from typing import Tuple
 
 from flask import render_template
 
@@ -11,7 +11,7 @@ class ChangePasswordEmail(AbstractBaseEmailContent):
     logo = EMAIL_LOGO
 
     def __init__(
-        self, trans: GNUTranslations, to: List[str], first_name: str, hash: str
+        self, trans: GNUTranslations, to: list[str], first_name: str, hash: str
     ) -> None:
         self._ = trans.gettext
         change_email_link = (

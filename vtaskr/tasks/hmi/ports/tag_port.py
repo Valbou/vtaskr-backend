@@ -1,12 +1,12 @@
 from abc import ABC, abstractmethod
-from typing import List, Optional
+from typing import Optional
 
 from vtaskr.tasks.models import Tag
 
 
 class AbstractTagPort(ABC):
     @abstractmethod
-    def get_user_tags(self, user_id: str) -> List[dict]:
+    def get_user_tags(self, user_id: str) -> list[dict]:
         raise NotImplementedError()
 
     @abstractmethod
@@ -14,7 +14,7 @@ class AbstractTagPort(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    def get_user_task_tags(self, user_id: str, task_id: str) -> List[Tag]:
+    def get_user_task_tags(self, user_id: str, task_id: str) -> list[Tag]:
         raise NotImplementedError()
 
     @abstractmethod

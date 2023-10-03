@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from datetime import datetime
 from re import fullmatch
-from typing import Any, List, Optional, TypeVar
+from typing import Any, Optional, TypeVar
 
 from pytz import utc
 
@@ -48,7 +48,7 @@ class Tag:
     user_id: str = ""
     title: str = ""
     color: Optional[Color] = None
-    tasks: Optional[List[Any]] = None
+    tasks: Optional[list[Any]] = None
 
     def __init__(
         self,
@@ -57,7 +57,7 @@ class Tag:
         color: Optional[Color] = None,
         id: Optional[str] = None,
         created_at: Optional[datetime] = None,
-        tasks: Optional[List[Any]] = None,
+        tasks: Optional[list[Any]] = None,
     ) -> None:
         self.id = id or get_id()
         self.created_at = created_at or datetime.now(utc)
@@ -69,7 +69,7 @@ class Tag:
     def add_tasks(self, tasks: list):
         self.tasks.extend(tasks)
 
-    def remove_tasks(self, tasks_id: List[str]):
+    def remove_tasks(self, tasks_id: list[str]):
         self.tasks = [t for t in self.tasks if t.id not in tasks_id]
 
     def __str__(self) -> str:

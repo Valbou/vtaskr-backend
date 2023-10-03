@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import Optional
 
 from sqlalchemy.orm import Session
 
@@ -33,8 +33,8 @@ class TaskDB(AbstractTaskPort):
         return session.query(self.task_qs.statement.exists()).scalar()
 
     def user_tasks(
-        self, session: Session, user_id: str, filters: Optional[List[Filter]] = None
-    ) -> List[Task]:
+        self, session: Session, user_id: str, filters: Optional[list[Filter]] = None
+    ) -> list[Task]:
         """Retrieve all user's tasks"""
 
         filters = filters or []
@@ -49,8 +49,8 @@ class TaskDB(AbstractTaskPort):
         session: Session,
         user_id: str,
         tag_id: str,
-        filters: Optional[List[Filter]] = None,
-    ) -> List[Task]:
+        filters: Optional[list[Filter]] = None,
+    ) -> list[Task]:
         """Retrieve all user's tasks with this tag"""
 
         filters = filters or []
@@ -65,7 +65,7 @@ class TaskDB(AbstractTaskPort):
         session: Session,
         user_id: str,
         task: Task,
-        tags_id: List[str],
+        tags_id: list[str],
         autocommit: bool = True,
     ):
         """Bulk add tags to user's task"""
