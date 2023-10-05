@@ -8,7 +8,7 @@ tag_component = {
     "type": "object",
     "properties": {
         "id": {"type": "string"},
-        "user_id": {"type": "string"},
+        "tenant_id": {"type": "string"},
         "title": {"type": "string"},
         "backgound_color": {"type": "string"},
         "text_color": {"type": "string"},
@@ -22,7 +22,7 @@ openapi.register_schemas_components("Tag", tag_component)
 class TagDTO:
     id: Optional[str] = ""
     created_at: str = ""
-    user_id: str = ""
+    tenant_id: str = ""
     title: str = ""
     backgound_color: str = "#000000"
     text_color: str = "#FFFFFF"
@@ -34,7 +34,7 @@ class TagMapperDTO:
         return TagDTO(
             id=tag.id,
             created_at=tag.created_at.isoformat(),
-            user_id=tag.user_id,
+            tenant_id=tag.tenant_id,
             title=tag.title,
             backgound_color=tag.color.background,
             text_color=tag.color.text,
@@ -46,10 +46,10 @@ class TagMapperDTO:
 
     @classmethod
     def dto_to_model(
-        cls, user_id: str, tag_dto: TagDTO, tag: Optional[Tag] = None
+        cls, tenant_id: str, tag_dto: TagDTO, tag: Optional[Tag] = None
     ) -> Tag:
         if not tag:
-            tag = Tag(user_id=user_id, title=tag_dto.title)
+            tag = Tag(tenant_id=tenant_id, title=tag_dto.title)
 
         tag.title = tag_dto.title
         tag.color = Color(tag_dto.backgound_color, tag_dto.text_color)

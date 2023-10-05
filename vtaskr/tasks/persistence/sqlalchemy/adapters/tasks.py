@@ -32,46 +32,46 @@ class TaskDB(AbstractTaskPort):
         self.task_qs.id(id)
         return session.query(self.task_qs.statement.exists()).scalar()
 
-    def user_tasks(
-        self, session: Session, user_id: str, filters: Optional[list[Filter]] = None
+    def tenant_tasks(
+        self, session: Session, tenant_id: str, filters: Optional[list[Filter]] = None
     ) -> list[Task]:
-        """Retrieve all user's tasks"""
+        """Retrieve all tenant's tasks"""
 
         filters = filters or []
         if filters:
             self.task_qs.from_filters(filters)
 
-        self.task_qs.user(user_id)
+        self.task_qs.tenant(tenant_id)
         return session.execute(self.task_qs.statement).scalars().all()
 
-    def user_tag_tasks(
+    def tenant_tag_tasks(
         self,
         session: Session,
-        user_id: str,
+        tenant_id: str,
         tag_id: str,
         filters: Optional[list[Filter]] = None,
     ) -> list[Task]:
-        """Retrieve all user's tasks with this tag"""
+        """Retrieve all tenant's tasks with this tag"""
 
         filters = filters or []
         if filters:
             self.task_qs.from_filters(filters)
 
-        self.task_qs.user(user_id).tag(tag_id)
+        self.task_qs.tenant(tenant_id).tag(tag_id)
         return session.execute(self.task_qs.statement).scalars().all()
 
-    def user_add_tags(
+    def tenant_add_tags(
         self,
         session: Session,
-        user_id: str,
+        tenant_id: str,
         task: Task,
         tags_id: list[str],
         autocommit: bool = True,
     ):
-        """Bulk add tags to user's task"""
+        """Bulk add tags to tenant's task"""
 
         tag_qs = TagQueryset()
-        tag_qs = tag_qs.user(user_id).ids(tags_id)
+        tag_qs = tag_qs.tenant(tenant_id).ids(tags_id)
         tags = session.execute(tag_qs.statement).scalars().all()
 
         task.tags = tags
@@ -79,7 +79,7 @@ class TaskDB(AbstractTaskPort):
             session.commit()
 
     def clean_tags(
-        self, session: Session, user_id: str, task: Task, autocommit: bool = True
+        self, session: Session, tenant_id: str, task: Task, autocommit: bool = True
     ):
         """Clean all associations with tags"""
 

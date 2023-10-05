@@ -37,7 +37,7 @@ class TestTasksAPI(BaseTestCase):
 
     def test_get_tasks(self):
         headers = self.get_token_headers()
-        task = Task(user_id=self.user.id, title=self.fake.sentence(nb_words=8))
+        task = Task(tenant_id=self.user.id, title=self.fake.sentence(nb_words=8))
         with self.app.sql.get_session() as session:
             self.task_db.save(session, task)
 
@@ -50,7 +50,7 @@ class TestTasksAPI(BaseTestCase):
 
     def test_get_tasks_with_filter(self):
         headers = self.get_token_headers()
-        task = Task(user_id=self.user.id, title=self.fake.sentence(nb_words=8))
+        task = Task(tenant_id=self.user.id, title=self.fake.sentence(nb_words=8))
         with self.app.sql.get_session() as session:
             self.task_db.save(session, task)
 

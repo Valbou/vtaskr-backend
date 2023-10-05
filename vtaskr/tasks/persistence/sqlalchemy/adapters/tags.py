@@ -32,30 +32,30 @@ class TagDB(AbstractTagPort):
         self.tag_qs.id(id)
         return session.query(self.tag_qs.statement.exists()).scalar()
 
-    def user_tags(
-        self, session: Session, user_id: str, filters: Optional[list[Filter]] = None
+    def tenant_tags(
+        self, session: Session, tenant_id: str, filters: Optional[list[Filter]] = None
     ) -> list[Tag]:
-        """Retrieve all user's tags"""
+        """Retrieve all tenant's tags"""
 
         filters = filters or []
         if filters:
             self.tag_qs.from_filters(filters)
 
-        self.tag_qs.user(user_id)
+        self.tag_qs.tenant(tenant_id)
         return session.execute(self.tag_qs.statement).scalars().all()
 
-    def user_task_tags(
+    def tenant_task_tags(
         self,
         session: Session,
-        user_id: str,
+        tenant_id: str,
         task_id: str,
         filters: Optional[list[Filter]] = None,
     ) -> list[Tag]:
-        """Retrieve all user's tags for this task"""
+        """Retrieve all tenant's tags for this task"""
 
         filters = filters or []
         if filters:
             self.tag_qs.from_filters(filters)
 
-        self.tag_qs.user(user_id).task(task_id)
+        self.tag_qs.tenant(tenant_id).task(task_id)
         return session.execute(self.tag_qs.statement).scalars().all()

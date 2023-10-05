@@ -9,7 +9,7 @@ class TestTaskAdapter(BaseTestCase):
         self.create_user()
         self.task_db = TaskDB()
         self.task = Task(
-            user_id=self.user.id,
+            tenant_id=self.user.id,
             title=self.fake.sentence(),
         )
 
@@ -38,7 +38,7 @@ class TestTaskAdapter(BaseTestCase):
             self.assertTrue(tag_db.exists(session, tag_1.id))
             self.assertTrue(tag_db.exists(session, tag_2.id))
 
-            tasks = self.task_db.user_tag_tasks(session, self.user.id, tag_1.id)
+            tasks = self.task_db.tenant_tag_tasks(session, self.user.id, tag_1.id)
             self.assertIsInstance(tasks, list)
             self.assertEqual(len(tasks), 1)
             self.assertEqual(tasks[0].id, self.task.id)

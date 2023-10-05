@@ -55,10 +55,10 @@ class TaskMapperDTO:
 
     @classmethod
     def dto_to_model(
-        cls, user_id: str, task_dto: TaskDTO, task: Optional[Task] = None
+        cls, tenant_id: str, task_dto: TaskDTO, task: Optional[Task] = None
     ) -> Task:
         if not task:
-            task = Task(user_id=user_id, title=task_dto.title)
+            task = Task(tenant_id=tenant_id, title=task_dto.title)
 
         task.title = task_dto.title
         task.description = task_dto.description

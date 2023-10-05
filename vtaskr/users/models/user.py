@@ -17,7 +17,7 @@ class User:
     last_name: str = ""
     email: str = ""
     hash_password: str = ""
-    locale: Locale = ""
+    locale: Locale = Locale("en", "US")
     timezone: str = ""
     created_at: datetime = datetime.now(utc)
     last_login_at: Optional[datetime] = None

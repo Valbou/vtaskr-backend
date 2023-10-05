@@ -12,15 +12,15 @@ class TestTask(TestCase):
     def setUp(self) -> None:
         super().setUp()
         self.fake = Faker()
-        self.user_id = "1234abcd"
+        self.tenant_id = "1234abcd"
         self.task = Task(
-            user_id=self.user_id,
+            tenant_id=self.tenant_id,
             title=self.fake.sentence(),
         )
 
     def test_task_table_fields(self):
         self.assertEqual(Task.__annotations__.get("id"), str)
-        self.assertEqual(Task.__annotations__.get("user_id"), str)
+        self.assertEqual(Task.__annotations__.get("tenant_id"), str)
         self.assertEqual(Task.__annotations__.get("title"), str)
         self.assertEqual(Task.__annotations__.get("description"), str)
         self.assertEqual(Task.__annotations__.get("emergency"), bool)
@@ -45,8 +45,8 @@ class TestTask(TestCase):
         self.assertEqual(self.task.get_eisenhower_flag(), EisenhowerFlag.SCHEDULE)
 
     def test_add_and_remove_tags(self):
-        tag_1 = Tag(self.user_id, self.fake.text(max_nb_chars=50))
-        tag_2 = Tag(self.user_id, self.fake.text(max_nb_chars=50))
+        tag_1 = Tag(self.tenant_id, self.fake.text(max_nb_chars=50))
+        tag_2 = Tag(self.tenant_id, self.fake.text(max_nb_chars=50))
         self.task.add_tags([tag_1, tag_2])
         self.assertEqual(len(self.task.tags), 2)
 

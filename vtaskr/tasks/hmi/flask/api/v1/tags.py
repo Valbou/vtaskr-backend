@@ -4,20 +4,20 @@ from flask import current_app, g, request
 
 from vtaskr.libs.flask.querystring import QueryStringFilter
 from vtaskr.libs.flask.utils import ResponseAPI
+from vtaskr.libs.iam.flask.config import login_required
 from vtaskr.libs.redis import rate_limited
 from vtaskr.tasks.hmi.dto import TagDTO, TagMapperDTO, TaskDTO, TaskMapperDTO
 from vtaskr.tasks.hmi.tags_service import TagService
 from vtaskr.tasks.hmi.tasks_service import TaskService
 from vtaskr.tasks.persistence import TagDB
-from vtaskr.users.hmi.flask.decorators import login_required
 
 from .. import V1, logger, openapi, tasks_bp
 
 api_item = {
     "get": {
-        "description": "Get all current user's tags",
-        "summary": "Get user's tags",
-        "operationId": "getUserTags",
+        "description": "Get all current tenant's tags",
+        "summary": "Get tenant's tags",
+        "operationId": "getTenantTags",
         "responses": {
             "200": {
                 "description": "Tag list",
@@ -33,7 +33,7 @@ api_item = {
         },
     },
     "post": {
-        "description": "Create tag for the current user",
+        "description": "Create tag for the current tenant",
         "summary": "Create a tag",
         "operationId": "postTag",
         "responses": {
@@ -68,12 +68,12 @@ openapi.register_path(f"{V1}/tags", api_item)
 @login_required(logger)
 @rate_limited(logger=logger, hit=1, period=timedelta(seconds=1))
 def tags():
-    """URL to current user tags - Token required"""
+    """URL to current tenant tags - Token required"""
     try:
         if request.method == "GET":
             with current_app.sql.get_session() as session:
                 tag_service = TagService(session)
-                tags = tag_service.get_user_tags(g.user.id)
+                tags = tag_service.get_tenant_tags(g.user.id)
                 if tags:
                     tags_dto = TagMapperDTO.list_models_to_list_dto(tags)
                     return ResponseAPI.get_response(
@@ -211,10 +211,10 @@ openapi.register_path(f"{V1}/tag/{{tag_id}}", api_item)
 @login_required(logger)
 @rate_limited(logger=logger, hit=5, period=timedelta(seconds=1))
 def tag(tag_id: str):
-    """URL to current user tag - Token required"""
+    """URL to current tenant tag - Token required"""
     with current_app.sql.get_session() as session:
         tag_service = TagService(session)
-        tag = tag_service.get_user_tag(g.user.id, tag_id)
+        tag = tag_service.get_tenant_tag(g.user.id, tag_id)
         if tag:
             if request.method == "GET":
                 tag_dto = TagMapperDTO.model_to_dto(tag)
@@ -223,13 +223,13 @@ def tag(tag_id: str):
             elif request.method in ("PUT", "PATCH"):
                 tag_dto = TagDTO(**request.get_json())
                 tag = TagMapperDTO.dto_to_model(g.user.id, tag_dto, tag)
-                tag_service.update_user_tag(g.user.id, tag)
+                tag_service.update_tenant_tag(g.user.id, tag)
 
                 tag_dto = TagMapperDTO.model_to_dto(tag)
                 return ResponseAPI.get_response(TagMapperDTO.dto_to_dict(tag_dto), 200)
 
             elif request.method == "DELETE":
-                tag_service.delete_user_tag(g.user.id, tag)
+                tag_service.delete_tenant_tag(g.user.id, tag)
                 return ResponseAPI.get_response({}, 204)
 
         else:
@@ -280,11 +280,11 @@ def tag_tasks(tag_id: str):
             )
 
             tag_service = TagService(session)
-            tag = tag_service.get_user_tag(g.user.id, tag_id)
+            tag = tag_service.get_tenant_tag(g.user.id, tag_id)
             if tag:
                 task_service = TaskService(session)
                 tasks_dto = TaskMapperDTO.list_models_to_list_dto(
-                    task_service.get_user_tag_tasks(
+                    task_service.get_tenant_tag_tasks(
                         g.user.id, tag.id, qsf.get_filters()
                     )
                 )
@@ -294,4 +294,5 @@ def tag_tasks(tag_id: str):
             else:
                 return ResponseAPI.get_error_response("Tag not found", 404)
     else:
+        print("## 9")
         return ResponseAPI.get_error_response({}, 405)

@@ -2,7 +2,7 @@ from typing import Optional
 
 from sqlalchemy.orm import Session
 
-from vtaskr.users.models import User
+from vtaskr.users.models import Role, RoleType, User
 from vtaskr.users.persistence.ports import AbstractUserPort
 from vtaskr.users.persistence.sqlalchemy.querysets import UserQueryset
 
@@ -54,3 +54,13 @@ class UserDB(AbstractUserPort):
 
         if autocommit:
             session.commit()
+
+    def with_group_permissions(
+        self, session: Session, id: str, group_id: str
+    ) -> Optional[User]:
+        self.user_qs.joinedload(User.roles).joinedload(Role.roletype).joinedload(
+            RoleType.rights
+        ).id(id).where(Role.group_id == group_id)
+
+        result = Session.scalars(self.user_qs.statement).one_or_none()
+        return result

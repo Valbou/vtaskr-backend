@@ -6,17 +6,17 @@ from vtaskr.tasks.models import Task
 
 class AbstractTaskPort(ABC):
     @abstractmethod
-    def get_user_tasks(self, user_id: str) -> list[dict]:
+    def get_tenant_tasks(self, tenant_id: str) -> list[dict]:
         raise NotImplementedError()
 
-    def get_user_task(self, user_id: str, task_id: str) -> Optional[Task]:
+    def get_tenant_task(self, tenant_id: str, task_id: str) -> Optional[Task]:
         raise NotImplementedError()
 
-    def get_user_tag_tasks(self, user_id: str, tag_id: str) -> list[Task]:
+    def get_tenant_tag_tasks(self, tenant_id: str, tag_id: str) -> list[Task]:
         raise NotImplementedError()
 
-    def update_user_task(self, user_id: str, task: Task):
+    def update_tenant_task(self, tenant_id: str, task: Task):
         raise NotImplementedError()
 
-    def delete_user_task(self, user_id: str, task: Task):
+    def delete_tenant_task(self, tenant_id: str, task: Task):
         raise NotImplementedError()

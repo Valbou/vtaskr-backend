@@ -2,32 +2,37 @@ from typing import Optional
 
 from sqlalchemy.orm import Session
 
+from vtaskr.libs.iam.config import PermissionControl
+from vtaskr.libs.iam.constants import Permissions, Resources
 from vtaskr.tasks.hmi.ports import AbstractTagPort
 from vtaskr.tasks.models import Tag
 from vtaskr.tasks.persistence import TagDB
-from vtaskr.users import PermissionControl
 
 
 class TagService(AbstractTagPort):
     def __init__(self, session: Session) -> None:
         self.session: Session = session
         self.tag_db = TagDB()
-        self.control = PermissionControl()
+        self.control = PermissionControl(self.session, resource=Resources.TAG)
 
-    def get_user_tags(self, user_id: str) -> list[dict]:
-        return self.tag_db.user_tags(self.session, user_id)
+    def get_tenant_tags(self, tenant_id: str) -> list[dict]:
+        return self.tag_db.tenant_tags(self.session, tenant_id)
 
-    def get_user_tag(self, user_id: str, tag_id: str) -> Optional[Tag]:
+    def get_tenant_tag(self, tenant_id: str, tag_id: str) -> Optional[Tag]:
         tag = self.tag_db.load(self.session, tag_id)
-        return tag if self.control.is_owner(user_id, tag.user_id) else None
+        return (
+            tag
+            if self.control.can(Permissions.READ, tenant_id, tag.tenant_id)
+            else None
+        )
 
-    def get_user_task_tags(self, user_id: str, task_id: str) -> list[Tag]:
-        return self.tag_db.user_task_tags(self.session, user_id, task_id)
+    def get_tenant_task_tags(self, tenant_id: str, task_id: str) -> list[Tag]:
+        return self.tag_db.tenant_task_tags(self.session, tenant_id, task_id)
 
-    def update_user_tag(self, user_id: str, tag: Tag):
-        if self.control.is_owner(user_id, tag.user_id):
+    def update_tenant_tag(self, tenant_id: str, tag: Tag):
+        if self.control.can(Permissions.UPDATE, tenant_id, tag.tenant_id):
             self.tag_db.save(self.session, tag)
 
-    def delete_user_tag(self, user_id: str, tag: Tag):
-        if self.control.is_owner(user_id, tag.user_id):
+    def delete_tenant_tag(self, tenant_id: str, tag: Tag):
+        if self.control.can(Permissions.DELETE, tenant_id, tag.tenant_id):
             self.tag_db.delete(self.session, tag)
