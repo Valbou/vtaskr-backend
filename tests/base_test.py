@@ -1,12 +1,13 @@
 from unittest import TestCase
 
+from babel import Locale
 from faker import Faker
 from flask import Flask, template_rendered
 
 from tests.utils.db_utils import text_query_column_exists, text_query_table_exists
-from vtaskr.users import User
-from vtaskr.users.hmi.user_service import UserService
-from vtaskr.users.persistence import UserDB
+from vtaskr.base.config import LOCALE, TIMEZONE
+from vtaskr.users.hmi.dto import UserDTO
+from vtaskr.users.services import UserService
 
 from . import APP
 
@@ -69,18 +70,24 @@ class BaseTestCase(TestCase):
         )
 
     def create_user(self):
+        """Create a default test user and his group, role etc..."""
         self.password = self.fake.password() + "Aa1#"
-        self.user = User(
+
+        self.user_dto = UserDTO(
             first_name=self.fake.first_name(),
             last_name=self.fake.last_name(),
             email=self.generate_email(),
+            locale=Locale.parse(LOCALE),
+            timezone=TIMEZONE,
         )
-        self.user.set_password(self.password)
 
-        self.user_db = UserDB()
         with self.app.sql.get_session() as session:
             session.expire_on_commit = False
-            self.user_db.save(session, self.user)
+
+            user_service = UserService(session)
+            self.user, self.group = user_service.register(
+                self.user_dto, password=self.password
+            )
 
     def get_json_headers(self):
         return {"Content-Type": "application/json"}

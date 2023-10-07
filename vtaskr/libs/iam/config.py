@@ -1,5 +1,3 @@
-from vtaskr.users.services.permissions import (
-    PermissionControl as users_PermissionControl,
-)
+from vtaskr.users.services import PermissionControl as users_PermissionControl
 
 PermissionControl = users_PermissionControl

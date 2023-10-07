@@ -41,8 +41,8 @@ class TagMapperDTO:
         )
 
     @classmethod
-    def list_models_to_list_dto(cls, tags: list[Tag]) -> list[TagDTO]:
-        return [TagMapperDTO.model_to_dto(t) for t in tags]
+    def list_models_to_list_dto(cls, tags: list[Tag] | None) -> list[TagDTO] | None:
+        return [TagMapperDTO.model_to_dto(t) for t in tags] if tags else None
 
     @classmethod
     def dto_to_model(

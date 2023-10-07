@@ -1,6 +1,5 @@
 import os
 from gettext import GNUTranslations, translation
-from typing import Union
 
 from babel import Locale
 
@@ -52,7 +51,7 @@ class TranslationService:
                 f"The language {lang} is not installed"
             )
 
-    def _locale_to_lang(self, locale: Union[Locale, str]) -> str:
+    def _locale_to_lang(self, locale: Locale | str) -> str:
         if isinstance(locale, str):
             locale = Locale.parse(locale)
         return locale.language
@@ -61,14 +60,12 @@ class TranslationService:
         self._check_valid_domain(domain)
         return os.path.join(APP_NAME, domain, self.dirname)
 
-    def get_translation_session(self, domain: str, locale: Union[Locale, str]):
+    def get_translation_session(self, domain: str, locale: Locale | str):
         lang = self._locale_to_lang(locale)
         self._check_valid_language(lang)
         return TranslationSession(domain, lang, self._path_to_translations(domain))
 
-    def get_translation(
-        self, domain: str, locale: Union[Locale, str]
-    ) -> GNUTranslations:
+    def get_translation(self, domain: str, locale: Locale | str) -> GNUTranslations:
         lang = self._locale_to_lang(locale)
         self._check_valid_language(lang)
         return translation(
@@ -82,12 +79,12 @@ class TranslationService:
     def jinja_install_translation(self, jinja_env, translation: GNUTranslations):
         jinja_env.install_gettext_translations(translation)
 
-    def add_languages(self, languages: Union[list[str], str]):
+    def add_languages(self, languages: list[str] | str):
         if isinstance(languages, str):
             languages = [languages]
         self.languages.extend(languages)
 
-    def add_domains(self, domains: Union[list[str], str]):
+    def add_domains(self, domains: list[str] | str):
         if isinstance(domains, str):
             domains = [domains]
         self.domains.extend(domains)

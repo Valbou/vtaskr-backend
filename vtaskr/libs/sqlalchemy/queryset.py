@@ -10,7 +10,7 @@ TQueryset = TypeVar("TQueryset", bound="Queryset")
 class Queryset:
     """
     Queryset is used to avoid duplication in SQL queries.
-    It's particulary usefull on complex queries.
+    It's particulary usefull to chain complex queries.
     """
 
     def __init__(self, qs_class):
@@ -27,8 +27,8 @@ class Queryset:
     def clean(self):
         self.select()
 
-    def select(self) -> TQueryset:
-        self._query = select(self.qs_class)
+    def select(self, *args) -> TQueryset:
+        self._query = select(*args) if args else select(self.qs_class)
         return self
 
     def update(self) -> TQueryset:
@@ -41,6 +41,14 @@ class Queryset:
 
     def values(self, **kwargs):
         self._query = self._query.values(**kwargs)
+        return self
+
+    def join(self, column):
+        self._query = self._query.join(column)
+        return self
+
+    def where(self, *args):
+        self._query = self._query.where(*args)
         return self
 
     def id(self, id: str):

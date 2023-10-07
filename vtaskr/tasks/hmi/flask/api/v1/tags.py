@@ -7,9 +7,8 @@ from vtaskr.libs.flask.utils import ResponseAPI
 from vtaskr.libs.iam.flask.config import login_required
 from vtaskr.libs.redis import rate_limited
 from vtaskr.tasks.hmi.dto import TagDTO, TagMapperDTO, TaskDTO, TaskMapperDTO
-from vtaskr.tasks.hmi.tags_service import TagService
-from vtaskr.tasks.hmi.tasks_service import TaskService
 from vtaskr.tasks.persistence import TagDB
+from vtaskr.tasks.services import TagService, TaskService
 
 from .. import V1, logger, openapi, tasks_bp
 
@@ -73,7 +72,7 @@ def tags():
         if request.method == "GET":
             with current_app.sql.get_session() as session:
                 tag_service = TagService(session)
-                tags = tag_service.get_tenant_tags(g.user.id)
+                tags = tag_service.get_tags(g.user.id)
                 if tags:
                     tags_dto = TagMapperDTO.list_models_to_list_dto(tags)
                     return ResponseAPI.get_response(
@@ -214,7 +213,7 @@ def tag(tag_id: str):
     """URL to current tenant tag - Token required"""
     with current_app.sql.get_session() as session:
         tag_service = TagService(session)
-        tag = tag_service.get_tenant_tag(g.user.id, tag_id)
+        tag = tag_service.get_tag(g.user.id, tag_id)
         if tag:
             if request.method == "GET":
                 tag_dto = TagMapperDTO.model_to_dto(tag)
@@ -223,13 +222,13 @@ def tag(tag_id: str):
             elif request.method in ("PUT", "PATCH"):
                 tag_dto = TagDTO(**request.get_json())
                 tag = TagMapperDTO.dto_to_model(g.user.id, tag_dto, tag)
-                tag_service.update_tenant_tag(g.user.id, tag)
+                tag_service.update_tag(g.user.id, tag)
 
                 tag_dto = TagMapperDTO.model_to_dto(tag)
                 return ResponseAPI.get_response(TagMapperDTO.dto_to_dict(tag_dto), 200)
 
             elif request.method == "DELETE":
-                tag_service.delete_tenant_tag(g.user.id, tag)
+                tag_service.delete_tag(g.user.id, tag)
                 return ResponseAPI.get_response({}, 204)
 
         else:
@@ -280,19 +279,21 @@ def tag_tasks(tag_id: str):
             )
 
             tag_service = TagService(session)
-            tag = tag_service.get_tenant_tag(g.user.id, tag_id)
+            tag = tag_service.get_tag(g.user.id, tag_id)
             if tag:
                 task_service = TaskService(session)
                 tasks_dto = TaskMapperDTO.list_models_to_list_dto(
-                    task_service.get_tenant_tag_tasks(
-                        g.user.id, tag.id, qsf.get_filters()
+                    task_service.get_tag_tasks(
+                        g.user.id, tag.id, tag.tenant_id, qsf.get_filters()
                     )
                 )
-                return ResponseAPI.get_response(
-                    TagMapperDTO.list_dto_to_dict(tasks_dto), 200
-                )
+
+                if tasks_dto:
+                    return ResponseAPI.get_response(
+                        TagMapperDTO.list_dto_to_dict(tasks_dto), 200
+                    )
+                return ResponseAPI.get_response([], 200)
             else:
                 return ResponseAPI.get_error_response("Tag not found", 404)
     else:
-        print("## 9")
         return ResponseAPI.get_error_response({}, 405)

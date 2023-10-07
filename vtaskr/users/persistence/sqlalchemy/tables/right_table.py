@@ -25,8 +25,10 @@ class PermissionsType(types.TypeDecorator):
     impl = Integer
     cache_ok = True
 
-    def process_bind_param(self, value: list[Permissions], dialect: Dialect) -> int:
-        return sum([perm.value for perm in value])
+    def process_bind_param(
+        self, value: list[Permissions] | Permissions, dialect: Dialect
+    ) -> int:
+        return sum([perm.value for perm in value]) if isinstance(value, list) else value
 
     def process_result_value(self, value: int, dialect: Dialect) -> list[Permissions]:
         return [perm for perm in Permissions if value & perm]

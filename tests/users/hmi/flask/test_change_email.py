@@ -1,6 +1,6 @@
 from tests.base_test import BaseTestCase
 from vtaskr.users import RequestChange, RequestType, User
-from vtaskr.users.persistence import RequestChangeDB
+from vtaskr.users.persistence import RequestChangeDB, UserDB
 
 URL_API = "/api/v1"
 
@@ -71,6 +71,7 @@ class TestUserV1NewEmail(BaseTestCase):
         super().setUp()
         self.headers = self.get_json_headers()
         self.request_change_db = RequestChangeDB()
+        self.user_db = UserDB()
         self.new_email = self.generate_email()
 
     def _create_request_change_email(self) -> RequestChange:

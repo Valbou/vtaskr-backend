@@ -2,7 +2,7 @@ import os
 import ssl
 from email.message import EmailMessage
 from smtplib import SMTP_SSL
-from typing import Optional, Union
+from typing import Optional
 
 from .base_email import AbstractBaseEmailContent
 
@@ -32,7 +32,7 @@ class SMTPEmail:
     def __init__(
         self,
         from_email: str,
-        to_emails: Union[list[str], str],
+        to_emails: list[str] | str,
         subject: str,
         text: str = "",
         html: str = "",

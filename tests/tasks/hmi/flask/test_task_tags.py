@@ -5,7 +5,7 @@ from vtaskr.tasks.persistence import TagDB, TaskDB
 URL_API = "/api/v1"
 
 
-class TestTagTasksAPI(BaseTestCase):
+class TestTaskTagsAPI(BaseTestCase):
     def setUp(self) -> None:
         super().setUp()
         self.headers = self.get_json_headers()
@@ -13,9 +13,9 @@ class TestTagTasksAPI(BaseTestCase):
         self.task_db = TaskDB()
 
     def create_data(self, session):
-        self.task = Task(self.user.id, self.fake.text(max_nb_chars=50))
-        self.tag_1 = Tag(self.user.id, self.fake.text(max_nb_chars=50))
-        self.tag_2 = Tag(self.user.id, self.fake.text(max_nb_chars=50))
+        self.task = Task(self.group.id, self.fake.text(max_nb_chars=50))
+        self.tag_1 = Tag(self.group.id, self.fake.text(max_nb_chars=50))
+        self.tag_2 = Tag(self.group.id, self.fake.text(max_nb_chars=50))
         self.task.add_tags([self.tag_1, self.tag_2])
         self.task_db.save(session, self.task)
 
@@ -44,7 +44,7 @@ class TestTagTasksAPI(BaseTestCase):
             self.assertEqual(len(task.tags), 2)
             previous_ids = [t.id for t in task.tags]
 
-            tag = Tag(self.user.id, self.fake.text(max_nb_chars=50))
+            tag = Tag(tenant_id=self.group.id, title=self.fake.text(max_nb_chars=50))
             self.tag_db.save(session, tag)
 
             # Check with bad data

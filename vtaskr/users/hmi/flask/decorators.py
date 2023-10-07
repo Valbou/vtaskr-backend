@@ -5,7 +5,7 @@ from typing import Callable
 from flask import current_app, g, request
 
 from vtaskr.libs.flask.utils import ResponseAPI, get_bearer_token
-from vtaskr.users.hmi.user_service import UserService
+from vtaskr.users.services import UserService
 
 
 def login_required(logger: Logger):

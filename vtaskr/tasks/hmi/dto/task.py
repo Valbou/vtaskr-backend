@@ -50,8 +50,8 @@ class TaskMapperDTO:
         )
 
     @classmethod
-    def list_models_to_list_dto(cls, tasks: list[Task]) -> list[TaskDTO]:
-        return [TaskMapperDTO.model_to_dto(t) for t in tasks]
+    def list_models_to_list_dto(cls, tasks: list[Task] | None) -> list[TaskDTO] | None:
+        return [TaskMapperDTO.model_to_dto(t) for t in tasks] if tasks else None
 
     @classmethod
     def dto_to_model(

@@ -1,5 +1,5 @@
 import os
-from typing import Literal, Union
+from typing import Literal
 
 from sqlalchemy import Engine, create_engine
 from sqlalchemy.orm import Session, scoped_session, sessionmaker
@@ -10,7 +10,7 @@ from .base import mapper_registry
 class SQLService:
     def __init__(
         self,
-        echo: Union[None, bool, Literal["debug"]] = False,
+        echo: None | bool | Literal["debug"] = False,
     ) -> None:
         debug = False
         if os.getenv("DEBUG_SQL") == "true":

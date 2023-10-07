@@ -3,51 +3,37 @@ from typing import Optional
 from sqlalchemy.orm import Session
 
 from vtaskr.libs.flask.querystring import Filter
+from vtaskr.libs.sqlalchemy.default_adapter import DefaultDB
 from vtaskr.tasks.models import Tag
 from vtaskr.tasks.persistence.ports import AbstractTagPort
 from vtaskr.tasks.persistence.sqlalchemy.querysets import TagQueryset
 
 
-class TagDB(AbstractTagPort):
+class TagDB(AbstractTagPort, DefaultDB):
     def __init__(self) -> None:
         super().__init__()
-        self.tag_qs = TagQueryset()
+        self.qs = TagQueryset()
 
-    def load(self, session: Session, id: str) -> Optional[Tag]:
-        self.tag_qs.id(id)
-        result = session.scalars(self.tag_qs.statement).one_or_none()
-        return result
-
-    def save(self, session: Session, tag: Tag, autocommit: bool = True):
-        session.add(tag)
-        if autocommit:
-            session.commit()
-
-    def delete(self, session: Session, tag: Tag, autocommit: bool = True):
-        session.delete(tag)
-        if autocommit:
-            session.commit()
-
-    def exists(self, session: Session, id: str) -> bool:
-        self.tag_qs.id(id)
-        return session.query(self.tag_qs.statement.exists()).scalar()
-
-    def tenant_tags(
-        self, session: Session, tenant_id: str, filters: Optional[list[Filter]] = None
+    def tags(
+        self,
+        session: Session,
+        tenant_ids: list[str],
+        filters: Optional[list[Filter]] = None,
     ) -> list[Tag]:
         """Retrieve all tenant's tags"""
 
         filters = filters or []
         if filters:
-            self.tag_qs.from_filters(filters)
+            self.qs.from_filters(filters)
 
-        self.tag_qs.tenant(tenant_id)
-        return session.execute(self.tag_qs.statement).scalars().all()
+        self.qs.tenants(tenant_ids)
 
-    def tenant_task_tags(
+        return session.execute(self.qs.statement).scalars().all()
+
+    def task_tags(
         self,
         session: Session,
-        tenant_id: str,
+        tenant_ids: list[str],
         task_id: str,
         filters: Optional[list[Filter]] = None,
     ) -> list[Tag]:
@@ -55,7 +41,8 @@ class TagDB(AbstractTagPort):
 
         filters = filters or []
         if filters:
-            self.tag_qs.from_filters(filters)
+            self.qs.from_filters(filters)
 
-        self.tag_qs.tenant(tenant_id).task(task_id)
-        return session.execute(self.tag_qs.statement).scalars().all()
+        self.qs.tenants(tenant_ids).task(task_id)
+
+        return session.execute(self.qs.statement).scalars().all()
