@@ -14,7 +14,10 @@ load_dotenv()
 config = context.config
 
 sql_service = SQLService()
-config.set_main_option("sqlalchemy.url", sql_service.get_database_url())
+
+# Avoid interpolation error with % char in password if it appear
+database_url = sql_service.get_database_url().replace("%", "%%")
+config.set_main_option("sqlalchemy.url", database_url)
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.

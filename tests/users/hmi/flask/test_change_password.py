@@ -1,6 +1,6 @@
 from tests.base_test import BaseTestCase
 from vtaskr.users import RequestChange, RequestType
-from vtaskr.users.persistence import RequestChangeDB
+from vtaskr.users.persistence import RequestChangeDB, UserDB
 
 URL_API = "/api/v1"
 
@@ -67,6 +67,7 @@ class TestUserV1NewPassword(BaseTestCase):
     def setUp(self) -> None:
         super().setUp()
         self.request_change_db = RequestChangeDB()
+        self.user_db = UserDB()
         self.headers = self.get_json_headers()
         self.new_password = self.fake.bothify("A??? ###a??? ###")
 

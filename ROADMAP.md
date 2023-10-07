@@ -14,18 +14,18 @@ As vTaskr is an non profit project without fulltime dev, no release date can be 
 - [x] User can't access to tasks or tags not owned
 - [x] User can filter tasks with some basics filters
 - [x] Add an OpenApiv3 documentation
-- [X] User can associate Task and Tags together
+- [x] User can associate Task and Tags together
 
 ## Go to v1.0.1
 - [x] Add alembic migrations
-- [X] Check code organisation
-- [X] Add gunicorn/uvicorn
-- [X] Start a frontend developpement in an other git repository
+- [x] Check code organisation
+- [x] Add gunicorn/uvicorn
+- [x] Start a frontend developpement in an other git repository
 
 ## Go to v1.1.0
-- [ ] User can manage groups (create, read, update, delete)
-- [ ] User can manage roles (create, read, update, delete)
-- [ ] User can't access to tasks not owned or not in his groups
+- [ ] User can manage groups (create, read, update, delete and achieve)
+- [ ] User can manage roles (create, read, update, delete and achieve)
+- [x] User can't access to tasks not owned by at least one of his groups
 - [ ] Add Keycloak integration
 
 ## Go to v1.2.0

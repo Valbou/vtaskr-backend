@@ -50,15 +50,15 @@ class TaskMapperDTO:
         )
 
     @classmethod
-    def list_models_to_list_dto(cls, tasks: list[Task]) -> list[TaskDTO]:
-        return [TaskMapperDTO.model_to_dto(t) for t in tasks]
+    def list_models_to_list_dto(cls, tasks: list[Task] | None) -> list[TaskDTO] | None:
+        return [TaskMapperDTO.model_to_dto(t) for t in tasks] if tasks else None
 
     @classmethod
     def dto_to_model(
-        cls, user_id: str, task_dto: TaskDTO, task: Optional[Task] = None
+        cls, tenant_id: str, task_dto: TaskDTO, task: Optional[Task] = None
     ) -> Task:
         if not task:
-            task = Task(user_id=user_id, title=task_dto.title)
+            task = Task(tenant_id=tenant_id, title=task_dto.title)
 
         task.title = task_dto.title
         task.description = task_dto.description

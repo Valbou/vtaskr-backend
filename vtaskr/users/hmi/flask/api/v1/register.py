@@ -8,7 +8,7 @@ from vtaskr.libs.redis import rate_limited
 from vtaskr.libs.secutity.validators import PasswordComplexityError
 from vtaskr.users.hmi.dto.user import UserDTO, UserMapperDTO
 from vtaskr.users.hmi.flask.emails import RegisterEmail
-from vtaskr.users.hmi.user_service import UserService
+from vtaskr.users.services import UserService
 
 from .. import V1, logger, openapi, users_bp
 
@@ -79,7 +79,7 @@ def register():
             password = payload.pop("password")
             user_dto = UserDTO(**payload)
             auth_service.clean_unused_accounts()
-            user = auth_service.register(user_dto, password)
+            user, _group = auth_service.register(user_dto, password)
 
             with current_app.trans.get_translation_session(
                 "users", user.locale

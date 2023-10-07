@@ -6,18 +6,18 @@ from vtaskr.tasks import Task
 
 class AbstractTaskPort(AbstractPort, ABC):
     @abstractmethod
-    def user_tasks(self, user_id: str) -> list[Task]:
-        """Retrieve all user's tasks"""
+    def tasks(self, user_id: str) -> list[Task]:
+        """Retrieve all tenant's tasks"""
         raise NotImplementedError()
 
     @abstractmethod
-    def user_tag_tasks(self, user_id: str, tag_id: str) -> list[Task]:
-        """Retrieve all user's tasks with this tag"""
+    def tag_tasks(self, user_id: str, tag_id: str) -> list[Task]:
+        """Retrieve all tenant's tasks with this tag"""
         raise NotImplementedError()
 
     @abstractmethod
-    def user_add_tags(self, user_id: str, task: Task, tags_id: list[str]):
-        """Bulk add tags to user's task"""
+    def add_tags(self, user_id: str, task: Task, tags_id: list[str]):
+        """Bulk add tags to tenant's task"""
         raise NotImplementedError()
 
     @abstractmethod

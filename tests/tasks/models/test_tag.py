@@ -11,22 +11,22 @@ class TestTag(TestCase):
     def setUp(self) -> None:
         super().setUp()
         self.fake = Faker()
-        self.user_id = "1234abcd"
+        self.tenant_id = "1234abcd"
         self.tag = Tag(
-            user_id=self.user_id,
+            tenant_id=self.tenant_id,
             title=self.fake.text(max_nb_chars=50),
         )
 
     def test_tag_table_fields(self):
         self.assertEqual(Tag.__annotations__.get("id"), str)
         self.assertEqual(Tag.__annotations__.get("title"), str)
-        self.assertEqual(Tag.__annotations__.get("user_id"), str)
+        self.assertEqual(Tag.__annotations__.get("tenant_id"), str)
         self.assertEqual(Tag.__annotations__.get("color"), Optional[Color])
         self.assertEqual(Tag.__annotations__.get("created_at"), Optional[datetime])
 
     def test_add_and_remove_tasks(self):
-        task_1 = Task(self.user_id, self.fake.text(max_nb_chars=50))
-        task_2 = Task(self.user_id, self.fake.text(max_nb_chars=50))
+        task_1 = Task(self.tenant_id, self.fake.text(max_nb_chars=50))
+        task_2 = Task(self.tenant_id, self.fake.text(max_nb_chars=50))
         self.tag.add_tasks([task_1, task_2])
         self.assertEqual(len(self.tag.tasks), 2)
 

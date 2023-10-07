@@ -8,7 +8,7 @@ from vtaskr.libs.redis import rate_limited
 from vtaskr.libs.secutity.validators import get_valid_email
 from vtaskr.users.hmi.flask.decorators import login_required
 from vtaskr.users.hmi.flask.emails import ChangeEmailToNewEmail, ChangeEmailToOldEmail
-from vtaskr.users.hmi.user_service import EmailAlreadyUsedError, UserService
+from vtaskr.users.services import EmailAlreadyUsedError, UserService
 
 from .. import V1, logger, openapi, users_bp
 

@@ -5,7 +5,7 @@ from flask import current_app, request
 from vtaskr.libs.flask.utils import ResponseAPI
 from vtaskr.libs.redis import rate_limited
 from vtaskr.users.hmi.flask.emails import LoginEmail
-from vtaskr.users.hmi.user_service import UserService
+from vtaskr.users.services import UserService
 
 from .. import V1, logger, openapi, users_bp
 

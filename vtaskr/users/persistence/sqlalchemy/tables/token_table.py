@@ -11,12 +11,24 @@ token_table = Table(
     "tokens",
     mapper_registry.metadata,
     Column("id", String, primary_key=True),
-    Column("created_at", DateTime(timezone=True), default=datetime.now(utc)),
-    Column("last_activity_at", DateTime(timezone=True), default=datetime.now(utc)),
-    Column("temp", Boolean),
+    Column(
+        "created_at", DateTime(timezone=True), default=datetime.now(utc), nullable=False
+    ),
+    Column(
+        "last_activity_at",
+        DateTime(timezone=True),
+        default=datetime.now(utc),
+        nullable=False,
+    ),
+    Column("temp", Boolean, nullable=False),
     Column("temp_code", String(12)),
-    Column("sha_token", String(64), unique=True),
-    Column("user_id", String, ForeignKey("users.id")),
+    Column("sha_token", String(64), unique=True, nullable=False),
+    Column(
+        "user_id",
+        String,
+        ForeignKey("users.id", ondelete="CASCADE", name="fk_tokens_user_id"),
+        nullable=False,
+    ),
 )
 
 

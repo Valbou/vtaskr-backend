@@ -10,12 +10,15 @@ request_change_table = Table(
     "requestschanges",
     mapper_registry.metadata,
     Column("id", String, primary_key=True),
-    Column("created_at", DateTime(timezone=True), default=datetime.now(utc)),
-    Column("request_type", Enum(RequestType)),
-    Column("email", String),
-    Column("code", String(12)),
-    Column("done", Boolean),
+    Column(
+        "created_at", DateTime(timezone=True), default=datetime.now(utc), nullable=False
+    ),
+    Column("request_type", Enum(RequestType), nullable=False),
+    Column("email", String, nullable=False),
+    Column("code", String(12), nullable=False),
+    Column("done", Boolean, default=False),
 )
+
 
 mapper_registry.map_imperatively(
     RequestChange,

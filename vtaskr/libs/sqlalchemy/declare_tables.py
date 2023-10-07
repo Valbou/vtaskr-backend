@@ -6,7 +6,11 @@ from vtaskr.tasks.persistence.sqlalchemy.tables import (
     tasktag_table,
 )
 from vtaskr.users.persistence.sqlalchemy.tables import (
+    group_table,
     request_change_table,
+    right_table,
+    role_table,
+    roletype_table,
     token_table,
     user_table,
 )
@@ -19,4 +23,8 @@ LIST_TABLES = [
     tasks_table,
     tag_table,
     tasktag_table,
+    group_table,
+    roletype_table,
+    right_table,
+    role_table,
 ]

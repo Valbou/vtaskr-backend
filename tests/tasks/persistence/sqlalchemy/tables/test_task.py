@@ -8,7 +8,7 @@ class TestTaskTable(BaseTestCase):
         self.columns_name = [
             "id",
             "created_at",
-            "user_id",
+            "tenant_id",
             "title",
             "description",
             "emergency",

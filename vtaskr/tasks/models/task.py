@@ -24,7 +24,7 @@ T = TypeVar("T", bound="Task")
 class Task:
     id: str = ""
     created_at: Optional[datetime] = None
-    user_id: str = ""
+    tenant_id: str = ""
     title: str = ""
     description: str = ""
     emergency: bool = False
@@ -36,7 +36,7 @@ class Task:
 
     def __init__(
         self,
-        user_id: str,
+        tenant_id: str,
         title: str,
         description: str = "",
         emergency: bool = False,
@@ -50,7 +50,7 @@ class Task:
     ) -> None:
         self.id = id or get_id()
         self.created_at = created_at or datetime.now(utc)
-        self.user_id = user_id
+        self.tenant_id = tenant_id
         self.title = title
         self.description = description
         self.emergency = emergency

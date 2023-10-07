@@ -24,13 +24,15 @@ user_table = Table(
     "users",
     mapper_registry.metadata,
     Column("id", String, primary_key=True),
-    Column("first_name", String(25)),
-    Column("last_name", String(25)),
-    Column("email", String(250), unique=True),
+    Column("first_name", String(25), nullable=False),
+    Column("last_name", String(25), nullable=False),
+    Column("email", String(250), unique=True, nullable=False),
     Column("hash_password", String(256)),
     Column("locale", LocaleField),
     Column("timezone", String(35)),
-    Column("created_at", DateTime(timezone=True), default=datetime.now(utc)),
+    Column(
+        "created_at", DateTime(timezone=True), default=datetime.now(utc), nullable=False
+    ),
     Column("last_login_at", DateTime(timezone=True), nullable=True, default=None),
 )
 
@@ -38,5 +40,8 @@ user_table = Table(
 mapper_registry.map_imperatively(
     User,
     user_table,
-    properties={"tokens": relationship("Token", back_populates="user")},
+    properties={
+        "tokens": relationship("Token", back_populates="user"),
+        "roles": relationship("Role", back_populates="user"),
+    },
 )

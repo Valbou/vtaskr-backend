@@ -9,7 +9,7 @@ class TestTagAdapter(BaseTestCase):
         self.create_user()
         self.tag_db = TagDB()
         self.tag = Tag(
-            user_id=self.user.id,
+            tenant_id=self.user.id,
             title=self.fake.text(max_nb_chars=50),
         )
 
@@ -38,7 +38,13 @@ class TestTagAdapter(BaseTestCase):
             self.assertTrue(task_db.exists(session, task_1.id))
             self.assertTrue(task_db.exists(session, task_2.id))
 
-            tags = self.tag_db.user_task_tags(session, self.user.id, task_1.id)
+            tags = self.tag_db.task_tags(
+                session,
+                [
+                    self.user.id,
+                ],
+                task_1.id,
+            )
             self.assertIsInstance(tags, list)
             self.assertEqual(len(tags), 1)
             self.assertEqual(tags[0].id, self.tag.id)
