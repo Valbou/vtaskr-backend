@@ -184,7 +184,7 @@ class TestPermissionControlOnOthersGroups(BaseTestCase, CheckCanMixin):
             read_roletype_tenant_ids = self.permissions_service.all_tenants_with_access(
                 permission=Permissions.READ,
                 user_id=self.user.id,
-                resource=Resources.ROLETYPE
+                resource=Resources.ROLETYPE,
             )
 
             self.assertNotIn(self.first_group, read_roletype_tenant_ids)
@@ -194,10 +194,12 @@ class TestPermissionControlOnOthersGroups(BaseTestCase, CheckCanMixin):
     def test_all_tenants_with_create_access_to_private_group_only(self):
         with self.app.sql.get_session() as session:
             self.permissions_service = PermissionControl(session=session)
-            create_roletype_tenant_ids = self.permissions_service.all_tenants_with_access(
-                permission=Permissions.CREATE,
-                user_id=self.user.id,
-                resource=Resources.ROLETYPE
+            create_roletype_tenant_ids = (
+                self.permissions_service.all_tenants_with_access(
+                    permission=Permissions.CREATE,
+                    user_id=self.user.id,
+                    resource=Resources.ROLETYPE,
+                )
             )
 
             self.assertNotIn(self.first_group, create_roletype_tenant_ids)
@@ -207,10 +209,12 @@ class TestPermissionControlOnOthersGroups(BaseTestCase, CheckCanMixin):
     def test_all_tenants_with_read_access_on_group_to_private_group_only(self):
         with self.app.sql.get_session() as session:
             self.permissions_service = PermissionControl(session=session)
-            create_roletype_tenant_ids = self.permissions_service.all_tenants_with_access(
-                permission=Permissions.READ,
-                user_id=self.user.id,
-                resource=Resources.GROUP
+            create_roletype_tenant_ids = (
+                self.permissions_service.all_tenants_with_access(
+                    permission=Permissions.READ,
+                    user_id=self.user.id,
+                    resource=Resources.GROUP,
+                )
             )
 
             self.assertNotIn(self.first_group, create_roletype_tenant_ids)
