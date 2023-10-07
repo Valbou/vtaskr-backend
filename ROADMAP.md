@@ -23,9 +23,9 @@ As vTaskr is an non profit project without fulltime dev, no release date can be 
 - [x] Start a frontend developpement in an other git repository
 
 ## Go to v1.1.0
-- [ ] User can manage groups (create, read, update, delete)
-- [ ] User can manage roles (create, read, update, delete)
-- [ ] User can't access to tasks not owned or not in his groups
+- [ ] User can manage groups (create, read, update, delete and achieve)
+- [ ] User can manage roles (create, read, update, delete and achieve)
+- [x] User can't access to tasks not owned by at least one of his groups
 - [ ] Add Keycloak integration
 
 ## Go to v1.2.0

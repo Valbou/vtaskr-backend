@@ -108,7 +108,7 @@ class TestPermissionControlOnOthersGroups(BaseTestCase, CheckCanMixin):
     def setUp(self) -> None:
         super().setUp()
         self.create_user()
-        first_user = self.user
+        first_user, self.first_group = self.user, self.group
         self.create_user()
 
         self.assertNotEqual(first_user.id, self.user.id)
@@ -177,3 +177,42 @@ class TestPermissionControlOnOthersGroups(BaseTestCase, CheckCanMixin):
                 group_id_resource=self.shared_group.id,
             )
         )
+
+    def test_all_tenants_with_read_access_to_group_and_shared(self):
+        with self.app.sql.get_session() as session:
+            self.permissions_service = PermissionControl(session=session)
+            read_roletype_tenant_ids = self.permissions_service.all_tenants_with_access(
+                permission=Permissions.READ,
+                user_id=self.user.id,
+                resource=Resources.ROLETYPE
+            )
+
+            self.assertNotIn(self.first_group, read_roletype_tenant_ids)
+            self.assertIn(self.group.id, read_roletype_tenant_ids)
+            self.assertIn(self.shared_group.id, read_roletype_tenant_ids)
+
+    def test_all_tenants_with_create_access_to_private_group_only(self):
+        with self.app.sql.get_session() as session:
+            self.permissions_service = PermissionControl(session=session)
+            create_roletype_tenant_ids = self.permissions_service.all_tenants_with_access(
+                permission=Permissions.CREATE,
+                user_id=self.user.id,
+                resource=Resources.ROLETYPE
+            )
+
+            self.assertNotIn(self.first_group, create_roletype_tenant_ids)
+            self.assertIn(self.group.id, create_roletype_tenant_ids)
+            self.assertNotIn(self.shared_group.id, create_roletype_tenant_ids)
+
+    def test_all_tenants_with_read_access_on_group_to_private_group_only(self):
+        with self.app.sql.get_session() as session:
+            self.permissions_service = PermissionControl(session=session)
+            create_roletype_tenant_ids = self.permissions_service.all_tenants_with_access(
+                permission=Permissions.READ,
+                user_id=self.user.id,
+                resource=Resources.GROUP
+            )
+
+            self.assertNotIn(self.first_group, create_roletype_tenant_ids)
+            self.assertIn(self.group.id, create_roletype_tenant_ids)
+            self.assertNotIn(self.shared_group.id, create_roletype_tenant_ids)
