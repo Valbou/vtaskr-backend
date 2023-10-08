@@ -9,6 +9,7 @@ task_component = {
     "type": "object",
     "properties": {
         "id": {"type": "string"},
+        "tenant_id": {"type": "string"},
         "title": {"type": "string"},
         "description": {"type": "string"},
         "emergency": {"type": "boolean"},
@@ -25,6 +26,7 @@ openapi.register_schemas_components("Task", task_component)
 class TaskDTO:
     id: Optional[str] = ""
     created_at: str = ""
+    tenant_id: str = ""
     title: str = ""
     description: str = ""
     emergency: bool = False
@@ -54,11 +56,9 @@ class TaskMapperDTO:
         return [TaskMapperDTO.model_to_dto(t) for t in tasks] if tasks else None
 
     @classmethod
-    def dto_to_model(
-        cls, tenant_id: str, task_dto: TaskDTO, task: Optional[Task] = None
-    ) -> Task:
+    def dto_to_model(cls, task_dto: TaskDTO, task: Optional[Task] = None) -> Task:
         if not task:
-            task = Task(tenant_id=tenant_id, title=task_dto.title)
+            task = Task(tenant_id=task_dto.tenant_id, title=task_dto.title)
 
         task.title = task_dto.title
         task.description = task_dto.description

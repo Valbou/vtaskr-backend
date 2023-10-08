@@ -91,10 +91,14 @@ def register():
 
             user_dto = UserMapperDTO.model_to_dto(user)
             return ResponseAPI.get_response(UserMapperDTO.dto_to_dict(user_dto), 201)
+
     except (PasswordComplexityError, EmailSyntaxError) as e:
         return ResponseAPI.get_error_response(str(e), 400)
-    except KeyError:
+
+    except KeyError as e:
+        logger.warning(f"400 Error: {e}")
         return ResponseAPI.get_error_response("No password given", 400)
+
     except Exception as e:
-        logger.error(str(e))
+        logger.error(f"500 Error: {e}")
         return ResponseAPI.get_error_response("Internal error", 500)

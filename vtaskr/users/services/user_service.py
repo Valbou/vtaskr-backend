@@ -37,6 +37,9 @@ class UserService:
 
         return (user, group)
 
+    def find_login(self, email: str) -> User | None:
+        return self.user_db.find_login(self.session, email=email)
+
     def clean_unused_accounts(self):
         """Clean all account whithout last_login_at"""
 
@@ -99,6 +102,10 @@ class UserService:
         request_change = RequestChange(request_type, email=email)
         self.request_change_db.save(self.session, request_change)
         return request_change
+
+    def update(self, user: User) -> None:
+        """Update user"""
+        self.user_db.update(self.session, user)
 
     def set_new_password(self, email: str, hash: str, password: str) -> bool:
         """Set the new password to user if request is ok"""

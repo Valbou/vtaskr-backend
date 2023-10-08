@@ -4,7 +4,7 @@ from flask import current_app, request
 
 from vtaskr.libs.flask.utils import ResponseAPI, get_bearer_token
 from vtaskr.libs.redis import rate_limited
-from vtaskr.users.persistence import TokenDB
+from vtaskr.users.services import TokenService
 
 from .. import V1, logger, openapi, users_bp
 
@@ -69,20 +69,22 @@ def confirm_2fa():
 
     try:
         code = payload.get("code_2FA")
-    except AttributeError:
+    except AttributeError as e:
+        logger.warning(f"400 Error: {e}")
         return ResponseAPI.get_error_response("Bad request", 400)
 
     try:
         with current_app.sql.get_session() as session:
-            token_db = TokenDB()
-            token = token_db.get_token(session, sha_token)
+            token_service = TokenService(session=session)
+            token = token_service.get_token(sha_token)
 
-            if code and token.is_temp_valid() and token.validate_token(code):
+            if code and token and token.is_temp_valid() and token.validate_token(code):
                 session.commit()
                 data = {}
                 return ResponseAPI.get_response(data, 200)
             else:
+                logger.warning("401 Error: Attempt with bad 2FA")
                 return ResponseAPI.get_error_response("Invalid 2FA code", 401)
     except Exception as e:
-        logger.error(str(e))
+        logger.error(f"500 Error: {e}")
         return ResponseAPI.get_error_response("Internal error", 500)

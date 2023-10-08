@@ -7,7 +7,7 @@ from vtaskr.libs.redis import rate_limited
 from vtaskr.libs.secutity.validators import PasswordComplexityError
 from vtaskr.users.hmi.dto import UserDTO, UserMapperDTO
 from vtaskr.users.hmi.flask.decorators import login_required
-from vtaskr.users.persistence import UserDB
+from vtaskr.users.services import UserService
 
 from .. import V1, logger, openapi, users_bp
 
@@ -49,17 +49,12 @@ def me():
     Need a valid token
     Return a jsonify user
     """
-    try:
-        if g.user:
-            user_dto = UserMapperDTO.model_to_dto(g.user)
-            return ResponseAPI.get_response(UserMapperDTO.dto_to_dict(user_dto), 200)
+    if g.user:
+        user_dto = UserMapperDTO.model_to_dto(g.user)
+        return ResponseAPI.get_response(UserMapperDTO.dto_to_dict(user_dto), 200)
 
-        else:
-            return ResponseAPI.get_error_response("Invalid token", 403)
-
-    except Exception as e:
-        logger.error(str(e))
-        return ResponseAPI.get_error_response("Internal error", 500)
+    else:
+        return ResponseAPI.get_error_response("Invalid token", 403)
 
 
 api_item = {
@@ -150,16 +145,15 @@ def update_me():
             return ResponseAPI.get_error_response("Invalid token", 401)
 
         else:
-            user_db = UserDB()
+            user_dto = UserDTO(**request.get_json())
+            g.user = UserMapperDTO.dto_to_model(user_dto, g.user)
+
             with current_app.sql.get_session() as session:
-                user_dto = UserDTO(**request.get_json())
-                g.user = UserMapperDTO.dto_to_model(user_dto, g.user)
-                user_db.update(session, g.user)
+                user_service = UserService(session=session)
+                user_service.update(g.user)
                 user_dto = UserMapperDTO.model_to_dto(g.user)
+
             return ResponseAPI.get_response(UserMapperDTO.dto_to_dict(user_dto), 200)
 
     except PasswordComplexityError as e:
         return ResponseAPI.get_error_response(str(e), 400)
-    except Exception as e:
-        logger.error(str(e))
-        return ResponseAPI.get_error_response("Internal error", 500)

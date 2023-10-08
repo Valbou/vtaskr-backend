@@ -54,6 +54,13 @@ class TagService:
 
         return self.tag_db.task_tags(self.session, tenant_ids, task_id)
 
+    def save_tag(self, user_id: str, tag: Tag) -> None:
+        """Save a new tag"""
+        if self.control.can(
+            Permissions.CREATE, user_id, tag.tenant_id, resource=Resources.TAG
+        ):
+            self.tag_db.save(self.session, tag)
+
     def update_tag(self, user_id: str, tag: Tag):
         """Update a tag if update permission was given"""
         if self.control.can(

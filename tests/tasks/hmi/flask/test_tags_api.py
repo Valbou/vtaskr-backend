@@ -12,17 +12,25 @@ class TestTagsAPI(BaseTestCase):
         self.tag_db = TagDB()
 
     def test_create_tag_no_login(self):
-        tag_data = {"nodata": "nodata"}
+        title = self.fake.text(max_nb_chars=50)
+        tag_data = {
+            "title": title,
+            "tenant_id": "fake_id",
+        }
         response = self.client.post(
             f"{URL_API}/tags", json=tag_data, headers=self.headers
         )
         self.assertEqual(response.status_code, 401)
+
+        with self.app.sql.get_session() as session:
+            self.assertFalse(self.tag_db.exists(session, response.json.get("id")))
 
     def test_create_tag(self):
         headers = self.get_token_headers()
         title = self.fake.text(max_nb_chars=50)
         tag_data = {
             "title": title,
+            "tenant_id": self.group.id,
         }
         response = self.client.post(f"{URL_API}/tags", json=tag_data, headers=headers)
         self.assertEqual(response.status_code, 201)

@@ -45,11 +45,9 @@ class TagMapperDTO:
         return [TagMapperDTO.model_to_dto(t) for t in tags] if tags else None
 
     @classmethod
-    def dto_to_model(
-        cls, tenant_id: str, tag_dto: TagDTO, tag: Optional[Tag] = None
-    ) -> Tag:
+    def dto_to_model(cls, tag_dto: TagDTO, tag: Optional[Tag] = None) -> Tag:
         if not tag:
-            tag = Tag(tenant_id=tenant_id, title=tag_dto.title)
+            tag = Tag(tenant_id=tag_dto.tenant_id, title=tag_dto.title)
 
         tag.title = tag_dto.title
         tag.color = Color(tag_dto.backgound_color, tag_dto.text_color)

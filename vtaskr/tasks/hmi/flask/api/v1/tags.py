@@ -7,7 +7,6 @@ from vtaskr.libs.flask.utils import ResponseAPI
 from vtaskr.libs.iam.flask.config import login_required
 from vtaskr.libs.redis import rate_limited
 from vtaskr.tasks.hmi.dto import TagDTO, TagMapperDTO, TaskDTO, TaskMapperDTO
-from vtaskr.tasks.persistence import TagDB
 from vtaskr.tasks.services import TagService, TaskService
 
 from .. import V1, logger, openapi, tasks_bp
@@ -68,37 +67,31 @@ openapi.register_path(f"{V1}/tags", api_item)
 @rate_limited(logger=logger, hit=1, period=timedelta(seconds=1))
 def tags():
     """URL to current tenant tags - Token required"""
-    try:
-        if request.method == "GET":
-            with current_app.sql.get_session() as session:
-                tag_service = TagService(session)
-                tags = tag_service.get_tags(g.user.id)
-                if tags:
-                    tags_dto = TagMapperDTO.list_models_to_list_dto(tags)
-                    return ResponseAPI.get_response(
-                        TagMapperDTO.list_dto_to_dict(tags_dto), 200
-                    )
-                else:
-                    return ResponseAPI.get_response([], 200)
+    if request.method == "GET":
+        with current_app.sql.get_session() as session:
+            tag_service = TagService(session)
+            tags = tag_service.get_tags(g.user.id)
+            if tags:
+                tags_dto = TagMapperDTO.list_models_to_list_dto(tags)
+                return ResponseAPI.get_response(
+                    TagMapperDTO.list_dto_to_dict(tags_dto), 200
+                )
+            else:
+                return ResponseAPI.get_response([], 200)
 
-        elif request.method == "POST":
-            try:
-                tag_dto = TagDTO(**request.get_json())
-                tag = TagMapperDTO.dto_to_model(g.user.id, tag_dto)
+    elif request.method == "POST":
+        try:
+            tag_dto = TagDTO(**request.get_json())
+            tag = TagMapperDTO.dto_to_model(tag_dto)
+        except Exception as e:
+            logger.warning(f"400 Error: {e}")
+            return ResponseAPI.get_error_response(f"Bad request {e}", 400)
 
-                with current_app.sql.get_session() as session:
-                    tag_db = TagDB()
-                    tag_db.save(session, tag)
-                    tag_dto = TagMapperDTO.model_to_dto(tag)
-                    return ResponseAPI.get_response(
-                        TagMapperDTO.dto_to_dict(tag_dto), 201
-                    )
-            except Exception:
-                return ResponseAPI.get_error_response("Bad request", 400)
-
-    except Exception as e:
-        logger.error(str(e))
-        return ResponseAPI.get_error_response("Internal error", 500)
+        with current_app.sql.get_session() as session:
+            tag_service = TagService(session)
+            tag_service.save_tag(user_id=g.user.id, tag=tag)
+            tag_dto = TagMapperDTO.model_to_dto(tag)
+            return ResponseAPI.get_response(TagMapperDTO.dto_to_dict(tag_dto), 201)
 
 
 api_item = {
@@ -221,7 +214,7 @@ def tag(tag_id: str):
 
             elif request.method in ("PUT", "PATCH"):
                 tag_dto = TagDTO(**request.get_json())
-                tag = TagMapperDTO.dto_to_model(g.user.id, tag_dto, tag)
+                tag = TagMapperDTO.dto_to_model(tag_dto, tag)
                 tag_service.update_tag(g.user.id, tag)
 
                 tag_dto = TagMapperDTO.model_to_dto(tag)

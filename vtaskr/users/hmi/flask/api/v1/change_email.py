@@ -64,41 +64,33 @@ def change_email():
 
     Need a valid token and a new email
     """
-    try:
-        with current_app.sql.get_session() as session:
-            payload: dict = request.get_json()
-            data = {}
-            try:
-                new_email = payload.get("new_email", "")
-                new_email = get_valid_email(new_email)
-                auth_service = UserService(session)
-                req_hash, req_code = auth_service.request_email_change(
-                    g.user, new_email
-                )
-            except (EmailSyntaxError, EmailAlreadyUsedError) as e:
-                return ResponseAPI.get_error_response(str(e), 400)
-            except AttributeError:
-                return ResponseAPI.get_error_response("Bad request", 400)
+    with current_app.sql.get_session() as session:
+        payload: dict = request.get_json()
+        data = {}
+        try:
+            new_email = payload.get("new_email", "")
+            new_email = get_valid_email(new_email)
+            auth_service = UserService(session)
+            req_hash, req_code = auth_service.request_email_change(g.user, new_email)
+        except (EmailSyntaxError, EmailAlreadyUsedError) as e:
+            return ResponseAPI.get_error_response(str(e), 400)
+        except AttributeError as e:
+            logger.warning(f"400 Error: {e}")
+            return ResponseAPI.get_error_response("Bad request", 400)
 
-            with current_app.trans.get_translation_session(
-                "users", g.user.locale
-            ) as trans:
-                old_email_message = ChangeEmailToOldEmail(
-                    trans, [g.user.email], g.user.first_name, req_code
-                )
-                new_email_message = ChangeEmailToNewEmail(
-                    trans, [new_email], g.user.first_name, req_hash
-                )
+        with current_app.trans.get_translation_session("users", g.user.locale) as trans:
+            old_email_message = ChangeEmailToOldEmail(
+                trans, [g.user.email], g.user.first_name, req_code
+            )
+            new_email_message = ChangeEmailToNewEmail(
+                trans, [new_email], g.user.first_name, req_hash
+            )
 
-            current_app.notification.add_message(old_email_message)
-            current_app.notification.add_message(new_email_message)
-            current_app.notification.notify_all()
+        current_app.notification.add_message(old_email_message)
+        current_app.notification.add_message(new_email_message)
+        current_app.notification.notify_all()
 
-            return ResponseAPI.get_response(data, 200)
-
-    except Exception as e:
-        logger.error(str(e))
-        return ResponseAPI.get_error_response("Internal error", 500)
+        return ResponseAPI.get_response(data, 200)
 
 
 api_item = {
@@ -204,5 +196,5 @@ def new_email():
                 return ResponseAPI.get_error_response(str(e), 400)
             return ResponseAPI.get_error_response("Bad request", 400)
     except Exception as e:
-        logger.error(str(e))
+        logger.error(f"500 Error: {e}")
         return ResponseAPI.get_error_response("Internal error", 500)

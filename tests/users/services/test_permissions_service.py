@@ -20,6 +20,7 @@ class CheckCanMixin:
                 user_id=user_id,
                 group_id_resource=group_id_resource,
                 resource=Resources.ROLETYPE,
+                exception=False,
             )
 
 

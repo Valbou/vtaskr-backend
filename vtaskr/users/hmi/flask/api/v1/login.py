@@ -90,7 +90,8 @@ def login():
     try:
         email = payload.get("email", "")
         password = payload.get("password", "")
-    except Exception:
+    except Exception as e:
+        logger.warning(f"400 Error: {e}")
         return ResponseAPI.get_error_response("Bad request", 400)
 
     try:
@@ -112,7 +113,8 @@ def login():
                 data = {"token": token.sha_token}
                 return ResponseAPI.get_response(data, 201)
             else:
+                logger.warning("401 Error: Request token with invalid credentials")
                 return ResponseAPI.get_error_response("Invalid credentials", 401)
     except Exception as e:
-        logger.error(str(e))
+        logger.error(f"500 Error: {e}")
         return ResponseAPI.get_error_response("Internal error", 500)

@@ -4,6 +4,10 @@ from vtaskr.libs.iam.constants import Permissions, Resources
 from vtaskr.users.persistence.sqlalchemy.adapters import GroupDB, UserDB
 
 
+class PermissionError(Exception):
+    pass
+
+
 class PermissionControl:
     """
     Control permissions to access a resource.
@@ -19,12 +23,21 @@ class PermissionControl:
         user_id: str,
         group_id_resource: str,
         resource: Resources,
+        exception: bool = True,
     ) -> bool:
         user_db = UserDB()
 
-        return user_db.has_permissions(
+        permitted = user_db.has_permissions(
             self.session, user_id, resource, permission, group_id_resource
         )
+
+        if not permitted and exception:
+            raise PermissionError(
+                f"User {user_id} has no permission {permission.name}"
+                " on {resource} in group {group_id_resource}"
+            )
+
+        return permitted
 
     def all_tenants_with_access(
         self, permission: Permissions, user_id: str, resource: Resources

@@ -12,17 +12,25 @@ class TestTasksAPI(BaseTestCase):
         self.task_db = TaskDB()
 
     def test_create_task_no_login(self):
-        task_data = {"nodata": "nodata"}
+        title = self.fake.sentence(nb_words=8)
+        task_data = {
+            "title": title,
+            "tenant_id": "fake_id",
+        }
         response = self.client.post(
             f"{URL_API}/tasks", json=task_data, headers=self.headers
         )
         self.assertEqual(response.status_code, 401)
+
+        with self.app.sql.get_session() as session:
+            self.assertFalse(self.task_db.exists(session, response.json.get("id")))
 
     def test_create_task(self):
         headers = self.get_token_headers()
         title = self.fake.sentence(nb_words=8)
         task_data = {
             "title": title,
+            "tenant_id": self.group.id,
         }
         response = self.client.post(f"{URL_API}/tasks", json=task_data, headers=headers)
         self.assertEqual(response.status_code, 201)
