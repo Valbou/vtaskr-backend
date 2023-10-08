@@ -4,6 +4,7 @@ from email_validator import EmailSyntaxError
 from flask import current_app, request
 
 from vtaskr.libs.flask.utils import ResponseAPI
+from vtaskr.libs.hmi import dto_to_dict
 from vtaskr.libs.redis import rate_limited
 from vtaskr.libs.secutity.validators import PasswordComplexityError
 from vtaskr.users.hmi.dto.user import UserDTO, UserMapperDTO
@@ -90,7 +91,7 @@ def register():
             current_app.notification.notify_all()
 
             user_dto = UserMapperDTO.model_to_dto(user)
-            return ResponseAPI.get_response(UserMapperDTO.dto_to_dict(user_dto), 201)
+            return ResponseAPI.get_response(dto_to_dict(user_dto), 201)
 
     except (PasswordComplexityError, EmailSyntaxError) as e:
         return ResponseAPI.get_error_response(str(e), 400)

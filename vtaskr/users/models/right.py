@@ -1,6 +1,5 @@
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Optional
 
 from pytz import utc
 
@@ -22,9 +21,9 @@ class Right:
         self,
         roletype_id: str,
         resource: Resources,
-        permissions: Optional[list[Permissions]] = None,
-        id: Optional[str] = None,
-        created_at: Optional[datetime] = None,
+        permissions: list[Permissions] | None = None,
+        id: str | None = None,
+        created_at: datetime | None = None,
     ) -> None:
         self.id = id or get_id()
         self.created_at = created_at or datetime.now(utc)

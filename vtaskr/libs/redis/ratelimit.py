@@ -1,5 +1,4 @@
 from datetime import timedelta
-from typing import Optional
 
 from redis import Redis
 
@@ -20,7 +19,7 @@ class RateLimit:
         user: str,
         resource_name: str,
         limit: int = 1,
-        period: Optional[timedelta] = None,
+        period: timedelta | None = None,
     ) -> None:
         self.redis = redis
         self.user = user

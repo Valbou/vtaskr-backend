@@ -1,4 +1,4 @@
-from dataclasses import asdict, dataclass
+from dataclasses import dataclass
 
 from vtaskr.libs.iam.constants import Permissions
 from vtaskr.libs.openapi.base import openapi
@@ -45,7 +45,3 @@ class RightMapperDTO:
             perm for perm in Permissions if right_dto.permissions & perm
         ]
         return right
-
-    @classmethod
-    def dto_to_dict(cls, right_dto: RightDTO) -> dict:
-        return asdict(right_dto)

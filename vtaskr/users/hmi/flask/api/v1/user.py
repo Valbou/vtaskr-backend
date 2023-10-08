@@ -3,6 +3,7 @@ from datetime import timedelta
 from flask import current_app, g, request
 
 from vtaskr.libs.flask.utils import ResponseAPI
+from vtaskr.libs.hmi import dto_to_dict
 from vtaskr.libs.redis import rate_limited
 from vtaskr.libs.secutity.validators import PasswordComplexityError
 from vtaskr.users.hmi.dto import UserDTO, UserMapperDTO
@@ -49,12 +50,8 @@ def me():
     Need a valid token
     Return a jsonify user
     """
-    if g.user:
-        user_dto = UserMapperDTO.model_to_dto(g.user)
-        return ResponseAPI.get_response(UserMapperDTO.dto_to_dict(user_dto), 200)
-
-    else:
-        return ResponseAPI.get_error_response("Invalid token", 403)
+    user_dto = UserMapperDTO.model_to_dto(g.user)
+    return ResponseAPI.get_response(dto_to_dict(user_dto), 200)
 
 
 api_item = {
@@ -153,7 +150,7 @@ def update_me():
                 user_service.update(g.user)
                 user_dto = UserMapperDTO.model_to_dto(g.user)
 
-            return ResponseAPI.get_response(UserMapperDTO.dto_to_dict(user_dto), 200)
+            return ResponseAPI.get_response(dto_to_dict(user_dto), 200)
 
     except PasswordComplexityError as e:
         return ResponseAPI.get_error_response(str(e), 400)

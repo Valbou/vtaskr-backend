@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 from datetime import date, datetime
-from typing import Optional
 from unittest import TestCase
 
 from vtaskr.libs.flask.querystring import Filter, Operations, QueryStringFilter
@@ -195,10 +194,10 @@ class TestDTO:
     integer: int = 42
     floating: float = 0.0
     boolean: bool = False
-    opt_str: Optional[str] = None
-    opt_int: Optional[int] = None
+    opt_str: str | None = None
+    opt_int: int | None = None
     datation: datetime = datetime.now()
-    opt_datation: Optional[date] = date.today()
+    opt_datation: date | None = date.today()
 
 
 class TestQueryStringFilterLimited(QSTestMixin):

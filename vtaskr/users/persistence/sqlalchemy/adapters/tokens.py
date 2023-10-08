@@ -1,5 +1,3 @@
-from typing import Optional
-
 from sqlalchemy.orm import Session
 
 from vtaskr.libs.sqlalchemy.default_adapter import DefaultDB
@@ -13,7 +11,7 @@ class TokenDB(AbstractTokenPort, DefaultDB):
         super().__init__()
         self.qs = TokenQueryset()
 
-    def get_token(self, session: Session, sha_token: str) -> Optional[Token]:
+    def get_token(self, session: Session, sha_token: str) -> Token | None:
         self.qs.by_sha(sha_token)
         result = session.scalars(self.qs.statement).one_or_none()
         return result

@@ -1,13 +1,16 @@
 from sqlalchemy.orm import Session
 
+# from vtaskr.libs.iam.constants import Permissions, Resources
 from vtaskr.users.models import RoleType
 from vtaskr.users.persistence import RoleTypeDB
+from vtaskr.users.services.permission_service import PermissionControl
 
 
 class RoleTypeService:
     def __init__(self, session: Session) -> None:
         self.session: Session = session
         self.roletype_db = RoleTypeDB()
+        self.control = PermissionControl(self.session)
 
     def get_default_admin(self) -> RoleType:
         """Looking for a default roletype named: Admin"""

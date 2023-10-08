@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 from datetime import datetime, timedelta
-from typing import Optional
 
 from babel import Locale
 from pytz import utc
@@ -20,19 +19,19 @@ class User:
     locale: Locale = Locale("en", "US")
     timezone: str = ""
     created_at: datetime = datetime.now(utc)
-    last_login_at: Optional[datetime] = None
+    last_login_at: datetime | None = None
 
     def __init__(
         self,
         first_name: str,
         last_name: str,
         email: str,
-        locale: Optional[Locale] = None,
-        timezone: Optional[str] = None,
-        hash_password: Optional[str] = None,
-        id: Optional[str] = None,
-        created_at: Optional[datetime] = None,
-        last_login_at: Optional[datetime] = None,
+        locale: Locale | None = None,
+        timezone: str | None = None,
+        hash_password: str | None = None,
+        id: str | None = None,
+        created_at: datetime | None = None,
+        last_login_at: datetime | None = None,
     ) -> None:
         self.id = id or get_id()
         self.first_name = first_name

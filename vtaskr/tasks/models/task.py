@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 from enum import Enum
-from typing import Optional, TypeVar
+from typing import TypeVar
 
 from pytz import utc
 
@@ -23,16 +23,16 @@ T = TypeVar("T", bound="Task")
 @dataclass
 class Task:
     id: str = ""
-    created_at: Optional[datetime] = None
+    created_at: datetime | None = None
     tenant_id: str = ""
     title: str = ""
     description: str = ""
     emergency: bool = False
     important: bool = False
-    scheduled_at: Optional[datetime] = None
-    duration: Optional[timedelta] = None
-    done: Optional[datetime] = None
-    tags: Optional[list[Tag]] = None
+    scheduled_at: datetime | None = None
+    duration: timedelta | None = None
+    done: datetime | None = None
+    tags: list[Tag] | None = None
 
     def __init__(
         self,
@@ -41,12 +41,12 @@ class Task:
         description: str = "",
         emergency: bool = False,
         important: bool = False,
-        scheduled_at: Optional[datetime] = None,
-        duration: Optional[timedelta] = None,
-        done: Optional[datetime] = None,
+        scheduled_at: datetime | None = None,
+        duration: timedelta | None = None,
+        done: datetime | None = None,
         id: str = "",
-        created_at: Optional[datetime] = None,
-        tags: Optional[list[Tag]] = None,
+        created_at: datetime | None = None,
+        tags: list[Tag] | None = None,
     ) -> None:
         self.id = id or get_id()
         self.created_at = created_at or datetime.now(utc)

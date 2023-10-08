@@ -1,5 +1,4 @@
 from datetime import datetime, timedelta
-from typing import Optional
 from unittest import TestCase
 
 from faker import Faker
@@ -25,10 +24,10 @@ class TestTask(TestCase):
         self.assertEqual(Task.__annotations__.get("description"), str)
         self.assertEqual(Task.__annotations__.get("emergency"), bool)
         self.assertEqual(Task.__annotations__.get("important"), bool)
-        self.assertEqual(Task.__annotations__.get("created_at"), Optional[datetime])
-        self.assertEqual(Task.__annotations__.get("scheduled_at"), Optional[datetime])
-        self.assertEqual(Task.__annotations__.get("duration"), Optional[timedelta])
-        self.assertEqual(Task.__annotations__.get("done"), Optional[datetime])
+        self.assertEqual(Task.__annotations__.get("created_at"), datetime | None)
+        self.assertEqual(Task.__annotations__.get("scheduled_at"), datetime | None)
+        self.assertEqual(Task.__annotations__.get("duration"), timedelta | None)
+        self.assertEqual(Task.__annotations__.get("done"), datetime | None)
 
     def test_is_done(self):
         self.assertFalse(self.task.is_done())

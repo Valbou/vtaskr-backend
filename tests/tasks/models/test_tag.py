@@ -1,5 +1,4 @@
 from datetime import datetime
-from typing import Optional
 from unittest import TestCase
 
 from faker import Faker
@@ -21,8 +20,8 @@ class TestTag(TestCase):
         self.assertEqual(Tag.__annotations__.get("id"), str)
         self.assertEqual(Tag.__annotations__.get("title"), str)
         self.assertEqual(Tag.__annotations__.get("tenant_id"), str)
-        self.assertEqual(Tag.__annotations__.get("color"), Optional[Color])
-        self.assertEqual(Tag.__annotations__.get("created_at"), Optional[datetime])
+        self.assertEqual(Tag.__annotations__.get("color"), Color | None)
+        self.assertEqual(Tag.__annotations__.get("created_at"), datetime | None)
 
     def test_add_and_remove_tasks(self):
         task_1 = Task(self.tenant_id, self.fake.text(max_nb_chars=50))

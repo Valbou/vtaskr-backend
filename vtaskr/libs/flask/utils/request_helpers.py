@@ -1,11 +1,9 @@
-from typing import Optional
-
 from flask import Request
 
 BEARER = "Bearer "
 
 
-def get_bearer_token(request: Request) -> Optional[str]:
+def get_bearer_token(request: Request) -> str | None:
     bearer = request.headers.get("Authorization")
     if bearer and bearer.startswith(BEARER):
         return bearer.replace(BEARER, "").strip()

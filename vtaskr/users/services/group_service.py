@@ -1,13 +1,23 @@
 from sqlalchemy.orm import Session
 
+from vtaskr.libs.iam.constants import Permissions, Resources
 from vtaskr.users.models import Group, User
 from vtaskr.users.persistence import GroupDB
+from vtaskr.users.services.permission_service import PermissionControl
+
+# TODO:
+# Since foreign key are not permitted between bounded context
+# Remove a group may create many orphan resources
+# 1 - add a periodic script to remove all orphans
+# 2 - remove all orphans when user delete a group
+# 3 - protect group deletion if a resouce may become an orphan
 
 
 class GroupService:
     def __init__(self, session: Session) -> None:
         self.session: Session = session
         self.group_db = GroupDB()
+        self.control = PermissionControl(self.session)
 
     def create_group(self, user: User, group_name: str):
         """Create a new user group"""
@@ -33,3 +43,37 @@ class GroupService:
         """Create a default mandatory group to use this app"""
 
         return self.create_group(user=user, group_name="Private")
+
+    def get_all_groups(self, user_id: str):
+        """Return all user associated groups"""
+
+        return self.group_db.get_all_user_groups(self.session, user_id=user_id)
+
+    def get_group(self, user_id: str, group_id: str) -> Group | None:
+        """Retrieve just a group if permission was given"""
+
+        group = self.group_db.load(self.session, group_id)
+
+        return (
+            group
+            if self.control.can(
+                Permissions.READ, user_id, group.id, resource=Resources.GROUP
+            )
+            else None
+        )
+
+    def update_group(self, user_id: str, group: Group):
+        """Update a group if update permission was given"""
+
+        if self.control.can(
+            Permissions.UPDATE, user_id, group.id, resource=Resources.GROUP
+        ):
+            self.group_db.save(self.session, group)
+
+    def delete_group(self, user_id: str, group: Group):
+        """Delete a group if delete permission was given"""
+
+        if self.control.can(
+            Permissions.DELETE, user_id, group.id, resource=Resources.GROUP
+        ):
+            self.group_db.delete(self.session, group)

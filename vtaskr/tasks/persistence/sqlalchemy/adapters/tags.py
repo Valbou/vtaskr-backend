@@ -1,5 +1,3 @@
-from typing import Optional
-
 from sqlalchemy.orm import Session
 
 from vtaskr.libs.flask.querystring import Filter
@@ -18,7 +16,7 @@ class TagDB(AbstractTagPort, DefaultDB):
         self,
         session: Session,
         tenant_ids: list[str],
-        filters: Optional[list[Filter]] = None,
+        filters: list[Filter] | None = None,
     ) -> list[Tag]:
         """Retrieve all tenant's tags"""
 
@@ -35,7 +33,7 @@ class TagDB(AbstractTagPort, DefaultDB):
         session: Session,
         tenant_ids: list[str],
         task_id: str,
-        filters: Optional[list[Filter]] = None,
+        filters: list[Filter] | None = None,
     ) -> list[Tag]:
         """Retrieve all tenant's tags for this task"""
 

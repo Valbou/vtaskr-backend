@@ -3,12 +3,14 @@ from sqlalchemy.orm import Session
 from vtaskr.libs.iam.constants import Permissions, Resources
 from vtaskr.users.models import Right, RoleType
 from vtaskr.users.persistence import RightDB
+from vtaskr.users.services.permission_service import PermissionControl
 
 
 class RightService:
     def __init__(self, session: Session) -> None:
         self.session: Session = session
         self.right_db = RightDB()
+        self.control = PermissionControl(self.session)
 
     def create_admin_rights(self, roletype: RoleType) -> int:
         """Give all rights on all resources for the given roletype (Admin)"""

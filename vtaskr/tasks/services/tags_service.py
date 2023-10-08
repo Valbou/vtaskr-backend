@@ -1,5 +1,3 @@
-from typing import Optional
-
 from sqlalchemy.orm import Session
 
 from vtaskr.libs.iam.config import PermissionControl
@@ -23,7 +21,7 @@ class TagService:
 
         return self.tag_db.tags(self.session, tenant_ids)
 
-    def get_tag(self, user_id: str, tag_id: str) -> Optional[Tag]:
+    def get_tag(self, user_id: str, tag_id: str) -> Tag | None:
         """Get a tag if read permission was given"""
 
         tag = self.tag_db.load(self.session, tag_id)
@@ -56,6 +54,7 @@ class TagService:
 
     def save_tag(self, user_id: str, tag: Tag) -> None:
         """Save a new tag"""
+
         if self.control.can(
             Permissions.CREATE, user_id, tag.tenant_id, resource=Resources.TAG
         ):
@@ -63,6 +62,7 @@ class TagService:
 
     def update_tag(self, user_id: str, tag: Tag):
         """Update a tag if update permission was given"""
+
         if self.control.can(
             Permissions.UPDATE, user_id, tag.tenant_id, resource=Resources.TAG
         ):
@@ -70,6 +70,7 @@ class TagService:
 
     def delete_tag(self, user_id: str, tag: Tag):
         """Delete a tag if delete permission was given"""
+
         if self.control.can(
             Permissions.DELETE, user_id, tag.tenant_id, resource=Resources.TAG
         ):

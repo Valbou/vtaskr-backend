@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Optional
 
 from pytz import utc
 
@@ -16,8 +15,8 @@ class Group:
     def __init__(
         self,
         name: str,
-        id: Optional[str] = None,
-        created_at: Optional[datetime] = None,
+        id: str | None = None,
+        created_at: datetime | None = None,
     ) -> None:
         self.id = id or get_id()
         self.created_at = created_at or datetime.now(utc)

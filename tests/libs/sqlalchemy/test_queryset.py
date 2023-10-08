@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from typing import Optional
 from unittest import TestCase
 
 from sqlalchemy import Column, Integer, String, Table
@@ -14,7 +13,7 @@ class TestUser:
     id: int
     name: str
     age: int
-    fullname: Optional[str]
+    fullname: str | None
 
 
 test_table = Table(

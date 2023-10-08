@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 from datetime import datetime, timedelta
-from typing import Optional
 
 from pytz import utc
 
@@ -21,12 +20,12 @@ class Token:
     def __init__(
         self,
         user_id: str,
-        token: Optional[str] = None,
+        token: str | None = None,
         temp: bool = True,
-        temp_code: Optional[str] = None,
-        id: Optional[str] = None,
-        created_at: Optional[datetime] = None,
-        last_activity_at: Optional[datetime] = None,
+        temp_code: str | None = None,
+        id: str | None = None,
+        created_at: datetime | None = None,
+        last_activity_at: datetime | None = None,
     ) -> None:
         self.id = id or get_id()
         self.created_at = created_at or datetime.now(utc)

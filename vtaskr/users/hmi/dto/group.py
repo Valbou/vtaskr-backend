@@ -1,4 +1,4 @@
-from dataclasses import asdict, dataclass
+from dataclasses import dataclass
 
 from vtaskr.libs.openapi.base import openapi
 from vtaskr.users.models import Group
@@ -31,10 +31,9 @@ class GroupMapperDTO:
         )
 
     @classmethod
-    def dto_to_model(cls, group_dto: GroupDTO, group: Group) -> Group:
+    def dto_to_model(cls, group_dto: GroupDTO, group: Group | None = None) -> Group:
+        if not group:
+            group = Group(name=group_dto.name)
+
         group.name = group_dto.first_name
         return group
-
-    @classmethod
-    def dto_to_dict(cls, group_dto: GroupDTO) -> dict:
-        return asdict(group_dto)

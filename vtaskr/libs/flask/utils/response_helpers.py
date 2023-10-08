@@ -1,5 +1,5 @@
 from json import dumps
-from typing import Any, Optional
+from typing import Any
 
 from flask import Response
 
@@ -8,7 +8,7 @@ JSON_MIME_TYPE = "application/json"
 
 class ResponseAPI:
     @classmethod
-    def get_response(cls, data: Any, status: int, headers: Optional[dict] = None):
+    def get_response(cls, data: Any, status: int, headers: dict | None = None):
         headers = headers or {}
         assert (  # nosec
             status < 400
@@ -23,9 +23,7 @@ class ResponseAPI:
         )
 
     @classmethod
-    def get_error_response(
-        cls, message: str, status: int, headers: Optional[dict] = None
-    ):
+    def get_error_response(cls, message: str, status: int, headers: dict | None = None):
         data = {"error": message, "status": status}
         headers = headers or {}
         return Response(

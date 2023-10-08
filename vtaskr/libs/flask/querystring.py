@@ -1,7 +1,7 @@
 from dataclasses import dataclass, fields, is_dataclass
 from datetime import date, datetime, time, timedelta
 from enum import Enum
-from typing import Any, Optional, _GenericAlias
+from typing import Any, _GenericAlias, types
 from urllib.parse import parse_qs
 
 
@@ -39,10 +39,10 @@ class Filter:
 
 class QueryStringFilter:
     _filters: list = []
-    _dto_data: Optional[dict] = None
-    _dto_fields: Optional[list[str]] = None
+    _dto_data: dict | None = None
+    _dto_fields: list[str] | None = None
 
-    def __init__(self, query_string: str, dto: Optional[Any] = None):
+    def __init__(self, query_string: str, dto: Any | None = None):
         """
         Generate filters from query string args.
         Fournish a DTO instance (using dataclass required) to cast values
@@ -56,7 +56,7 @@ class QueryStringFilter:
             list_values = self._separate_values(v)
             [self._create_filter(k, val) for val in list_values if val]
 
-    def _set_dto(self, dto: Optional[Any] = None):
+    def _set_dto(self, dto: Any | None = None):
         """Define accepted fields"""
         self._dto_data = None
         self._dto_fields = None
@@ -92,8 +92,10 @@ class QueryStringFilter:
         ):
             filter.value = None
 
-        # Attempt to infer Optional and Union recursively
-        elif isinstance(field_type, _GenericAlias):
+        # Attempt to infer Optional and Union recursively or pipe notation (not a _GenericAlias)
+        elif isinstance(field_type, _GenericAlias) or isinstance(
+            field_type, types.UnionType
+        ):
             for t in field_type.__args__:
                 self._cast_filter_value(filter, t)
 

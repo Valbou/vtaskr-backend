@@ -4,6 +4,7 @@ from flask import current_app, g, request
 
 from vtaskr.libs.flask.querystring import QueryStringFilter
 from vtaskr.libs.flask.utils import ResponseAPI
+from vtaskr.libs.hmi import dto_to_dict, list_dto_to_dict, list_models_to_list_dto
 from vtaskr.libs.iam.flask.config import login_required
 from vtaskr.libs.redis import rate_limited
 from vtaskr.tasks.hmi.dto import TagMapperDTO, TaskDTO, TaskMapperDTO
@@ -78,10 +79,8 @@ def tasks():
             task_service = TaskService(session)
             tasks = task_service.get_tasks(g.user.id, qsf.get_filters())
             if tasks:
-                tasks_dto = TaskMapperDTO.list_models_to_list_dto(tasks)
-                return ResponseAPI.get_response(
-                    TaskMapperDTO.list_dto_to_dict(tasks_dto), 200
-                )
+                tasks_dto = list_models_to_list_dto(TaskMapperDTO, tasks)
+                return ResponseAPI.get_response(list_dto_to_dict(tasks_dto), 200)
             else:
                 return ResponseAPI.get_response([], 200)
 
@@ -94,11 +93,12 @@ def tasks():
                 task_service = TaskService(session)
                 task_service.save_task(user_id=g.user.id, task=task)
                 task_dto = TaskMapperDTO.model_to_dto(task)
-                return ResponseAPI.get_response(
-                    TaskMapperDTO.dto_to_dict(task_dto), 201
-                )
+                return ResponseAPI.get_response(dto_to_dict(task_dto), 201)
         except Exception:
             return ResponseAPI.get_error_response("Bad request", 400)
+
+    else:
+        return ResponseAPI.get_error_response({}, 405)
 
 
 api_item = {
@@ -225,9 +225,7 @@ def task(task_id: str):
         if task:
             if request.method == "GET":
                 task_dto = TaskMapperDTO.model_to_dto(task)
-                return ResponseAPI.get_response(
-                    TaskMapperDTO.dto_to_dict(task_dto), 200
-                )
+                return ResponseAPI.get_response(dto_to_dict(task_dto), 200)
 
             elif request.method in ("PUT", "PATCH"):
                 task_dto = TaskDTO(**request.get_json())
@@ -235,13 +233,14 @@ def task(task_id: str):
                 task_service.update_task(g.user.id, task)
 
                 task_dto = TaskMapperDTO.model_to_dto(task)
-                return ResponseAPI.get_response(
-                    TaskMapperDTO.dto_to_dict(task_dto), 200
-                )
+                return ResponseAPI.get_response(dto_to_dict(task_dto), 200)
 
             elif request.method == "DELETE":
                 task_service.delete_task(g.user.id, task)
                 return ResponseAPI.get_response({}, 204)
+
+            else:
+                return ResponseAPI.get_error_response({}, 405)
 
         else:
             return ResponseAPI.get_error_response({}, 404)
@@ -291,14 +290,13 @@ def task_tags(task_id: str):
             task = task_service.get_task(g.user.id, task_id)
             if task:
                 tag_service = TagService(session)
-                tags_dto = TagMapperDTO.list_models_to_list_dto(
-                    tag_service.get_task_tags(g.user.id, task.id, task.tenant_id)
+                tags_dto = list_models_to_list_dto(
+                    TagMapperDTO,
+                    tag_service.get_task_tags(g.user.id, task.id, task.tenant_id),
                 )
 
                 if tags_dto:
-                    return ResponseAPI.get_response(
-                        TaskMapperDTO.list_dto_to_dict(tags_dto), 200
-                    )
+                    return ResponseAPI.get_response(list_dto_to_dict(tags_dto), 200)
                 return ResponseAPI.get_response([], 200)
             else:
                 return ResponseAPI.get_error_response("Task not found", 404)

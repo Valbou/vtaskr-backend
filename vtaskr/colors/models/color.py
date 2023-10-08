@@ -1,5 +1,5 @@
 from re import fullmatch
-from typing import Optional, TypeVar
+from typing import TypeVar
 
 from vtaskr.colors.exceptions.color import ColorFormatError
 
@@ -21,7 +21,7 @@ class Color:
         return f"{self.background}|{self.text}"
 
     @classmethod
-    def from_string(cls, colors: str) -> Optional[TColor]:
+    def from_string(cls, colors: str) -> TColor | None:
         return Color(*colors.split("|"))
 
     @classmethod

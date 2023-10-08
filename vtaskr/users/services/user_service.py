@@ -1,4 +1,4 @@
-from typing import Optional, Tuple
+from typing import Tuple
 
 from sqlalchemy.orm import Session
 
@@ -47,7 +47,7 @@ class UserService:
 
     def authenticate(
         self, email: str, password: str
-    ) -> Tuple[Optional[Token], Optional[User]]:
+    ) -> Tuple[Token | None, User | None]:
         """Create a token only if user and password are ok"""
 
         self.token_db.clean_expired(self.session)
@@ -71,7 +71,7 @@ class UserService:
             return True
         return False
 
-    def user_from_token(self, sha_token: str) -> Optional[User]:
+    def user_from_token(self, sha_token: str) -> User | None:
         """Load a user from a given token"""
 
         token = self.token_db.get_token(self.session, sha_token)
