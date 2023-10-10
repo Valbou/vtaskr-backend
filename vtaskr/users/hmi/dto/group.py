@@ -35,5 +35,5 @@ class GroupMapperDTO:
         if not group:
             group = Group(name=group_dto.name)
 
-        group.name = group_dto.first_name
+        group.name = group_dto.name
         return group

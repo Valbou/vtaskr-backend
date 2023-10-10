@@ -19,7 +19,7 @@ class GroupService:
         self.group_db = GroupDB()
         self.control = PermissionControl(self.session)
 
-    def create_group(self, user: User, group_name: str):
+    def create_group(self, user: User, group_name: str) -> Group:
         """Create a new user group"""
 
         group = Group(name=group_name)
@@ -44,7 +44,7 @@ class GroupService:
 
         return self.create_group(user=user, group_name="Private")
 
-    def get_all_groups(self, user_id: str):
+    def get_all_groups(self, user_id: str) -> list[Group] | None:
         """Return all user associated groups"""
 
         return self.group_db.get_all_user_groups(self.session, user_id=user_id)
@@ -54,15 +54,17 @@ class GroupService:
 
         group = self.group_db.load(self.session, group_id)
 
-        return (
-            group
-            if self.control.can(
-                Permissions.READ, user_id, group.id, resource=Resources.GROUP
+        if group:
+            return (
+                group
+                if self.control.can(
+                    Permissions.READ, user_id, group.id, resource=Resources.GROUP
+                )
+                else None
             )
-            else None
-        )
+        return None
 
-    def update_group(self, user_id: str, group: Group):
+    def update_group(self, user_id: str, group: Group) -> None:
         """Update a group if update permission was given"""
 
         if self.control.can(
@@ -70,8 +72,8 @@ class GroupService:
         ):
             self.group_db.save(self.session, group)
 
-    def delete_group(self, user_id: str, group: Group):
-        """Delete a group if delete permission was given"""
+    def delete_group(self, user_id: str, group: Group) -> None:
+        """Delete all roles before the group if delete permission was given"""
 
         if self.control.can(
             Permissions.DELETE, user_id, group.id, resource=Resources.GROUP

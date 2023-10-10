@@ -13,7 +13,7 @@ class Role:
     user_id: str = ""
     group_id: str = ""
     roletype_id: str = ""
-    color: Color | None = None
+    color: Color = Color(background="#FFFFFF", text="#000000")
     created_at: datetime = datetime.now(utc)
 
     def __init__(
@@ -27,7 +27,7 @@ class Role:
     ) -> None:
         self.id = id or get_id()
         self.created_at = created_at or datetime.now(utc)
-        self.color = color
+        self.color = color or Color(background="#FFFFFF", text="#000000")
         self.user_id = user_id
         self.group_id = group_id
         self.roletype_id = roletype_id

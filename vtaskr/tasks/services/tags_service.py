@@ -26,13 +26,15 @@ class TagService:
 
         tag = self.tag_db.load(self.session, tag_id)
 
-        return (
-            tag
-            if self.control.can(
-                Permissions.READ, user_id, tag.tenant_id, resource=Resources.TAG
+        if tag:
+            return (
+                tag
+                if self.control.can(
+                    Permissions.READ, user_id, tag.tenant_id, resource=Resources.TAG
+                )
+                else None
             )
-            else None
-        )
+        return None
 
     def get_task_tags(
         self, user_id: str, task_id: str, task_tenant_id: str

@@ -12,12 +12,12 @@ class DefaultDB(AbstractPort):
         result = session.scalars(self.qs.statement).one_or_none()
         return result
 
-    def save(self, session: Session, obj: object, autocommit: bool = True):
+    def save(self, session: Session, obj: object, autocommit: bool = True) -> None:
         session.add(obj)
         if autocommit:
             session.commit()
 
-    def delete(self, session: Session, obj: object, autocommit: bool = True):
+    def delete(self, session: Session, obj: object, autocommit: bool = True) -> None:
         session.delete(obj)
         if autocommit:
             session.commit()
