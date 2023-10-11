@@ -44,7 +44,7 @@ class RoleService:
             user_id=user_id,
             group_id_resource=role.group_id,
             resource=Resources.GROUP,
-            exception=True
+            exception=True,
         ):
             self.role_db.save(self.session, role)
             return role

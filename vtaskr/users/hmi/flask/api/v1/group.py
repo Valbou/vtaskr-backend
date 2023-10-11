@@ -5,11 +5,11 @@ from flask import current_app, g, request
 from vtaskr.libs.flask.utils import ResponseAPI
 from vtaskr.libs.hmi import dto_to_dict, list_models_to_list_dto
 from vtaskr.libs.redis import rate_limited
-from vtaskr.users.hmi.dto import GroupDTO, GroupMapperDTO, GROUP_COMPONENT
+from vtaskr.users.hmi.dto import GROUP_COMPONENT, GroupDTO, GroupMapperDTO
 from vtaskr.users.hmi.flask.decorators import login_required
 from vtaskr.users.services import GroupService
 
-from .. import V1, logger, openapi, users_bp, API_ERROR_COMPONENT
+from .. import API_ERROR_COMPONENT, V1, logger, openapi, users_bp
 
 api_item = {
     "get": {
@@ -19,18 +19,12 @@ api_item = {
         "responses": {
             "200": {
                 "description": "",
-                "content": {
-                    "application/json": {
-                        "schema": {"$ref": GROUP_COMPONENT}
-                    }
-                },
+                "content": {"application/json": {"schema": {"$ref": GROUP_COMPONENT}}},
             },
             "403": {
                 "description": "Unauthorized",
                 "content": {
-                    "application/json": {
-                        "schema": {"$ref": API_ERROR_COMPONENT}
-                    }
+                    "application/json": {"schema": {"$ref": API_ERROR_COMPONENT}}
                 },
             },
         },
@@ -42,26 +36,18 @@ api_item = {
         "responses": {
             "201": {
                 "description": "Created group",
-                "content": {
-                    "application/json": {
-                        "schema": {"$ref": GROUP_COMPONENT}
-                    }
-                },
+                "content": {"application/json": {"schema": {"$ref": GROUP_COMPONENT}}},
             },
             "400": {
                 "description": "Bad request",
                 "content": {
-                    "application/json": {
-                        "schema": {"$ref": API_ERROR_COMPONENT}
-                    }
+                    "application/json": {"schema": {"$ref": API_ERROR_COMPONENT}}
                 },
             },
         },
         "requestBody": {
             "description": "Group to create",
-            "content": {
-                "application/json": {"schema": {"$ref": GROUP_COMPONENT}}
-            },
+            "content": {"application/json": {"schema": {"$ref": GROUP_COMPONENT}}},
             "required": True,
         },
     },
@@ -119,11 +105,7 @@ api_item = {
         "responses": {
             "200": {
                 "description": "A group",
-                "content": {
-                    "application/json": {
-                        "schema": {"$ref": GROUP_COMPONENT}
-                    }
-                },
+                "content": {"application/json": {"schema": {"$ref": GROUP_COMPONENT}}},
             },
         },
     },
@@ -134,26 +116,18 @@ api_item = {
         "responses": {
             "200": {
                 "description": "Updated group",
-                "content": {
-                    "application/json": {
-                        "schema": {"$ref": GROUP_COMPONENT}
-                    }
-                },
+                "content": {"application/json": {"schema": {"$ref": GROUP_COMPONENT}}},
             },
             "400": {
                 "description": "Bad request",
                 "content": {
-                    "application/json": {
-                        "schema": {"$ref": API_ERROR_COMPONENT}
-                    }
+                    "application/json": {"schema": {"$ref": API_ERROR_COMPONENT}}
                 },
             },
         },
         "requestBody": {
             "description": "Group to update",
-            "content": {
-                "application/json": {"schema": {"$ref": GROUP_COMPONENT}}
-            },
+            "content": {"application/json": {"schema": {"$ref": GROUP_COMPONENT}}},
             "required": True,
         },
     },
@@ -164,26 +138,18 @@ api_item = {
         "responses": {
             "200": {
                 "description": "Updated group",
-                "content": {
-                    "application/json": {
-                        "schema": {"$ref": GROUP_COMPONENT}
-                    }
-                },
+                "content": {"application/json": {"schema": {"$ref": GROUP_COMPONENT}}},
             },
             "400": {
                 "description": "Bad request",
                 "content": {
-                    "application/json": {
-                        "schema": {"$ref": API_ERROR_COMPONENT}
-                    }
+                    "application/json": {"schema": {"$ref": API_ERROR_COMPONENT}}
                 },
             },
         },
         "requestBody": {
             "description": "Group to update",
-            "content": {
-                "application/json": {"schema": {"$ref": GROUP_COMPONENT}}
-            },
+            "content": {"application/json": {"schema": {"$ref": GROUP_COMPONENT}}},
             "required": True,
         },
     },

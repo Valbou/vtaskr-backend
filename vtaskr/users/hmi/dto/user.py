@@ -19,9 +19,7 @@ user_component = {
         "created_at": {"type": "string", "format": "date-time"},
         "last_login_at": {"type": "string", "format": "date-time"},
     },
-    "required": [
-        "first_name", "last_name", "email", "locale", "timezone"
-    ],
+    "required": ["first_name", "last_name", "email", "locale", "timezone"],
 }
 openapi.register_schemas_components("User", user_component)
 

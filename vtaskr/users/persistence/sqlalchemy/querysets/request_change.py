@@ -3,7 +3,9 @@ from typing import TypeVar
 from vtaskr.libs.sqlalchemy.queryset import Queryset
 from vtaskr.users.models import RequestChange
 
-TRequestChangeQueryset = TypeVar("TRequestChangeQueryset", bound="RequestChangeQueryset")
+TRequestChangeQueryset = TypeVar(
+    "TRequestChangeQueryset", bound="RequestChangeQueryset"
+)
 
 
 class RequestChangeQueryset(Queryset):

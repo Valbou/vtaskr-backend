@@ -5,11 +5,11 @@ from flask import current_app, g, request
 from vtaskr.libs.flask.utils import ResponseAPI
 from vtaskr.libs.hmi import dto_to_dict, list_models_to_list_dto
 from vtaskr.libs.redis import rate_limited
-from vtaskr.users.hmi.dto import RoleDTO, RoleMapperDTO, ROLE_COMPONENT
+from vtaskr.users.hmi.dto import ROLE_COMPONENT, RoleDTO, RoleMapperDTO
 from vtaskr.users.hmi.flask.decorators import login_required
 from vtaskr.users.services import RoleService
 
-from .. import V1, logger, openapi, users_bp, API_ERROR_COMPONENT
+from .. import API_ERROR_COMPONENT, V1, logger, openapi, users_bp
 
 api_item = {
     "get": {
@@ -19,18 +19,12 @@ api_item = {
         "responses": {
             "200": {
                 "description": "",
-                "content": {
-                    "application/json": {
-                        "schema": {"$ref": ROLE_COMPONENT}
-                    }
-                },
+                "content": {"application/json": {"schema": {"$ref": ROLE_COMPONENT}}},
             },
             "403": {
                 "description": "Unauthorized",
                 "content": {
-                    "application/json": {
-                        "schema": {"$ref": API_ERROR_COMPONENT}
-                    }
+                    "application/json": {"schema": {"$ref": API_ERROR_COMPONENT}}
                 },
             },
         },
@@ -42,26 +36,18 @@ api_item = {
         "responses": {
             "201": {
                 "description": "Created role",
-                "content": {
-                    "application/json": {
-                        "schema": {"$ref": ROLE_COMPONENT}
-                    }
-                },
+                "content": {"application/json": {"schema": {"$ref": ROLE_COMPONENT}}},
             },
             "400": {
                 "description": "Bad request",
                 "content": {
-                    "application/json": {
-                        "schema": {"$ref": API_ERROR_COMPONENT}
-                    }
+                    "application/json": {"schema": {"$ref": API_ERROR_COMPONENT}}
                 },
             },
         },
         "requestBody": {
             "description": "Role to create",
-            "content": {
-                "application/json": {"schema": {"$ref": ROLE_COMPONENT}}
-            },
+            "content": {"application/json": {"schema": {"$ref": ROLE_COMPONENT}}},
             "required": True,
         },
     },
@@ -122,11 +108,7 @@ api_item = {
         "responses": {
             "200": {
                 "description": "A role",
-                "content": {
-                    "application/json": {
-                        "schema": {"$ref": ROLE_COMPONENT}
-                    }
-                },
+                "content": {"application/json": {"schema": {"$ref": ROLE_COMPONENT}}},
             },
         },
     },
@@ -137,26 +119,18 @@ api_item = {
         "responses": {
             "200": {
                 "description": "Updated role",
-                "content": {
-                    "application/json": {
-                        "schema": {"$ref": ROLE_COMPONENT}
-                    }
-                },
+                "content": {"application/json": {"schema": {"$ref": ROLE_COMPONENT}}},
             },
             "400": {
                 "description": "Bad request",
                 "content": {
-                    "application/json": {
-                        "schema": {"$ref": API_ERROR_COMPONENT}
-                    }
+                    "application/json": {"schema": {"$ref": API_ERROR_COMPONENT}}
                 },
             },
         },
         "requestBody": {
             "description": "Role to update",
-            "content": {
-                "application/json": {"schema": {"$ref": ROLE_COMPONENT}}
-            },
+            "content": {"application/json": {"schema": {"$ref": ROLE_COMPONENT}}},
             "required": True,
         },
     },
@@ -167,26 +141,18 @@ api_item = {
         "responses": {
             "200": {
                 "description": "Updated role",
-                "content": {
-                    "application/json": {
-                        "schema": {"$ref": ROLE_COMPONENT}
-                    }
-                },
+                "content": {"application/json": {"schema": {"$ref": ROLE_COMPONENT}}},
             },
             "400": {
                 "description": "Bad request",
                 "content": {
-                    "application/json": {
-                        "schema": {"$ref": API_ERROR_COMPONENT}
-                    }
+                    "application/json": {"schema": {"$ref": API_ERROR_COMPONENT}}
                 },
             },
         },
         "requestBody": {
             "description": "Role to update",
-            "content": {
-                "application/json": {"schema": {"$ref": ROLE_COMPONENT}}
-            },
+            "content": {"application/json": {"schema": {"$ref": ROLE_COMPONENT}}},
             "required": True,
         },
     },
@@ -212,6 +178,7 @@ api_item = {
     },
 }
 openapi.register_path(f"{V1}/role/{{role_id}}", api_item)
+
 
 @users_bp.route(
     f"{V1}/role/<string:role_id>", methods=["GET", "PUT", "PATCH", "DELETE"]

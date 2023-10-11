@@ -13,9 +13,7 @@ tag_component = {
         "text_color": {"type": "string"},
         "created_at": {"type": "string", "format": "date-time"},
     },
-    "required": [
-        "tenant_id", "title"
-    ],
+    "required": ["tenant_id", "title"],
 }
 openapi.register_schemas_components("Tag", tag_component)
 

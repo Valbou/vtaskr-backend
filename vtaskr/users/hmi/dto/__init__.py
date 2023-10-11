@@ -1,3 +1,3 @@
 from .group import *
-from .user import *
 from .role import *
+from .user import *

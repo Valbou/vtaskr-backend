@@ -14,9 +14,7 @@ role_component = {
         "roletype_id": {"type": "string"},
         "created_at": {"type": "string", "format": "date-time"},
     },
-    "required": [
-        "user_id", "group_id", "roletype_id"
-    ],
+    "required": ["user_id", "group_id", "roletype_id"],
 }
 openapi.register_schemas_components("Role", role_component)
 

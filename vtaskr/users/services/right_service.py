@@ -43,7 +43,9 @@ class RightService:
                     Right(
                         roletype_id=roletype.id,
                         resource=res,
-                        permissions=[Permissions.READ,],
+                        permissions=[
+                            Permissions.READ,
+                        ],
                     ),
                     autocommit=False,
                 )

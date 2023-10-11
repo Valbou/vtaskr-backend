@@ -1,4 +1,5 @@
 from typing import TypeVar
+
 from sqlalchemy import or_
 
 from vtaskr.libs.sqlalchemy.queryset import Queryset
@@ -19,11 +20,10 @@ class RoleQueryset(Queryset):
         self._query = self._query.where(self.qs_class.group_id.in_(group_ids))
         return self
 
-    def both_is_mine_and_is_under_my_control(self, user_id: str, group_ids: list[str]) -> TRoleQueryset:
+    def both_is_mine_and_is_under_my_control(
+        self, user_id: str, group_ids: list[str]
+    ) -> TRoleQueryset:
         self._query = self._query.where(
-            or_(
-                self.qs_class.user_id == user_id,
-                self.qs_class.group_id.in_(group_ids)
-            )
+            or_(self.qs_class.user_id == user_id, self.qs_class.group_id.in_(group_ids))
         )
         return self

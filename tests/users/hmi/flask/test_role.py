@@ -1,5 +1,4 @@
 from tests.base_test import BaseTestCase
-
 from vtaskr.users.models import Role
 from vtaskr.users.services import RoleService, RoleTypeService
 
@@ -125,9 +124,7 @@ class TestRoleAPI(BaseTestCase):
         with self.app.sql.get_session() as session:
             role = self.get_a_colleague_role(session=session)
 
-            response = self.client.delete(
-                f"{URL_API}/role/{role.id}", headers=headers
-            )
+            response = self.client.delete(f"{URL_API}/role/{role.id}", headers=headers)
             self.assertEqual(response.status_code, 204)
 
             response = self.client.get(f"{URL_API}/role/{role.id}", headers=headers)
@@ -138,7 +135,5 @@ class TestRoleAPI(BaseTestCase):
         with self.app.sql.get_session() as session:
             role = self.get_a_test_user_role(session=session)
 
-            response = self.client.delete(
-                f"{URL_API}/role/{role.id}", headers=headers
-            )
+            response = self.client.delete(f"{URL_API}/role/{role.id}", headers=headers)
             self.assertEqual(response.status_code, 403)
