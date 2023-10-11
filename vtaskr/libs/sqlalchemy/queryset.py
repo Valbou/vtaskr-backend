@@ -24,7 +24,7 @@ class Queryset:
         self.clean()
         return statement
 
-    def clean(self):
+    def clean(self) -> None:
         self.select()
 
     def select(self, *args) -> TQueryset:
@@ -39,23 +39,23 @@ class Queryset:
         self._query = delete(self.qs_class)
         return self
 
-    def values(self, **kwargs):
+    def values(self, **kwargs) -> TQueryset:
         self._query = self._query.values(**kwargs)
         return self
 
-    def join(self, column):
+    def join(self, column) -> TQueryset:
         self._query = self._query.join(column)
         return self
 
-    def where(self, *args):
+    def where(self, *args) -> TQueryset:
         self._query = self._query.where(*args)
         return self
 
-    def id(self, id: str):
+    def id(self, id: str) -> TQueryset:
         self._query = self._query.where(self.qs_class.id == id)
         return self
 
-    def ids(self, ids: list[str]):
+    def ids(self, ids: list[str]) -> TQueryset:
         self._query = self._query.where(self.qs_class.id.in_(ids))
         return self
 

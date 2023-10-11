@@ -28,6 +28,22 @@ class RoleTypeService:
 
         return roletype
 
+    def get_default_observer(self) -> RoleType:
+        """Looking for a default roletype named: Observer"""
+
+        observer_roletype = RoleType(name="Observer", group_id=None)
+        roletype, created = self.roletype_db.get_or_create(
+            session=self.session, roletype=observer_roletype
+        )
+
+        if created:
+            from .right_service import RightService
+
+            right_service = RightService(self.session)
+            right_service.create_observer_rights(roletype=roletype)
+
+        return roletype
+
     def create_custom_roletype(self, name: str, group_id: str) -> RoleType:
         roletype = RoleType(name=name, group_id=group_id)
         roletype, _created = self.roletype_db.get_or_create(

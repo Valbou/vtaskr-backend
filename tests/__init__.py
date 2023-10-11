@@ -22,3 +22,8 @@ APP: Flask = create_flask_app(
     nosql_class=TestNoSQLService,
     notification_class=TestNotificationService,
 )
+
+print("All registered routes:")
+for rule in APP.url_map.iter_rules():
+    print(f"{rule.endpoint:-<30} {rule.rule}")
+print(" ----- ")

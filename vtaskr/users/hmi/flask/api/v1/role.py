@@ -5,23 +5,23 @@ from flask import current_app, g, request
 from vtaskr.libs.flask.utils import ResponseAPI
 from vtaskr.libs.hmi import dto_to_dict, list_models_to_list_dto
 from vtaskr.libs.redis import rate_limited
-from vtaskr.users.hmi.dto import GroupDTO, GroupMapperDTO, GROUP_COMPONENT
+from vtaskr.users.hmi.dto import RoleDTO, RoleMapperDTO, ROLE_COMPONENT
 from vtaskr.users.hmi.flask.decorators import login_required
-from vtaskr.users.services import GroupService
+from vtaskr.users.services import RoleService
 
 from .. import V1, logger, openapi, users_bp, API_ERROR_COMPONENT
 
 api_item = {
     "get": {
-        "description": "Get all groups",
-        "summary": "Give all groups with optionnal filters",
-        "operationId": "getGroups",
+        "description": "Get all roles",
+        "summary": "Give all roles with optionnal filters",
+        "operationId": "getRoles",
         "responses": {
             "200": {
                 "description": "",
                 "content": {
                     "application/json": {
-                        "schema": {"$ref": GROUP_COMPONENT}
+                        "schema": {"$ref": ROLE_COMPONENT}
                     }
                 },
             },
@@ -36,15 +36,15 @@ api_item = {
         },
     },
     "post": {
-        "description": "Create a new group",
-        "summary": "Create a new group and the admin role to the user",
-        "operationId": "createGroup",
+        "description": "Create a new role",
+        "summary": "Create a new role if user id a group's admin",
+        "operationId": "createRole",
         "responses": {
             "201": {
-                "description": "Created group",
+                "description": "Created role",
                 "content": {
                     "application/json": {
-                        "schema": {"$ref": GROUP_COMPONENT}
+                        "schema": {"$ref": ROLE_COMPONENT}
                     }
                 },
             },
@@ -58,45 +58,48 @@ api_item = {
             },
         },
         "requestBody": {
-            "description": "Group to create",
+            "description": "Role to create",
             "content": {
-                "application/json": {"schema": {"$ref": GROUP_COMPONENT}}
+                "application/json": {"schema": {"$ref": ROLE_COMPONENT}}
             },
             "required": True,
         },
     },
 }
-openapi.register_path(f"{V1}/groups", api_item)
+openapi.register_path(f"{V1}/roles", api_item)
 
 
-@users_bp.route(f"{V1}/groups", methods=["GET", "POST"])
+@users_bp.route(f"{V1}/roles", methods=["GET", "POST"])
 @login_required(logger)
 @rate_limited(logger=logger, hit=10, period=timedelta(seconds=60))
-def groups():
+def roles():
     """
-    URL to get current user groups - Token required
+    URL to get current user roles - Token required
 
     Need a valid token
-    Return a list of all groups in which the user have a role
+    Return a list of all roles in which the user have rights
     """
 
     if request.method == "GET":
         with current_app.sql.get_session() as session:
-            group_service = GroupService(session)
-            groups = group_service.get_all_groups(g.user.id)
+            role_service = RoleService(session)
+            roles = role_service.get_all_roles(g.user.id)
 
-            groups_dto = list_models_to_list_dto(GroupMapperDTO, groups)
-            return ResponseAPI.get_response(dto_to_dict(groups_dto), 200)
+            roles_dto = list_models_to_list_dto(RoleMapperDTO, roles)
+            return ResponseAPI.get_response(dto_to_dict(roles_dto), 200)
 
     if request.method == "POST":
-        group_dto = GroupDTO(**request.get_json())
+        role_dto = RoleDTO(**request.get_json())
 
         with current_app.sql.get_session() as session:
-            group_service = GroupService(session)
-            group = group_service.create_group(g.user.id, group_dto.name)
+            role_service = RoleService(session)
+            role = role_service.create_role(
+                g.user.id,
+                RoleMapperDTO.dto_to_model(role_dto),
+            )
 
-            group_dto = GroupMapperDTO.model_to_dto(group)
-            return ResponseAPI.get_response(dto_to_dict(group_dto), 201)
+            role_dto = RoleMapperDTO.model_to_dto(role)
+            return ResponseAPI.get_response(dto_to_dict(role_dto), 201)
 
     else:
         return ResponseAPI.get_error_response({}, 405)
@@ -104,39 +107,39 @@ def groups():
 
 api_item = {
     "get": {
-        "description": "Get the group with specified id",
-        "summary": "Get a group",
-        "operationId": "getGroup",
+        "description": "Get the role with specified id",
+        "summary": "Get a role",
+        "operationId": "getRole",
         "parameters": [
             {
-                "name": "group_id",
+                "name": "role_id",
                 "in": "path",
-                "description": "Id of the group you are looking for",
+                "description": "Id of the role you are looking for",
                 "required": True,
                 "schema": {"type": "string"},
             },
         ],
         "responses": {
             "200": {
-                "description": "A group",
+                "description": "A role",
                 "content": {
                     "application/json": {
-                        "schema": {"$ref": GROUP_COMPONENT}
+                        "schema": {"$ref": ROLE_COMPONENT}
                     }
                 },
             },
         },
     },
     "put": {
-        "description": "Update group",
-        "summary": "Update the group",
-        "operationId": "putGroup",
+        "description": "Update role",
+        "summary": "Update the role",
+        "operationId": "putRole",
         "responses": {
             "200": {
-                "description": "Updated group",
+                "description": "Updated role",
                 "content": {
                     "application/json": {
-                        "schema": {"$ref": GROUP_COMPONENT}
+                        "schema": {"$ref": ROLE_COMPONENT}
                     }
                 },
             },
@@ -150,23 +153,23 @@ api_item = {
             },
         },
         "requestBody": {
-            "description": "Group to update",
+            "description": "Role to update",
             "content": {
-                "application/json": {"schema": {"$ref": GROUP_COMPONENT}}
+                "application/json": {"schema": {"$ref": ROLE_COMPONENT}}
             },
             "required": True,
         },
     },
     "patch": {
-        "description": "Update group",
-        "summary": "Update the group",
-        "operationId": "patchGroup",
+        "description": "Update role",
+        "summary": "Update the role",
+        "operationId": "patchRole",
         "responses": {
             "200": {
-                "description": "Updated group",
+                "description": "Updated role",
                 "content": {
                     "application/json": {
-                        "schema": {"$ref": GROUP_COMPONENT}
+                        "schema": {"$ref": ROLE_COMPONENT}
                     }
                 },
             },
@@ -180,22 +183,22 @@ api_item = {
             },
         },
         "requestBody": {
-            "description": "Group to update",
+            "description": "Role to update",
             "content": {
-                "application/json": {"schema": {"$ref": GROUP_COMPONENT}}
+                "application/json": {"schema": {"$ref": ROLE_COMPONENT}}
             },
             "required": True,
         },
     },
     "delete": {
-        "description": "Delete the group with specified id",
-        "summary": "Delete a group",
-        "operationId": "deleteGroup",
+        "description": "Delete the role with specified id",
+        "summary": "Delete a role",
+        "operationId": "deleteRole",
         "parameters": [
             {
-                "name": "group_id",
+                "name": "role_id",
                 "in": "path",
-                "description": "Id of the group you are looking for",
+                "description": "Id of the role you are looking for",
                 "required": True,
                 "schema": {"type": "string"},
             },
@@ -208,34 +211,34 @@ api_item = {
         },
     },
 }
-openapi.register_path(f"{V1}/group/{{group_id}}", api_item)
-
+openapi.register_path(f"{V1}/role/{{role_id}}", api_item)
 
 @users_bp.route(
-    f"{V1}/group/<string:group_id>", methods=["GET", "PUT", "PATCH", "DELETE"]
+    f"{V1}/role/<string:role_id>", methods=["GET", "PUT", "PATCH", "DELETE"]
 )
 @login_required(logger)
 @rate_limited(logger=logger, hit=5, period=timedelta(seconds=60))
-def group(group_id: str):
+def role(role_id: str):
     with current_app.sql.get_session() as session:
-        group_service = GroupService(session)
-        group = group_service.get_group(g.user.id, group_id)
+        role_service = RoleService(session)
+        role = role_service.get_role(g.user.id, role_id)
 
-        if group:
+        if role:
             if request.method == "GET":
-                group_dto = GroupMapperDTO.model_to_dto(group)
-                return ResponseAPI.get_response(dto_to_dict(group_dto), 200)
+                role_dto = RoleMapperDTO.model_to_dto(role)
+                return ResponseAPI.get_response(dto_to_dict(role_dto), 200)
 
             if request.method in ["PUT", "PATCH"]:
-                group_dto = GroupDTO(**request.get_json())
-                group = GroupMapperDTO.dto_to_model(group_dto, group)
-                if group_service.update_group(g.user.id, group):
-                    group_dto = GroupMapperDTO.model_to_dto(group)
-                    return ResponseAPI.get_response(dto_to_dict(group_dto), 200)
+                role_dto = RoleDTO(**request.get_json())
+                role = RoleMapperDTO.dto_to_model(role_dto, role)
+
+                if role_service.update_role(g.user.id, role):
+                    role_dto = RoleMapperDTO.model_to_dto(role)
+                    return ResponseAPI.get_response(dto_to_dict(role_dto), 200)
                 return ResponseAPI.get_error_response({}, 403)
 
             if request.method == "DELETE":
-                if group_service.delete_group(g.user.id, group):
+                if role_service.delete_role(g.user.id, role):
                     return ResponseAPI.get_response({}, 204)
                 return ResponseAPI.get_error_response({}, 403)
 

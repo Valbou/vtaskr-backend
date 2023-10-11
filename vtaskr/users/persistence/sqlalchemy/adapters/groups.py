@@ -37,9 +37,9 @@ class GroupDB(AbstractGroupPort, DefaultDB):
         return [r[0] for r in session.execute(self.qs.statement)]
 
     def get_all_user_groups(self, session: Session, user_id: str) -> list[Group] | None:
-        self.qs.join(Group.roles).where(
+        self.qs.select().join(Group.roles).where(
             Role.user_id == user_id,
         )
 
-        groups = list(session.execute(self.qs.statement))
+        groups = session.scalars(self.qs.statement).all()
         return groups

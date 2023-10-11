@@ -3,6 +3,8 @@ from dataclasses import dataclass
 from vtaskr.libs.openapi.base import openapi
 from vtaskr.users.models import Group
 
+GROUP_COMPONENT = "#/components/schemas/Group"
+
 group_component = {
     "type": "object",
     "properties": {

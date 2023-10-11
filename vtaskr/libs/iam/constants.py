@@ -4,6 +4,7 @@ from enum import Enum, IntFlag, auto
 class Resources(str, Enum):
     # Users
     GROUP = "group"
+    ROLE = "role"
     ROLETYPE = "roletype"
 
     # Tasks

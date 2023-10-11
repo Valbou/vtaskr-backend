@@ -64,18 +64,22 @@ class GroupService:
             )
         return None
 
-    def update_group(self, user_id: str, group: Group) -> None:
+    def update_group(self, user_id: str, group: Group) -> bool:
         """Update a group if update permission was given"""
 
         if self.control.can(
             Permissions.UPDATE, user_id, group.id, resource=Resources.GROUP
         ):
             self.group_db.save(self.session, group)
+            return True
+        return False
 
-    def delete_group(self, user_id: str, group: Group) -> None:
+    def delete_group(self, user_id: str, group: Group) -> bool:
         """Delete all roles before the group if delete permission was given"""
 
         if self.control.can(
             Permissions.DELETE, user_id, group.id, resource=Resources.GROUP
         ):
             self.group_db.delete(self.session, group)
+            return True
+        return False

@@ -34,6 +34,28 @@ class RightService:
 
         return num_rights
 
+    def create_observer_rights(self, roletype: RoleType) -> int:
+        """Give reader rights on all resources for the given roletype (Admin)"""
+        num_rights = len(
+            [
+                self.right_db.save(
+                    self.session,
+                    Right(
+                        roletype_id=roletype.id,
+                        resource=res,
+                        permissions=[Permissions.READ,],
+                    ),
+                    autocommit=False,
+                )
+                for res in Resources
+            ]
+        )
+
+        # bulk insert
+        self.session.commit()
+
+        return num_rights
+
     def add_right(
         self,
         roletype_id: str,

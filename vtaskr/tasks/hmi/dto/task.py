@@ -17,6 +17,9 @@ task_component = {
         "duration": {"type": "integer", "format": "int32"},
         "created_at": {"type": "string", "format": "date-time"},
     },
+    "required": [
+        "tenant_id", "title"
+    ],
 }
 openapi.register_schemas_components("Task", task_component)
 

@@ -34,7 +34,7 @@ class PermissionControl:
         if not permitted and exception:
             raise PermissionError(
                 f"User {user_id} has no permission {permission.name}"
-                " on {resource} in group {group_id_resource}"
+                f" on {resource} in group {group_id_resource}"
             )
 
         return permitted

@@ -1,20 +1,29 @@
+from typing import TypeVar
+from sqlalchemy import or_
+
 from vtaskr.libs.sqlalchemy.queryset import Queryset
 from vtaskr.users.models import Role
+
+TRoleQueryset = TypeVar("TRoleQueryset", bound="RoleQueryset")
 
 
 class RoleQueryset(Queryset):
     def __init__(self):
         super().__init__(Role)
 
-    def has_right(self, group_id: str, resource: str):
-        self._query = self._query.where(self.qs_class.group_id == group_id)
-
-    def last(self):
-        self._query = self._query.order_by(self.qs_class.created_at.desc()).limit(1)
+    def is_mine(self, user_id: str) -> TRoleQueryset:
+        self._query = self._query.where(self.qs_class.user_id == user_id)
         return self
 
-    def expired(self):
+    def is_under_my_control(self, group_ids: list[str]) -> TRoleQueryset:
+        self._query = self._query.where(self.qs_class.group_id.in_(group_ids))
+        return self
+
+    def both_is_mine_and_is_under_my_control(self, user_id: str, group_ids: list[str]) -> TRoleQueryset:
         self._query = self._query.where(
-            self.qs_class.created_at < self.qs_class.history_expired_before()
+            or_(
+                self.qs_class.user_id == user_id,
+                self.qs_class.group_id.in_(group_ids)
+            )
         )
         return self

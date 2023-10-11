@@ -1,2 +1,3 @@
-from .group import GroupDTO, GroupMapperDTO
-from .user import UserDTO, UserMapperDTO
+from .group import *
+from .user import *
+from .role import *

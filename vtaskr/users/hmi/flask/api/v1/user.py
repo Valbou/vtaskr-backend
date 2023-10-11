@@ -6,11 +6,11 @@ from vtaskr.libs.flask.utils import ResponseAPI
 from vtaskr.libs.hmi import dto_to_dict
 from vtaskr.libs.redis import rate_limited
 from vtaskr.libs.secutity.validators import PasswordComplexityError
-from vtaskr.users.hmi.dto import UserDTO, UserMapperDTO
+from vtaskr.users.hmi.dto import UserDTO, UserMapperDTO, USER_COMPONENT
 from vtaskr.users.hmi.flask.decorators import login_required
 from vtaskr.users.services import UserService
 
-from .. import V1, logger, openapi, users_bp
+from .. import V1, logger, openapi, users_bp, API_ERROR_COMPONENT
 
 api_item = {
     "get": {
@@ -22,7 +22,7 @@ api_item = {
                 "description": "no response content",
                 "content": {
                     "application/json": {
-                        "schema": {"$ref": "#/components/schemas/User"}
+                        "schema": {"$ref": USER_COMPONENT}
                     }
                 },
             },
@@ -30,7 +30,7 @@ api_item = {
                 "description": "Unauthorized",
                 "content": {
                     "application/json": {
-                        "schema": {"$ref": "#/components/schemas/APIError"}
+                        "schema": {"$ref": API_ERROR_COMPONENT}
                     }
                 },
             },
@@ -64,7 +64,7 @@ api_item = {
                 "description": "no response content",
                 "content": {
                     "application/json": {
-                        "schema": {"$ref": "#/components/schemas/User"}
+                        "schema": {"$ref": USER_COMPONENT}
                     }
                 },
             },
@@ -72,7 +72,7 @@ api_item = {
                 "description": "Unauthorized",
                 "content": {
                     "application/json": {
-                        "schema": {"$ref": "#/components/schemas/APIError"}
+                        "schema": {"$ref": API_ERROR_COMPONENT}
                     }
                 },
             },
@@ -82,7 +82,7 @@ api_item = {
             "content": {
                 "application/json": {
                     "schema": {
-                        "$ref": "#/components/schemas/User",
+                        "$ref": USER_COMPONENT,
                     }
                 }
             },
@@ -98,7 +98,7 @@ api_item = {
                 "description": "no response content",
                 "content": {
                     "application/json": {
-                        "schema": {"$ref": "#/components/schemas/User"}
+                        "schema": {"$ref": USER_COMPONENT}
                     }
                 },
             },
@@ -106,7 +106,7 @@ api_item = {
                 "description": "Unauthorized",
                 "content": {
                     "application/json": {
-                        "schema": {"$ref": "#/components/schemas/APIError"}
+                        "schema": {"$ref": API_ERROR_COMPONENT}
                     }
                 },
             },
@@ -116,7 +116,7 @@ api_item = {
             "content": {
                 "application/json": {
                     "schema": {
-                        "$ref": "#/components/schemas/User",
+                        "$ref": USER_COMPONENT,
                     }
                 }
             },

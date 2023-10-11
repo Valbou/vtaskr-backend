@@ -1,18 +1,22 @@
+from typing import TypeVar
+
 from sqlalchemy import and_, or_
 
 from vtaskr.libs.sqlalchemy.queryset import Queryset
 from vtaskr.users.models import Token
+
+TTokenQueryset = TypeVar("TTokenQueryset", bound="TTokenQueryset")
 
 
 class TokenQueryset(Queryset):
     def __init__(self):
         super().__init__(Token)
 
-    def by_sha(self, sha_token: str):
+    def by_sha(self, sha_token: str) -> TTokenQueryset:
         self._query = self._query.where(self.qs_class.sha_token == sha_token)
         return self
 
-    def expired(self):
+    def expired(self) -> TTokenQueryset:
         self._query = self._query.where(
             or_(
                 self.qs_class.last_activity_at < self.qs_class.expired_before(),
