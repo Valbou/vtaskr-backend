@@ -4,6 +4,8 @@ from vtaskr.libs.iam.constants import Permissions
 from vtaskr.libs.openapi.base import openapi
 from vtaskr.users.models import Right
 
+RIGHT_COMPONENT = "#/components/schemas/Right"
+
 right_component = {
     "type": "object",
     "properties": {
@@ -38,10 +40,21 @@ class RightMapperDTO:
         )
 
     @classmethod
-    def dto_to_model(cls, right_dto: RightDTO, right: Right) -> Right:
-        right.roletype_id = right_dto.roletype_id
-        right.resource = right_dto.resource
-        right.permissions = [
-            perm for perm in Permissions if right_dto.permissions & perm
-        ]
+    def dto_to_model(cls, right_dto: RightDTO, right: Right | None = None) -> Right:
+        if not right:
+            right = Right(
+                roletype_id=right_dto.roletype_id,
+                resource=right_dto.resource,
+                permissions=[
+                    perm for perm in Permissions if right_dto.permissions & perm
+                ],
+            )
+
+        else:
+            right.roletype_id = right_dto.roletype_id
+            right.resource = right_dto.resource
+            right.permissions = [
+                perm for perm in Permissions if right_dto.permissions & perm
+            ]
+
         return right

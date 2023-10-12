@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 
 from vtaskr.libs.iam.constants import Permissions, Resources
-from vtaskr.users.models import Group, User
+from vtaskr.users.models import Group
 from vtaskr.users.persistence import GroupDB
 from vtaskr.users.services.permission_service import PermissionControl
 
@@ -19,7 +19,7 @@ class GroupService:
         self.group_db = GroupDB()
         self.control = PermissionControl(self.session)
 
-    def create_group(self, user: User, group_name: str) -> Group:
+    def create_group(self, user_id: str, group_name: str) -> Group:
         """Create a new user group"""
 
         group = Group(name=group_name)
@@ -34,15 +34,15 @@ class GroupService:
 
         role_service = RoleService(self.session)
         role_service.add_role(
-            user_id=user.id, group_id=group.id, roletype_id=roletype.id
+            user_id=user_id, group_id=group.id, roletype_id=roletype.id
         )
 
         return group
 
-    def create_private_group(self, user: User) -> Group:
+    def create_private_group(self, user_id: str) -> Group:
         """Create a default mandatory group to use this app"""
 
-        return self.create_group(user=user, group_name="Private")
+        return self.create_group(user_id=user_id, group_name="Private")
 
     def get_all_groups(self, user_id: str) -> list[Group] | None:
         """Return all user associated groups"""

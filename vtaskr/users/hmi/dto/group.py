@@ -36,6 +36,7 @@ class GroupMapperDTO:
     def dto_to_model(cls, group_dto: GroupDTO, group: Group | None = None) -> Group:
         if not group:
             group = Group(name=group_dto.name)
+        else:
+            group.name = group_dto.name
 
-        group.name = group_dto.name
         return group

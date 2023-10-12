@@ -3,7 +3,7 @@ from datetime import timedelta
 from flask import current_app, g, request
 
 from vtaskr.libs.flask.utils import ResponseAPI
-from vtaskr.libs.hmi import dto_to_dict, list_models_to_list_dto
+from vtaskr.libs.hmi import dto_to_dict, list_dto_to_dict, list_models_to_list_dto
 from vtaskr.libs.redis import rate_limited
 from vtaskr.users.hmi.dto import ROLE_COMPONENT, RoleDTO, RoleMapperDTO
 from vtaskr.users.hmi.flask.decorators import login_required
@@ -72,7 +72,7 @@ def roles():
             roles = role_service.get_all_roles(g.user.id)
 
             roles_dto = list_models_to_list_dto(RoleMapperDTO, roles)
-            return ResponseAPI.get_response(dto_to_dict(roles_dto), 200)
+            return ResponseAPI.get_response(list_dto_to_dict(roles_dto), 200)
 
     if request.method == "POST":
         role_dto = RoleDTO(**request.get_json())

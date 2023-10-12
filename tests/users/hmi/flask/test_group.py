@@ -21,6 +21,21 @@ class TestGroupAPI(BaseTestCase):
         response = self.client.get(f"{URL_API}/group/{self.group.id}", headers=headers)
         self.assertEqual(response.status_code, 200)
 
+    def test_create_group(self):
+        headers = self.get_token_headers()
+
+        name = self.fake.word()
+        data = {"name": name}
+        response = self.client.post(f"{URL_API}/groups", json=data, headers=headers)
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.json.get("name"), name)
+
+    def test_get_all_groups(self):
+        headers = self.get_token_headers()
+        response = self.client.get(f"{URL_API}/groups", headers=headers)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.json), 1)
+
     def test_update_group_put(self):
         headers = self.get_token_headers()
 
@@ -63,7 +78,7 @@ class TestGroupAPI(BaseTestCase):
         with self.app.sql.get_session() as session:
             self.group_service = GroupService(session=session)
             group = self.group_service.create_group(
-                user=self.user, group_name=self.fake.word()
+                user_id=self.user.id, group_name=self.fake.word()
             )
 
             response = self.client.get(f"{URL_API}/group/{group.id}", headers=headers)

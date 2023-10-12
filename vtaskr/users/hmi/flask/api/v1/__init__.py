@@ -5,5 +5,6 @@ from .group import *
 from .login import *
 from .logout import *
 from .register import *
+from .right import *
 from .role import *
 from .user import *

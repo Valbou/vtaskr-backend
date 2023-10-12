@@ -47,6 +47,33 @@ class TestRoleAPI(BaseTestCase):
             response = self.client.get(f"{URL_API}/role/{role.id}", headers=headers)
             self.assertEqual(response.status_code, 200)
 
+    def test_get_all_my_roles(self):
+        headers = self.get_token_headers()
+        response = self.client.get(f"{URL_API}/roles", headers=headers)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIsInstance(response.json, list)
+        self.assertEqual(len(response.json), 1)
+
+    def test_create_a_new_role(self):
+        headers = self.get_token_headers()
+        self.user_0, self.group_0 = self.user, self.group
+        self.create_user()
+
+        with self.app.sql.get_session() as session:
+            roletype_service = RoleTypeService(session=session)
+            roletype = roletype_service.get_default_admin()
+
+            data = {
+                "user_id": self.user.id,
+                "group_id": self.group_0.id,
+                "roletype_id": roletype.id,
+            }
+            response = self.client.post(f"{URL_API}/roles", json=data, headers=headers)
+
+            self.assertEqual(response.status_code, 201)
+            self.assertEqual(response.json.get("roletype_id"), roletype.id)
+
     def test_get_colleague_role(self):
         headers = self.get_token_headers()
         with self.app.sql.get_session() as session:

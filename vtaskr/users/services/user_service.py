@@ -33,7 +33,7 @@ class UserService:
         from .group_service import GroupService
 
         group_service = GroupService(self.session)
-        group = group_service.create_private_group(user)
+        group = group_service.create_private_group(user_id=user.id)
 
         return (user, group)
 

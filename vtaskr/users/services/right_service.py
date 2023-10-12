@@ -64,7 +64,10 @@ class RightService:
         resource: Resources,
         permissions: list[Permissions] | Permissions,
     ) -> Right:
-        """Helper to add right to a roletype"""
+        """
+        Helper to add right to a roletype
+        Prefer create_right for unsafe use
+        """
         if isinstance(permissions, Permissions):
             permissions = [
                 permissions,
@@ -78,3 +81,73 @@ class RightService:
         self.right_db.save(self.session, right)
 
         return right
+
+    def create_right(self, user_id: str, group_id: str, right: Right) -> Right | None:
+        """Add a right with permission controls"""
+
+        if self.control.can(
+            Permissions.CREATE,
+            user_id=user_id,
+            group_id_resource=group_id,
+            resource=Resources.ROLETYPE,
+            exception=True,
+        ):
+            self.right_db.save(self.session, right)
+            return right
+        return None
+
+    def get_right(self, user_id, right_id) -> Right | None:
+        """Return the right expected if user has read permission"""
+
+        group_ids = self.control.all_tenants_with_access(
+            Permissions.READ, user_id=user_id, resource=Resources.ROLETYPE
+        )
+        return self.right_db.get_a_user_right(
+            self.session, user_id, right_id, group_ids=group_ids
+        )
+
+    def get_all_rights(self, user_id: str) -> list[Right]:
+        """Return a list of all user's available rights"""
+
+        group_ids = self.control.all_tenants_with_access(
+            Permissions.READ, user_id=user_id, resource=Resources.ROLETYPE
+        )
+        return self.right_db.get_all_user_rights(
+            self.session, user_id, group_ids=group_ids
+        )
+
+    def update_right(self, user_id: str, right: Right, roletype: RoleType) -> bool:
+        """Update a right if update permission was given"""
+
+        # A user can't change global rights or right not bounded to the user
+        if (
+            right.roletype_id == roletype.id
+            and roletype.group_id
+            and self.control.can(
+                Permissions.UPDATE,
+                user_id,
+                roletype.group_id,
+                resource=Resources.ROLETYPE,
+            )
+        ):
+            self.right_db.save(self.session, right)
+            return True
+        return False
+
+    def delete_right(self, user_id: str, right: Right, roletype: RoleType) -> bool:
+        """Delete a right if delete permission was given"""
+
+        # A user can't delete global rights or right not bounded to the user
+        if (
+            right.roletype_id == roletype.id
+            and roletype.group_id
+            and self.control.can(
+                Permissions.DELETE,
+                user_id,
+                roletype.group_id,
+                resource=Resources.ROLETYPE,
+            )
+        ):
+            self.right_db.delete(self.session, right)
+            return True
+        return False

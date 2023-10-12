@@ -48,8 +48,9 @@ class RoleMapperDTO:
                 roletype_id=role_dto.roletype_id,
             )
 
-        role.user_id = role_dto.user_id
-        role.group_id = role_dto.group_id
-        role.roletype_id = role_dto.roletype_id
+        else:
+            role.user_id = role_dto.user_id
+            role.group_id = role_dto.group_id
+            role.roletype_id = role_dto.roletype_id
 
         return role

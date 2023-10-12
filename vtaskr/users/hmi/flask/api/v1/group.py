@@ -3,7 +3,7 @@ from datetime import timedelta
 from flask import current_app, g, request
 
 from vtaskr.libs.flask.utils import ResponseAPI
-from vtaskr.libs.hmi import dto_to_dict, list_models_to_list_dto
+from vtaskr.libs.hmi import dto_to_dict, list_dto_to_dict, list_models_to_list_dto
 from vtaskr.libs.redis import rate_limited
 from vtaskr.users.hmi.dto import GROUP_COMPONENT, GroupDTO, GroupMapperDTO
 from vtaskr.users.hmi.flask.decorators import login_required
@@ -72,7 +72,7 @@ def groups():
             groups = group_service.get_all_groups(g.user.id)
 
             groups_dto = list_models_to_list_dto(GroupMapperDTO, groups)
-            return ResponseAPI.get_response(dto_to_dict(groups_dto), 200)
+            return ResponseAPI.get_response(list_dto_to_dict(groups_dto), 200)
 
     if request.method == "POST":
         group_dto = GroupDTO(**request.get_json())

@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 
-# from vtaskr.libs.iam.constants import Permissions, Resources
+from vtaskr.libs.iam.constants import Permissions, Resources
 from vtaskr.users.models import RoleType
 from vtaskr.users.persistence import RoleTypeDB
 from vtaskr.users.services.permission_service import PermissionControl
@@ -51,3 +51,47 @@ class RoleTypeService:
         )
 
         return roletype
+
+    def get_roletype(self, user_id: str, roletype_id: str) -> RoleType | None:
+        """Return the roletype expected if user has read permission"""
+
+        group_ids = self.control.all_tenants_with_access(
+            Permissions.READ, user_id=user_id, resource=Resources.ROLETYPE
+        )
+
+        return self.roletype_db.get_a_user_roletype(
+            self.session, roletype_id, group_ids=group_ids
+        )
+
+    def get_all_roletypes(self, user_id: str) -> list[RoleType]:
+        """Return a list of all user's available roletypes"""
+
+        group_ids = self.control.all_tenants_with_access(
+            Permissions.READ, user_id=user_id, resource=Resources.ROLETYPE
+        )
+
+        return self.roletype_db.get_all_user_roletypes(
+            self.session, group_ids=group_ids
+        )
+
+    def update_roletype(self, user_id: str, roletype: RoleType) -> bool:
+        """Update a roletype if update permission was given"""
+
+        # A user can't change global roletypes
+        if self.control.can(
+            Permissions.UPDATE, user_id, roletype.group_id, resource=Resources.ROLETYPE
+        ):
+            self.roletype_db.save(self.session, roletype)
+            return True
+        return False
+
+    def delete_roletype(self, user_id: str, roletype: RoleType) -> bool:
+        """Delete a roletype if delete permission was given"""
+
+        # A user can't delete global roletypes
+        if self.control.can(
+            Permissions.DELETE, user_id, roletype.group_id, resource=Resources.ROLETYPE
+        ):
+            self.roletype_db.delete(self.session, roletype)
+            return True
+        return False
