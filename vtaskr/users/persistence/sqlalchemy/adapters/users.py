@@ -1,5 +1,3 @@
-from typing import Optional
-
 from sqlalchemy.orm import Session
 
 from vtaskr.libs.iam.constants import Permissions, Resources
@@ -26,7 +24,7 @@ class UserDB(AbstractUserPort, DefaultDB):
         if autocommit:
             session.commit()
 
-    def find_login(self, session: Session, email: str) -> Optional[User]:
+    def find_login(self, session: Session, email: str) -> User | None:
         self.qs.by_email(email)
         result = session.scalars(self.qs.statement).one_or_none()
         return result

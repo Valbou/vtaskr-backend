@@ -1,5 +1,4 @@
 from datetime import datetime, timedelta
-from typing import Optional
 from unittest import TestCase
 
 from faker import Faker
@@ -15,7 +14,7 @@ class TestRequestChange(TestCase):
         self.fake = Faker()
 
     def create_request_change(
-        self, type: RequestType = RequestType.PASSWORD, email: Optional[str] = None
+        self, type: RequestType = RequestType.PASSWORD, email: str | None = None
     ) -> RequestChange:
         email = email or self.fake.email(domain="valbou.fr")
         return RequestChange(type, email)
@@ -24,7 +23,7 @@ class TestRequestChange(TestCase):
         self.assertEqual(RequestChange.__annotations__.get("id"), str)
         self.assertEqual(RequestChange.__annotations__.get("created_at"), datetime)
         self.assertEqual(
-            RequestChange.__annotations__.get("request_type"), Optional[RequestType]
+            RequestChange.__annotations__.get("request_type"), RequestType | None
         )
         self.assertEqual(RequestChange.__annotations__.get("email"), str)
         self.assertEqual(RequestChange.__annotations__.get("code"), str)

@@ -43,15 +43,10 @@ def logout():
     Need a valid token
     Return a 204
     """
-    try:
-        with current_app.sql.get_session() as session:
-            auth_service = UserService(session)
-            if auth_service.logout(g.token):
-                data = {}
-                return ResponseAPI.get_response(data, 204)
-            else:
-                return ResponseAPI.get_error_response("Unauthorized", 403)
-
-    except Exception as e:
-        logger.error(str(e))
-        return ResponseAPI.get_error_response("Internal error", 500)
+    with current_app.sql.get_session() as session:
+        auth_service = UserService(session)
+        if auth_service.logout(g.token):
+            data = {}
+            return ResponseAPI.get_response(data, 204)
+        else:
+            return ResponseAPI.get_403_response("Unauthorized")

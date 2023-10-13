@@ -1,9 +1,11 @@
-from dataclasses import asdict, dataclass
+from dataclasses import dataclass
 
 from babel import Locale
 
 from vtaskr.libs.openapi.base import openapi
 from vtaskr.users.models import User
+
+USER_COMPONENT = "#/components/schemas/User"
 
 user_component = {
     "type": "object",
@@ -17,6 +19,7 @@ user_component = {
         "created_at": {"type": "string", "format": "date-time"},
         "last_login_at": {"type": "string", "format": "date-time"},
     },
+    "required": ["first_name", "last_name", "email", "locale", "timezone"],
 }
 openapi.register_schemas_components("User", user_component)
 
@@ -54,7 +57,3 @@ class UserMapperDTO:
         user.locale = Locale.parse(user_dto.locale)
         user.timezone = user_dto.timezone
         return user
-
-    @classmethod
-    def dto_to_dict(cls, user_dto: UserDTO) -> dict:
-        return asdict(user_dto)

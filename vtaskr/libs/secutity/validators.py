@@ -1,13 +1,12 @@
 from gettext import gettext as _
 from string import ascii_lowercase, ascii_uppercase, digits, punctuation
-from typing import Optional
 
 from email_validator import validate_email
 
 from vtaskr.base.config import PASSWORD_MIN_LENGTH
 
 
-def get_valid_email(email: str) -> Optional[str]:
+def get_valid_email(email: str) -> str | None:
     validation = validate_email(email, check_deliverability=True)
     return validation.email
 

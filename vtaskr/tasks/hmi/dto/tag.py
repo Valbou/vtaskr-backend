@@ -1,5 +1,4 @@
-from dataclasses import asdict, dataclass
-from typing import Optional
+from dataclasses import dataclass
 
 from vtaskr.libs.openapi.base import openapi
 from vtaskr.tasks.models import Color, Tag
@@ -14,13 +13,14 @@ tag_component = {
         "text_color": {"type": "string"},
         "created_at": {"type": "string", "format": "date-time"},
     },
+    "required": ["tenant_id", "title"],
 }
 openapi.register_schemas_components("Tag", tag_component)
 
 
 @dataclass
 class TagDTO:
-    id: Optional[str] = ""
+    id: str | None = ""
     created_at: str = ""
     tenant_id: str = ""
     title: str = ""
@@ -41,25 +41,11 @@ class TagMapperDTO:
         )
 
     @classmethod
-    def list_models_to_list_dto(cls, tags: list[Tag] | None) -> list[TagDTO] | None:
-        return [TagMapperDTO.model_to_dto(t) for t in tags] if tags else None
-
-    @classmethod
-    def dto_to_model(
-        cls, tenant_id: str, tag_dto: TagDTO, tag: Optional[Tag] = None
-    ) -> Tag:
+    def dto_to_model(cls, tag_dto: TagDTO, tag: Tag | None = None) -> Tag:
         if not tag:
-            tag = Tag(tenant_id=tenant_id, title=tag_dto.title)
+            tag = Tag(tenant_id=tag_dto.tenant_id, title=tag_dto.title)
 
         tag.title = tag_dto.title
         tag.color = Color(tag_dto.backgound_color, tag_dto.text_color)
 
         return tag
-
-    @classmethod
-    def dto_to_dict(cls, tag_dto: TagDTO) -> dict:
-        return asdict(tag_dto)
-
-    @classmethod
-    def list_dto_to_dict(cls, tags_dto: list[TagDTO]) -> list[dict]:
-        return [asdict(tag_dto) for tag_dto in tags_dto]

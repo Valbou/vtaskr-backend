@@ -1,13 +1,12 @@
 from abc import ABC
-from typing import Optional
 
 from vtaskr.libs.notifications.message import AbstractMessage
 
 
 class AbstractBaseEmailContent(AbstractMessage, ABC):
-    from_email: Optional[str] = None
+    from_email: str | None = None
     to: list[str] = []
     subject: str = ""
     text: str = ""
     html: str = ""
-    cc: Optional[list[str]] = None
+    cc: list[str] | None = None

@@ -2,7 +2,6 @@ import os
 import ssl
 from email.message import EmailMessage
 from smtplib import SMTP_SSL
-from typing import Optional
 
 from .base_email import AbstractBaseEmailContent
 
@@ -12,10 +11,10 @@ class NoEmailContentError(Exception):
 
 
 def get_smtp_server(
-    host: Optional[str] = None,
-    port: Optional[str] = None,
-    user: Optional[str] = None,
-    password: Optional[str] = None,
+    host: str | None = None,
+    port: str | None = None,
+    user: str | None = None,
+    password: str | None = None,
 ) -> SMTP_SSL:
     ssl_default_context = ssl.create_default_context()
     host = host or os.getenv("DEFAULT_SMTP_HOST")
@@ -36,8 +35,8 @@ class SMTPEmail:
         subject: str,
         text: str = "",
         html: str = "",
-        cc_emails: Optional[list[str]] = None,
-        bcc_emails: Optional[list[str]] = None,
+        cc_emails: list[str] | None = None,
+        bcc_emails: list[str] | None = None,
     ) -> None:
         if not text and not html:
             raise NoEmailContentError("Error: Email as no content !")
@@ -69,10 +68,10 @@ class SMTPEmail:
 
     def send(
         self,
-        host: Optional[str] = None,
-        port: Optional[str] = None,
-        user: Optional[str] = None,
-        password: Optional[str] = None,
+        host: str | None = None,
+        port: str | None = None,
+        user: str | None = None,
+        password: str | None = None,
     ):
         server = get_smtp_server(host, port, user, password)
         server.sendmail(self.from_email, self.to_emails, self.message.as_string())
@@ -80,7 +79,7 @@ class SMTPEmail:
 
     @classmethod
     def from_base_email_content(
-        cls, email: AbstractBaseEmailContent, from_email: Optional[str] = None
+        cls, email: AbstractBaseEmailContent, from_email: str | None = None
     ):
         from_email = from_email or os.getenv("DEFAULT_SMTP_USER")
         return SMTPEmail(
@@ -102,10 +101,10 @@ class MultiSMTPEmail:
 
     def send_all(
         self,
-        host: Optional[str] = None,
-        port: Optional[str] = None,
-        user: Optional[str] = None,
-        password: Optional[str] = None,
+        host: str | None = None,
+        port: str | None = None,
+        user: str | None = None,
+        password: str | None = None,
     ):
         server = get_smtp_server(host, port, user, password)
         for email in self.emails:

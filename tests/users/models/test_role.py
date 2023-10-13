@@ -1,5 +1,4 @@
 from datetime import datetime
-from typing import Optional
 from unittest import TestCase
 
 from faker import Faker
@@ -24,4 +23,4 @@ class TestRole(TestCase):
         self.assertEqual(Role.__annotations__.get("user_id"), str)
         self.assertEqual(Role.__annotations__.get("group_id"), str)
         self.assertEqual(Role.__annotations__.get("roletype_id"), str)
-        self.assertEqual(Role.__annotations__.get("color"), Optional[Color])
+        self.assertEqual(Role.__annotations__.get("color"), Color)

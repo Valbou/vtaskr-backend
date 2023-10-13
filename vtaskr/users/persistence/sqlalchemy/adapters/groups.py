@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 
+from vtaskr.libs.flask.querystring import Filter
 from vtaskr.libs.iam.constants import Permissions, Resources
 from vtaskr.libs.sqlalchemy.default_adapter import DefaultDB
 from vtaskr.users.models import Group, Right, Role, RoleType
@@ -35,3 +36,20 @@ class GroupDB(AbstractGroupPort, DefaultDB):
         )
 
         return [r[0] for r in session.execute(self.qs.statement)]
+
+    def get_all_user_groups(
+        self,
+        session: Session,
+        user_id: str,
+        filters: list[Filter] | None = None,
+    ) -> list[Group] | None:
+        filters = filters or []
+        if filters:
+            self.qs.from_filters(filters)
+
+        self.qs.select().join(Group.roles).where(
+            Role.user_id == user_id,
+        )
+
+        groups = session.scalars(self.qs.statement).all()
+        return groups

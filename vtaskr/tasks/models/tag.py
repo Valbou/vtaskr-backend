@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Any, Optional
+from typing import Any
 
 from pytz import utc
 
@@ -11,20 +11,20 @@ from vtaskr.libs.secutity.utils import get_id
 @dataclass
 class Tag:
     id: str = ""
-    created_at: Optional[datetime] = None
+    created_at: datetime | None = None
     tenant_id: str = ""
     title: str = ""
-    color: Optional[Color] = None
-    tasks: Optional[list[Any]] = None
+    color: Color | None = None
+    tasks: list[Any] | None = None
 
     def __init__(
         self,
         tenant_id: str,
         title: str,
-        color: Optional[Color] = None,
-        id: Optional[str] = None,
-        created_at: Optional[datetime] = None,
-        tasks: Optional[list[Any]] = None,
+        color: Color | None = None,
+        id: str | None = None,
+        created_at: datetime | None = None,
+        tasks: list[Any] | None = None,
     ) -> None:
         self.id = id or get_id()
         self.created_at = created_at or datetime.now(utc)

@@ -1,10 +1,12 @@
-from typing import Optional, Tuple
+from typing import Tuple
 
 from sqlalchemy.orm import Session
 
+from vtaskr.libs.iam.constants import Permissions, Resources
 from vtaskr.users import RequestChange, RequestType, Token, User
 from vtaskr.users.hmi.dto import UserDTO
 from vtaskr.users.persistence import RequestChangeDB, TokenDB, UserDB
+from vtaskr.users.services import PermissionControl
 
 
 class EmailAlreadyUsedError(Exception):
@@ -17,6 +19,7 @@ class UserService:
         self.user_db = UserDB()
         self.token_db = TokenDB()
         self.request_change_db = RequestChangeDB()
+        self.control = PermissionControl(session=self.session)
 
     def register(self, user_dto: UserDTO, password: str) -> User:
         """Add a new user and his group with admin role"""
@@ -33,9 +36,12 @@ class UserService:
         from .group_service import GroupService
 
         group_service = GroupService(self.session)
-        group = group_service.create_private_group(user)
+        group = group_service.create_private_group(user_id=user.id)
 
         return (user, group)
+
+    def find_login(self, email: str) -> User | None:
+        return self.user_db.find_login(self.session, email=email)
 
     def clean_unused_accounts(self):
         """Clean all account whithout last_login_at"""
@@ -44,7 +50,7 @@ class UserService:
 
     def authenticate(
         self, email: str, password: str
-    ) -> Tuple[Optional[Token], Optional[User]]:
+    ) -> Tuple[Token | None, User | None]:
         """Create a token only if user and password are ok"""
 
         self.token_db.clean_expired(self.session)
@@ -68,7 +74,7 @@ class UserService:
             return True
         return False
 
-    def user_from_token(self, sha_token: str) -> Optional[User]:
+    def user_from_token(self, sha_token: str) -> User | None:
         """Load a user from a given token"""
 
         token = self.token_db.get_token(self.session, sha_token)
@@ -99,6 +105,10 @@ class UserService:
         request_change = RequestChange(request_type, email=email)
         self.request_change_db.save(self.session, request_change)
         return request_change
+
+    def update(self, user: User) -> None:
+        """Update user"""
+        self.user_db.update(self.session, user)
 
     def set_new_password(self, email: str, hash: str, password: str) -> bool:
         """Set the new password to user if request is ok"""
@@ -134,4 +144,18 @@ class UserService:
             self.session.commit()
             return True
 
+        return False
+
+    def delete(self, user: User) -> bool:
+        """
+        Delete a user if he is not an admin of many groups
+        Otherwise it can lead to a deadlock for members left
+        """
+
+        group_id = self.control.all_tenants_with_access(
+            Permissions.CREATE, user.id, Resources.ROLETYPE
+        )
+        if len(group_id) <= 1:
+            self.user_db.delete(self.session, user)
+            return True
         return False

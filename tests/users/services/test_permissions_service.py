@@ -20,6 +20,7 @@ class CheckCanMixin:
                 user_id=user_id,
                 group_id_resource=group_id_resource,
                 resource=Resources.ROLETYPE,
+                exception=False,
             )
 
 
@@ -118,7 +119,7 @@ class TestPermissionControlOnOthersGroups(BaseTestCase, CheckCanMixin):
 
             group_service = GroupService(session)
             self.shared_group = group_service.create_group(
-                first_user, "My Shared Group"
+                user_id=first_user.id, group_name="My Shared Group"
             )
 
             roletype_service = RoleTypeService(session)

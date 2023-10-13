@@ -25,8 +25,8 @@ def rate_limited(
                 )()
                 return func(*args, **kwargs)
             except LimitExceededError as e:
-                logger.warning(str(e))
-                return ResponseAPI.get_error_response("Too many requests", 429)
+                logger.warning(f"429 Error: {e}")
+                return ResponseAPI.get_429_response()
 
         return wrapper
 

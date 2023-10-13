@@ -3,13 +3,13 @@ from datetime import timedelta
 from flask import current_app, g, request
 
 from vtaskr.libs.flask.utils import ResponseAPI
+from vtaskr.libs.hmi import dto_to_dict
 from vtaskr.libs.redis import rate_limited
-from vtaskr.libs.secutity.validators import PasswordComplexityError
-from vtaskr.users.hmi.dto import UserDTO, UserMapperDTO
+from vtaskr.users.hmi.dto import USER_COMPONENT, UserDTO, UserMapperDTO
 from vtaskr.users.hmi.flask.decorators import login_required
-from vtaskr.users.persistence import UserDB
+from vtaskr.users.services import UserService
 
-from .. import V1, logger, openapi, users_bp
+from .. import API_ERROR_COMPONENT, V1, logger, openapi, users_bp
 
 api_item = {
     "get": {
@@ -19,18 +19,12 @@ api_item = {
         "responses": {
             "200": {
                 "description": "no response content",
-                "content": {
-                    "application/json": {
-                        "schema": {"$ref": "#/components/schemas/User"}
-                    }
-                },
+                "content": {"application/json": {"schema": {"$ref": USER_COMPONENT}}},
             },
             "403": {
                 "description": "Unauthorized",
                 "content": {
-                    "application/json": {
-                        "schema": {"$ref": "#/components/schemas/APIError"}
-                    }
+                    "application/json": {"schema": {"$ref": API_ERROR_COMPONENT}}
                 },
             },
         },
@@ -49,17 +43,8 @@ def me():
     Need a valid token
     Return a jsonify user
     """
-    try:
-        if g.user:
-            user_dto = UserMapperDTO.model_to_dto(g.user)
-            return ResponseAPI.get_response(UserMapperDTO.dto_to_dict(user_dto), 200)
-
-        else:
-            return ResponseAPI.get_error_response("Invalid token", 403)
-
-    except Exception as e:
-        logger.error(str(e))
-        return ResponseAPI.get_error_response("Internal error", 500)
+    user_dto = UserMapperDTO.model_to_dto(g.user)
+    return ResponseAPI.get_response(dto_to_dict(user_dto), 200)
 
 
 api_item = {
@@ -70,18 +55,12 @@ api_item = {
         "responses": {
             "200": {
                 "description": "no response content",
-                "content": {
-                    "application/json": {
-                        "schema": {"$ref": "#/components/schemas/User"}
-                    }
-                },
+                "content": {"application/json": {"schema": {"$ref": USER_COMPONENT}}},
             },
             "403": {
                 "description": "Unauthorized",
                 "content": {
-                    "application/json": {
-                        "schema": {"$ref": "#/components/schemas/APIError"}
-                    }
+                    "application/json": {"schema": {"$ref": API_ERROR_COMPONENT}}
                 },
             },
         },
@@ -90,7 +69,7 @@ api_item = {
             "content": {
                 "application/json": {
                     "schema": {
-                        "$ref": "#/components/schemas/User",
+                        "$ref": USER_COMPONENT,
                     }
                 }
             },
@@ -104,18 +83,12 @@ api_item = {
         "responses": {
             "200": {
                 "description": "no response content",
-                "content": {
-                    "application/json": {
-                        "schema": {"$ref": "#/components/schemas/User"}
-                    }
-                },
+                "content": {"application/json": {"schema": {"$ref": USER_COMPONENT}}},
             },
             "403": {
                 "description": "Unauthorized",
                 "content": {
-                    "application/json": {
-                        "schema": {"$ref": "#/components/schemas/APIError"}
-                    }
+                    "application/json": {"schema": {"$ref": API_ERROR_COMPONENT}}
                 },
             },
         },
@@ -124,7 +97,7 @@ api_item = {
             "content": {
                 "application/json": {
                     "schema": {
-                        "$ref": "#/components/schemas/User",
+                        "$ref": USER_COMPONENT,
                     }
                 }
             },
@@ -132,10 +105,10 @@ api_item = {
         },
     },
 }
-openapi.register_path(f"{V1}/users/me/update", api_item)
+openapi.register_path(f"{V1}/users/me", api_item)
 
 
-@users_bp.route(f"{V1}/users/me/update", methods=["PUT", "PATCH"])
+@users_bp.route(f"{V1}/users/me", methods=["PUT", "PATCH"])
 @login_required(logger)
 @rate_limited(logger=logger, hit=5, period=timedelta(seconds=60))
 def update_me():
@@ -145,21 +118,60 @@ def update_me():
     Need a valid token
     Return a jsonify user updated
     """
-    try:
-        if g.user is None:
-            return ResponseAPI.get_error_response("Invalid token", 401)
 
-        else:
-            user_db = UserDB()
-            with current_app.sql.get_session() as session:
-                user_dto = UserDTO(**request.get_json())
-                g.user = UserMapperDTO.dto_to_model(user_dto, g.user)
-                user_db.update(session, g.user)
-                user_dto = UserMapperDTO.model_to_dto(g.user)
-            return ResponseAPI.get_response(UserMapperDTO.dto_to_dict(user_dto), 200)
+    user_dto = UserDTO(**request.get_json())
+    g.user = UserMapperDTO.dto_to_model(user_dto, g.user)
 
-    except PasswordComplexityError as e:
-        return ResponseAPI.get_error_response(str(e), 400)
-    except Exception as e:
-        logger.error(str(e))
-        return ResponseAPI.get_error_response("Internal error", 500)
+    with current_app.sql.get_session() as session:
+        user_service = UserService(session=session)
+        user_service.update(g.user)
+        user_dto = UserMapperDTO.model_to_dto(g.user)
+
+    return ResponseAPI.get_response(dto_to_dict(user_dto), 200)
+
+
+api_item = {
+    "delete": {
+        "description": "Delete current user",
+        "summary": "Delete current user",
+        "operationId": "deleteUser",
+        "responses": {
+            "204": {
+                "description": "User deleted",
+                "content": {"application/json": {"schema": {"$ref": USER_COMPONENT}}},
+            },
+            "403": {
+                "description": "Unauthorized",
+                "content": {
+                    "application/json": {"schema": {"$ref": API_ERROR_COMPONENT}}
+                },
+            },
+        },
+    },
+}
+
+
+@users_bp.route(f"{V1}/users/me", methods=["DELETE"])
+@login_required(logger)
+@rate_limited(logger=logger, hit=5, period=timedelta(seconds=60))
+def delete_me():
+    """
+    URL to delete user - Token required
+
+    Need a valid token
+    Return a jsonify user deleted
+    """
+
+    with current_app.sql.get_session() as session:
+        user_service = UserService(session=session)
+        if user_service.delete(g.user):
+            user_dto = UserMapperDTO.model_to_dto(g.user)
+
+            return ResponseAPI.get_response(dto_to_dict(user_dto), 204)
+
+        return ResponseAPI.get_403_response(
+            message=(
+                "Check you haven't anymore roles in some groups, "
+                "You may need to leave all groups except your private group"
+            )
+        )

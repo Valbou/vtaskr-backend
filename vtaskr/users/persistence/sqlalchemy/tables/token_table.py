@@ -35,5 +35,7 @@ token_table = Table(
 mapper_registry.map_imperatively(
     Token,
     token_table,
-    properties={"user": relationship("User", back_populates="tokens")},
+    properties={
+        "user": relationship("User", back_populates="tokens", passive_deletes=True)
+    },
 )

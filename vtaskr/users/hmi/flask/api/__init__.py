@@ -16,5 +16,6 @@ users_bp = Blueprint(
 
 
 V1 = "/api/v1"
+API_ERROR_COMPONENT = "#/components/schemas/APIError"
 
 from .v1 import *

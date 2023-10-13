@@ -6,7 +6,6 @@ from vtaskr.libs.flask.utils import ResponseAPI
 from vtaskr.libs.redis import rate_limited
 from vtaskr.libs.secutity.validators import PasswordComplexityError
 from vtaskr.users.hmi.flask.emails import ChangePasswordEmail
-from vtaskr.users.persistence import UserDB
 from vtaskr.users.services import UserService
 
 from .. import V1, logger, openapi, users_bp
@@ -70,15 +69,15 @@ def forgotten_password():
     data = {}
     try:
         email = payload.get("email", "")
-    except AttributeError:
-        return ResponseAPI.get_error_response("Bad request", 400)
+    except AttributeError as e:
+        logger.warning(f"400 Error: {e}")
+        return ResponseAPI.get_400_response()
 
     try:
-        user_db = UserDB()
         with current_app.sql.get_session() as session:
-            user = user_db.find_login(session, email)
+            user_service = UserService(session)
+            user = user_service.find_login(email)
             if user:
-                user_service = UserService(session)
                 request_hash = user_service.request_password_change(user)
 
                 with current_app.trans.get_translation_session(
@@ -94,7 +93,7 @@ def forgotten_password():
         return ResponseAPI.get_response(data, 200)
 
     except Exception as e:
-        logger.error(str(e))
+        logger.warning(f"200: Attenpt to leak emails {e}")
         return ResponseAPI.get_response(data, 200)
 
 
@@ -168,8 +167,9 @@ def new_password():
         email = payload.get("email", "")
         request_hash = payload.get("hash", "")
         new_passwd = payload.get("new_password", "")
-    except AttributeError:
-        return ResponseAPI.get_error_response("Bad request", 400)
+    except AttributeError as e:
+        logger.warning(f"400 Error: {e}")
+        return ResponseAPI.get_400_response()
 
     try:
         with current_app.sql.get_session() as session:
@@ -186,8 +186,10 @@ def new_password():
                     data = {}
                     return ResponseAPI.get_response(data, 200)
             except PasswordComplexityError as e:
-                return ResponseAPI.get_error_response(str(e), 400)
-            return ResponseAPI.get_error_response("Bad request", 400)
+                logger.warning(f"400 Error: {e}")
+                return ResponseAPI.get_400_response(str(e))
+
+            return ResponseAPI.get_400_response()
     except Exception as e:
-        logger.error(str(e))
-        return ResponseAPI.get_error_response("Internal error", 500)
+        logger.error(f"500 Error: {e}")
+        return ResponseAPI.get_500_response()

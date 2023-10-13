@@ -23,17 +23,23 @@ As vTaskr is an non profit project without fulltime dev, no release date can be 
 - [x] Start a frontend developpement in an other git repository
 
 ## Go to v1.1.0
-- [ ] User can manage groups (create, read, update, delete and achieve)
-- [ ] User can manage roles (create, read, update, delete and achieve)
+- [x] User can manage groups (create, read, update, delete and achieve)
+- [x] User can manage roles (create, read, update, delete and achieve)
+- [x] User can manage role types (create, read, update, delete and achieve)
+- [x] User can manage rights (create, read, update, delete and achieve)
 - [x] User can't access to tasks not owned by at least one of his groups
-- [ ] Add Keycloak integration
+- [x] User can delete his account efficiently (cannot delete a user if user has admin role on 2 groups or more !)
+- [x] Add filters on list endpoints (filter groups according to role or filter rights according to a group etc...)
 
 ## Go to v1.2.0
+- [ ] Add Keycloak integration
+- [ ] Grouping tasks in todolists
+- [ ] Transform a todolist into a template to reuse it.
 - [ ] Task reccurence
 - [ ] Weekly/Daily email with tasks of the period
 
 ## Go to v1.3.0
-- [ ] User can't modify tasks without the required role
+- [x] User can't modify tasks without the required role
 - [ ] User can invite another user in a group with a specific role
 - [ ] Sub tasks
 - [ ] Tasks status (blocking) that block parent task

@@ -4,10 +4,10 @@ from flask import current_app, g, request
 
 from vtaskr.libs.flask.querystring import QueryStringFilter
 from vtaskr.libs.flask.utils import ResponseAPI
+from vtaskr.libs.hmi import dto_to_dict, list_dto_to_dict, list_models_to_list_dto
 from vtaskr.libs.iam.flask.config import login_required
 from vtaskr.libs.redis import rate_limited
 from vtaskr.tasks.hmi.dto import TagMapperDTO, TaskDTO, TaskMapperDTO
-from vtaskr.tasks.persistence import TaskDB
 from vtaskr.tasks.services import TagService, TaskService
 
 from .. import V1, logger, openapi, tasks_bp
@@ -70,41 +70,35 @@ openapi.register_path(f"{V1}/tasks", api_item)
 @rate_limited(logger=logger, hit=1, period=timedelta(seconds=1))
 def tasks():
     """URL to current tenant tasks - Token required"""
-    try:
-        if request.method == "GET":
+    if request.method == "GET":
+        with current_app.sql.get_session() as session:
+            qsf = QueryStringFilter(
+                query_string=request.query_string.decode(), dto=TaskDTO
+            )
+
+            task_service = TaskService(session)
+            tasks = task_service.get_tasks(g.user.id, qsf.get_filters())
+            if tasks:
+                tasks_dto = list_models_to_list_dto(TaskMapperDTO, tasks)
+                return ResponseAPI.get_response(list_dto_to_dict(tasks_dto), 200)
+            else:
+                return ResponseAPI.get_response([], 200)
+
+    elif request.method == "POST":
+        try:
+            task_dto = TaskDTO(**request.get_json())
+            task = TaskMapperDTO.dto_to_model(task_dto)
+
             with current_app.sql.get_session() as session:
-                qsf = QueryStringFilter(
-                    query_string=request.query_string.decode(), dto=TaskDTO
-                )
-
                 task_service = TaskService(session)
-                tasks = task_service.get_tasks(g.user.id, qsf.get_filters())
-                if tasks:
-                    tasks_dto = TaskMapperDTO.list_models_to_list_dto(tasks)
-                    return ResponseAPI.get_response(
-                        TaskMapperDTO.list_dto_to_dict(tasks_dto), 200
-                    )
-                else:
-                    return ResponseAPI.get_response([], 200)
+                task_service.save_task(user_id=g.user.id, task=task)
+                task_dto = TaskMapperDTO.model_to_dto(task)
+                return ResponseAPI.get_response(dto_to_dict(task_dto), 201)
+        except Exception:
+            return ResponseAPI.get_400_response()
 
-        elif request.method == "POST":
-            try:
-                task_dto = TaskDTO(**request.get_json())
-                task = TaskMapperDTO.dto_to_model(g.user.id, task_dto)
-
-                with current_app.sql.get_session() as session:
-                    task_db = TaskDB()
-                    task_db.save(session, task)
-                    task_dto = TaskMapperDTO.model_to_dto(task)
-                    return ResponseAPI.get_response(
-                        TaskMapperDTO.dto_to_dict(task_dto), 201
-                    )
-            except Exception:
-                return ResponseAPI.get_error_response("Bad request", 400)
-
-    except Exception as e:
-        logger.error(str(e))
-        return ResponseAPI.get_error_response("Internal error", 500)
+    else:
+        return ResponseAPI.get_405_response()
 
 
 api_item = {
@@ -231,26 +225,25 @@ def task(task_id: str):
         if task:
             if request.method == "GET":
                 task_dto = TaskMapperDTO.model_to_dto(task)
-                return ResponseAPI.get_response(
-                    TaskMapperDTO.dto_to_dict(task_dto), 200
-                )
+                return ResponseAPI.get_response(dto_to_dict(task_dto), 200)
 
             elif request.method in ("PUT", "PATCH"):
                 task_dto = TaskDTO(**request.get_json())
-                task = TaskMapperDTO.dto_to_model(g.user.id, task_dto, task)
+                task = TaskMapperDTO.dto_to_model(task_dto, task)
                 task_service.update_task(g.user.id, task)
 
                 task_dto = TaskMapperDTO.model_to_dto(task)
-                return ResponseAPI.get_response(
-                    TaskMapperDTO.dto_to_dict(task_dto), 200
-                )
+                return ResponseAPI.get_response(dto_to_dict(task_dto), 200)
 
             elif request.method == "DELETE":
                 task_service.delete_task(g.user.id, task)
-                return ResponseAPI.get_response({}, 204)
+                return ResponseAPI.get_response("", 204)
+
+            else:
+                return ResponseAPI.get_405_response()
 
         else:
-            return ResponseAPI.get_error_response({}, 404)
+            return ResponseAPI.get_404_response()
 
 
 api_item = {
@@ -297,19 +290,18 @@ def task_tags(task_id: str):
             task = task_service.get_task(g.user.id, task_id)
             if task:
                 tag_service = TagService(session)
-                tags_dto = TagMapperDTO.list_models_to_list_dto(
-                    tag_service.get_task_tags(g.user.id, task.id, task.tenant_id)
+                tags_dto = list_models_to_list_dto(
+                    TagMapperDTO,
+                    tag_service.get_task_tags(g.user.id, task.id, task.tenant_id),
                 )
 
                 if tags_dto:
-                    return ResponseAPI.get_response(
-                        TaskMapperDTO.list_dto_to_dict(tags_dto), 200
-                    )
+                    return ResponseAPI.get_response(list_dto_to_dict(tags_dto), 200)
                 return ResponseAPI.get_response([], 200)
             else:
-                return ResponseAPI.get_error_response("Task not found", 404)
+                return ResponseAPI.get_404_response("Task not found")
     else:
-        return ResponseAPI.get_error_response({}, 405)
+        return ResponseAPI.get_405_response()
 
 
 api_item = {
@@ -365,7 +357,13 @@ def task_tags_set(task_id: str):
     data = request.get_json()
     tag_ids = data.get("tags")
     if not isinstance(tag_ids, list):
-        return ResponseAPI.get_error_response("Bad request", 400)
+        logger.warning("400 Error: Invalid parameters - not a list")
+        return ResponseAPI.get_400_response()
+
+    for tag_id in tag_ids:
+        if not isinstance(tag_id, str):
+            logger.warning("400 Error: Invalid parameters - not a list of str")
+            return ResponseAPI.get_400_response()
 
     if request.method == "PUT":
         with current_app.sql.get_session() as session:
@@ -374,12 +372,12 @@ def task_tags_set(task_id: str):
             try:
                 task_service.set_task_tags(g.user.id, task, tag_ids)
             except Exception as e:
-                logger.info(str(e))
-                return ResponseAPI.get_error_response("Bad request", 400)
-            return ResponseAPI.get_response({}, 201)
+                logger.warning(f"400 Error: {e}")
+                return ResponseAPI.get_400_response()
+            return ResponseAPI.get_response("Created", 201)
 
     else:
-        return ResponseAPI.get_error_response({}, 405)
+        return ResponseAPI.get_405_response()
 
 
 api_item = {
@@ -418,12 +416,9 @@ def task_tags_clean(task_id: str):
         with current_app.sql.get_session() as session:
             task_service = TaskService(session)
             task = task_service.get_task(g.user.id, task_id)
-            try:
-                task_service.clean_task_tags(g.user.id, task)
-            except Exception as e:
-                logger.error(str(e))
-                return ResponseAPI.get_error_response("Internal error", 500)
-            return ResponseAPI.get_response({}, 204)
+            task_service.clean_task_tags(g.user.id, task)
+
+            return ResponseAPI.get_response("", 204)
 
     else:
-        return ResponseAPI.get_error_response({}, 405)
+        return ResponseAPI.get_405_response()

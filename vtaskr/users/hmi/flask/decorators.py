@@ -5,6 +5,7 @@ from typing import Callable
 from flask import current_app, g, request
 
 from vtaskr.libs.flask.utils import ResponseAPI, get_bearer_token
+from vtaskr.libs.iam.config import PermissionError
 from vtaskr.users.services import UserService
 
 
@@ -15,7 +16,7 @@ def login_required(logger: Logger):
             try:
                 sha_token = get_bearer_token(request)
                 if not sha_token:
-                    return ResponseAPI.get_error_response("Invalid token", 401)
+                    return ResponseAPI.get_401_response("Invalid token")
 
                 with current_app.sql.get_session() as session:
                     session.expire_on_commit = False
@@ -25,11 +26,14 @@ def login_required(logger: Logger):
                         g.token = sha_token
                         g.user = user
                     else:
-                        return ResponseAPI.get_error_response("Invalid token", 401)
+                        return ResponseAPI.get_401_response("Invalid token")
                 return func(*args, **kwargs)
+            except PermissionError as e:
+                logger.info(f"403 Error: {e}")
+                return ResponseAPI.get_403_response("Permissions Error")
             except Exception as e:
-                logger.error(str(e))
-                return ResponseAPI.get_error_response("Internal error", 500)
+                logger.error(f"500 Error: {e}")
+                return ResponseAPI.get_500_response()
 
         return wrapper
 

@@ -1,5 +1,3 @@
-from typing import Optional
-
 from sqlalchemy.orm import Session
 
 from vtaskr.libs.flask.querystring import Filter
@@ -16,7 +14,7 @@ class TaskService:
         self.control = PermissionControl(self.session)
 
     def get_tasks(
-        self, user_id: str, qs_filters: Optional[list[Filter]] = None
+        self, user_id: str, qs_filters: list[Filter] | None = None
     ) -> list[dict]:
         """Get a list of authorized tasks"""
 
@@ -26,25 +24,27 @@ class TaskService:
 
         return self.task_db.tasks(self.session, tenant_ids, qs_filters)
 
-    def get_task(self, user_id: str, task_id: str) -> Optional[Task]:
+    def get_task(self, user_id: str, task_id: str) -> Task | None:
         """Get a tag if read permission was given"""
 
         task = self.task_db.load(self.session, task_id)
 
-        return (
-            task
-            if self.control.can(
-                Permissions.READ, user_id, task.tenant_id, resource=Resources.TASK
+        if task:
+            return (
+                task
+                if self.control.can(
+                    Permissions.READ, user_id, task.tenant_id, resource=Resources.TASK
+                )
+                else None
             )
-            else None
-        )
+        return None
 
     def get_tag_tasks(
         self,
         user_id: str,
         tag_id: str,
         tag_tenant_id: str,
-        qs_filters: Optional[list[Filter]] = None,
+        qs_filters: list[Filter] | None = None,
     ) -> list[Task] | None:
         """Access to all tasks of one tag"""
 
@@ -63,6 +63,7 @@ class TaskService:
 
     def set_task_tags(self, user_id: str, task: Task, tag_ids: list[str]) -> None:
         """Associate many tags to one task"""
+
         if not self.control.can(
             Permissions.UPDATE, user_id, task.tenant_id, resource=Resources.TASK
         ):
@@ -76,8 +77,17 @@ class TaskService:
 
         self.task_db.add_tags(self.session, tenant_ids, task, tag_ids)
 
+    def save_task(self, user_id: str, task: Task) -> None:
+        """Save a new task"""
+
+        if self.control.can(
+            Permissions.CREATE, user_id, task.tenant_id, resource=Resources.TASK
+        ):
+            self.task_db.save(self.session, task)
+
     def update_task(self, user_id: str, task: Task):
         """Update a task if update permission was given"""
+
         if self.control.can(
             Permissions.UPDATE, user_id, task.tenant_id, resource=Resources.TASK
         ):
@@ -85,6 +95,7 @@ class TaskService:
 
     def clean_task_tags(self, user_id: str, task: Task):
         """Clean all tags of a task if update permission was given on task"""
+
         if self.control.can(
             Permissions.UPDATE, user_id, task.tenant_id, resource=Resources.TASK
         ):
@@ -92,6 +103,7 @@ class TaskService:
 
     def delete_task(self, user_id: str, task: Task):
         """Delete a task if delete permission was given"""
+
         if self.control.can(
             Permissions.DELETE, user_id, task.tenant_id, resource=Resources.TASK
         ):

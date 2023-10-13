@@ -22,7 +22,9 @@ mapper_registry.map_imperatively(
     Group,
     group_table,
     properties={
-        "roles": relationship("Role", back_populates="group"),
-        "roletypes": relationship("RoleType", back_populates="group"),
+        "roles": relationship("Role", back_populates="group", passive_deletes=True),
+        "roletypes": relationship(
+            "RoleType", back_populates="group", passive_deletes=True
+        ),
     },
 )

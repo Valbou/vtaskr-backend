@@ -1,5 +1,3 @@
-from typing import Optional
-
 from sqlalchemy.orm import Session
 
 from vtaskr.libs.sqlalchemy.default_adapter import DefaultDB
@@ -13,7 +11,7 @@ class RequestChangeDB(AbstractRequestChangePort, DefaultDB):
         super().__init__()
         self.qs = RequestChangeQueryset()
 
-    def find_request(self, session: Session, email: str) -> Optional[RequestChange]:
+    def find_request(self, session: Session, email: str) -> RequestChange | None:
         self.qs.valid_for(email).last()
         result = session.scalars(self.qs.statement).one_or_none()
         return result

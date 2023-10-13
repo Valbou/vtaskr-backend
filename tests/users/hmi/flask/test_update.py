@@ -1,4 +1,5 @@
 from tests.base_test import BaseTestCase
+from vtaskr.users.services import GroupService
 
 URL_API_USERS = "/api/v1/users"
 
@@ -9,11 +10,7 @@ class TestUserV1Update(BaseTestCase):
         self.headers = self.get_json_headers()
 
     def test_no_post(self):
-        response = self.client.post(f"{URL_API_USERS}/me/update", headers=self.headers)
-        self.assertEqual(response.status_code, 405)
-
-    def test_no_get(self):
-        response = self.client.get(f"{URL_API_USERS}/me/update", headers=self.headers)
+        response = self.client.post(f"{URL_API_USERS}/me", headers=self.headers)
         self.assertEqual(response.status_code, 405)
 
     def test_put_user(self):
@@ -25,9 +22,7 @@ class TestUserV1Update(BaseTestCase):
             "locale": str(self.user.locale),
             "timezone": self.user.timezone,
         }
-        response = self.client.put(
-            f"{URL_API_USERS}/me/update", headers=headers, json=payload
-        )
+        response = self.client.put(f"{URL_API_USERS}/me", headers=headers, json=payload)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.content_type, "application/json")
         self.assertEqual(response.json.get("first_name"), new_first_name)
@@ -46,7 +41,7 @@ class TestUserV1Update(BaseTestCase):
             "timezone": self.user.timezone,
         }
         response = self.client.patch(
-            f"{URL_API_USERS}/me/update", headers=headers, json=payload
+            f"{URL_API_USERS}/me", headers=headers, json=payload
         )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.content_type, "application/json")
@@ -56,8 +51,28 @@ class TestUserV1Update(BaseTestCase):
         self.assertEqual(response.json.get("timezone"), self.user.timezone)
         self.assertIsNone(response.json.get("hash_password"))
 
+    def test_no_put(self):
+        response = self.client.put(f"{URL_API_USERS}/me", headers=self.headers)
+        self.assertEqual(response.status_code, 401)
+
+    def test_no_patch(self):
+        response = self.client.patch(f"{URL_API_USERS}/me", headers=self.headers)
+        self.assertEqual(response.status_code, 401)
+
     def test_no_delete(self):
-        response = self.client.delete(
-            f"{URL_API_USERS}/me/update", headers=self.headers
-        )
-        self.assertEqual(response.status_code, 405)
+        response = self.client.delete(f"{URL_API_USERS}/me", headers=self.headers)
+        self.assertEqual(response.status_code, 401)
+
+    def test_delete(self):
+        headers = self.get_token_headers()
+        response = self.client.delete(f"{URL_API_USERS}/me", headers=headers)
+        self.assertEqual(response.status_code, 204)
+
+    def test_no_delete_with_2_admin_groups(self):
+        headers = self.get_token_headers()
+        with self.app.sql.get_session() as session:
+            group_service = GroupService(session=session)
+            group_service.create_group(self.user.id, "Another Group")
+
+        response = self.client.delete(f"{URL_API_USERS}/me", headers=headers)
+        self.assertEqual(response.status_code, 403)

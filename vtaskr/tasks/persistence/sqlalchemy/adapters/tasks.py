@@ -1,5 +1,4 @@
 from logging import Logger
-from typing import Optional
 
 from sqlalchemy.orm import Session
 
@@ -21,7 +20,7 @@ class TaskDB(AbstractTaskPort, DefaultDB):
         self,
         session: Session,
         tenant_ids: list[str],
-        filters: Optional[list[Filter]] = None,
+        filters: list[Filter] | None = None,
     ) -> list[Task]:
         """Retrieve all tenant's tasks"""
 
@@ -37,7 +36,7 @@ class TaskDB(AbstractTaskPort, DefaultDB):
         session: Session,
         tenant_ids: list[str],
         tag_id: str,
-        filters: Optional[list[Filter]] = None,
+        filters: list[Filter] | None = None,
     ) -> list[Task]:
         """Retrieve all tenant's tasks with this tag"""
 
