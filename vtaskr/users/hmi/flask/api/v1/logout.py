@@ -49,4 +49,4 @@ def logout():
             data = {}
             return ResponseAPI.get_response(data, 204)
         else:
-            return ResponseAPI.get_error_response("Unauthorized", 403)
+            return ResponseAPI.get_403_response("Unauthorized")

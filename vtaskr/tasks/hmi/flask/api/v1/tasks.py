@@ -95,10 +95,10 @@ def tasks():
                 task_dto = TaskMapperDTO.model_to_dto(task)
                 return ResponseAPI.get_response(dto_to_dict(task_dto), 201)
         except Exception:
-            return ResponseAPI.get_error_response("Bad request", 400)
+            return ResponseAPI.get_400_response()
 
     else:
-        return ResponseAPI.get_error_response({}, 405)
+        return ResponseAPI.get_405_response()
 
 
 api_item = {
@@ -237,13 +237,13 @@ def task(task_id: str):
 
             elif request.method == "DELETE":
                 task_service.delete_task(g.user.id, task)
-                return ResponseAPI.get_response({}, 204)
+                return ResponseAPI.get_response("", 204)
 
             else:
-                return ResponseAPI.get_error_response({}, 405)
+                return ResponseAPI.get_405_response()
 
         else:
-            return ResponseAPI.get_error_response({}, 404)
+            return ResponseAPI.get_404_response()
 
 
 api_item = {
@@ -299,9 +299,9 @@ def task_tags(task_id: str):
                     return ResponseAPI.get_response(list_dto_to_dict(tags_dto), 200)
                 return ResponseAPI.get_response([], 200)
             else:
-                return ResponseAPI.get_error_response("Task not found", 404)
+                return ResponseAPI.get_404_response("Task not found")
     else:
-        return ResponseAPI.get_error_response({}, 405)
+        return ResponseAPI.get_405_response()
 
 
 api_item = {
@@ -358,12 +358,12 @@ def task_tags_set(task_id: str):
     tag_ids = data.get("tags")
     if not isinstance(tag_ids, list):
         logger.warning("400 Error: Invalid parameters - not a list")
-        return ResponseAPI.get_error_response("Bad request", 400)
+        return ResponseAPI.get_400_response()
 
     for tag_id in tag_ids:
         if not isinstance(tag_id, str):
             logger.warning("400 Error: Invalid parameters - not a list of str")
-            return ResponseAPI.get_error_response("Bad request", 400)
+            return ResponseAPI.get_400_response()
 
     if request.method == "PUT":
         with current_app.sql.get_session() as session:
@@ -373,11 +373,11 @@ def task_tags_set(task_id: str):
                 task_service.set_task_tags(g.user.id, task, tag_ids)
             except Exception as e:
                 logger.warning(f"400 Error: {e}")
-                return ResponseAPI.get_error_response("Bad request", 400)
-            return ResponseAPI.get_response({}, 201)
+                return ResponseAPI.get_400_response()
+            return ResponseAPI.get_response("Created", 201)
 
     else:
-        return ResponseAPI.get_error_response({}, 405)
+        return ResponseAPI.get_405_response()
 
 
 api_item = {
@@ -418,7 +418,7 @@ def task_tags_clean(task_id: str):
             task = task_service.get_task(g.user.id, task_id)
             task_service.clean_task_tags(g.user.id, task)
 
-            return ResponseAPI.get_response({}, 204)
+            return ResponseAPI.get_response("", 204)
 
     else:
-        return ResponseAPI.get_error_response({}, 405)
+        return ResponseAPI.get_405_response()

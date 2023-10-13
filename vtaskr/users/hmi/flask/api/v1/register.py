@@ -94,12 +94,12 @@ def register():
             return ResponseAPI.get_response(dto_to_dict(user_dto), 201)
 
     except (PasswordComplexityError, EmailSyntaxError) as e:
-        return ResponseAPI.get_error_response(str(e), 400)
+        return ResponseAPI.get_400_response(str(e))
 
     except KeyError as e:
         logger.warning(f"400 Error: {e}")
-        return ResponseAPI.get_error_response("No password given", 400)
+        return ResponseAPI.get_400_response("No password given")
 
     except Exception as e:
         logger.error(f"500 Error: {e}")
-        return ResponseAPI.get_error_response("Internal error", 500)
+        return ResponseAPI.get_500_response("Internal error")

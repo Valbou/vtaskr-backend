@@ -88,7 +88,7 @@ def roles():
             return ResponseAPI.get_response(dto_to_dict(role_dto), 201)
 
     else:
-        return ResponseAPI.get_error_response({}, 405)
+        return ResponseAPI.get_405_response()
 
 
 api_item = {
@@ -116,6 +116,15 @@ api_item = {
         "description": "Update role",
         "summary": "Update the role",
         "operationId": "putRole",
+        "parameters": [
+            {
+                "name": "role_id",
+                "in": "path",
+                "description": "Id of the role you are looking for",
+                "required": True,
+                "schema": {"type": "string"},
+            },
+        ],
         "responses": {
             "200": {
                 "description": "Updated role",
@@ -138,6 +147,15 @@ api_item = {
         "description": "Update role",
         "summary": "Update the role",
         "operationId": "patchRole",
+        "parameters": [
+            {
+                "name": "role_id",
+                "in": "path",
+                "description": "Id of the role you are looking for",
+                "required": True,
+                "schema": {"type": "string"},
+            },
+        ],
         "responses": {
             "200": {
                 "description": "Updated role",
@@ -202,15 +220,15 @@ def role(role_id: str):
                 if role_service.update_role(g.user.id, role):
                     role_dto = RoleMapperDTO.model_to_dto(role)
                     return ResponseAPI.get_response(dto_to_dict(role_dto), 200)
-                return ResponseAPI.get_error_response({}, 403)
+                return ResponseAPI.get_403_response()
 
             if request.method == "DELETE":
                 if role_service.delete_role(g.user.id, role):
                     return ResponseAPI.get_response({}, 204)
-                return ResponseAPI.get_error_response({}, 403)
+                return ResponseAPI.get_403_response()
 
             else:
-                return ResponseAPI.get_error_response({}, 405)
+                return ResponseAPI.get_405_response()
 
         else:
-            return ResponseAPI.get_error_response({}, 404)
+            return ResponseAPI.get_404_response()

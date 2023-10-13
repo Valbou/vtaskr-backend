@@ -89,7 +89,7 @@ def roletypes():
             return ResponseAPI.get_response(dto_to_dict(roletype_dto), 201)
 
         else:
-            return ResponseAPI.get_error_response({}, 405)
+            return ResponseAPI.get_405_response()
 
 
 api_item = {
@@ -119,6 +119,15 @@ api_item = {
         "description": "Update role type",
         "summary": "Update the role type",
         "operationId": "putRoleType",
+        "parameters": [
+            {
+                "name": "roletype_id",
+                "in": "path",
+                "description": "Id of the role type you are looking for",
+                "required": True,
+                "schema": {"type": "string"},
+            },
+        ],
         "responses": {
             "200": {
                 "description": "Updated role type",
@@ -143,6 +152,15 @@ api_item = {
         "description": "Update role type",
         "summary": "Update the role type",
         "operationId": "patchRoleType",
+        "parameters": [
+            {
+                "name": "roletype_id",
+                "in": "path",
+                "description": "Id of the role type you are looking for",
+                "required": True,
+                "schema": {"type": "string"},
+            },
+        ],
         "responses": {
             "200": {
                 "description": "Updated role type",
@@ -205,23 +223,22 @@ def roletype(roletype_id: str):
             if request.method in ["PUT", "PATCH"]:
                 roletype_dto = RoleTypeDTO(**request.get_json())
                 if roletype_dto.group_id and roletype_dto.group_id != roletype.group_id:
-                    return ResponseAPI.get_error_response(
-                        message="You cannot reassign a role type to another group",
-                        status=403,
+                    return ResponseAPI.get_403_response(
+                        message="You cannot reassign a role type to another group"
                     )
 
                 roletype = RoleTypeMapperDTO.dto_to_model(roletype_dto, roletype)
                 if roletype_service.update_roletype(g.user.id, roletype):
                     roletype_dto = RoleTypeMapperDTO.model_to_dto(roletype)
                     return ResponseAPI.get_response(dto_to_dict(roletype_dto), 200)
-                return ResponseAPI.get_error_response({}, 403)
+                return ResponseAPI.get_403_response()
 
             if request.method == "DELETE":
                 if roletype_service.delete_roletype(g.user.id, roletype):
-                    return ResponseAPI.get_response({}, 204)
-                return ResponseAPI.get_error_response({}, 403)
+                    return ResponseAPI.get_response("", 204)
+                return ResponseAPI.get_403_response()
 
             else:
-                return ResponseAPI.get_error_response({}, 405)
+                return ResponseAPI.get_405_response()
 
-        return ResponseAPI.get_error_response(message="No role type found", status=404)
+        return ResponseAPI.get_404_response()

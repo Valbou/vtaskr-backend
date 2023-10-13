@@ -71,7 +71,7 @@ def forgotten_password():
         email = payload.get("email", "")
     except AttributeError as e:
         logger.warning(f"400 Error: {e}")
-        return ResponseAPI.get_error_response("Bad request", 400)
+        return ResponseAPI.get_400_response()
 
     try:
         with current_app.sql.get_session() as session:
@@ -169,7 +169,7 @@ def new_password():
         new_passwd = payload.get("new_password", "")
     except AttributeError as e:
         logger.warning(f"400 Error: {e}")
-        return ResponseAPI.get_error_response("Bad request", 400)
+        return ResponseAPI.get_400_response()
 
     try:
         with current_app.sql.get_session() as session:
@@ -187,9 +187,9 @@ def new_password():
                     return ResponseAPI.get_response(data, 200)
             except PasswordComplexityError as e:
                 logger.warning(f"400 Error: {e}")
-                return ResponseAPI.get_error_response(str(e), 400)
+                return ResponseAPI.get_400_response(str(e))
 
-            return ResponseAPI.get_error_response("Bad request", 400)
+            return ResponseAPI.get_400_response()
     except Exception as e:
         logger.error(f"500 Error: {e}")
-        return ResponseAPI.get_error_response("Internal error", 500)
+        return ResponseAPI.get_500_response()

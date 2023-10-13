@@ -84,7 +84,7 @@ def tags():
             tag = TagMapperDTO.dto_to_model(tag_dto)
         except Exception as e:
             logger.warning(f"400 Error: {e}")
-            return ResponseAPI.get_error_response(f"Bad request {e}", 400)
+            return ResponseAPI.get_400_response(f"Bad request {e}")
 
         with current_app.sql.get_session() as session:
             tag_service = TagService(session)
@@ -93,7 +93,7 @@ def tags():
             return ResponseAPI.get_response(dto_to_dict(tag_dto), 201)
 
     else:
-        return ResponseAPI.get_error_response({}, 405)
+        return ResponseAPI.get_405_response()
 
 
 api_item = {
@@ -226,13 +226,13 @@ def tag(tag_id: str):
 
             elif request.method == "DELETE":
                 tag_service.delete_tag(g.user.id, tag)
-                return ResponseAPI.get_response({}, 204)
+                return ResponseAPI.get_response("", 204)
 
             else:
-                return ResponseAPI.get_error_response({}, 405)
+                return ResponseAPI.get_405_response()
 
         else:
-            return ResponseAPI.get_error_response({}, 404)
+            return ResponseAPI.get_404_response()
 
 
 api_item = {
@@ -294,6 +294,6 @@ def tag_tasks(tag_id: str):
                     return ResponseAPI.get_response(list_dto_to_dict(tasks_dto), 200)
                 return ResponseAPI.get_response([], 200)
             else:
-                return ResponseAPI.get_error_response("Tag not found", 404)
+                return ResponseAPI.get_404_response("Tag not found")
     else:
-        return ResponseAPI.get_error_response({}, 405)
+        return ResponseAPI.get_405_response()

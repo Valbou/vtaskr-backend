@@ -85,7 +85,7 @@ def groups():
             return ResponseAPI.get_response(dto_to_dict(group_dto), 201)
 
     else:
-        return ResponseAPI.get_error_response({}, 405)
+        return ResponseAPI.get_405_response()
 
 
 api_item = {
@@ -113,6 +113,15 @@ api_item = {
         "description": "Update group",
         "summary": "Update the group",
         "operationId": "putGroup",
+        "parameters": [
+            {
+                "name": "group_id",
+                "in": "path",
+                "description": "Id of the group you are looking for",
+                "required": True,
+                "schema": {"type": "string"},
+            },
+        ],
         "responses": {
             "200": {
                 "description": "Updated group",
@@ -135,6 +144,15 @@ api_item = {
         "description": "Update group",
         "summary": "Update the group",
         "operationId": "patchGroup",
+        "parameters": [
+            {
+                "name": "group_id",
+                "in": "path",
+                "description": "Id of the group you are looking for",
+                "required": True,
+                "schema": {"type": "string"},
+            },
+        ],
         "responses": {
             "200": {
                 "description": "Updated group",
@@ -198,15 +216,15 @@ def group(group_id: str):
                 if group_service.update_group(g.user.id, group):
                     group_dto = GroupMapperDTO.model_to_dto(group)
                     return ResponseAPI.get_response(dto_to_dict(group_dto), 200)
-                return ResponseAPI.get_error_response({}, 403)
+                return ResponseAPI.get_403_response()
 
             if request.method == "DELETE":
                 if group_service.delete_group(g.user.id, group):
-                    return ResponseAPI.get_response({}, 204)
-                return ResponseAPI.get_error_response({}, 403)
+                    return ResponseAPI.get_response("", 204)
+                return ResponseAPI.get_403_response()
 
             else:
-                return ResponseAPI.get_error_response({}, 405)
+                return ResponseAPI.get_405_response()
 
         else:
-            return ResponseAPI.get_error_response({}, 404)
+            return ResponseAPI.get_404_response()

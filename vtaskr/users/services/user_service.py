@@ -2,9 +2,11 @@ from typing import Tuple
 
 from sqlalchemy.orm import Session
 
+from vtaskr.libs.iam.constants import Permissions, Resources
 from vtaskr.users import RequestChange, RequestType, Token, User
 from vtaskr.users.hmi.dto import UserDTO
 from vtaskr.users.persistence import RequestChangeDB, TokenDB, UserDB
+from vtaskr.users.services import PermissionControl
 
 
 class EmailAlreadyUsedError(Exception):
@@ -17,6 +19,7 @@ class UserService:
         self.user_db = UserDB()
         self.token_db = TokenDB()
         self.request_change_db = RequestChangeDB()
+        self.control = PermissionControl(session=self.session)
 
     def register(self, user_dto: UserDTO, password: str) -> User:
         """Add a new user and his group with admin role"""
@@ -141,4 +144,18 @@ class UserService:
             self.session.commit()
             return True
 
+        return False
+
+    def delete(self, user: User) -> bool:
+        """
+        Delete a user if he is not an admin of many groups
+        Otherwise it can lead to a deadlock for members left
+        """
+
+        group_id = self.control.all_tenants_with_access(
+            Permissions.CREATE, user.id, Resources.ROLETYPE
+        )
+        if len(group_id) <= 1:
+            self.user_db.delete(self.session, user)
+            return True
         return False

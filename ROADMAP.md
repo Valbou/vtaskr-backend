@@ -28,7 +28,7 @@ As vTaskr is an non profit project without fulltime dev, no release date can be 
 - [x] User can manage role types (create, read, update, delete and achieve)
 - [x] User can manage rights (create, read, update, delete and achieve)
 - [x] User can't access to tasks not owned by at least one of his groups
-- [ ] User can delete his account efficiently (cannot delete a user if user has admin role on 2 groups or more !)
+- [x] User can delete his account efficiently (cannot delete a user if user has admin role on 2 groups or more !)
 - [ ] Add filters on list endpoints (filter groups according to role or filter rights according to a group etc...)
 
 ## Go to v1.2.0

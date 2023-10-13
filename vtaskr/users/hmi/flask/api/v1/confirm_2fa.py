@@ -63,7 +63,7 @@ def confirm_2fa():
     """
     sha_token = get_bearer_token(request)
     if not sha_token:
-        return ResponseAPI.get_error_response("Invalid token", 401)
+        return ResponseAPI.get_401_response("Invalid token")
 
     payload: dict = request.get_json()
 
@@ -71,7 +71,7 @@ def confirm_2fa():
         code = payload.get("code_2FA")
     except AttributeError as e:
         logger.warning(f"400 Error: {e}")
-        return ResponseAPI.get_error_response("Bad request", 400)
+        return ResponseAPI.get_400_response()
 
     try:
         with current_app.sql.get_session() as session:
@@ -84,7 +84,7 @@ def confirm_2fa():
                 return ResponseAPI.get_response(data, 200)
             else:
                 logger.warning("401 Error: Attempt with bad 2FA")
-                return ResponseAPI.get_error_response("Invalid 2FA code", 401)
+                return ResponseAPI.get_401_response("Invalid 2FA code")
     except Exception as e:
         logger.error(f"500 Error: {e}")
-        return ResponseAPI.get_error_response("Internal error", 500)
+        return ResponseAPI.get_500_response()

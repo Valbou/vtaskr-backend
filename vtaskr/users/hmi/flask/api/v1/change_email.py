@@ -73,10 +73,10 @@ def change_email():
             auth_service = UserService(session)
             req_hash, req_code = auth_service.request_email_change(g.user, new_email)
         except (EmailSyntaxError, EmailAlreadyUsedError) as e:
-            return ResponseAPI.get_error_response(str(e), 400)
+            return ResponseAPI.get_400_response(str(e))
         except AttributeError as e:
             logger.warning(f"400 Error: {e}")
-            return ResponseAPI.get_error_response("Bad request", 400)
+            return ResponseAPI.get_400_response()
 
         with current_app.trans.get_translation_session("users", g.user.locale) as trans:
             old_email_message = ChangeEmailToOldEmail(
@@ -172,7 +172,7 @@ def new_email():
         request_hash = payload.get("hash", "")
         code = payload.get("code", "")
     except AttributeError:
-        return ResponseAPI.get_error_response("Bad request", 400)
+        return ResponseAPI.get_400_response()
 
     try:
         with current_app.sql.get_session() as session:
@@ -193,8 +193,8 @@ def new_email():
                     data = {}
                     return ResponseAPI.get_response(data, 200)
             except EmailSyntaxError as e:
-                return ResponseAPI.get_error_response(str(e), 400)
-            return ResponseAPI.get_error_response("Bad request", 400)
+                return ResponseAPI.get_400_response(str(e))
+            return ResponseAPI.get_400_response()
     except Exception as e:
         logger.error(f"500 Error: {e}")
-        return ResponseAPI.get_error_response("Internal error", 500)
+        return ResponseAPI.get_500_response()

@@ -89,11 +89,11 @@ def rights():
                 right_dto = RightMapperDTO.model_to_dto(right)
                 return ResponseAPI.get_response(dto_to_dict(right_dto), 201)
 
-            return ResponseAPI.get_error_response(
+            return ResponseAPI.get_404_response(
                 message="Associated role type not found", status=404
             )
         else:
-            return ResponseAPI.get_error_response({}, 405)
+            return ResponseAPI.get_405_response()
 
 
 api_item = {
@@ -121,6 +121,15 @@ api_item = {
         "description": "Update right",
         "summary": "Update the right",
         "operationId": "putRight",
+        "parameters": [
+            {
+                "name": "right_id",
+                "in": "path",
+                "description": "Id of the right you are looking for",
+                "required": True,
+                "schema": {"type": "string"},
+            },
+        ],
         "responses": {
             "200": {
                 "description": "Updated right",
@@ -143,6 +152,15 @@ api_item = {
         "description": "Update right",
         "summary": "Update the right",
         "operationId": "patchRight",
+        "parameters": [
+            {
+                "name": "right_id",
+                "in": "path",
+                "description": "Id of the right you are looking for",
+                "required": True,
+                "schema": {"type": "string"},
+            },
+        ],
         "responses": {
             "200": {
                 "description": "Updated right",
@@ -210,14 +228,14 @@ def right(right_id: str):
                     if right_service.update_right(g.user.id, right, roletype):
                         right_dto = RightMapperDTO.model_to_dto(right)
                         return ResponseAPI.get_response(dto_to_dict(right_dto), 200)
-                    return ResponseAPI.get_error_response({}, 403)
+                    return ResponseAPI.get_403_response()
 
                 if request.method == "DELETE":
                     if right_service.delete_right(g.user.id, right, roletype):
                         return ResponseAPI.get_response({}, 204)
-                    return ResponseAPI.get_error_response({}, 403)
+                    return ResponseAPI.get_403_response()
 
                 else:
-                    return ResponseAPI.get_error_response({}, 405)
+                    return ResponseAPI.get_405_response()
 
-        return ResponseAPI.get_error_response(message="No rights found", status=404)
+        return ResponseAPI.get_404_response()

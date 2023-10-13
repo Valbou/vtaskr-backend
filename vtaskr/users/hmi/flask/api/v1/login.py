@@ -92,7 +92,7 @@ def login():
         password = payload.get("password", "")
     except Exception as e:
         logger.warning(f"400 Error: {e}")
-        return ResponseAPI.get_error_response("Bad request", 400)
+        return ResponseAPI.get_400_response()
 
     try:
         with current_app.sql.get_session() as session:
@@ -114,7 +114,7 @@ def login():
                 return ResponseAPI.get_response(data, 201)
             else:
                 logger.warning("401 Error: Request token with invalid credentials")
-                return ResponseAPI.get_error_response("Invalid credentials", 401)
+                return ResponseAPI.get_401_response("Invalid credentials")
     except Exception as e:
         logger.error(f"500 Error: {e}")
-        return ResponseAPI.get_error_response("Internal error", 500)
+        return ResponseAPI.get_500_response()
