@@ -15,6 +15,7 @@ right_component = {
         "permissions": {"type": "integer"},
         "created_at": {"type": "string", "format": "date-time"},
     },
+    "required": ["roletype_id", "resource", "permissions"],
 }
 openapi.register_schemas_components("Right", right_component)
 

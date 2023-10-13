@@ -89,7 +89,7 @@ class RoleTypeService:
         """Delete a roletype if delete permission was given"""
 
         # A user can't delete global roletypes
-        if self.control.can(
+        if roletype.group_id and self.control.can(
             Permissions.DELETE, user_id, roletype.group_id, resource=Resources.ROLETYPE
         ):
             self.roletype_db.delete(self.session, roletype)

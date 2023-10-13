@@ -12,6 +12,7 @@ group_component = {
         "name": {"type": "string"},
         "created_at": {"type": "string", "format": "date-time"},
     },
+    "required": ["name"],
 }
 openapi.register_schemas_components("Group", group_component)
 
