@@ -69,9 +69,11 @@ openapi.register_path(f"{V1}/tags", api_item)
 def tags():
     """URL to current tenant tags - Token required"""
     if request.method == "GET":
+        qsf = QueryStringFilter(query_string=request.query_string.decode(), dto=TaskDTO)
+
         with current_app.sql.get_session() as session:
             tag_service = TagService(session)
-            tags = tag_service.get_tags(g.user.id)
+            tags = tag_service.get_tags(g.user.id, qsf.get_filters())
             if tags:
                 tags_dto = list_models_to_list_dto(TagMapperDTO, tags)
                 return ResponseAPI.get_response(list_dto_to_dict(tags_dto), 200)

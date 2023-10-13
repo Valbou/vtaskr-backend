@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 
+from vtaskr.libs.flask.querystring import Filter
 from vtaskr.libs.sqlalchemy.default_adapter import DefaultDB
 from vtaskr.users.models import Role
 from vtaskr.users.persistence.ports import AbstractRolePort
@@ -28,8 +29,16 @@ class RoleDB(AbstractRolePort, DefaultDB):
         return session.scalars(self.qs.statement).one_or_none()
 
     def get_all_user_roles(
-        self, session: Session, user_id: str, group_ids: list[str]
+        self,
+        session: Session,
+        user_id: str,
+        group_ids: list[str],
+        filters: list[Filter] | None = None,
     ) -> list[Role]:
+        filters = filters or []
+        if filters:
+            self.qs.from_filters(filters)
+
         self.qs.select().both_is_mine_and_is_under_my_control(
             user_id=user_id, group_ids=group_ids
         )

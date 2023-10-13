@@ -2,6 +2,7 @@ from datetime import timedelta
 
 from flask import current_app, g, request
 
+from vtaskr.libs.flask.querystring import QueryStringFilter
 from vtaskr.libs.flask.utils import ResponseAPI
 from vtaskr.libs.hmi import dto_to_dict, list_dto_to_dict, list_models_to_list_dto
 from vtaskr.libs.redis import rate_limited
@@ -73,7 +74,11 @@ def roletypes():
         roletype_service = RoleTypeService(session)
 
         if request.method == "GET":
-            roletypes = roletype_service.get_all_roletypes(g.user.id)
+            qsf = QueryStringFilter(
+                query_string=request.query_string.decode(), dto=RoleTypeDTO
+            )
+
+            roletypes = roletype_service.get_all_roletypes(g.user.id, qsf.get_filters())
             roletypes_dto = list_models_to_list_dto(RoleTypeMapperDTO, roletypes)
             return ResponseAPI.get_response(list_dto_to_dict(roletypes_dto), 200)
 

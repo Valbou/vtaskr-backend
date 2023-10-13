@@ -2,6 +2,7 @@ from datetime import timedelta
 
 from flask import current_app, g, request
 
+from vtaskr.libs.flask.querystring import QueryStringFilter
 from vtaskr.libs.flask.utils import ResponseAPI
 from vtaskr.libs.hmi import dto_to_dict, list_dto_to_dict, list_models_to_list_dto
 from vtaskr.libs.redis import rate_limited
@@ -68,8 +69,12 @@ def groups():
 
     if request.method == "GET":
         with current_app.sql.get_session() as session:
+            qsf = QueryStringFilter(
+                query_string=request.query_string.decode(), dto=GroupDTO
+            )
+
             group_service = GroupService(session)
-            groups = group_service.get_all_groups(g.user.id)
+            groups = group_service.get_all_groups(g.user.id, qsf.get_filters())
 
             groups_dto = list_models_to_list_dto(GroupMapperDTO, groups)
             return ResponseAPI.get_response(list_dto_to_dict(groups_dto), 200)

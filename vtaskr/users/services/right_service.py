@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 
+from vtaskr.libs.flask.querystring import Filter
 from vtaskr.libs.iam.constants import Permissions, Resources
 from vtaskr.users.models import Right, RoleType
 from vtaskr.users.persistence import RightDB
@@ -106,14 +107,16 @@ class RightService:
             self.session, user_id, right_id, group_ids=group_ids
         )
 
-    def get_all_rights(self, user_id: str) -> list[Right]:
+    def get_all_rights(
+        self, user_id: str, qs_filters: list[Filter] | None = None
+    ) -> list[Right]:
         """Return a list of all user's available rights"""
 
         group_ids = self.control.all_tenants_with_access(
             Permissions.READ, user_id=user_id, resource=Resources.ROLETYPE
         )
         return self.right_db.get_all_user_rights(
-            self.session, user_id, group_ids=group_ids
+            self.session, group_ids=group_ids, filters=qs_filters
         )
 
     def update_right(self, user_id: str, right: Right, roletype: RoleType) -> bool:

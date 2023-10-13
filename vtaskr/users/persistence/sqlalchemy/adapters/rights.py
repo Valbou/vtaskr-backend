@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 
+from vtaskr.libs.flask.querystring import Filter
 from vtaskr.libs.sqlalchemy.default_adapter import DefaultDB
 from vtaskr.users.models import Right
 from vtaskr.users.persistence.ports import AbstractRightPort
@@ -12,8 +13,15 @@ class RightDB(AbstractRightPort, DefaultDB):
         self.qs = RightQueryset()
 
     def get_all_user_rights(
-        self, session: Session, user_id: str, group_ids: list[str]
+        self,
+        session: Session,
+        group_ids: list[str],
+        filters: list[Filter] | None = None,
     ) -> list[Right]:
+        filters = filters or []
+        if filters:
+            self.qs.from_filters(filters)
+
         self.qs.select().both_user_have_and_user_can_use(group_ids=group_ids)
 
         return session.scalars(self.qs.statement).all()

@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 
+from vtaskr.libs.flask.querystring import Filter
 from vtaskr.libs.iam.constants import Permissions, Resources
 from vtaskr.users.models import Group
 from vtaskr.users.persistence import GroupDB
@@ -44,10 +45,16 @@ class GroupService:
 
         return self.create_group(user_id=user_id, group_name="Private")
 
-    def get_all_groups(self, user_id: str) -> list[Group] | None:
+    def get_all_groups(
+        self,
+        user_id: str,
+        qs_filters: list[Filter] | None = None,
+    ) -> list[Group] | None:
         """Return all user associated groups"""
 
-        return self.group_db.get_all_user_groups(self.session, user_id=user_id)
+        return self.group_db.get_all_user_groups(
+            self.session, user_id=user_id, filters=qs_filters
+        )
 
     def get_group(self, user_id: str, group_id: str) -> Group | None:
         """Retrieve just a group if permission was given"""

@@ -2,6 +2,7 @@ from datetime import timedelta
 
 from flask import current_app, g, request
 
+from vtaskr.libs.flask.querystring import QueryStringFilter
 from vtaskr.libs.flask.utils import ResponseAPI
 from vtaskr.libs.hmi import dto_to_dict, list_dto_to_dict, list_models_to_list_dto
 from vtaskr.libs.redis import rate_limited
@@ -69,7 +70,11 @@ def rights():
         right_service = RightService(session)
 
         if request.method == "GET":
-            rights = right_service.get_all_rights(g.user.id)
+            qsf = QueryStringFilter(
+                query_string=request.query_string.decode(), dto=RightDTO
+            )
+
+            rights = right_service.get_all_rights(g.user.id, qsf.get_filters())
             rights_dto = list_models_to_list_dto(RightMapperDTO, rights)
             return ResponseAPI.get_response(list_dto_to_dict(rights_dto), 200)
 

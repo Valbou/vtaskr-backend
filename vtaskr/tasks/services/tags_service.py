@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 
+from vtaskr.libs.flask.querystring import Filter
 from vtaskr.libs.iam.config import PermissionControl
 from vtaskr.libs.iam.constants import Permissions, Resources
 from vtaskr.tasks.models import Tag
@@ -12,14 +13,16 @@ class TagService:
         self.tag_db = TagDB()
         self.control = PermissionControl(self.session)
 
-    def get_tags(self, user_id: str) -> list[dict]:
+    def get_tags(
+        self, user_id: str, qs_filters: list[Filter] | None = None
+    ) -> list[dict]:
         """Get a list of authorized tags"""
 
         tenant_ids = self.control.all_tenants_with_access(
             permission=Permissions.READ, user_id=user_id, resource=Resources.TAG
         )
 
-        return self.tag_db.tags(self.session, tenant_ids)
+        return self.tag_db.tags(self.session, tenant_ids, qs_filters)
 
     def get_tag(self, user_id: str, tag_id: str) -> Tag | None:
         """Get a tag if read permission was given"""

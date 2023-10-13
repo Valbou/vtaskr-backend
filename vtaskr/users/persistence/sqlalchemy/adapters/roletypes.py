@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 
+from vtaskr.libs.flask.querystring import Filter
 from vtaskr.libs.sqlalchemy.default_adapter import DefaultDB
 from vtaskr.users.models import RoleType
 from vtaskr.users.persistence.ports import AbstractRoleTypePort
@@ -35,8 +36,15 @@ class RoleTypeDB(AbstractRoleTypePort, DefaultDB):
         return session.scalars(self.qs.statement).one_or_none()
 
     def get_all_user_roletypes(
-        self, session: Session, group_ids: list[str]
+        self,
+        session: Session,
+        group_ids: list[str],
+        filters: list[Filter] | None = None,
     ) -> list[RoleType]:
+        filters = filters or []
+        if filters:
+            self.qs.from_filters(filters)
+
         self.qs.select().user_can_use(group_ids=group_ids)
 
         return session.scalars(self.qs.statement).all()

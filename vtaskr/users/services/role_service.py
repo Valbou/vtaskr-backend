@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 
+from vtaskr.libs.flask.querystring import Filter
 from vtaskr.libs.iam.constants import Permissions, Resources
 from vtaskr.users.models import Role
 from vtaskr.users.persistence import RoleDB
@@ -60,14 +61,16 @@ class RoleService:
             self.session, user_id, role_id, group_ids=group_ids
         )
 
-    def get_all_roles(self, user_id: str) -> list[Role]:
+    def get_all_roles(
+        self, user_id: str, qs_filters: list[Filter] | None = None
+    ) -> list[Role]:
         """Return a list of all user's roles"""
 
         group_ids = self.control.all_tenants_with_access(
             Permissions.CREATE, user_id=user_id, resource=Resources.ROLE
         )
         return self.role_db.get_all_user_roles(
-            self.session, user_id, group_ids=group_ids
+            self.session, user_id, group_ids=group_ids, filters=qs_filters
         )
 
     def update_role(self, user_id: str, role: Role) -> bool:

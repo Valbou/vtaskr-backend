@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 
+from vtaskr.libs.flask.querystring import Filter
 from vtaskr.libs.iam.constants import Permissions, Resources
 from vtaskr.users.models import RoleType
 from vtaskr.users.persistence import RoleTypeDB
@@ -63,7 +64,9 @@ class RoleTypeService:
             self.session, roletype_id, group_ids=group_ids
         )
 
-    def get_all_roletypes(self, user_id: str) -> list[RoleType]:
+    def get_all_roletypes(
+        self, user_id: str, qs_filters: list[Filter] | None = None
+    ) -> list[RoleType]:
         """Return a list of all user's available roletypes"""
 
         group_ids = self.control.all_tenants_with_access(
@@ -71,7 +74,7 @@ class RoleTypeService:
         )
 
         return self.roletype_db.get_all_user_roletypes(
-            self.session, group_ids=group_ids
+            self.session, group_ids=group_ids, filters=qs_filters
         )
 
     def update_roletype(self, user_id: str, roletype: RoleType) -> bool:
