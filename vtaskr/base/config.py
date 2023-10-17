@@ -3,6 +3,7 @@ import os
 from vtaskr.libs.secutity.utils import file_to_base64
 
 APP_NAME = "vtaskr"
+VERSION = "1.1.0"
 
 # Validators config
 PASSWORD_MIN_LENGTH = 10

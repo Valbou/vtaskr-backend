@@ -2,7 +2,7 @@ class OpenApiRegistry:
     """
     A simple class to register OpenApiv3 elements
 
-    https://spec.openapis.org/oas/v3.0.3
+    https://spec.openapis.org/oas/v3.1.0
     https://swagger.io/specification/
     Validator: https://www.postman.com/
     """

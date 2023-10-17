@@ -2,7 +2,7 @@ from json import loads
 
 from flask import Blueprint, jsonify, render_template
 
-from vtaskr.base.config import AVAILABLE_LANGUAGES
+from vtaskr.base.config import AVAILABLE_LANGUAGES, VERSION
 from vtaskr.libs.flask.utils import ResponseAPI
 from vtaskr.libs.openapi.base import openapi
 
@@ -17,7 +17,7 @@ base_bp = Blueprint(
 @base_bp.route("/", methods=["GET"])
 def hello():
     """Just a logo displayed to curious users"""
-    return render_template("home.html")
+    return render_template("home.html", version=VERSION)
 
 
 @base_bp.route("/languages", methods=["GET"])
