@@ -23,4 +23,4 @@ class TestBaseRoutes(BaseTestCase):
         response = self.client.get("/documentation")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.content_type, "application/json")
-        self.assertIn('"openapi": "3.0.3"', response.text)
+        self.assertIn('"openapi": "3.1.0"', response.text)
