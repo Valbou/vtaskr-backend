@@ -13,9 +13,9 @@ class TestTaskTagsAPI(BaseTestCase):
         self.task_db = TaskDB()
 
     def create_data(self, session):
-        self.task = Task(self.group.id, self.fake.text(max_nb_chars=50))
-        self.tag_1 = Tag(self.group.id, self.fake.text(max_nb_chars=50))
-        self.tag_2 = Tag(self.group.id, self.fake.text(max_nb_chars=50))
+        self.task = Task(tenant_id=self.group.id, title=self.fake.text(max_nb_chars=50))
+        self.tag_1 = Tag(tenant_id=self.group.id, title=self.fake.text(max_nb_chars=50))
+        self.tag_2 = Tag(tenant_id=self.group.id, title=self.fake.text(max_nb_chars=50))
         self.task.add_tags([self.tag_1, self.tag_2])
         self.task_db.save(session, self.task)
 

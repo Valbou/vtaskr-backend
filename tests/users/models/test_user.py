@@ -1,5 +1,4 @@
 from datetime import datetime
-from typing import Union
 from unittest import TestCase
 
 from babel import Locale
@@ -22,17 +21,15 @@ class TestUser(TestCase):
         )
 
     def test_user_table_fields(self):
-        self.assertEqual(User.__annotations__.get("id"), str)
+        self.assertEqual(User.__annotations__.get("id"), str | None)
         self.assertEqual(User.__annotations__.get("first_name"), str)
         self.assertEqual(User.__annotations__.get("last_name"), str)
         self.assertEqual(User.__annotations__.get("email"), str)
-        self.assertEqual(User.__annotations__.get("hash_password"), str)
-        self.assertEqual(User.__annotations__.get("locale"), Locale)
-        self.assertEqual(User.__annotations__.get("timezone"), str)
-        self.assertEqual(User.__annotations__.get("created_at"), datetime)
-        self.assertEqual(
-            User.__annotations__.get("last_login_at"), Union[datetime, None]
-        )
+        self.assertEqual(User.__annotations__.get("hash_password"), str | None)
+        self.assertEqual(User.__annotations__.get("locale"), Locale | None)
+        self.assertEqual(User.__annotations__.get("timezone"), str | None)
+        self.assertEqual(User.__annotations__.get("created_at"), datetime | None)
+        self.assertEqual(User.__annotations__.get("last_login_at"), datetime | None)
 
     def test_user_property_fullname(self):
         self.assertEqual(

@@ -21,28 +21,18 @@ class RequestChange:
     The email field permit to looking for an user if needed.
     """
 
-    id: str = ""
-    created_at: datetime = datetime.now(utc)
-    request_type: RequestType | None = None
-    email: str = ""
-    code: str = ""
+    request_type: RequestType
+    email: str
+    id: str | None = None
+    created_at: datetime | None = None
+    code: str | None = None
     done: bool = False
 
-    def __init__(
-        self,
-        request_type: RequestType,
-        email: str,
-        done: bool = False,
-        code: str | None = None,
-        id: str | None = None,
-        created_at: datetime | None = None,
-    ) -> None:
-        self.id = id or get_id()
-        self.created_at = created_at or datetime.now(utc)
-        self.request_type = request_type
-        self.set_email(email.lower())
-        self.code = code or get_2FA()
-        self.done = done
+    def __post_init__(self):
+        self.id = self.id or get_id()
+        self.created_at = self.created_at or datetime.now(utc)
+        self.set_email(self.email.lower())
+        self.code = self.code or get_2FA()
 
     def _gen_base_hash_string(self) -> str:
         return f"{self.id}_{self.email}_{self.request_type.value}"

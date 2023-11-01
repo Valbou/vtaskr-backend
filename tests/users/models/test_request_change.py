@@ -20,13 +20,13 @@ class TestRequestChange(TestCase):
         return RequestChange(type, email)
 
     def test_request_change_table_fields(self):
-        self.assertEqual(RequestChange.__annotations__.get("id"), str)
-        self.assertEqual(RequestChange.__annotations__.get("created_at"), datetime)
+        self.assertEqual(RequestChange.__annotations__.get("id"), str | None)
         self.assertEqual(
-            RequestChange.__annotations__.get("request_type"), RequestType | None
+            RequestChange.__annotations__.get("created_at"), datetime | None
         )
+        self.assertEqual(RequestChange.__annotations__.get("request_type"), RequestType)
         self.assertEqual(RequestChange.__annotations__.get("email"), str)
-        self.assertEqual(RequestChange.__annotations__.get("code"), str)
+        self.assertEqual(RequestChange.__annotations__.get("code"), str | None)
         self.assertEqual(RequestChange.__annotations__.get("done"), bool)
 
     def test_request_change_is_valid(self):

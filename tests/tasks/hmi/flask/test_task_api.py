@@ -17,7 +17,7 @@ class TestTaskAPI(BaseTestCase):
 
     def test_get_task_no_login(self):
         self.create_user()
-        task = Task(self.group.id, self.fake.sentence(nb_words=8))
+        task = Task(tenant_id=self.group.id, title=self.fake.sentence(nb_words=8))
         with self.app.sql.get_session() as session:
             self.task_db.save(session, task)
 
@@ -28,7 +28,7 @@ class TestTaskAPI(BaseTestCase):
 
     def test_get_task(self):
         headers = self.get_token_headers()
-        task = Task(self.group.id, self.fake.sentence(nb_words=8))
+        task = Task(tenant_id=self.group.id, title=self.fake.sentence(nb_words=8))
         with self.app.sql.get_session() as session:
             self.task_db.save(session, task)
 
@@ -37,7 +37,7 @@ class TestTaskAPI(BaseTestCase):
 
     def test_update_task_put(self):
         headers = self.get_token_headers()
-        task = Task(self.group.id, self.fake.sentence(nb_words=8))
+        task = Task(tenant_id=self.group.id, title=self.fake.sentence(nb_words=8))
         with self.app.sql.get_session() as session:
             self.task_db.save(session, task)
 
@@ -61,7 +61,7 @@ class TestTaskAPI(BaseTestCase):
 
     def test_update_task_patch(self):
         headers = self.get_token_headers()
-        task = Task(self.group.id, self.fake.sentence(nb_words=8))
+        task = Task(tenant_id=self.group.id, title=self.fake.sentence(nb_words=8))
         with self.app.sql.get_session() as session:
             self.task_db.save(session, task)
 
@@ -82,7 +82,7 @@ class TestTaskAPI(BaseTestCase):
 
     def test_delete_task(self):
         headers = self.get_token_headers()
-        task = Task(self.group.id, self.fake.sentence(nb_words=8))
+        task = Task(tenant_id=self.group.id, title=self.fake.sentence(nb_words=8))
         with self.app.sql.get_session() as session:
             self.task_db.save(session, task)
 

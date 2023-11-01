@@ -18,8 +18,10 @@ class TestRight(TestCase):
         )
 
     def test_user_table_fields(self):
-        self.assertEqual(Right.__annotations__.get("id"), str)
-        self.assertEqual(Right.__annotations__.get("created_at"), datetime)
+        self.assertEqual(Right.__annotations__.get("id"), str | None)
+        self.assertEqual(Right.__annotations__.get("created_at"), datetime | None)
         self.assertEqual(Right.__annotations__.get("roletype_id"), str)
         self.assertEqual(Right.__annotations__.get("resource"), Resources)
-        self.assertEqual(Right.__annotations__.get("permissions"), list[Permissions])
+        self.assertEqual(
+            Right.__annotations__.get("permissions"), list[Permissions] | None
+        )

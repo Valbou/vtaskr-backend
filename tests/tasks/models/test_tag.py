@@ -17,15 +17,15 @@ class TestTag(TestCase):
         )
 
     def test_tag_table_fields(self):
-        self.assertEqual(Tag.__annotations__.get("id"), str)
+        self.assertEqual(Tag.__annotations__.get("id"), str | None)
         self.assertEqual(Tag.__annotations__.get("title"), str)
         self.assertEqual(Tag.__annotations__.get("tenant_id"), str)
         self.assertEqual(Tag.__annotations__.get("color"), Color | None)
         self.assertEqual(Tag.__annotations__.get("created_at"), datetime | None)
 
     def test_add_and_remove_tasks(self):
-        task_1 = Task(self.tenant_id, self.fake.text(max_nb_chars=50))
-        task_2 = Task(self.tenant_id, self.fake.text(max_nb_chars=50))
+        task_1 = Task(tenant_id=self.tenant_id, title=self.fake.text(max_nb_chars=50))
+        task_2 = Task(tenant_id=self.tenant_id, title=self.fake.text(max_nb_chars=50))
         self.tag.add_tasks([task_1, task_2])
         self.assertEqual(len(self.tag.tasks), 2)
 

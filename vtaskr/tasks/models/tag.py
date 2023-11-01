@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Any
 
@@ -10,28 +10,17 @@ from vtaskr.libs.secutity.utils import get_id
 
 @dataclass
 class Tag:
-    id: str = ""
-    created_at: datetime | None = None
-    tenant_id: str = ""
-    title: str = ""
+    title: str
+    tenant_id: str
     color: Color | None = None
-    tasks: list[Any] | None = None
+    tasks: list[Any] = field(default_factory=list)
+    id: str | None = None
+    created_at: datetime | None = None
 
-    def __init__(
-        self,
-        tenant_id: str,
-        title: str,
-        color: Color | None = None,
-        id: str | None = None,
-        created_at: datetime | None = None,
-        tasks: list[Any] | None = None,
-    ) -> None:
-        self.id = id or get_id()
-        self.created_at = created_at or datetime.now(utc)
-        self.tenant_id = tenant_id
-        self.title = title
-        self.color = color or Color("#000000", "#FFFFFF")
-        self.tasks = tasks or []
+    def __post_init__(self):
+        self.color = self.color or Color("#000000", "#FFFFFF")
+        self.id = self.id or get_id()
+        self.created_at = self.created_at or datetime.now(utc)
 
     def add_tasks(self, tasks: list):
         self.tasks.extend(tasks)

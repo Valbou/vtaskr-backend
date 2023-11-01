@@ -8,16 +8,10 @@ from vtaskr.libs.secutity.utils import get_id
 
 @dataclass
 class Group:
-    id: str = ""
-    name: str = ""
-    created_at: datetime = datetime.now(utc)
+    name: str
+    id: str | None = None
+    created_at: datetime | None = None
 
-    def __init__(
-        self,
-        name: str,
-        id: str | None = None,
-        created_at: datetime | None = None,
-    ) -> None:
-        self.id = id or get_id()
-        self.created_at = created_at or datetime.now(utc)
-        self.name = name
+    def __post_init__(self):
+        self.id = self.id or get_id()
+        self.created_at = self.created_at or datetime.now(utc)

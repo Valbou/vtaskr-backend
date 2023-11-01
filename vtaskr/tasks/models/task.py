@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 from enum import Enum
 from typing import TypeVar
@@ -22,43 +22,21 @@ T = TypeVar("T", bound="Task")
 
 @dataclass
 class Task:
-    id: str = ""
-    created_at: datetime | None = None
-    tenant_id: str = ""
-    title: str = ""
+    title: str
+    tenant_id: str
     description: str = ""
     emergency: bool = False
     important: bool = False
     scheduled_at: datetime | None = None
     duration: timedelta | None = None
     done: datetime | None = None
-    tags: list[Tag] | None = None
+    tags: list[Tag] = field(default_factory=list)
+    id: str | None = None
+    created_at: datetime | None = None
 
-    def __init__(
-        self,
-        tenant_id: str,
-        title: str,
-        description: str = "",
-        emergency: bool = False,
-        important: bool = False,
-        scheduled_at: datetime | None = None,
-        duration: timedelta | None = None,
-        done: datetime | None = None,
-        id: str = "",
-        created_at: datetime | None = None,
-        tags: list[Tag] | None = None,
-    ) -> None:
-        self.id = id or get_id()
-        self.created_at = created_at or datetime.now(utc)
-        self.tenant_id = tenant_id
-        self.title = title
-        self.description = description
-        self.emergency = emergency
-        self.important = important
-        self.scheduled_at = scheduled_at
-        self.duration = duration
-        self.done = done
-        self.tags = tags or []
+    def __post_init__(self):
+        self.id = self.id or get_id()
+        self.created_at = self.created_at or datetime.now(utc)
 
     def is_done(self) -> bool:
         return bool(self.done)

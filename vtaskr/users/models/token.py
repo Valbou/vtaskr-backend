@@ -9,31 +9,24 @@ from vtaskr.libs.secutity.utils import get_2FA, get_id, get_token
 
 @dataclass
 class Token:
-    id: str = ""
-    created_at: datetime = datetime.now(utc)
-    last_activity_at: datetime = datetime.now(utc)
+    user_id: str
     temp: bool = True
-    temp_code: str = ""
-    sha_token: str = ""
-    user_id: str = ""
+    temp_code: str | None = None
+    sha_token: str | None = None
+    id: str | None = None
+    created_at: datetime | None = None
+    last_activity_at: datetime | None = None
 
-    def __init__(
-        self,
-        user_id: str,
-        token: str | None = None,
-        temp: bool = True,
-        temp_code: str | None = None,
-        id: str | None = None,
-        created_at: datetime | None = None,
-        last_activity_at: datetime | None = None,
-    ) -> None:
-        self.id = id or get_id()
-        self.created_at = created_at or datetime.now(utc)
-        self.last_activity_at = last_activity_at or self.created_at
+    def __post_init__(self):
+        self.id = self.id or get_id()
+        self.created_at = self.created_at or datetime.now(utc)
+        self.last_activity_at = self.last_activity_at or self.created_at
+        if not self.sha_token:
+            self.sha_token = get_token()
+        self.temp_code = self.temp_code or get_2FA()
+
+    def set_token(self, token: str):
         self.sha_token = token or get_token()
-        self.user_id = user_id
-        self.temp = temp
-        self.temp_code = temp_code or get_2FA()
 
     def is_temp_valid(self) -> bool:
         """

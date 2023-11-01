@@ -9,25 +9,14 @@ from vtaskr.libs.secutity.utils import get_id
 
 @dataclass
 class Role:
-    id: str = ""
-    user_id: str = ""
-    group_id: str = ""
-    roletype_id: str = ""
-    color: Color = Color(background="#FFFFFF", text="#000000")
-    created_at: datetime = datetime.now(utc)
+    user_id: str
+    group_id: str
+    roletype_id: str
+    color: Color | None = None
+    id: str | None = None
+    created_at: datetime | None = None
 
-    def __init__(
-        self,
-        user_id: str,
-        group_id: str,
-        roletype_id: str,
-        color: Color | None = None,
-        id: str | None = None,
-        created_at: datetime | None = None,
-    ) -> None:
-        self.id = id or get_id()
-        self.created_at = created_at or datetime.now(utc)
-        self.color = color or Color(background="#FFFFFF", text="#000000")
-        self.user_id = user_id
-        self.group_id = group_id
-        self.roletype_id = roletype_id
+    def __post_init__(self):
+        self.id = self.id or get_id()
+        self.created_at = self.created_at or datetime.now(utc)
+        self.color = self.color or Color(background="#FFFFFF", text="#000000")

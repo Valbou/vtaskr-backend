@@ -16,7 +16,7 @@ class TestRoleType(TestCase):
         )
 
     def test_user_table_fields(self):
-        self.assertEqual(RoleType.__annotations__.get("id"), str)
-        self.assertEqual(RoleType.__annotations__.get("created_at"), datetime)
+        self.assertEqual(RoleType.__annotations__.get("id"), str | None)
+        self.assertEqual(RoleType.__annotations__.get("created_at"), datetime | None)
         self.assertEqual(RoleType.__annotations__.get("name"), str)
         self.assertEqual(RoleType.__annotations__.get("group_id"), str | None)

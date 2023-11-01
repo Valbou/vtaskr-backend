@@ -1,4 +1,4 @@
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from datetime import datetime
 
 from pytz import utc
@@ -12,23 +12,14 @@ class Right:
     """EAV like model"""
 
     roletype_id: str
-    resource: Resources = Resources.TASK
-    id: str = ""
-    created_at: datetime = datetime.now(utc)
-    permissions: list[Permissions] = field(default_factory=list)
+    resource: Resources
+    permissions: list[Permissions] | None = None
+    id: str | None = None
+    created_at: datetime | None = None
 
-    def __init__(
-        self,
-        roletype_id: str,
-        resource: Resources,
-        permissions: list[Permissions] | None = None,
-        id: str | None = None,
-        created_at: datetime | None = None,
-    ) -> None:
-        self.id = id or get_id()
-        self.created_at = created_at or datetime.now(utc)
-        self.roletype_id = roletype_id
-        self.resource = resource
-        self.permissions = permissions or [
+    def __post_init__(self):
+        self.id = self.id or get_id()
+        self.created_at = self.created_at or datetime.now(utc)
+        self.permissions = self.permissions or [
             Permissions.READ,
         ]

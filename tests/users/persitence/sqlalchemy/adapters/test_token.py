@@ -25,9 +25,9 @@ class TestTokenAdapter(BaseTestCase):
 
         with self.app.sql.get_session() as session:
             self.user_db.save(session, self.user)
-            self.token = Token(
-                token=sha256(self.fake.password().encode()).hexdigest(),
-                user_id=self.user.id,
+            self.token = Token(user_id=self.user.id)
+            self.token.set_token(
+                token=sha256(self.fake.password().encode()).hexdigest()
             )
 
     def test_complete_crud_token(self):

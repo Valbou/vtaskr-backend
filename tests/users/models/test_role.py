@@ -18,9 +18,9 @@ class TestRole(TestCase):
         )
 
     def test_user_table_fields(self):
-        self.assertEqual(Role.__annotations__.get("id"), str)
-        self.assertEqual(Role.__annotations__.get("created_at"), datetime)
+        self.assertEqual(Role.__annotations__.get("id"), str | None)
+        self.assertEqual(Role.__annotations__.get("created_at"), datetime | None)
         self.assertEqual(Role.__annotations__.get("user_id"), str)
         self.assertEqual(Role.__annotations__.get("group_id"), str)
         self.assertEqual(Role.__annotations__.get("roletype_id"), str)
-        self.assertEqual(Role.__annotations__.get("color"), Color)
+        self.assertEqual(Role.__annotations__.get("color"), Color | None)

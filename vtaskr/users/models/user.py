@@ -11,38 +11,24 @@ from vtaskr.libs.secutity.validators import PasswordChecker, get_valid_email
 
 @dataclass
 class User:
-    id: str = ""
-    first_name: str = ""
-    last_name: str = ""
-    email: str = ""
-    hash_password: str = ""
-    locale: Locale = Locale("en", "US")
-    timezone: str = ""
-    created_at: datetime = datetime.now(utc)
+    first_name: str
+    last_name: str
+    email: str
+    timezone: str | None = None
+    locale: Locale | None = None
+    hash_password: str | None = None
+    id: str | None = None
+    created_at: datetime | None = None
     last_login_at: datetime | None = None
 
-    def __init__(
-        self,
-        first_name: str,
-        last_name: str,
-        email: str,
-        locale: Locale | None = None,
-        timezone: str | None = None,
-        hash_password: str | None = None,
-        id: str | None = None,
-        created_at: datetime | None = None,
-        last_login_at: datetime | None = None,
-    ) -> None:
-        self.id = id or get_id()
-        self.first_name = first_name
-        self.last_name = last_name
-        self.set_email(email.lower())
-        if hash_password:
-            self.hash_password = hash_password
-        self.locale = locale or Locale.parse(LOCALE)
-        self.timezone = timezone or TIMEZONE
-        self.created_at = created_at or datetime.now(utc)
-        self.last_login_at = last_login_at
+    def __post_init__(self, password: str | None = None):
+        self.id = self.id or get_id()
+        self.created_at = self.created_at or datetime.now(utc)
+        self.locale = self.locale or Locale.parse(LOCALE)
+        self.timezone = self.timezone or TIMEZONE
+        self.set_email(self.email.lower())
+        if password:
+            self.set_password(password=password)
 
     @property
     def full_name(self) -> str:

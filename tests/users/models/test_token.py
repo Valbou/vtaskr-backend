@@ -18,12 +18,12 @@ class TestToken(TestCase):
         return Token(user_id=get_id(), temp=temp)
 
     def test_token_table_fields(self):
-        self.assertEqual(Token.__annotations__.get("id"), str)
-        self.assertEqual(Token.__annotations__.get("created_at"), datetime)
-        self.assertEqual(Token.__annotations__.get("last_activity_at"), datetime)
+        self.assertEqual(Token.__annotations__.get("id"), str | None)
+        self.assertEqual(Token.__annotations__.get("created_at"), datetime | None)
+        self.assertEqual(Token.__annotations__.get("last_activity_at"), datetime | None)
         self.assertEqual(Token.__annotations__.get("temp"), bool)
-        self.assertEqual(Token.__annotations__.get("temp_code"), str)
-        self.assertEqual(Token.__annotations__.get("sha_token"), str)
+        self.assertEqual(Token.__annotations__.get("temp_code"), str | None)
+        self.assertEqual(Token.__annotations__.get("sha_token"), str | None)
         self.assertEqual(Token.__annotations__.get("user_id"), str)
 
     def test_token_is_valid(self):
