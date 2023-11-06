@@ -12,7 +12,7 @@ source ../bin/activate
 if [ -n "$1" ]
 then
     # Generate PO Templates Files
-    pybabel extract -F babel.cfg -o vtaskr/$1/translations/$1.pot vtaskr/$1
+    pybabel extract -F babel.cfg -o src/$1/translations/$1.pot src/$1
 else 
     echo "No domain given";
 fi

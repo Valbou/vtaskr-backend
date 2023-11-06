@@ -3,9 +3,9 @@ from unittest import TestCase
 
 from sqlalchemy import Column, Integer, String, Table
 
-from vtaskr.libs.flask.querystring import QueryStringFilter
-from vtaskr.libs.sqlalchemy.base import mapper_registry
-from vtaskr.libs.sqlalchemy.queryset import Queryset
+from src.libs.flask.querystring import QueryStringFilter
+from src.libs.sqlalchemy.base import mapper_registry
+from src.libs.sqlalchemy.queryset import Queryset
 
 
 @dataclass

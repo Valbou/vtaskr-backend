@@ -1,5 +1,5 @@
 from tests.base_test import BaseTestCase
-from vtaskr.users.services import GroupService
+from src.users.services import GroupService
 
 URL_API_USERS = "/api/v1/users"
 

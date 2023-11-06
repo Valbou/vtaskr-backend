@@ -1,5 +1,5 @@
 from tests.base_test import BaseTestCase, FlaskTemplateCapture
-from vtaskr.base.config import AVAILABLE_LANGUAGES
+from src.base.config import AVAILABLE_LANGUAGES
 
 
 class TestBaseRoutes(BaseTestCase):

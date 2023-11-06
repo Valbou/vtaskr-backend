@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from vtaskr.libs.secutity.utils import file_to_base64
+from src.libs.secutity.utils import file_to_base64
 
 
 class TestFileBase64(TestCase):
@@ -8,7 +8,7 @@ class TestFileBase64(TestCase):
         expected = (
             "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8"
         )
-        file_name = "vtaskr/static/vtaskr-logo-light.svg"
+        file_name = "src/static/vtaskr-logo-light.svg"
         result = file_to_base64(file_name)
         self.assertIn(expected, result)
         self.assertTrue(result.startswith(expected))

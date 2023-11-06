@@ -5,8 +5,8 @@ from babel import Locale
 from faker import Faker
 from pytz import utc
 
-from vtaskr.base.config import UNUSED_ACCOUNT_DELAY
-from vtaskr.users import User
+from src.base.config import UNUSED_ACCOUNT_DELAY
+from src.users import User
 
 
 class TestUser(TestCase):

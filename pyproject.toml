@@ -1,0 +1,45 @@
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vtaskr"
+authors = [
+    {name = "Valentin BOUVAREL", email = "contact@valbou.fr"},
+]
+description = "An open-source to do list application"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "GNU General Public License v3.0"}
+classifiers = [
+    "Framework :: Flask",
+    "Programming Language :: Python :: 3.10",
+]
+
+dependencies = [
+    "alembic",
+    "argon2-cffi",
+    "Flask",
+    "gunicorn",
+    "Jinja2",
+    "Babel",
+    "python-dotenv",
+    "SQLAlchemy",
+    "redis",
+    "email-validator",
+    "psycopg2-binary"
+]
+dynamic = ["version"]
+
+optional-dependencies.dev = [
+    "black",
+    "isort",
+    "coverage",
+    "bandit",
+    "colorama",
+    "Faker",
+    "flake8",
+    "mccabe",
+]
+
+[tool.setuptools_scm]

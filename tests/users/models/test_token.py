@@ -4,9 +4,9 @@ from unittest import TestCase
 from faker import Faker
 from pytz import utc
 
-from vtaskr.base.config import TOKEN_TEMP_VALIDITY, TOKEN_VALIDITY
-from vtaskr.libs.secutity.utils import get_id
-from vtaskr.users import Token
+from src.base.config import TOKEN_TEMP_VALIDITY, TOKEN_VALIDITY
+from src.libs.secutity.utils import get_id
+from src.users import Token
 
 
 class TestToken(TestCase):

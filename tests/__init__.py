@@ -1,9 +1,9 @@
 from flask import Flask
 
-from vtaskr.libs.flask.main import create_flask_app
-from vtaskr.libs.notifications import TestNotificationService
-from vtaskr.libs.redis.database import TestNoSQLService
-from vtaskr.libs.sqlalchemy.database import TestSQLService
+from src.libs.flask.main import create_flask_app
+from src.libs.notifications import TestNotificationService
+from src.libs.redis.database import TestNoSQLService
+from src.libs.sqlalchemy.database import TestSQLService
 
 # Clean cache
 nosql_test = TestNoSQLService()

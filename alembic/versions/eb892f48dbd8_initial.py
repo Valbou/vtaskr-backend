@@ -8,9 +8,9 @@ Create Date: 2023-10-04 19:46:27.919877
 import sqlalchemy as sa
 
 from alembic import op
-from vtaskr.colors.persistence.sqlalchemy.color import ColorType
-from vtaskr.users.persistence.sqlalchemy.tables.right_table import PermissionsType
-from vtaskr.users.persistence.sqlalchemy.tables.user_table import LocaleField
+from src.colors.persistence.sqlalchemy.color import ColorType
+from src.users.persistence.sqlalchemy.tables.right_table import PermissionsType
+from src.users.persistence.sqlalchemy.tables.user_table import LocaleField
 
 # revision identifiers, used by Alembic.
 revision = "eb892f48dbd8"

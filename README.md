@@ -36,7 +36,7 @@ Config your own .env file (based on template.env file in project folder)
 ### Install dependencies
 
 ```bash
-pip install -r requirements.txt
+pip install .
 ```
 
 ### Install translations
@@ -55,10 +55,10 @@ alembic upgrade head
 ### To run flask
 ```bash
 # With Werkzeug (dev :5000)
-flask --app vtaskr.flask run
+flask --app src.flask run
 
 # With Gunicorn (prod :8000)
-gunicorn vtaskr.flask:app
+gunicorn src.flask:app
 ```
 
 ## Technical informations for developpers
@@ -68,7 +68,7 @@ Follow previous steps, an continue with steps below.
 ### Install dev dependencies
 
 ```bash
-pip install -r requirements-dev.txt
+pip install .[dev]
 ```
 
 ### To run tests

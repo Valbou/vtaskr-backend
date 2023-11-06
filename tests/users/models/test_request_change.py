@@ -4,8 +4,8 @@ from unittest import TestCase
 from faker import Faker
 from pytz import utc
 
-from vtaskr.base.config import REQUEST_DAYS_HISTORY, REQUEST_VALIDITY
-from vtaskr.users import RequestChange, RequestType
+from src.base.config import REQUEST_DAYS_HISTORY, REQUEST_VALIDITY
+from src.users import RequestChange, RequestType
 
 
 class TestRequestChange(TestCase):

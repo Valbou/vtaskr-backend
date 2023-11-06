@@ -1,7 +1,7 @@
 from tests.base_test import BaseTestCase
-from vtaskr.libs.iam.constants import Permissions, Resources
-from vtaskr.users.models import Right
-from vtaskr.users.services import RightService, RoleTypeService
+from src.libs.iam.constants import Permissions, Resources
+from src.users.models import Right
+from src.users.services import RightService, RoleTypeService
 
 URL_API = "/api/v1"
 

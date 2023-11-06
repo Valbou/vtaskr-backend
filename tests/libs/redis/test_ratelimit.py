@@ -1,8 +1,8 @@
 from datetime import timedelta
 from unittest import TestCase
 
-from vtaskr.libs.redis.database import TestNoSQLService
-from vtaskr.libs.redis.ratelimit import LimitExceededError, RateLimit
+from src.libs.redis.database import TestNoSQLService
+from src.libs.redis.ratelimit import LimitExceededError, RateLimit
 
 
 class TestRateLimit(TestCase):

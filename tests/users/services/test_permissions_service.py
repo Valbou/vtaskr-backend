@@ -1,6 +1,6 @@
 from tests.base_test import BaseTestCase
-from vtaskr.libs.iam.constants import Permissions, Resources
-from vtaskr.users.services import (
+from src.libs.iam.constants import Permissions, Resources
+from src.users.services import (
     GroupService,
     PermissionControl,
     RightService,

@@ -3,7 +3,7 @@ from unittest import TestCase
 
 from faker import Faker
 
-from vtaskr.users import Group
+from src.users import Group
 
 
 class TestGroup(TestCase):

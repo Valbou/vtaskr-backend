@@ -5,7 +5,7 @@ from sqlalchemy import Engine
 from sqlalchemy.orm import Session
 
 from tests.utils.db_utils import check_connection_query
-from vtaskr.libs.sqlalchemy.database import SQLService, TestSQLService
+from src.libs.sqlalchemy.database import SQLService, TestSQLService
 
 
 class TestFakeSQLService(TestCase):
@@ -38,14 +38,14 @@ class TestFakeSQLService(TestCase):
 
     def test_create_tables(self):
         with patch(
-            "vtaskr.libs.sqlalchemy.base.mapper_registry.metadata.create_all"
+            "src.libs.sqlalchemy.base.mapper_registry.metadata.create_all"
         ) as mock:
             self.sql_test.create_tables()
             mock.assert_called_once()
 
     def test_drop_tables(self):
         with patch(
-            "vtaskr.libs.sqlalchemy.base.mapper_registry.metadata.drop_all"
+            "src.libs.sqlalchemy.base.mapper_registry.metadata.drop_all"
         ) as mock:
             self.sql_test.drop_tables()
             mock.assert_called_once()

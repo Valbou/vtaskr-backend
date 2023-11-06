@@ -3,8 +3,8 @@ from unittest import TestCase
 
 from faker import Faker
 
-from vtaskr.colors.models.color import Color
-from vtaskr.users import Role
+from src.colors.models.color import Color
+from src.users import Role
 
 
 class TestRole(TestCase):

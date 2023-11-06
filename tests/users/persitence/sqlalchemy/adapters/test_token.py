@@ -4,9 +4,9 @@ from hashlib import sha256
 from pytz import utc
 
 from tests.base_test import BaseTestCase
-from vtaskr.base.config import TOKEN_TEMP_VALIDITY, TOKEN_VALIDITY
-from vtaskr.users.models import Token, User
-from vtaskr.users.persistence import TokenDB, UserDB
+from src.base.config import TOKEN_TEMP_VALIDITY, TOKEN_VALIDITY
+from src.users.models import Token, User
+from src.users.persistence import TokenDB, UserDB
 
 
 class TestTokenAdapter(BaseTestCase):

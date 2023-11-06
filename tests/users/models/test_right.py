@@ -3,8 +3,8 @@ from unittest import TestCase
 
 from faker import Faker
 
-from vtaskr.libs.iam.constants import Permissions, Resources
-from vtaskr.users import Right
+from src.libs.iam.constants import Permissions, Resources
+from src.users import Right
 
 
 class TestRight(TestCase):

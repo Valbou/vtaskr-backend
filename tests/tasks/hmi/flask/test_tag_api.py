@@ -1,6 +1,6 @@
 from tests.base_test import BaseTestCase
-from vtaskr.tasks.models import Tag
-from vtaskr.tasks.persistence import TagDB
+from src.tasks.models import Tag
+from src.tasks.persistence import TagDB
 
 URL_API = "/api/v1"
 

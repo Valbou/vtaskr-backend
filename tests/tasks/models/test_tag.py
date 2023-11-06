@@ -3,7 +3,7 @@ from unittest import TestCase
 
 from faker import Faker
 
-from vtaskr.tasks import Color, Tag, Task
+from src.tasks import Color, Tag, Task
 
 
 class TestTag(TestCase):

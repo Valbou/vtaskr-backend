@@ -1,6 +1,6 @@
 from tests.base_test import BaseTestCase
-from vtaskr.users.models import RoleType
-from vtaskr.users.services import RoleTypeService
+from src.users.models import RoleType
+from src.users.services import RoleTypeService
 
 URL_API = "/api/v1"
 

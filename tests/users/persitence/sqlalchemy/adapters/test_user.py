@@ -3,9 +3,9 @@ from datetime import datetime, timedelta
 from pytz import utc
 
 from tests.base_test import BaseTestCase
-from vtaskr.base.config import UNUSED_ACCOUNT_DELAY
-from vtaskr.users.models import User
-from vtaskr.users.persistence import UserDB
+from src.base.config import UNUSED_ACCOUNT_DELAY
+from src.users.models import User
+from src.users.persistence import UserDB
 
 
 class TestUserAdapter(BaseTestCase):

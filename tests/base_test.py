@@ -5,9 +5,9 @@ from faker import Faker
 from flask import Flask, template_rendered
 
 from tests.utils.db_utils import text_query_column_exists, text_query_table_exists
-from vtaskr.base.config import LOCALE, TIMEZONE
-from vtaskr.users.hmi.dto import UserDTO
-from vtaskr.users.services import UserService
+from src.base.config import LOCALE, TIMEZONE
+from src.users.hmi.dto import UserDTO
+from src.users.services import UserService
 
 from . import APP
 

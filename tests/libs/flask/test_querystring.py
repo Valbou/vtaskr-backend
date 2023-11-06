@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from datetime import date, datetime
 from unittest import TestCase
 
-from vtaskr.libs.flask.querystring import Filter, Operations, QueryStringFilter
+from src.libs.flask.querystring import Filter, Operations, QueryStringFilter
 
 
 class QSTestMixin(TestCase):

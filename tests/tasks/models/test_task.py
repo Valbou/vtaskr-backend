@@ -4,7 +4,7 @@ from unittest import TestCase
 from faker import Faker
 from pytz import utc
 
-from vtaskr.tasks import EisenhowerFlag, Tag, Task
+from src.tasks import EisenhowerFlag, Tag, Task
 
 
 class TestTask(TestCase):

@@ -1,0 +1,2 @@
+class ColorFormatError(Exception):
+    pass
