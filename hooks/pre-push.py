@@ -95,7 +95,10 @@ def check_git_branch_name() -> int:
         ["/bin/git", "rev-parse", "--abbrev-ref", "HEAD"], capture_output=True
     )
     branch_name = process.stdout
-    if re.match(r"(^(feat|fix|doc|test|perf|refacto)([-\w]+)-#([\d]+)$)|(^master$)|(^dev$)", branch_name.decode()):
+    if re.match(
+        r"(^(feat|fix|doc|test|perf|refacto)([-\w]+)-#([\d]+)$)|(^master$)|(^dev$)",
+        branch_name.decode(),
+    ):
         print(f"{Back.GREEN+Fore.BLACK} Branch name PASSED {Style.RESET_ALL}")
         return 0
     else:
