@@ -81,6 +81,15 @@ python -m coverage run -m unittest -vv
 python -m coverage report
 ```
 
+### To contribute
+
+To contribute:
+- clone this git repository first.
+- Create a branch nammed like this: "feat-good-feature-#42".
+- Use commit namming convention: "feat: my commit message".
+- Run tests and check your code coverage (coverage is not just a high %)
+- Make a pull request ! <3
+
 ## How to help ?
 
 - First you can encourage development with starring project <3
