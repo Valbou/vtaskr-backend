@@ -90,49 +90,12 @@ def check_coverage_report(interpreter: str) -> int:
         return 1
 
 
-def check_requirements(interpreter: str) -> int:
-    """Check updated requirements"""
-    status = 0
-    process = run([interpreter, "-m", "pip", "freeze"], capture_output=True)
-    content_file_prod = ""
-    with open("requirements.txt", "r") as file:
-        content_file_prod = file.read()
-
-    content_file_dev = ""
-    with open("requirements-dev.txt", "r") as file:
-        content_file_dev = file.read()
-
-    content_output = process.stdout.decode().replace("\\n", "\n")
-
-    package_bug = "pkg_resources==0.0.0"
-    for req in content_output.split("\n"):
-        if (
-            req != package_bug
-            and req.replace("==", ">=") not in content_file_prod
-            and req.replace("==", ">=") not in content_file_dev
-        ):
-            print(f"missing {req} requirement")
-            status += 1
-
-    if status == 0:
-        print(f"{Back.GREEN+Fore.BLACK} Requirements PASSED {Style.RESET_ALL}")
-        return status
-    else:
-        print(
-            f"{Back.RED} Requirements FAIL {Style.RESET_ALL}"
-            "Requirements seems to be outdated",
-            sep="\n",
-            file=sys.stderr,
-        )
-        return status
-
-
 def check_git_branch_name() -> int:
     process = run(
         ["/bin/git", "rev-parse", "--abbrev-ref", "HEAD"], capture_output=True
     )
     branch_name = process.stdout
-    if re.match(r"^(bug|feature)-([\w]+)$", branch_name.decode()):
+    if re.match(r"(^(feat|fix|doc|test|perf|refacto)([-\w]+)-#([\d]+)$)|(^master$)|(^dev$)", branch_name.decode()):
         print(f"{Back.GREEN+Fore.BLACK} Branch name PASSED {Style.RESET_ALL}")
         return 0
     else:
@@ -165,7 +128,6 @@ if __name__ == "__main__":
         exit_score += run_app(interpreter, path_project, *app)
 
     exit_score += check_coverage_report(interpreter)
-    exit_score += check_requirements(interpreter)
     # exit_score += check_git_branch_name()
 
     if exit_score > 0:

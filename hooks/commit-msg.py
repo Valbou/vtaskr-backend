@@ -8,7 +8,7 @@ from colorama import Back, Style
 
 
 def check_git_commit_name(msg):
-    if re.match(r"^(#[0-9]+) (.*)", msg):
+    if re.match(r"^(feat|fix|doc|test|perf|refacto):([ \w]+) #([\d]+)$", msg):
         return 0
     print(
         f"{Back.RED} Message commit must start by a ticket reference {Style.RESET_ALL}.",
