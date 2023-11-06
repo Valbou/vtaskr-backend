@@ -1,7 +1,6 @@
 from json import loads
 
 from flask import Blueprint, jsonify, render_template
-
 from src.base.config import AVAILABLE_LANGUAGES, VERSION
 from src.libs.flask.utils import ResponseAPI
 from src.libs.openapi.base import openapi

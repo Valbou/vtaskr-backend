@@ -40,6 +40,7 @@ optional-dependencies.dev = [
     "Faker",
     "flake8",
     "mccabe",
+    "mkdocs",
 ]
 
 [tool.setuptools_scm]
