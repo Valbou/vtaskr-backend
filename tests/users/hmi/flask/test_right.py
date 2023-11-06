@@ -1,7 +1,7 @@
-from tests.base_test import BaseTestCase
 from src.libs.iam.constants import Permissions, Resources
 from src.users.models import Right
 from src.users.services import RightService, RoleTypeService
+from tests.base_test import BaseTestCase
 
 URL_API = "/api/v1"
 

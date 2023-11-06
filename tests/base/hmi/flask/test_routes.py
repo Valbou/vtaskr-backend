@@ -1,5 +1,5 @@
-from tests.base_test import BaseTestCase, FlaskTemplateCapture
 from src.base.config import AVAILABLE_LANGUAGES
+from tests.base_test import BaseTestCase, FlaskTemplateCapture
 
 
 class TestBaseRoutes(BaseTestCase):

@@ -2,12 +2,12 @@ from unittest import TestCase
 
 from babel import Locale
 from faker import Faker
-from flask import Flask, template_rendered
 
-from tests.utils.db_utils import text_query_column_exists, text_query_table_exists
+from flask import Flask, template_rendered
 from src.base.config import LOCALE, TIMEZONE
 from src.users.hmi.dto import UserDTO
 from src.users.services import UserService
+from tests.utils.db_utils import text_query_column_exists, text_query_table_exists
 
 from . import APP
 

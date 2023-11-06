@@ -1,4 +1,3 @@
-from tests.base_test import BaseTestCase, FlaskTemplateCapture
 from src.base.config import LINK_TO_CHANGE_EMAIL, LINK_TO_CHANGE_PASSWORD
 from src.users.hmi.flask.emails import (
     ChangeEmailToNewEmail,
@@ -7,6 +6,7 @@ from src.users.hmi.flask.emails import (
     LoginEmail,
     RegisterEmail,
 )
+from tests.base_test import BaseTestCase, FlaskTemplateCapture
 
 
 class TestRegisterEmail(BaseTestCase):

@@ -2,9 +2,9 @@ from datetime import datetime
 
 from pytz import utc
 
-from tests.base_test import BaseTestCase
 from src.tasks.models import Task
 from src.tasks.persistence import TaskDB
+from tests.base_test import BaseTestCase
 
 URL_API = "/api/v1"
 

@@ -1,5 +1,4 @@
 from flask import Flask
-
 from src.libs.flask.main import create_flask_app
 from src.libs.notifications import TestNotificationService
 from src.libs.redis.database import TestNoSQLService

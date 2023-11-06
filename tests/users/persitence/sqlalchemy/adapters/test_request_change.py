@@ -1,9 +1,9 @@
 from datetime import datetime, timedelta
 
-from tests.base_test import BaseTestCase
 from src.base.config import REQUEST_DAYS_HISTORY
 from src.users.models import RequestChange, RequestType
 from src.users.persistence import RequestChangeDB
+from tests.base_test import BaseTestCase
 
 
 class TestRequestChangeAdapter(BaseTestCase):

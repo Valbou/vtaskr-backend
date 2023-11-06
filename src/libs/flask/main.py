@@ -1,8 +1,8 @@
 import os
 
-from flask import Flask
 from jinja2 import ChoiceLoader, FileSystemLoader
 
+from flask import Flask
 from src.base.config import AVAILABLE_LANGUAGES
 from src.base.hmi.flask import base_bp
 from src.libs.babel.translations import TranslationService

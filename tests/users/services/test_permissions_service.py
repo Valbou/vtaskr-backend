@@ -1,4 +1,3 @@
-from tests.base_test import BaseTestCase
 from src.libs.iam.constants import Permissions, Resources
 from src.users.services import (
     GroupService,
@@ -7,6 +6,7 @@ from src.users.services import (
     RoleService,
     RoleTypeService,
 )
+from tests.base_test import BaseTestCase
 
 
 class CheckCanMixin:

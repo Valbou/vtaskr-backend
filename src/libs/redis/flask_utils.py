@@ -4,7 +4,6 @@ from logging import Logger
 from typing import Callable
 
 from flask import current_app, g, request
-
 from src.libs.flask.utils import ResponseAPI, get_ip
 from src.libs.redis.ratelimit import LimitExceededError, RateLimit
 

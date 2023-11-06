@@ -1,6 +1,6 @@
-from tests.base_test import BaseTestCase
 from src.tasks import Tag, Task
 from src.tasks.persistence import TagDB, TaskDB
+from tests.base_test import BaseTestCase
 
 
 class TestTaskAdapter(BaseTestCase):

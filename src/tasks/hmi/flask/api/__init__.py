@@ -1,7 +1,6 @@
 from logging import Logger
 
 from flask import Blueprint
-
 from src.libs.openapi.base import openapi
 
 logger = Logger(__name__)

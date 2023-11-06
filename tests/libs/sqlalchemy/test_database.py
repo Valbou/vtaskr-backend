@@ -4,8 +4,8 @@ from unittest.mock import patch
 from sqlalchemy import Engine
 from sqlalchemy.orm import Session
 
-from tests.utils.db_utils import check_connection_query
 from src.libs.sqlalchemy.database import SQLService, TestSQLService
+from tests.utils.db_utils import check_connection_query
 
 
 class TestFakeSQLService(TestCase):

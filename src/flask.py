@@ -1,5 +1,4 @@
 from flask import Flask
-
 from src.libs.notifications import NotificationService
 from src.libs.redis.database import NoSQLService
 from src.libs.sqlalchemy.database import SQLService

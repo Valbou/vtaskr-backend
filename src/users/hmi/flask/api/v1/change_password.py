@@ -1,7 +1,6 @@
 from datetime import timedelta
 
 from flask import current_app, request
-
 from src.libs.flask.utils import ResponseAPI
 from src.libs.redis import rate_limited
 from src.libs.secutity.validators import PasswordComplexityError

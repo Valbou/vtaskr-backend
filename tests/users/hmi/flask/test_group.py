@@ -1,5 +1,5 @@
-from tests.base_test import BaseTestCase
 from src.users.services import GroupService
+from tests.base_test import BaseTestCase
 
 URL_API = "/api/v1"
 

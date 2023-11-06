@@ -1,6 +1,6 @@
-from tests.base_test import BaseTestCase
 from src.users import RequestChange, RequestType
 from src.users.persistence import RequestChangeDB, UserDB
+from tests.base_test import BaseTestCase
 
 URL_API = "/api/v1"
 
