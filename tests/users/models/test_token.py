@@ -5,7 +5,7 @@ from faker import Faker
 from pytz import utc
 
 from src.base.config import TOKEN_TEMP_VALIDITY, TOKEN_VALIDITY
-from src.libs.secutity.utils import get_id
+from src.libs.security.utils import get_id
 from src.users import Token
 
 

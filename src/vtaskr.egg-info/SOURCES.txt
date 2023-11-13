@@ -63,9 +63,9 @@ src/libs/redis/__init__.py
 src/libs/redis/database.py
 src/libs/redis/flask_utils.py
 src/libs/redis/ratelimit.py
-src/libs/secutity/__init__.py
-src/libs/secutity/utils.py
-src/libs/secutity/validators.py
+src/libs/security/__init__.py
+src/libs/security/utils.py
+src/libs/security/validators.py
 src/libs/sqlalchemy/__init__.py
 src/libs/sqlalchemy/base.py
 src/libs/sqlalchemy/database.py

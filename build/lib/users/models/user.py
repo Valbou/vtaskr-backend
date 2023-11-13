@@ -5,8 +5,8 @@ from babel import Locale
 from pytz import utc
 
 from src.base.config import LOCALE, TIMEZONE, UNUSED_ACCOUNT_DELAY
-from src.libs.secutity.utils import check_password, get_id, hash_from_password
-from src.libs.secutity.validators import PasswordChecker, get_valid_email
+from src.libs.security.utils import check_password, get_id, hash_from_password
+from src.libs.security.validators import PasswordChecker, get_valid_email
 
 
 @dataclass

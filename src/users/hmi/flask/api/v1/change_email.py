@@ -5,7 +5,7 @@ from email_validator import EmailSyntaxError
 from flask import current_app, g, request
 from src.libs.flask.utils import ResponseAPI
 from src.libs.redis import rate_limited
-from src.libs.secutity.validators import get_valid_email
+from src.libs.security.validators import get_valid_email
 from src.users.hmi.flask.decorators import login_required
 from src.users.hmi.flask.emails import ChangeEmailToNewEmail, ChangeEmailToOldEmail
 from src.users.services import EmailAlreadyUsedError, UserService

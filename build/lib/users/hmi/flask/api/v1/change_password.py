@@ -3,7 +3,7 @@ from datetime import timedelta
 from flask import current_app, request
 from src.libs.flask.utils import ResponseAPI
 from src.libs.redis import rate_limited
-from src.libs.secutity.validators import PasswordComplexityError
+from src.libs.security.validators import PasswordComplexityError
 from src.users.hmi.flask.emails import ChangePasswordEmail
 from src.users.services import UserService
 

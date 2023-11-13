@@ -5,7 +5,7 @@ from typing import TypeVar
 
 from pytz import utc
 
-from src.libs.secutity.utils import get_id
+from src.libs.security.utils import get_id
 
 from .tag import Tag
 

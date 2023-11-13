@@ -2,7 +2,7 @@ from unittest import TestCase
 
 from email_validator import EmailSyntaxError
 
-from src.libs.secutity.validators import (
+from src.libs.security.validators import (
     PasswordChecker,
     PasswordComplexityError,
     get_valid_email,

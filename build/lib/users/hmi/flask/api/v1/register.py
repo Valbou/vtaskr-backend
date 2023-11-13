@@ -6,7 +6,7 @@ from flask import current_app, request
 from src.libs.flask.utils import ResponseAPI
 from src.libs.hmi import dto_to_dict
 from src.libs.redis import rate_limited
-from src.libs.secutity.validators import PasswordComplexityError
+from src.libs.security.validators import PasswordComplexityError
 from src.users.hmi.dto.user import UserDTO, UserMapperDTO
 from src.users.hmi.flask.emails import RegisterEmail
 from src.users.services import UserService

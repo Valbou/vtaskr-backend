@@ -5,8 +5,8 @@ from enum import Enum
 from pytz import utc
 
 from src.base.config import REQUEST_DAYS_HISTORY, REQUEST_VALIDITY
-from src.libs.secutity.utils import get_2FA, get_id, hash_str
-from src.libs.secutity.validators import get_valid_email
+from src.libs.security.utils import get_2FA, get_id, hash_str
+from src.libs.security.validators import get_valid_email
 
 
 class RequestType(Enum):

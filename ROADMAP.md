@@ -32,6 +32,7 @@ As vTaskr is an non profit project without fulltime dev, no release date can be 
 - [x] Add filters on list endpoints (filter groups according to role or filter rights according to a group etc...)
 
 ## Go to v1.2.0
+- [ ] Add a dev documentation
 - [ ] Add Keycloak integration
 - [ ] Grouping tasks in todolists
 - [ ] Transform a todolist into a template to reuse it.

@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from src.libs.secutity.utils import file_to_base64
+from src.libs.security.utils import file_to_base64
 
 
 class TestFileBase64(TestCase):

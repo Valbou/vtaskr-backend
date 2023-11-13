@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from pytz import utc
 
 from src.base.config import TOKEN_TEMP_VALIDITY, TOKEN_VALIDITY
-from src.libs.secutity.utils import get_2FA, get_id, get_token
+from src.libs.security.utils import get_2FA, get_id, get_token
 
 
 @dataclass

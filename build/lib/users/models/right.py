@@ -4,7 +4,7 @@ from datetime import datetime
 from pytz import utc
 
 from src.libs.iam.constants import Permissions, Resources
-from src.libs.secutity.utils import get_id
+from src.libs.security.utils import get_id
 
 
 @dataclass

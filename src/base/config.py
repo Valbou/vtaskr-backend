@@ -1,6 +1,6 @@
 import os
 
-from src.libs.secutity.utils import file_to_base64
+from src.libs.security.utils import file_to_base64
 
 APP_NAME = "vtaskr"
 VERSION = "1.1.0"

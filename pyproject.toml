@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "vtaskr"
 authors = [
-    {name = "Valentin BOUVAREL", email = "contact@valbou.fr"},
+    {name = "Valentin B", email = "contact@valbou.fr"},
 ]
 description = "An open-source to do list application"
 readme = "README.md"
