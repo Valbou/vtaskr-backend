@@ -32,7 +32,7 @@ class UserService:
         )
         user.set_password(password)
 
-        if self.user_db.find_login(user.email):
+        if self.user_db.find_login(self.session, email=user.email):
             raise ValueError(f"User {user.email} already exists")
 
         self.user_db.save(self.session, user)

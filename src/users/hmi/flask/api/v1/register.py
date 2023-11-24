@@ -3,7 +3,6 @@ from datetime import timedelta
 from email_validator import EmailSyntaxError
 
 from flask import current_app, request
-
 from src.libs.flask.utils import ResponseAPI
 from src.libs.hmi import dto_to_dict
 from src.libs.redis import rate_limited
