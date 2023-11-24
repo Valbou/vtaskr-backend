@@ -32,6 +32,7 @@ cd vtaskr-backend
 ```
 
 Config your own .env file (based on template.env file in project folder)
+Please change the default SECRET_KEY if you are using sessions.
 
 ### Install dependencies
 
