@@ -103,7 +103,7 @@ def register():
 
     except ValueError as e:
         logger.warning(f"400 Error: {e}")
-        return ResponseAPI.get_400_response(f"Error: {e}")
+        return ResponseAPI.get_400_response(f"{e}")
 
     except Exception as e:
         logger.error(f"500 Error: {e}")
