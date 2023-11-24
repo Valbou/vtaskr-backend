@@ -3,6 +3,7 @@ from datetime import timedelta
 from email_validator import EmailSyntaxError
 
 from flask import current_app, request
+
 from src.libs.flask.utils import ResponseAPI
 from src.libs.hmi import dto_to_dict
 from src.libs.redis import rate_limited
@@ -76,9 +77,10 @@ def register():
     payload: dict = request.get_json()
     try:
         with current_app.sql.get_session() as session:
-            auth_service = UserService(session)
             password = payload.pop("password")
             user_dto = UserDTO(**payload)
+
+            auth_service = UserService(session)
             auth_service.clean_unused_accounts()
             user, _group = auth_service.register(user_dto, password)
 
