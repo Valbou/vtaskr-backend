@@ -101,6 +101,10 @@ def register():
         logger.warning(f"400 Error: {e}")
         return ResponseAPI.get_400_response("No password given")
 
+    except ValueError as e:
+        logger.warning(f"400 Error: {e}")
+        return ResponseAPI.get_400_response(f"Error: {e}")
+
     except Exception as e:
         logger.error(f"500 Error: {e}")
         return ResponseAPI.get_500_response("Internal error")
