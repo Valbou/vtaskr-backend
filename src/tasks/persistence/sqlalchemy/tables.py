@@ -1,6 +1,6 @@
 from datetime import datetime
+from zoneinfo import ZoneInfo
 
-from pytz import utc
 from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Interval, String, Table
 from sqlalchemy.orm import relationship
 
@@ -31,7 +31,10 @@ tag_table = Table(
     mapper_registry.metadata,
     Column("id", String, primary_key=True),
     Column(
-        "created_at", DateTime(timezone=True), default=datetime.now(utc), nullable=False
+        "created_at",
+        DateTime(timezone=True),
+        default=datetime.now(tz=ZoneInfo("UTC")),
+        nullable=False,
     ),
     Column("tenant_id", String, nullable=False),
     Column("title", String(50), nullable=False),
@@ -59,7 +62,10 @@ tasks_table = Table(
     mapper_registry.metadata,
     Column("id", String, primary_key=True),
     Column(
-        "created_at", DateTime(timezone=True), default=datetime.now(utc), nullable=False
+        "created_at",
+        DateTime(timezone=True),
+        default=datetime.now(tz=ZoneInfo("UTC")),
+        nullable=False,
     ),
     Column("tenant_id", String, nullable=False),
     Column("title", String(150), nullable=False),

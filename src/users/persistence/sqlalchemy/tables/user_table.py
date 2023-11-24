@@ -1,7 +1,7 @@
 from datetime import datetime
+from zoneinfo import ZoneInfo
 
 from babel import Locale
-from pytz import utc
 from sqlalchemy import Column, DateTime, Dialect, String, Table, types
 from sqlalchemy.orm import relationship
 
@@ -31,7 +31,10 @@ user_table = Table(
     Column("locale", LocaleField),
     Column("timezone", String(35)),
     Column(
-        "created_at", DateTime(timezone=True), default=datetime.now(utc), nullable=False
+        "created_at",
+        DateTime(timezone=True),
+        default=datetime.now(tz=ZoneInfo("UTC")),
+        nullable=False,
     ),
     Column("last_login_at", DateTime(timezone=True), nullable=True, default=None),
 )

@@ -1,8 +1,7 @@
 from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Any
-
-from pytz import utc
+from zoneinfo import ZoneInfo
 
 from src.colors.models.color import Color
 from src.libs.security.utils import get_id
@@ -20,7 +19,7 @@ class Tag:
     def __post_init__(self):
         self.color = self.color or Color("#000000", "#FFFFFF")
         self.id = self.id or get_id()
-        self.created_at = self.created_at or datetime.now(utc)
+        self.created_at = self.created_at or datetime.now(tz=ZoneInfo("UTC"))
 
     def add_tasks(self, tasks: list):
         self.tasks.extend(tasks)

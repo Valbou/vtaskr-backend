@@ -1,6 +1,5 @@
 from datetime import datetime
-
-from pytz import utc
+from zoneinfo import ZoneInfo
 
 from src.tasks.models import Task
 from src.tasks.persistence import TaskDB
@@ -42,7 +41,7 @@ class TestTaskAPI(BaseTestCase):
             self.task_db.save(session, task)
 
             new_title = self.fake.sentence(nb_words=5)
-            done_at = datetime.now(utc).isoformat()
+            done_at = datetime.now(tz=ZoneInfo("UTC")).isoformat()
             data = {
                 "title": new_title,
                 "done": done_at,

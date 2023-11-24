@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
 
 from babel import Locale
-from pytz import utc
 
 from src.base.config import LOCALE, TIMEZONE, UNUSED_ACCOUNT_DELAY
 from src.libs.security.utils import check_password, get_id, hash_from_password
@@ -23,7 +23,7 @@ class User:
 
     def __post_init__(self, password: str | None = None):
         self.id = self.id or get_id()
-        self.created_at = self.created_at or datetime.now(utc)
+        self.created_at = self.created_at or datetime.now(tz=ZoneInfo("UTC"))
         self.locale = self.locale or Locale.parse(LOCALE)
         self.timezone = self.timezone or TIMEZONE
         self.set_email(self.email.lower())
@@ -54,12 +54,12 @@ class User:
         return True
 
     def update_last_login(self) -> datetime:
-        self.last_login_at = datetime.now(utc)
+        self.last_login_at = datetime.now(tz=ZoneInfo("UTC"))
         return self.last_login_at
 
     @classmethod
     def unused_before(cls) -> datetime:
-        return datetime.now(utc) - timedelta(days=UNUSED_ACCOUNT_DELAY)
+        return datetime.now(tz=ZoneInfo("UTC")) - timedelta(days=UNUSED_ACCOUNT_DELAY)
 
     def __str__(self) -> str:
         return self.full_name

@@ -1,7 +1,6 @@
 from datetime import datetime, timedelta
 from hashlib import sha256
-
-from pytz import utc
+from zoneinfo import ZoneInfo
 
 from src.base.config import TOKEN_TEMP_VALIDITY, TOKEN_VALIDITY
 from src.users.models import Token, User
@@ -53,7 +52,8 @@ class TestTokenAdapter(BaseTestCase):
     def test_clean_expired(self):
         token = Token(
             self.user.id,
-            created_at=datetime.now(utc) - timedelta(seconds=TOKEN_VALIDITY),
+            created_at=datetime.now(tz=ZoneInfo("UTC"))
+            - timedelta(seconds=TOKEN_VALIDITY),
         )
         with self.app.sql.get_session() as session:
             self.token_db.save(session, token)
@@ -65,7 +65,8 @@ class TestTokenAdapter(BaseTestCase):
         token = Token(
             self.user.id,
             temp=False,
-            created_at=datetime.now(utc) - timedelta(seconds=TOKEN_TEMP_VALIDITY),
+            created_at=datetime.now(tz=ZoneInfo("UTC"))
+            - timedelta(seconds=TOKEN_TEMP_VALIDITY),
         )
         with self.app.sql.get_session() as session:
             self.token_db.save(session, token)
@@ -74,7 +75,9 @@ class TestTokenAdapter(BaseTestCase):
             self.assertTrue(self.token_db.exists(session, token.id))
 
     def test_not_clean_not_expired_not_temp(self):
-        token = Token(self.user.id, temp=False, created_at=datetime.now(utc))
+        token = Token(
+            self.user.id, temp=False, created_at=datetime.now(tz=ZoneInfo("UTC"))
+        )
         with self.app.sql.get_session() as session:
             self.token_db.save(session, token)
             self.assertTrue(self.token_db.exists(session, token.id))
@@ -85,7 +88,8 @@ class TestTokenAdapter(BaseTestCase):
         token = Token(
             self.user.id,
             temp=True,
-            created_at=datetime.now(utc) - timedelta(seconds=TOKEN_TEMP_VALIDITY / 2),
+            created_at=datetime.now(tz=ZoneInfo("UTC"))
+            - timedelta(seconds=TOKEN_TEMP_VALIDITY / 2),
         )
         with self.app.sql.get_session() as session:
             self.token_db.save(session, token)
@@ -97,7 +101,8 @@ class TestTokenAdapter(BaseTestCase):
         token = Token(
             self.user.id,
             temp=True,
-            created_at=datetime.now(utc) - timedelta(seconds=TOKEN_TEMP_VALIDITY),
+            created_at=datetime.now(tz=ZoneInfo("UTC"))
+            - timedelta(seconds=TOKEN_TEMP_VALIDITY),
         )
         with self.app.sql.get_session() as session:
             self.token_db.save(session, token)

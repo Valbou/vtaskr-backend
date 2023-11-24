@@ -1,8 +1,8 @@
 from datetime import datetime, timedelta
 from unittest import TestCase
+from zoneinfo import ZoneInfo
 
 from faker import Faker
-from pytz import utc
 
 from src.tasks import EisenhowerFlag, Tag, Task
 
@@ -31,7 +31,7 @@ class TestTask(TestCase):
 
     def test_is_done(self):
         self.assertFalse(self.task.is_done())
-        self.task.done = datetime.now(utc)
+        self.task.done = datetime.now(tz=ZoneInfo("UTC"))
         self.assertTrue(self.task.is_done())
 
     def test_eisenhower_flag(self):

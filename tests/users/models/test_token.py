@@ -1,8 +1,8 @@
 from datetime import datetime, timedelta
 from unittest import TestCase
+from zoneinfo import ZoneInfo
 
 from faker import Faker
-from pytz import utc
 
 from src.base.config import TOKEN_TEMP_VALIDITY, TOKEN_VALIDITY
 from src.libs.security.utils import get_id
@@ -32,7 +32,9 @@ class TestToken(TestCase):
 
     def test_token_old_invalid(self):
         token = self.create_token(temp=False)
-        token.last_activity_at = datetime.now(utc) - timedelta(seconds=TOKEN_VALIDITY)
+        token.last_activity_at = datetime.now(tz=ZoneInfo("UTC")) - timedelta(
+            seconds=TOKEN_VALIDITY
+        )
         self.assertFalse(token.is_valid())
 
     def test_token_temp_is_invalid(self):
@@ -45,7 +47,9 @@ class TestToken(TestCase):
 
     def test_token_old_temp_is_temp_invalid(self):
         token = self.create_token()
-        token.created_at = datetime.now(utc) - timedelta(seconds=TOKEN_TEMP_VALIDITY)
+        token.created_at = datetime.now(tz=ZoneInfo("UTC")) - timedelta(
+            seconds=TOKEN_TEMP_VALIDITY
+        )
         self.assertFalse(token.is_temp_valid())
 
     def test_token_not_temp_is_temp_invalid(self):

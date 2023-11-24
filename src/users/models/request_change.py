@@ -1,8 +1,7 @@
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 from enum import Enum
-
-from pytz import utc
+from zoneinfo import ZoneInfo
 
 from src.base.config import REQUEST_DAYS_HISTORY, REQUEST_VALIDITY
 from src.libs.security.utils import get_2FA, get_id, hash_str
@@ -30,7 +29,7 @@ class RequestChange:
 
     def __post_init__(self):
         self.id = self.id or get_id()
-        self.created_at = self.created_at or datetime.now(utc)
+        self.created_at = self.created_at or datetime.now(tz=ZoneInfo("UTC"))
         self.set_email(self.email.lower())
         self.code = self.code or get_2FA()
 
@@ -61,13 +60,13 @@ class RequestChange:
         """
         A RequestChange is valid only if it's creation date is less older than REQUEST_VALIDITY
         """
-        delta: timedelta = datetime.now(utc) - self.created_at
+        delta: timedelta = datetime.now(tz=ZoneInfo("UTC")) - self.created_at
         return not self.done and 0 <= delta.seconds < REQUEST_VALIDITY
 
     @classmethod
     def history_expired_before(cls) -> datetime:
-        return datetime.now(utc) - timedelta(days=REQUEST_DAYS_HISTORY)
+        return datetime.now(tz=ZoneInfo("UTC")) - timedelta(days=REQUEST_DAYS_HISTORY)
 
     @classmethod
     def valid_after(cls) -> datetime:
-        return datetime.now(utc) - timedelta(seconds=REQUEST_VALIDITY)
+        return datetime.now(tz=ZoneInfo("UTC")) - timedelta(seconds=REQUEST_VALIDITY)

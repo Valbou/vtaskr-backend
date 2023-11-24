@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 from datetime import datetime, timedelta
-
-from pytz import utc
+from zoneinfo import ZoneInfo
 
 from src.base.config import TOKEN_TEMP_VALIDITY, TOKEN_VALIDITY
 from src.libs.security.utils import get_2FA, get_id, get_token
@@ -19,7 +18,7 @@ class Token:
 
     def __post_init__(self):
         self.id = self.id or get_id()
-        self.created_at = self.created_at or datetime.now(utc)
+        self.created_at = self.created_at or datetime.now(tz=ZoneInfo("UTC"))
         self.last_activity_at = self.last_activity_at or self.created_at
         if not self.sha_token:
             self.sha_token = get_token()
@@ -32,7 +31,7 @@ class Token:
         """
         A Token is temp valid only if is temp and less older than TOKEN_TEMP_VALIDITY
         """
-        delta: timedelta = datetime.now(utc) - self.created_at
+        delta: timedelta = datetime.now(tz=ZoneInfo("UTC")) - self.created_at
         return self.temp and 0 <= delta.seconds < TOKEN_TEMP_VALIDITY
 
     def is_valid(self) -> bool:
@@ -40,7 +39,7 @@ class Token:
         A Token is valid only if it's last activity is under TOKEN_VALIDITY from now
         and if is not temp
         """
-        delta: timedelta = datetime.now(utc) - self.last_activity_at
+        delta: timedelta = datetime.now(tz=ZoneInfo("UTC")) - self.last_activity_at
         return not self.temp and 0 <= delta.seconds < TOKEN_VALIDITY
 
     def validate_token(self, code) -> bool:
@@ -52,7 +51,7 @@ class Token:
 
     def update_last_activity(self) -> datetime:
         """Token validity is automaticaly extended"""
-        self.last_activity_at = datetime.now(utc)
+        self.last_activity_at = datetime.now(tz=ZoneInfo("UTC"))
         return self.last_activity_at
 
     def __str__(self) -> str:
@@ -63,8 +62,8 @@ class Token:
 
     @classmethod
     def expired_temp_before(cls) -> datetime:
-        return datetime.now(utc) - timedelta(seconds=TOKEN_TEMP_VALIDITY)
+        return datetime.now(tz=ZoneInfo("UTC")) - timedelta(seconds=TOKEN_TEMP_VALIDITY)
 
     @classmethod
     def expired_before(cls) -> datetime:
-        return datetime.now(utc) - timedelta(seconds=TOKEN_VALIDITY)
+        return datetime.now(tz=ZoneInfo("UTC")) - timedelta(seconds=TOKEN_VALIDITY)

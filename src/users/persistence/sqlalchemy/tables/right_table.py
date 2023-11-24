@@ -1,6 +1,6 @@
 from datetime import datetime
+from zoneinfo import ZoneInfo
 
-from pytz import utc
 from sqlalchemy import (
     Column,
     DateTime,
@@ -38,7 +38,9 @@ right_table = Table(
     "rights",
     mapper_registry.metadata,
     Column("id", String, primary_key=True),
-    Column("created_at", DateTime(timezone=True), default=datetime.now(utc)),
+    Column(
+        "created_at", DateTime(timezone=True), default=datetime.now(tz=ZoneInfo("UTC"))
+    ),
     Column(
         "roletype_id",
         String,

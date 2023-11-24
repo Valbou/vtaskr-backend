@@ -1,6 +1,6 @@
 from datetime import datetime
+from zoneinfo import ZoneInfo
 
-from pytz import utc
 from sqlalchemy import Boolean, Column, DateTime, ForeignKey, String, Table
 from sqlalchemy.orm import relationship
 
@@ -12,12 +12,15 @@ token_table = Table(
     mapper_registry.metadata,
     Column("id", String, primary_key=True),
     Column(
-        "created_at", DateTime(timezone=True), default=datetime.now(utc), nullable=False
+        "created_at",
+        DateTime(timezone=True),
+        default=datetime.now(tz=ZoneInfo("UTC")),
+        nullable=False,
     ),
     Column(
         "last_activity_at",
         DateTime(timezone=True),
-        default=datetime.now(utc),
+        default=datetime.now(tz=ZoneInfo("UTC")),
         nullable=False,
     ),
     Column("temp", Boolean, nullable=False),

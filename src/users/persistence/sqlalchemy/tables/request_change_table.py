@@ -1,6 +1,6 @@
 from datetime import datetime
+from zoneinfo import ZoneInfo
 
-from pytz import utc
 from sqlalchemy import Boolean, Column, DateTime, Enum, String, Table
 
 from src.libs.sqlalchemy.base import mapper_registry
@@ -11,7 +11,10 @@ request_change_table = Table(
     mapper_registry.metadata,
     Column("id", String, primary_key=True),
     Column(
-        "created_at", DateTime(timezone=True), default=datetime.now(utc), nullable=False
+        "created_at",
+        DateTime(timezone=True),
+        default=datetime.now(tz=ZoneInfo("UTC")),
+        nullable=False,
     ),
     Column("request_type", Enum(RequestType), nullable=False),
     Column("email", String, nullable=False),

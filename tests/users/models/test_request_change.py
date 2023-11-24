@@ -1,8 +1,8 @@
 from datetime import datetime, timedelta
 from unittest import TestCase
+from zoneinfo import ZoneInfo
 
 from faker import Faker
-from pytz import utc
 
 from src.base.config import REQUEST_DAYS_HISTORY, REQUEST_VALIDITY
 from src.users import RequestChange, RequestType
@@ -40,14 +40,14 @@ class TestRequestChange(TestCase):
 
     def test_request_change_old_invalid(self):
         request_change = self.create_request_change()
-        request_change.created_at = datetime.now(utc) - timedelta(
+        request_change.created_at = datetime.now(tz=ZoneInfo("UTC")) - timedelta(
             seconds=REQUEST_VALIDITY
         )
         self.assertFalse(request_change.is_valid())
 
     def test_request_change_in_history(self):
         request_change = self.create_request_change()
-        request_change.created_at = datetime.now(utc) - timedelta(
+        request_change.created_at = datetime.now(tz=ZoneInfo("UTC")) - timedelta(
             seconds=REQUEST_VALIDITY
         )
         self.assertFalse(
@@ -56,7 +56,7 @@ class TestRequestChange(TestCase):
 
     def test_request_change_out_of_history(self):
         request_change = self.create_request_change()
-        request_change.created_at = datetime.now(utc) - timedelta(
+        request_change.created_at = datetime.now(tz=ZoneInfo("UTC")) - timedelta(
             days=REQUEST_DAYS_HISTORY
         )
         self.assertTrue(
@@ -69,7 +69,7 @@ class TestRequestChange(TestCase):
 
     def test_invalid_after(self):
         request_change = self.create_request_change()
-        request_change.created_at = datetime.now(utc) - timedelta(
+        request_change.created_at = datetime.now(tz=ZoneInfo("UTC")) - timedelta(
             seconds=REQUEST_VALIDITY
         )
         self.assertFalse(request_change.created_at > RequestChange.valid_after())

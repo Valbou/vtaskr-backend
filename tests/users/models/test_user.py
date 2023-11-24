@@ -1,9 +1,9 @@
 from datetime import datetime
 from unittest import TestCase
+from zoneinfo import ZoneInfo
 
 from babel import Locale
 from faker import Faker
-from pytz import utc
 
 from src.base.config import UNUSED_ACCOUNT_DELAY
 from src.users import User
@@ -64,5 +64,5 @@ class TestUser(TestCase):
 
     def test_user_unused_date(self):
         unused_limit = User.unused_before()
-        delta = datetime.now(utc) - unused_limit
+        delta = datetime.now(tz=ZoneInfo("UTC")) - unused_limit
         self.assertEqual(delta.days, UNUSED_ACCOUNT_DELAY)

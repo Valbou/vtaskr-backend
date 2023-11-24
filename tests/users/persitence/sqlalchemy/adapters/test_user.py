@@ -1,6 +1,5 @@
 from datetime import datetime, timedelta
-
-from pytz import utc
+from zoneinfo import ZoneInfo
 
 from src.base.config import UNUSED_ACCOUNT_DELAY
 from src.users.models import User
@@ -44,7 +43,8 @@ class TestUserAdapter(BaseTestCase):
             first_name=self.fake.first_name(),
             last_name=self.fake.last_name(),
             email=self.generate_email(),
-            created_at=datetime.now(utc) - timedelta(days=UNUSED_ACCOUNT_DELAY),
+            created_at=datetime.now(tz=ZoneInfo("UTC"))
+            - timedelta(days=UNUSED_ACCOUNT_DELAY),
         )
 
         with self.app.sql.get_session() as session:
@@ -62,8 +62,9 @@ class TestUserAdapter(BaseTestCase):
             first_name=self.fake.first_name(),
             last_name=self.fake.last_name(),
             email=self.generate_email(),
-            created_at=datetime.now(utc) - timedelta(days=UNUSED_ACCOUNT_DELAY),
-            last_login_at=datetime.now(utc),
+            created_at=datetime.now(tz=ZoneInfo("UTC"))
+            - timedelta(days=UNUSED_ACCOUNT_DELAY),
+            last_login_at=datetime.now(tz=ZoneInfo("UTC")),
         )
 
         with self.app.sql.get_session() as session:
