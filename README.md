@@ -39,7 +39,7 @@ Please change the default SECRET_KEY if you are using sessions.
 ```bash
 pip install .
 ```
-or
+or to contribute
 ```
 pip install -e .
 ```
@@ -74,6 +74,14 @@ Follow previous steps, an continue with steps below.
 
 ```bash
 pip install .[dev]
+```
+
+### Add migrations
+
+If you change models
+
+```bash
+alembic revision --autogenerate
 ```
 
 ### To run tests
