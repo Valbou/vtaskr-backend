@@ -39,6 +39,10 @@ Please change the default SECRET_KEY if you are using sessions.
 ```bash
 pip install .
 ```
+or
+```
+pip install -e .
+```
 
 ### Install translations
 
