@@ -9,7 +9,9 @@ from src.libs.notifications import AbstractBaseEmailContent
 class RegisterEmail(AbstractBaseEmailContent):
     logo = EMAIL_LOGO
 
-    def __init__(self, trans: GNUTranslations, to_emails: list[str], first_name: str) -> None:
+    def __init__(
+        self, trans: GNUTranslations, to_emails: list[str], first_name: str
+    ) -> None:
         self._ = trans.gettext
         self.html = render_template(
             "emails/simple_text.html", **self.email_context(first_name)
