@@ -90,7 +90,7 @@ class SMTPEmail:
         from_email = from_email or os.getenv("DEFAULT_SMTP_USER")
         return SMTPEmail(
             from_email,
-            email.to,
+            email.to_emails,
             email.subject,
             email.text,
             email.html,
