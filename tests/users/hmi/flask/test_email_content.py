@@ -21,7 +21,7 @@ class TestRegisterEmail(BaseTestCase):
                 with self.app.trans.get_translation_session("users", "en") as trans:
                     email = RegisterEmail(
                         trans=trans,
-                        to=[self.to],
+                        to_emails=[self.to_emails],
                         first_name=self.first_name,
                     )
                 self.assertTemplateUsed(
@@ -30,7 +30,7 @@ class TestRegisterEmail(BaseTestCase):
                 self.assertIn(self.first_name, email.html)
                 self.assertIn("data:image/svg+xml;base64,", email.html)
                 self.assertIn(self.first_name, email.text)
-                self.assertIn(self.to, email.to_emails)
+                self.assertIn(self.to_emails, email.to_emails)
 
 
 class TestLoginEmail(BaseTestCase):
@@ -46,7 +46,7 @@ class TestLoginEmail(BaseTestCase):
                 with self.app.trans.get_translation_session("users", "en") as trans:
                     email = LoginEmail(
                         trans=trans,
-                        to=[self.to],
+                        to_emails=[self.to_emails],
                         first_name=self.first_name,
                         code=self.code,
                     )
@@ -58,7 +58,7 @@ class TestLoginEmail(BaseTestCase):
                 self.assertIn("data:image/svg+xml;base64,", email.html)
                 self.assertIn(self.first_name, email.text)
                 self.assertIn(self.code, email.text)
-                self.assertIn(self.to, email.to_emails)
+                self.assertIn(self.to_emails, email.to_emails)
 
 
 class TestChangeEmailOldEmail(BaseTestCase):
@@ -74,7 +74,7 @@ class TestChangeEmailOldEmail(BaseTestCase):
                 with self.app.trans.get_translation_session("users", "en") as trans:
                     email = ChangeEmailToOldEmail(
                         trans=trans,
-                        to=[self.to],
+                        to_emails=[self.to_emails],
                         first_name=self.first_name,
                         code=self.code,
                     )
@@ -86,7 +86,7 @@ class TestChangeEmailOldEmail(BaseTestCase):
                 self.assertIn("data:image/svg+xml;base64,", email.html)
                 self.assertIn(self.first_name, email.text)
                 self.assertIn(self.code, email.text)
-                self.assertIn(self.to, email.to_emails)
+                self.assertIn(self.to_emails, email.to_emails)
 
 
 class TestChangeEmailNewEmail(BaseTestCase):
@@ -102,7 +102,7 @@ class TestChangeEmailNewEmail(BaseTestCase):
                 with self.app.trans.get_translation_session("users", "en") as trans:
                     email = ChangeEmailToNewEmail(
                         trans=trans,
-                        to=[self.to],
+                        to_emails=[self.to_emails],
                         first_name=self.first_name,
                         hash=self.hash,
                     )
@@ -114,7 +114,7 @@ class TestChangeEmailNewEmail(BaseTestCase):
                 self.assertIn("data:image/svg+xml;base64,", email.html)
                 self.assertIn(self.first_name, email.text)
                 self.assertIn(self.hash, email.text)
-                self.assertIn(self.to, email.to_emails)
+                self.assertIn(self.to_emails, email.to_emails)
                 self.assertIn(LINK_TO_CHANGE_EMAIL, email.text)
                 self.assertIn(LINK_TO_CHANGE_EMAIL, email.html)
 
@@ -132,7 +132,7 @@ class TestChangePasswordEmail(BaseTestCase):
                 with self.app.trans.get_translation_session("users", "en") as trans:
                     email = ChangePasswordEmail(
                         trans=trans,
-                        to=[self.to],
+                        to_emails=[self.to_emails],
                         first_name=self.first_name,
                         hash=self.hash,
                     )
@@ -144,6 +144,6 @@ class TestChangePasswordEmail(BaseTestCase):
                 self.assertIn("data:image/svg+xml;base64,", email.html)
                 self.assertIn(self.first_name, email.text)
                 self.assertIn(self.hash, email.text)
-                self.assertIn(self.to, email.to_emails)
+                self.assertIn(self.to_emails, email.to_emails)
                 self.assertIn(LINK_TO_CHANGE_PASSWORD, email.text)
                 self.assertIn(LINK_TO_CHANGE_PASSWORD, email.html)
