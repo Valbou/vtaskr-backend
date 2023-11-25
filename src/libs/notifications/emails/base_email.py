@@ -5,7 +5,7 @@ from src.libs.notifications.message import AbstractMessage
 
 class AbstractBaseEmailContent(AbstractMessage, ABC):
     from_email: str | None = None
-    to: list[str] = []
+    to_emails: list[str] = []
     subject: str = ""
     text: str = ""
     html: str = ""

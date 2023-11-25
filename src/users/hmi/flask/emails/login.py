@@ -10,13 +10,13 @@ class LoginEmail(AbstractBaseEmailContent):
     logo = EMAIL_LOGO
 
     def __init__(
-        self, trans: GNUTranslations, to: list[str], first_name: str, code: str
+        self, trans: GNUTranslations, to_emails: list[str], first_name: str, code: str
     ) -> None:
         self._ = trans.gettext
         self.html = render_template(
             "emails/simple_text.html", **self.email_context(first_name, code)
         )
-        self.to = to
+        self.to_emails = to_emails
         s1, s2, s3, s4 = self.get_trad(first_name)
         self.text = f"""
         \n{s1}\n{s2}\n{s3} {code}\n{s4}

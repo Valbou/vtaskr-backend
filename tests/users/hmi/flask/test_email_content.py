@@ -12,7 +12,7 @@ from tests.base_test import BaseTestCase, FlaskTemplateCapture
 class TestRegisterEmail(BaseTestCase):
     def setUp(self) -> None:
         super().setUp()
-        self.to = self.fake.email(domain="valbou.fr")
+        self.to_emails = self.fake.email(domain="valbou.fr")
         self.first_name = self.fake.first_name()
 
     def test_email_object(self):
@@ -36,7 +36,7 @@ class TestRegisterEmail(BaseTestCase):
 class TestLoginEmail(BaseTestCase):
     def setUp(self) -> None:
         super().setUp()
-        self.to = self.fake.email(domain="valbou.fr")
+        self.to_emails = self.fake.email(domain="valbou.fr")
         self.first_name = self.fake.first_name()
         self.code = self.fake.bothify("???###???###")
 
@@ -64,7 +64,7 @@ class TestLoginEmail(BaseTestCase):
 class TestChangeEmailOldEmail(BaseTestCase):
     def setUp(self) -> None:
         super().setUp()
-        self.to = self.fake.email(domain="valbou.fr")
+        self.to_emails = self.fake.email(domain="valbou.fr")
         self.first_name = self.fake.first_name()
         self.code = self.fake.bothify("???###???###")
 
@@ -92,7 +92,7 @@ class TestChangeEmailOldEmail(BaseTestCase):
 class TestChangeEmailNewEmail(BaseTestCase):
     def setUp(self) -> None:
         super().setUp()
-        self.to = self.fake.email(domain="valbou.fr")
+        self.to_emails = self.fake.email(domain="valbou.fr")
         self.first_name = self.fake.first_name()
         self.hash = self.fake.word()
 
@@ -122,7 +122,7 @@ class TestChangeEmailNewEmail(BaseTestCase):
 class TestChangePasswordEmail(BaseTestCase):
     def setUp(self) -> None:
         super().setUp()
-        self.to = self.fake.email(domain="valbou.fr")
+        self.to_emails = self.fake.email(domain="valbou.fr")
         self.first_name = self.fake.first_name()
         self.hash = self.fake.word()
 

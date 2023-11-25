@@ -10,13 +10,13 @@ class ChangeEmailToOldEmail(AbstractBaseEmailContent):
     logo = EMAIL_LOGO
 
     def __init__(
-        self, trans: GNUTranslations, to: list[str], first_name: str, code: str
+        self, trans: GNUTranslations, to_emails: list[str], first_name: str, code: str
     ) -> None:
         self._ = trans.gettext
         self.html = render_template(
             "emails/simple_text.html", **self.email_context(first_name, code)
         )
-        self.to_emails = to
+        self.to_emails = to_emails
         s1, s2, s3, s4, s5 = self.get_trad(first_name)
         self.text = f"""
         \n{s1}\n{s2}\n{s3}\n{s4} {code}\n{s5}
@@ -61,20 +61,20 @@ class ChangeEmailToNewEmail(AbstractBaseEmailContent):
     logo = EMAIL_LOGO
 
     def __init__(
-        self, trans: GNUTranslations, to: list[str], first_name: str, hash: str
+        self, trans: GNUTranslations, to_emails: list[str], first_name: str, hash: str
     ) -> None:
         self._ = trans.gettext
         change_email_link = (
-            f"{LINK_TO_CHANGE_EMAIL}&hash={hash}&email={to}"
+            f"{LINK_TO_CHANGE_EMAIL}&hash={hash}&email={to_emails}"
             if "?" in LINK_TO_CHANGE_EMAIL
-            else f"{LINK_TO_CHANGE_EMAIL}?hash={hash}&email={to}"
+            else f"{LINK_TO_CHANGE_EMAIL}?hash={hash}&email={to_emails}"
         )
 
         self.html = render_template(
             "emails/simple_text.html",
             **self.email_context(first_name, change_email_link),
         )
-        self.to_emails = to
+        self.to_emails = to_emails
         s1, s2, s3, _, s4_bis, s5, s6 = self.get_trad(first_name)
         self.text = f"""
         \n{s1}\n{s2}\n{s3}{s4_bis} {s5}:\n{change_email_link}\n{s6}
