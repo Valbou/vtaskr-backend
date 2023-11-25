@@ -1,9 +1,12 @@
+import logging
 import os
 import ssl
 from email.message import EmailMessage
 from smtplib import SMTP_SSL
 
 from .base_email import AbstractBaseEmailContent
+
+logger = logging.getLogger(__name__)
 
 
 class NoEmailContentError(Exception):
@@ -74,6 +77,7 @@ class SMTPEmail:
         password: str | None = None,
     ):
         server = get_smtp_server(host, port, user, password)
+        logger.info(f"Send Multi from {self.from_email} to {self.to_emails} subject {self.subject}")
         server.sendmail(self.from_email, self.to_emails, self.message.as_string())
         server.quit()
 
@@ -108,6 +112,7 @@ class MultiSMTPEmail:
     ):
         server = get_smtp_server(host, port, user, password)
         for email in self.emails:
+            logger.info(f"Send Multi from {email.from_email} to {email.to_emails} subject {email.subject}")
             server.sendmail(
                 email.from_email, email.to_emails, email.message.as_string()
             )
