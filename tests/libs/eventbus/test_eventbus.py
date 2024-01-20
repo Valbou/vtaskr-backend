@@ -29,7 +29,7 @@ class TestEventBus(BaseTestCase):
         def test_raise_function(ctx, event_type, event):
             raise TestError(str(event))
 
-        event = Event(tenant_id="123", data={"foo": "bar"})
+        event = Event(tenant_id="123", event_type="test", data={"foo": "bar"})
 
         with self.assertRaises(TestError) as e:
             with self.app.eventbus as eventbus_service:
