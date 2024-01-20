@@ -6,11 +6,14 @@ from flask import Flask
 from src.base.config import AVAILABLE_LANGUAGES
 from src.base.hmi.flask import base_bp
 from src.libs.babel.translations import TranslationService
+from src.libs.eventbus.register import *  # noqa E401 F403
 from src.tasks.hmi.flask.api import tasks_bp
 from src.users.hmi.flask.api import users_bp
 
 
-def create_flask_app(sql_class, nosql_class, notification_class) -> Flask:
+def create_flask_app(
+    sql_class, nosql_class, notification_class, eventbus_class
+) -> Flask:
     app = Flask(__name__)
 
     app.register_blueprint(base_bp)
@@ -34,6 +37,7 @@ def create_flask_app(sql_class, nosql_class, notification_class) -> Flask:
     app.sql = sql_class()
     app.nosql = nosql_class()
     app.notification = notification_class()
+    app.eventbus = eventbus_class(app_ctx=app)
 
     app.trans = TranslationService()
     app.trans.add_domains(["users", "tasks"])
