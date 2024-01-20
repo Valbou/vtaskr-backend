@@ -1,4 +1,5 @@
 from flask import Flask
+from src.libs.eventbus import EventBusService
 from src.libs.flask.main import create_flask_app
 from src.libs.notifications import TestNotificationService
 from src.libs.redis.database import TestNoSQLService
@@ -20,6 +21,7 @@ APP: Flask = create_flask_app(
     sql_class=TestSQLService,
     nosql_class=TestNoSQLService,
     notification_class=TestNotificationService,
+    eventbus_class=EventBusService,
 )
 
 print("All registered routes:")
