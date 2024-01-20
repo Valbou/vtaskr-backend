@@ -40,6 +40,6 @@ class TestEventBus(BaseTestCase):
             str(e.exception),
             (
                 "Event(tenant_id='123', event_type='test', data={'foo': 'bar'},"
-                " created_at='2024-01-20T09:38:48.680298+00:00')"
+                f" created_at='{event.created_at}')"
             ),
         )
