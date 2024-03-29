@@ -19,3 +19,4 @@ colorama
 Faker
 flake8
 mccabe
+mkdocs

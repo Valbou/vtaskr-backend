@@ -25,7 +25,7 @@ class UserDB(AbstractUserPort, DefaultDB):
             session.commit()
 
     def find_login(self, session: Session, email: str) -> User | None:
-        self.qs.by_email(email)
+        self.qs.select().by_email(email)
         result = session.scalars(self.qs.statement).one_or_none()
         return result
 

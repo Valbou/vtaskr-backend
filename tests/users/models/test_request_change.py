@@ -4,7 +4,7 @@ from zoneinfo import ZoneInfo
 
 from faker import Faker
 
-from src.base.config import REQUEST_DAYS_HISTORY, REQUEST_VALIDITY
+from src.settings import REQUEST_DAYS_HISTORY, REQUEST_VALIDITY
 from src.users import RequestChange, RequestType
 
 

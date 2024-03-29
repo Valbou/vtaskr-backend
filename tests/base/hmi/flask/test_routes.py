@@ -1,4 +1,4 @@
-from src.base.config import AVAILABLE_LANGUAGES
+from src.settings import AVAILABLE_LANGUAGES
 from tests.base_test import BaseTestCase, FlaskTemplateCapture
 
 

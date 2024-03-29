@@ -2,8 +2,8 @@ from dataclasses import dataclass
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 
-from src.base.config import TOKEN_TEMP_VALIDITY, TOKEN_VALIDITY
 from src.libs.security.utils import get_2FA, get_id, get_token
+from src.settings import TOKEN_TEMP_VALIDITY, TOKEN_VALIDITY
 
 
 @dataclass

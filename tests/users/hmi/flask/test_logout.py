@@ -8,8 +8,8 @@ class TestUserV1Logout(BaseTestCase):
         super().setUp()
         self.headers = self.get_json_headers()
 
-    def test_no_post(self):
-        response = self.client.post(f"{URL_API_USERS}/logout", headers=self.headers)
+    def test_no_delete(self):
+        response = self.client.delete(f"{URL_API_USERS}/logout", headers=self.headers)
         self.assertEqual(response.status_code, 405)
 
     def test_no_get(self):
@@ -24,21 +24,21 @@ class TestUserV1Logout(BaseTestCase):
         response = self.client.patch(f"{URL_API_USERS}/logout", headers=self.headers)
         self.assertEqual(response.status_code, 405)
 
-    def test_delete_logout(self):
+    def test_post_logout(self):
         headers = self.get_token_headers()
         payload = {"email": self.user.email}
-        response = self.client.delete(
+        response = self.client.post(
             f"{URL_API_USERS}/logout", headers=headers, json=payload
         )
         self.assertEqual(response.status_code, 204)
         self.assertEqual(response.content_type, "application/json")
         self.assertEqual(response.text, "")
 
-    def test_delete_logout_fake_token(self):
+    def test_post_logout_fake_token(self):
         headers = {
             "Content-Type": "application/json",
             "Authorization": f"Bearer {self.fake.word()}",
         }
-        response = self.client.delete(f"{URL_API_USERS}/logout", headers=headers)
+        response = self.client.post(f"{URL_API_USERS}/logout", headers=headers)
         self.assertEqual(response.status_code, 401)
         self.assertEqual(response.content_type, "application/json")

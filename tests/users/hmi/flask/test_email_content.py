@@ -1,4 +1,4 @@
-from src.base.config import LINK_TO_CHANGE_EMAIL, LINK_TO_CHANGE_PASSWORD
+from src.settings import LINK_TO_CHANGE_EMAIL, LINK_TO_CHANGE_PASSWORD
 from src.users.hmi.flask.emails import (
     ChangeEmailToNewEmail,
     ChangeEmailToOldEmail,

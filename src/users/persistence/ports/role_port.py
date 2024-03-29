@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from src.base.persistence import AbstractPort
+from src.libs.sqlalchemy.default_port import AbstractPort
 from src.users import Role
 
 

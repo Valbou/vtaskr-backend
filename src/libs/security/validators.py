@@ -3,7 +3,7 @@ from string import ascii_lowercase, ascii_uppercase, digits, punctuation
 
 from email_validator import validate_email
 
-from src.base.config import PASSWORD_MIN_LENGTH
+from src.settings import PASSWORD_MIN_LENGTH
 
 
 def get_valid_email(email: str) -> str | None:

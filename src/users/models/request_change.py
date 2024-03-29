@@ -3,9 +3,9 @@ from datetime import datetime, timedelta
 from enum import Enum
 from zoneinfo import ZoneInfo
 
-from src.base.config import REQUEST_DAYS_HISTORY, REQUEST_VALIDITY
 from src.libs.security.utils import get_2FA, get_id, hash_str
 from src.libs.security.validators import get_valid_email
+from src.settings import REQUEST_DAYS_HISTORY, REQUEST_VALIDITY
 
 
 class RequestType(Enum):

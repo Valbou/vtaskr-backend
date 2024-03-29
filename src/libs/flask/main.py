@@ -3,10 +3,10 @@ import os
 from jinja2 import ChoiceLoader, FileSystemLoader
 
 from flask import Flask
-from src.base.config import AVAILABLE_LANGUAGES
 from src.base.hmi.flask import base_bp
 from src.libs.babel.translations import TranslationService
 from src.libs.eventbus.register import *  # noqa E401 F403
+from src.settings import AVAILABLE_LANGUAGES
 from src.tasks.hmi.flask.api import tasks_bp
 from src.users.hmi.flask.api import users_bp
 

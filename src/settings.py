@@ -3,7 +3,9 @@ import os
 from src.libs.security.utils import file_to_base64
 
 APP_NAME = "vtaskr"
+DESCRIPTION = "vTaskr is an open-source task manager"
 VERSION = "1.1.0"
+DOMAIN = "https://api.vtaskr.com"
 
 # Validators config
 PASSWORD_MIN_LENGTH = 10
@@ -22,13 +24,10 @@ LINK_TO_CHANGE_PASSWORD = os.getenv("LINK_TO_CHANGE_PASSWORD", "")
 
 # i18n/l10n
 AVAILABLE_LANGUAGES = {
-    "de": "Deutsch",
     "fr": "Français",
     "en": "English",
-    "es": "Español",
-    "it": "Italiano",
-    "pt": "Português",
 }
+
 LOCALE = os.getenv("LOCALE", "en_GB")
 TIMEZONE = os.getenv("TIMEZONE", "Europe/London")
 

@@ -24,6 +24,7 @@ hooks/pre-commit.py
 hooks/pre-push.py
 src/__init__.py
 src/flask.py
+src/wsgi.py
 src/base/__init__.py
 src/base/config.py
 src/base/hmi/__init__.py
@@ -37,6 +38,11 @@ src/colors/persistence/sqlalchemy/color.py
 src/libs/__init__.py
 src/libs/babel/__init__.py
 src/libs/babel/translations.py
+src/libs/eventbus/__init__.py
+src/libs/eventbus/config.py
+src/libs/eventbus/event.py
+src/libs/eventbus/eventbus_service.py
+src/libs/eventbus/register.py
 src/libs/flask/__init__.py
 src/libs/flask/main.py
 src/libs/flask/querystring.py

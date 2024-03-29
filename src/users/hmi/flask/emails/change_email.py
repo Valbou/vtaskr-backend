@@ -2,8 +2,8 @@ from gettext import GNUTranslations
 from typing import Tuple
 
 from flask import render_template
-from src.base.config import EMAIL_LOGO, LINK_TO_CHANGE_EMAIL
 from src.libs.notifications import AbstractBaseEmailContent
+from src.settings import EMAIL_LOGO, LINK_TO_CHANGE_EMAIL
 
 
 class ChangeEmailToOldEmail(AbstractBaseEmailContent):

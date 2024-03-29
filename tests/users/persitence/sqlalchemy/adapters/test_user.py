@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 
-from src.base.config import UNUSED_ACCOUNT_DELAY
+from src.settings import UNUSED_ACCOUNT_DELAY
 from src.users.models import User
 from src.users.persistence import UserDB
 from tests.base_test import BaseTestCase

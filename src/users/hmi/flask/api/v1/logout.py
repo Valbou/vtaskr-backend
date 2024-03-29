@@ -32,7 +32,7 @@ api_item = {
 openapi.register_path(f"{V1}/users/logout", api_item)
 
 
-@users_bp.route(f"{V1}/users/logout", methods=["DELETE"])
+@users_bp.route(f"{V1}/users/logout", methods=["POST"])
 @login_required(logger)
 @rate_limited(logger=logger, hit=6, period=timedelta(seconds=60))
 def logout():

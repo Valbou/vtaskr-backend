@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 from hashlib import sha256
 from zoneinfo import ZoneInfo
 
-from src.base.config import TOKEN_TEMP_VALIDITY, TOKEN_VALIDITY
+from src.settings import TOKEN_TEMP_VALIDITY, TOKEN_VALIDITY
 from src.users.models import Token, User
 from src.users.persistence import TokenDB, UserDB
 from tests.base_test import BaseTestCase

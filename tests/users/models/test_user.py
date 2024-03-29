@@ -5,7 +5,7 @@ from zoneinfo import ZoneInfo
 from babel import Locale
 from faker import Faker
 
-from src.base.config import UNUSED_ACCOUNT_DELAY
+from src.settings import UNUSED_ACCOUNT_DELAY
 from src.users import User
 
 

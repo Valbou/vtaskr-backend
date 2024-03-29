@@ -1,7 +1,8 @@
 from sqlalchemy.orm import Session
 
-from src.base.persistence import AbstractPort
 from src.libs.sqlalchemy.queryset import Queryset
+
+from .default_port import AbstractPort
 
 
 class DefaultDB(AbstractPort):

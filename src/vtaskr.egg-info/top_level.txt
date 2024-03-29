@@ -6,3 +6,4 @@ libs
 static
 tasks
 users
+wsgi

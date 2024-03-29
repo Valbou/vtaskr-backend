@@ -4,9 +4,9 @@ from zoneinfo import ZoneInfo
 
 from babel import Locale
 
-from src.base.config import LOCALE, TIMEZONE, UNUSED_ACCOUNT_DELAY
 from src.libs.security.utils import check_password, get_id, hash_from_password
 from src.libs.security.validators import PasswordChecker, get_valid_email
+from src.settings import LOCALE, TIMEZONE, UNUSED_ACCOUNT_DELAY
 
 
 @dataclass

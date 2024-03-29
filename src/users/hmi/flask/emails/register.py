@@ -2,8 +2,8 @@ from gettext import GNUTranslations
 from typing import Tuple
 
 from flask import render_template
-from src.base.config import EMAIL_LOGO
 from src.libs.notifications import AbstractBaseEmailContent
+from src.settings import EMAIL_LOGO
 
 
 class RegisterEmail(AbstractBaseEmailContent):
@@ -46,6 +46,6 @@ class RegisterEmail(AbstractBaseEmailContent):
 
     def get_trad(self, first_name: str) -> Tuple[str]:
         s1 = self._("Welcome {first_name} !").format(first_name=first_name)
-        s2 = self._("Welcome in your new to do app management.")
-        s3 = self._("As of now, you can login and start to create your tasks !")
+        s2 = self._("Welcome in your new app.")
+        s3 = self._("As of now, you can login and enjoy !")
         return (s1, s2, s3)

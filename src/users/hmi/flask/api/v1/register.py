@@ -81,6 +81,7 @@ def register():
 
             auth_service = UserService(session)
             auth_service.clean_unused_accounts()
+
             user, _group = auth_service.register(user_dto, password)
 
             with current_app.trans.get_translation_session(
