@@ -12,6 +12,8 @@ You can follow the [Roadmap](https://github.com/Valbou/vtaskr-backend/blob/maste
 ![Tests 291 passed](https://img.shields.io/badge/tests-291%20passed-green "Tests 291 passed")
 ![Coverage 94%](https://img.shields.io/badge/coverage-94%25-green "Coverage 94%")
 [![CodeFactor](https://www.codefactor.io/repository/github/valbou/vtaskr-backend/badge)](https://www.codefactor.io/repository/github/valbou/vtaskr-backend)
+![API](https://img.shields.io/website?url=https%3A%2F%2Fapi.vtaskr.com)
+
 
 ### Translations
 vTaskr is available in some languages (europeans): EN, ES, DE, FR, IT, PT.

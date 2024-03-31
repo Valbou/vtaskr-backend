@@ -61,17 +61,17 @@ class TaskMapperDTO:
         task.emergency = task_dto.emergency
         task.important = task_dto.important
 
-        if task_dto.scheduled_at is not None:
+        if task_dto.scheduled_at:
             task.scheduled_at = datetime.fromisoformat(task_dto.scheduled_at)
         else:
             task.scheduled_at = None
 
-        if task_dto.duration is not None:
+        if task_dto.duration:
             task.duration = timedelta(seconds=task_dto.duration)
         else:
             task.duration = None
 
-        if task_dto.done is not None:
+        if task_dto.done:
             task.done = datetime.fromisoformat(task_dto.done)
         else:
             task.done = None
