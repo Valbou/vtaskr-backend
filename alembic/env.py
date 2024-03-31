@@ -4,7 +4,6 @@ from dotenv import load_dotenv
 from sqlalchemy import engine_from_config, pool
 
 from alembic import context
-from src.libs.sqlalchemy.base import mapper_registry
 from src.libs.sqlalchemy.database import SQLService
 
 load_dotenv()
@@ -28,6 +27,7 @@ if config.config_file_name is not None:
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
+mapper_registry = sql_service.get_registry()
 target_metadata = mapper_registry.metadata
 
 # other values from the config, defined by the needs of env.py,

@@ -2,7 +2,7 @@ import os
 from typing import Literal
 
 from sqlalchemy import Engine, create_engine
-from sqlalchemy.orm import Session, scoped_session, sessionmaker
+from sqlalchemy.orm import Session, scoped_session, sessionmaker, registry
 
 from .base import mapper_registry
 
@@ -43,6 +43,9 @@ class SQLService:
 
     def get_session(self) -> Session:
         return scoped_session(sessionmaker(self.get_engine()))()
+
+    def get_registry(self) -> registry:
+        return mapper_registry
 
     def create_tables(self) -> None:
         mapper_registry.metadata.create_all(bind=self.get_engine())
