@@ -2,7 +2,7 @@ import os
 from typing import Literal
 
 from sqlalchemy import Engine, create_engine
-from sqlalchemy.orm import Session, scoped_session, sessionmaker, registry
+from sqlalchemy.orm import Session, registry, scoped_session, sessionmaker
 
 from .base import mapper_registry
 
