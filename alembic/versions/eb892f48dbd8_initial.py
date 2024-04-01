@@ -18,8 +18,8 @@ down_revision = None
 branch_labels = None
 depends_on = None
 
-requesttype_enum = sa.Enum("RequestType.EMAIL", "RequestType.PASSWORD", name="requesttype")
-resources_enum = sa.Enum("Resources.GROUP", "Resources.ROLE", "Resources.ROLETYPE", "Resources.TASK", "Resources.TAG", name="resources")
+requesttype_enum = sa.Enum("EMAIL", "PASSWORD", name="requesttype")
+resources_enum = sa.Enum("GROUP", "ROLE", "ROLETYPE", "TASK", "TAG", name="resources")
 
 
 def upgrade() -> None:
@@ -37,7 +37,7 @@ def upgrade() -> None:
         sa.Column("created_at", sa.DateTime(timezone=True), nullable=False),
         sa.Column(
             "request_type",
-            sa.Enum("EMAIL", "PASSWORD", name="requesttype"),
+            requesttype_enum,
             nullable=False,
         ),
         sa.Column("email", sa.String(), nullable=False),
@@ -128,7 +128,7 @@ def upgrade() -> None:
         sa.Column("id", sa.String(), nullable=False),
         sa.Column("created_at", sa.DateTime(timezone=True), nullable=True),
         sa.Column("roletype_id", sa.String(), nullable=False),
-        sa.Column("resource", sa.Enum("TASK", "TAG", name="resources"), nullable=False),
+        sa.Column("resource", resources_enum, nullable=False),
         sa.Column("permissions", PermissionsType(), nullable=False),
         sa.ForeignKeyConstraint(
             ["roletype_id"],
