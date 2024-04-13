@@ -30,26 +30,27 @@ As vTaskr is an non profit project without fulltime dev, no release date can be 
 - [x] User can't access to tasks not owned by at least one of his groups
 - [x] User can delete his account efficiently (cannot delete a user if user has admin role on 2 groups or more !)
 - [x] Add filters on list endpoints (filter groups according to role or filter rights according to a group etc...)
+- [x] User can't modify tasks without the required role
 
 ## Go to v1.2.0
+- [ ] Code events developments
 - [ ] Add a dev documentation
-- [ ] Add Keycloak integration
-- [ ] Grouping tasks in todolists
+- [ ] Grouping tasks in ToDo lists
 - [ ] Transform a todolist into a template to reuse it.
 - [ ] Task reccurence
 - [ ] Weekly/Daily email with tasks of the period
 
 ## Go to v1.3.0
-- [x] User can't modify tasks without the required role
 - [ ] User can invite another user in a group with a specific role
 - [ ] Sub tasks
 - [ ] Tasks status (blocking) that block parent task
+- [ ] Tasks association, link another task (nonblocking link)
 - [ ] Tasks assignation to a group member
 
 ## Go to v1.4.0
-- [ ] Code events developments
 - [ ] Reminders/Alerts - Telegram/Email
-- [ ] Add ICS generator
+- [ ] Add .ics generator (iCalendar format)
+- [ ] Add Keycloak integration
 
 ## Go to v1.5.0
 - [ ] Add hooks for external integration
