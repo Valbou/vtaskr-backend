@@ -1,7 +1,11 @@
 from unittest import TestCase
 
+from src.notifications.models import (
+    BaseEmailContent,
+    BaseTelegramContent,
+    MessageFabric,
+)
 from src.ports import MessageType
-from src.notifications.models import MessageFabric, BaseEmailContent, BaseTelegramContent
 
 
 class TestMessageFabric(TestCase):

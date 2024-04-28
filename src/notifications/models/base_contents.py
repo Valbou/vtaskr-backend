@@ -17,7 +17,6 @@ class BaseEmailContent(AbstractMessage):
     def __init__(
         self, subscriptions: list[Subscription | str], template: Template, context: dict
     ) -> None:
-
         if subscriptions and isinstance(subscriptions[0], Subscription):
             self.to = [s.to for s in subscriptions]
         else:
@@ -37,7 +36,6 @@ class BaseTelegramContent(AbstractMessage):
     def __init__(
         self, subscriptions: list[Subscription | str], template: Template, context: dict
     ) -> None:
-
         if subscriptions and isinstance(subscriptions[0], Subscription):
             self.to = [s.to for s in subscriptions]
         else:
