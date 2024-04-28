@@ -2,7 +2,7 @@ from jinja2 import FileSystemLoader
 
 from flask import Flask
 
-APP_NAME = "libs"
+from .settings import APP_NAME
 
 
 def setup_flask(app: Flask, project_dir: str) -> dict:

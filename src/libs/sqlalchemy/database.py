@@ -7,6 +7,17 @@ from sqlalchemy.orm import Session, registry, scoped_session, sessionmaker
 from src.ports import SQLPort
 
 from .base import mapper_registry
+from .settings import (
+    BD_DRIVER,
+    DB_HOST,
+    DB_NAME,
+    DB_PASS,
+    DB_PORT,
+    DB_TEST,
+    DB_TYPE,
+    DB_USER,
+    DEBUG_SQL,
+)
 
 
 class SQLService(SQLPort):
@@ -15,23 +26,15 @@ class SQLService(SQLPort):
         echo: None | bool | Literal["debug"] = False,
     ) -> None:
         debug = False
-        if os.getenv("DEBUG_SQL") == "true":
-            debug = bool(os.getenv("DEBUG_SQL"))
-        elif os.getenv("DEBUG_SQL") == "debug":
-            debug = os.getenv("DEBUG_SQL")
+        if DEBUG_SQL == "true":
+            debug = bool(DEBUG_SQL)
+        elif DEBUG_SQL == "debug":
+            debug = DEBUG_SQL
 
         self.echo = echo or debug
         self.mapping()
 
     def get_database_url(self) -> str:
-        DB_TYPE = os.getenv("DB_TYPE")
-        BD_DRIVER = os.getenv("BD_DRIVER")
-        DB_USER = os.getenv("DB_USER")
-        DB_PASS = os.getenv("DB_PASS")
-        DB_HOST = os.getenv("DB_HOST")
-        DB_PORT = os.getenv("DB_PORT")
-        DB_NAME = os.getenv("DB_NAME")
-
         return (
             f"{DB_TYPE}+{BD_DRIVER}://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
         )
@@ -60,14 +63,6 @@ class SQLService(SQLPort):
 
 class TestSQLService(SQLService):
     def get_database_url(self) -> str:
-        DB_TYPE = os.getenv("DB_TYPE")
-        BD_DRIVER = os.getenv("BD_DRIVER")
-        DB_USER = os.getenv("DB_USER")
-        DB_PASS = os.getenv("DB_PASS")
-        DB_HOST = os.getenv("DB_HOST")
-        DB_PORT = os.getenv("DB_PORT")
-        DB_NAME = os.getenv("DB_TEST")
-
         return (
-            f"{DB_TYPE}+{BD_DRIVER}://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+            f"{DB_TYPE}+{BD_DRIVER}://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_TEST}"
         )

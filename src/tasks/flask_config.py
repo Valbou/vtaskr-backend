@@ -3,7 +3,7 @@ from jinja2 import FileSystemLoader
 from flask import Flask
 from src.tasks.hmi.flask import tasks_bp
 
-APP_NAME = "tasks"
+from .settings import APP_NAME
 
 
 def setup_flask(app: Flask, project_dir: str) -> dict:

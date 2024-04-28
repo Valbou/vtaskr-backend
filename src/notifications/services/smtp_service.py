@@ -1,10 +1,15 @@
 import logging
-import os
 import ssl
 from email.message import EmailMessage
 from smtplib import SMTP_SSL
 
 from src.notifications.models import BaseEmailContent
+from src.notifications.settings import (
+    DEFAULT_SMTP_HOST,
+    DEFAULT_SMTP_PASS,
+    DEFAULT_SMTP_PORT,
+    DEFAULT_SMTP_USER,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -20,10 +25,10 @@ def get_smtp_server(
     password: str | None = None,
 ) -> SMTP_SSL:
     ssl_default_context = ssl.create_default_context()
-    host = host or os.getenv("DEFAULT_SMTP_HOST")
-    port = port or os.getenv("DEFAULT_SMTP_PORT")
-    user = user or os.getenv("DEFAULT_SMTP_USER")
-    password = password or os.getenv("DEFAULT_SMTP_PASS")
+    host = host or DEFAULT_SMTP_HOST
+    port = port or DEFAULT_SMTP_PORT
+    user = user or DEFAULT_SMTP_USER
+    password = password or DEFAULT_SMTP_PASS
 
     server = SMTP_SSL(host, port, context=ssl_default_context)
     server.login(user, password)
@@ -87,7 +92,7 @@ class SMTPEmail:
     def from_base_email_content(
         cls, email: BaseEmailContent, from_email: str | None = None
     ):
-        from_email = from_email or os.getenv("DEFAULT_SMTP_USER")
+        from_email = from_email or DEFAULT_SMTP_USER
         return SMTPEmail(
             from_email=from_email,
             to_emails=email.to_emails,

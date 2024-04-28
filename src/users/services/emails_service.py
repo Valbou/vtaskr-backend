@@ -1,14 +1,14 @@
 from src.libs.dependencies import DependencyInjector
 from src.ports import MessageType
 from src.settings import APP_NAME, EMAIL_LOGO
-from src.users.config import (
+from src.users.models import RequestChange, User
+from src.users.settings import APP_NAME as NAME
+from src.users.settings import (
     DEFAULT_SENDER,
     LINK_TO_CHANGE_EMAIL,
     LINK_TO_CHANGE_PASSWORD,
     LINK_TO_LOGIN,
-    NAME,
 )
-from src.users.models import RequestChange, User
 
 
 class EmailService:
