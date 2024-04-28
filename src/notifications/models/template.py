@@ -31,12 +31,13 @@ class Template(BaseModelUpdate):
 
     @classmethod
     def temp_template_from_context(cls, context: dict) -> TTemplate:
+        template_name = context.pop("template")
         return Template(
             event_type=context.get("message_type"),
             event_name="None",
             sender=context.pop("sender"),
-            name=context.pop("template"),
+            name=template_name,
             subject=context.pop("subject"),
-            html=context.pop("template") + "html",
-            text=context.pop("template") + "txt",
+            html=template_name + ".html",
+            text=template_name + ".txt",
         )
