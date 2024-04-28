@@ -70,9 +70,9 @@ class TestUserV1Update(BaseTestCase):
 
     def test_no_delete_with_2_admin_groups(self):
         headers = self.get_token_headers()
-        with self.app.sql.get_session() as session:
-            group_service = GroupService(session=session)
-            group_service.create_group(self.user.id, "Another Group")
+
+        group_service = GroupService(self.app.dependencies)
+        group_service.create_group(self.user.id, "Another Group")
 
         response = self.client.delete(f"{URL_API_USERS}/me", headers=headers)
         self.assertEqual(response.status_code, 403)

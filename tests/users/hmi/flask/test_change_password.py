@@ -18,7 +18,7 @@ class TestUserV1ForgottenPassword(BaseTestCase):
             f"{URL_API}/forgotten-password", json=user_data, headers=self.headers
         )
         self.assertEqual(response.status_code, 200)
-        with self.app.sql.get_session() as session:
+        with self.app.dependencies.persistence.get_session() as session:
             request_change = self.request_change_db.find_request(
                 session, self.user.email
             )
@@ -32,7 +32,7 @@ class TestUserV1ForgottenPassword(BaseTestCase):
             f"{URL_API}/forgotten-password", json=user_data, headers=self.headers
         )
         self.assertEqual(response.status_code, 200)
-        with self.app.sql.get_session() as session:
+        with self.app.dependencies.persistence.get_session() as session:
             request_change = self.request_change_db.find_request(
                 session, self.user.email
             )
@@ -77,7 +77,7 @@ class TestUserV1NewPassword(BaseTestCase):
         self.client.post(
             f"{URL_API}/forgotten-password", json=user_data, headers=self.headers
         )
-        with self.app.sql.get_session() as session:
+        with self.app.dependencies.persistence.get_session() as session:
             return self.request_change_db.find_request(session, self.user.email)
 
     def test_set_new_password(self):
@@ -93,7 +93,7 @@ class TestUserV1NewPassword(BaseTestCase):
             f"{URL_API}/new-password", json=user_data, headers=self.headers
         )
         self.assertEqual(response.status_code, 200)
-        with self.app.sql.get_session() as session:
+        with self.app.dependencies.persistence.get_session() as session:
             user = self.user_db.find_login(session, self.user.email)
             self.assertTrue(user.check_password(self.new_password))
 

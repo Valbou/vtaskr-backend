@@ -1,46 +1,40 @@
 import os
+from importlib import import_module
+from typing import Callable
 
-from jinja2 import ChoiceLoader, FileSystemLoader
+from jinja2 import ChoiceLoader
 
 from flask import Flask
-from src.base.hmi.flask import base_bp
-from src.libs.babel.translations import TranslationService
+from src.libs.dependencies import DependencyInjector
 from src.libs.eventbus.register import *  # noqa E401 F403
-from src.settings import AVAILABLE_LANGUAGES
-from src.tasks.hmi.flask.api import tasks_bp
-from src.users.hmi.flask.api import users_bp
+from src.settings import AVAILABLE_LANGUAGES, INSTALLED_APPS
 
 
-def create_flask_app(
-    sql_class, nosql_class, notification_class, eventbus_class
-) -> Flask:
+def create_flask_app(dependencies: DependencyInjector) -> Flask:
     app = Flask(__name__)
-
-    app.register_blueprint(base_bp)
-    app.register_blueprint(users_bp)
-    app.register_blueprint(tasks_bp)
 
     project_dir = os.getcwd()
 
     app.static_folder = f"{project_dir}/src/static"
 
+    # App self config
+    loaders = []
+    domains: list[str] = []
+    for module in INSTALLED_APPS:
+        setup_app: Callable = getattr(
+            import_module(f"src.{module}.flask_config"), "setup_flask"
+        )
+        result = setup_app(app=app, project_dir=project_dir)
+        loaders.extend(result.get("loaders", []))
+        domains.extend(result.get("domains", []))
+
     app.jinja_env.add_extension("jinja2.ext.i18n")
-    app.jinja_env.loader = ChoiceLoader(
-        [
-            FileSystemLoader(f"{project_dir}/src/base/hmi/flask/templates"),
-            FileSystemLoader(f"{project_dir}/src/users/hmi/flask/templates"),
-            FileSystemLoader(f"{project_dir}/src/tasks/hmi/flask/templates"),
-            FileSystemLoader(f"{project_dir}/src/libs/openapi/templates"),
-        ]
+    app.jinja_env.loader = ChoiceLoader(loaders)
+
+    dependencies.instantiate_dependencies()
+    dependencies.set_context(
+        app=app, domains=domains, languages=list(AVAILABLE_LANGUAGES.keys())
     )
-
-    app.sql = sql_class()
-    app.nosql = nosql_class()
-    app.notification = notification_class()
-    app.eventbus = eventbus_class(app_ctx=app)
-
-    app.trans = TranslationService()
-    app.trans.add_domains(["users", "tasks"])
-    app.trans.add_languages(list(AVAILABLE_LANGUAGES.keys()))
+    app.dependencies = dependencies
 
     return app

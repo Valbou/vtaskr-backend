@@ -26,7 +26,6 @@ dependencies = [
     "python-dotenv",
     "SQLAlchemy",
     "redis",
-    "email-validator",
     "psycopg2-binary"
 ]
 dynamic = ["version"]

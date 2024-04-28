@@ -3,6 +3,8 @@ from gettext import GNUTranslations, translation
 
 from babel import Locale
 
+from src.ports import TranslationPort
+
 
 class TranslationsInvalidDomainError(Exception):
     pass
@@ -31,11 +33,15 @@ class TranslationSession:
         pass
 
 
-class TranslationService:
+class TranslationService(TranslationPort):
     def __init__(self):
         self.domains: list = []
         self.languages: list = []
         self.dirname: str = "translations"
+
+    def set_context(self, **ctx) -> None:
+        self.domains = ctx.pop("domains")
+        self.languages = ctx.pop("languages")
 
     def _check_valid_domain(self, domain: str):
         if domain not in self.domains:

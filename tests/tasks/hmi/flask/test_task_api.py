@@ -17,7 +17,7 @@ class TestTaskAPI(BaseTestCase):
     def test_get_task_no_login(self):
         self.create_user()
         task = Task(tenant_id=self.group.id, title=self.fake.sentence(nb_words=8))
-        with self.app.sql.get_session() as session:
+        with self.app.dependencies.persistence.get_session() as session:
             self.task_db.save(session, task)
 
             response = self.client.get(
@@ -28,7 +28,7 @@ class TestTaskAPI(BaseTestCase):
     def test_get_task(self):
         headers = self.get_token_headers()
         task = Task(tenant_id=self.group.id, title=self.fake.sentence(nb_words=8))
-        with self.app.sql.get_session() as session:
+        with self.app.dependencies.persistence.get_session() as session:
             self.task_db.save(session, task)
 
             response = self.client.get(f"{URL_API}/task/{task.id}", headers=headers)
@@ -37,7 +37,7 @@ class TestTaskAPI(BaseTestCase):
     def test_update_task_put(self):
         headers = self.get_token_headers()
         task = Task(tenant_id=self.group.id, title=self.fake.sentence(nb_words=8))
-        with self.app.sql.get_session() as session:
+        with self.app.dependencies.persistence.get_session() as session:
             self.task_db.save(session, task)
 
             new_title = self.fake.sentence(nb_words=5)
@@ -61,7 +61,7 @@ class TestTaskAPI(BaseTestCase):
     def test_update_task_patch(self):
         headers = self.get_token_headers()
         task = Task(tenant_id=self.group.id, title=self.fake.sentence(nb_words=8))
-        with self.app.sql.get_session() as session:
+        with self.app.dependencies.persistence.get_session() as session:
             self.task_db.save(session, task)
 
             new_title = self.fake.sentence(nb_words=5)
@@ -82,7 +82,7 @@ class TestTaskAPI(BaseTestCase):
     def test_delete_task(self):
         headers = self.get_token_headers()
         task = Task(tenant_id=self.group.id, title=self.fake.sentence(nb_words=8))
-        with self.app.sql.get_session() as session:
+        with self.app.dependencies.persistence.get_session() as session:
             self.task_db.save(session, task)
 
             response = self.client.delete(f"{URL_API}/task/{task.id}", headers=headers)

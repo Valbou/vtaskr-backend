@@ -1,14 +1,11 @@
 from datetime import timedelta
 
-from email_validator import EmailSyntaxError
-
 from flask import current_app, request
 from src.libs.flask.utils import ResponseAPI
 from src.libs.hmi import dto_to_dict
 from src.libs.redis import rate_limited
-from src.libs.security.validators import PasswordComplexityError
+from src.libs.security.validators import EmailSyntaxError, PasswordComplexityError
 from src.users.hmi.dto.user import UserDTO, UserMapperDTO
-from src.users.hmi.flask.emails import RegisterEmail
 from src.users.services import UserService
 
 from .. import V1, logger, openapi, users_bp
@@ -75,25 +72,16 @@ def register():
 
     payload: dict = request.get_json()
     try:
-        with current_app.sql.get_session() as session:
-            password = payload.pop("password")
-            user_dto = UserDTO(**payload)
+        password = payload.pop("password")
+        user_dto = UserDTO(**payload)
 
-            auth_service = UserService(session)
-            auth_service.clean_unused_accounts()
+        auth_service = UserService(services=current_app.dependencies)
+        auth_service.clean_unused_accounts()
 
-            user, _group = auth_service.register(user_dto, password)
+        user, _group = auth_service.register(user_dto, password)
 
-            with current_app.trans.get_translation_session(
-                "users", user.locale
-            ) as trans:
-                register_email = RegisterEmail(trans, [user.email], user.first_name)
-
-            current_app.notification.add_message(register_email)
-            current_app.notification.notify_all()
-
-            user_dto = UserMapperDTO.model_to_dto(user)
-            return ResponseAPI.get_response(dto_to_dict(user_dto), 201)
+        user_dto = UserMapperDTO.model_to_dto(user)
+        return ResponseAPI.get_response(dto_to_dict(user_dto), 201)
 
     except (PasswordComplexityError, EmailSyntaxError) as e:
         return ResponseAPI.get_400_response(str(e))

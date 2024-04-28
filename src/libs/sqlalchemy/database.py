@@ -4,10 +4,12 @@ from typing import Literal
 from sqlalchemy import Engine, create_engine
 from sqlalchemy.orm import Session, registry, scoped_session, sessionmaker
 
+from src.ports import SQLPort
+
 from .base import mapper_registry
 
 
-class SQLService:
+class SQLService(SQLPort):
     def __init__(
         self,
         echo: None | bool | Literal["debug"] = False,
@@ -41,8 +43,10 @@ class SQLService:
     def get_engine(self) -> Engine:
         return create_engine(self.get_database_url(), pool_size=20, echo=self.echo)
 
-    def get_session(self) -> Session:
-        return scoped_session(sessionmaker(self.get_engine()))()
+    def get_session(self, expire_on_commit=False) -> Session:
+        return scoped_session(
+            sessionmaker(self.get_engine(), expire_on_commit=expire_on_commit)
+        )()
 
     def get_registry(self) -> registry:
         return mapper_registry

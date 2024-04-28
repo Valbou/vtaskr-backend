@@ -1,15 +1,15 @@
 from datetime import timedelta
 from unittest import TestCase
 
-from src.libs.redis.database import TestNoSQLService
+from src.libs.redis.database import TestCacheService
 from src.libs.redis.ratelimit import LimitExceededError, RateLimit
 
 
 class TestRateLimit(TestCase):
     def setUp(self) -> None:
         super().setUp()
-        self.nosql = TestNoSQLService()
-        self.redis = self.nosql.get_engine()
+        self.cache = TestCacheService()
+        self.redis = self.cache.get_engine()
 
     def test_simple_call_do_nothing(self):
         rl = RateLimit(self.redis, "::1", "/test_1", 1, timedelta(seconds=1))

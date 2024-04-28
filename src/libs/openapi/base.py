@@ -1,3 +1,5 @@
+from src.settings import VERSION
+
 from .api_registry import OpenApiRegistry
 
 openapi = OpenApiRegistry()
@@ -15,7 +17,7 @@ if openapi.infos is None:
             "name": "LGPL v3",
             "url": "https://www.gnu.org/licenses/lgpl-3.0.en.html",
         },
-        "version": "1.1.0",
+        "version": VERSION,
     }
     openapi.register_infos(infos)
 

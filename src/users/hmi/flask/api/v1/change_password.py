@@ -4,7 +4,6 @@ from flask import current_app, request
 from src.libs.flask.utils import ResponseAPI
 from src.libs.redis import rate_limited
 from src.libs.security.validators import PasswordComplexityError
-from src.users.hmi.flask.emails import ChangePasswordEmail
 from src.users.services import UserService
 
 from .. import V1, logger, openapi, users_bp
@@ -73,21 +72,10 @@ def forgotten_password():
         return ResponseAPI.get_400_response()
 
     try:
-        with current_app.sql.get_session() as session:
-            user_service = UserService(session)
-            user = user_service.find_login(email)
-            if user:
-                request_hash = user_service.request_password_change(user)
-
-                with current_app.trans.get_translation_session(
-                    "users", user.locale
-                ) as trans:
-                    change_password_email = ChangePasswordEmail(
-                        trans, [user.email], user.first_name, request_hash
-                    )
-
-                current_app.notification.add_message(change_password_email)
-                current_app.notification.notify_all()
+        user_service = UserService(services=current_app.dependencies)
+        user = user_service.find_login(email)
+        if user:
+            user_service.request_password_change(user)
 
         return ResponseAPI.get_response(data, 200)
 
@@ -171,24 +159,22 @@ def new_password():
         return ResponseAPI.get_400_response()
 
     try:
-        with current_app.sql.get_session() as session:
-            user_service = UserService(session)
-            try:
-                if (
-                    email
-                    and request_hash
-                    and new_passwd
-                    and user_service.set_new_password(
-                        email=email, hash=request_hash, password=new_passwd
-                    )
-                ):
-                    data = {}
-                    return ResponseAPI.get_response(data, 200)
-            except PasswordComplexityError as e:
-                logger.warning(f"400 Error: {e}")
-                return ResponseAPI.get_400_response(str(e))
-
-            return ResponseAPI.get_400_response()
+        user_service = UserService(services=current_app.dependencies)
+        try:
+            if (
+                email
+                and request_hash
+                and new_passwd
+                and user_service.set_new_password(
+                    email=email, hash=request_hash, password=new_passwd
+                )
+            ):
+                data = {}
+                return ResponseAPI.get_response(data, 200)
+        except PasswordComplexityError as e:
+            logger.warning(f"400 Error: {e}")
+            return ResponseAPI.get_400_response(str(e))
+        return ResponseAPI.get_400_response()
     except Exception as e:
         logger.error(f"500 Error: {e}")
         return ResponseAPI.get_500_response()

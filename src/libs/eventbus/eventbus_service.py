@@ -1,16 +1,17 @@
 from copy import copy
 from typing import Callable
 
+from src.ports import EventBusPort
+
 from .config import EVENTS
 from .event import Event, Observer
 
 
-class EventBusService:
+class EventBusService(EventBusPort):
     events: dict[str, list[Event]] = {}
     index: dict[str, list[Callable]] = {}
 
-    def __init__(self, app_ctx) -> None:
-        self.app = app_ctx
+    def __init__(self) -> None:
         self.events = {}
         self.index = {}
 
@@ -21,6 +22,9 @@ class EventBusService:
                 observer = obs()
                 if observer.auto_subscribe(event_type):
                     self.subscribe(event_type=event_type, function=observer)
+
+    def set_context(self, **ctx) -> None:
+        self.app = ctx.pop("app")
 
     def __enter__(self):
         return self

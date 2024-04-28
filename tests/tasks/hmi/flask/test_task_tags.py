@@ -21,7 +21,7 @@ class TestTaskTagsAPI(BaseTestCase):
 
     def test_task_tags(self):
         headers = self.get_token_headers()
-        with self.app.sql.get_session() as session:
+        with self.app.dependencies.persistence.get_session() as session:
             self.create_data(session)
 
             response = self.client.get(
@@ -38,7 +38,7 @@ class TestTaskTagsAPI(BaseTestCase):
 
     def test_task_set_tags(self):
         headers = self.get_token_headers()
-        with self.app.sql.get_session() as session:
+        with self.app.dependencies.persistence.get_session() as session:
             self.create_data(session)
             task = self.task_db.load(session, self.task.id)
             self.assertEqual(len(task.tags), 2)
@@ -55,20 +55,24 @@ class TestTaskTagsAPI(BaseTestCase):
             self.assertEqual(response.status_code, 400)
 
             # Check with good data
-            data = {"tags": [tag.id]}
+            data = {
+                "tags": [
+                    tag.id,
+                ]
+            }
             response = self.client.put(
                 f"{URL_API}/task/{self.task.id}/tags/set", json=data, headers=headers
             )
             self.assertEqual(response.status_code, 201)
 
-        with self.app.sql.get_session() as session:  # required to update task informations
+        with self.app.dependencies.persistence.get_session() as session:
             task = self.task_db.load(session, self.task.id)
             self.assertEqual(len(task.tags), 1)
             self.assertNotIn(task.tags[0].id, previous_ids)
 
     def test_task_clean_tags(self):
         headers = self.get_token_headers()
-        with self.app.sql.get_session() as session:
+        with self.app.dependencies.persistence.get_session() as session:
             self.create_data(session)
             task = self.task_db.load(session, self.task.id)
             self.assertEqual(len(task.tags), 2)
@@ -78,6 +82,6 @@ class TestTaskTagsAPI(BaseTestCase):
             )
             self.assertEqual(response.status_code, 204)
 
-        with self.app.sql.get_session() as session:  # required to update task informations
+        with self.app.dependencies.persistence.get_session() as session:
             task = self.task_db.load(session, self.task.id)
             self.assertEqual(len(task.tags), 0)

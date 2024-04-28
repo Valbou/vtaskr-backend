@@ -75,19 +75,16 @@ class TestGroupAPI(BaseTestCase):
     def test_delete_group(self):
         headers = self.get_token_headers()
 
-        with self.app.sql.get_session() as session:
-            self.group_service = GroupService(session=session)
-            group = self.group_service.create_group(
-                user_id=self.user.id, group_name=self.fake.word()
-            )
+        self.group_service = GroupService(self.app.dependencies)
+        group = self.group_service.create_group(
+            user_id=self.user.id, group_name=self.fake.word()
+        )
 
-            response = self.client.get(f"{URL_API}/group/{group.id}", headers=headers)
-            self.assertEqual(response.status_code, 200)
+        response = self.client.get(f"{URL_API}/group/{group.id}", headers=headers)
+        self.assertEqual(response.status_code, 200)
 
-            response = self.client.delete(
-                f"{URL_API}/group/{group.id}", headers=headers
-            )
-            self.assertEqual(response.status_code, 204)
+        response = self.client.delete(f"{URL_API}/group/{group.id}", headers=headers)
+        self.assertEqual(response.status_code, 204)
 
-            response = self.client.get(f"{URL_API}/group/{group.id}", headers=headers)
-            self.assertEqual(response.status_code, 404)
+        response = self.client.get(f"{URL_API}/group/{group.id}", headers=headers)
+        self.assertEqual(response.status_code, 404)

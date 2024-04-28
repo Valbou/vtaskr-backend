@@ -1,13 +1,10 @@
 from datetime import timedelta
 
-from email_validator import EmailSyntaxError
-
 from flask import current_app, g, request
 from src.libs.flask.utils import ResponseAPI
 from src.libs.redis import rate_limited
-from src.libs.security.validators import get_valid_email
+from src.libs.security.validators import EmailSyntaxError, get_valid_email
 from src.users.hmi.flask.decorators import login_required
-from src.users.hmi.flask.emails import ChangeEmailToNewEmail, ChangeEmailToOldEmail
 from src.users.services import EmailAlreadyUsedError, UserService
 
 from .. import V1, logger, openapi, users_bp
@@ -64,33 +61,22 @@ def change_email():
 
     Need a valid token and a new email
     """
-    with current_app.sql.get_session() as session:
-        payload: dict = request.get_json()
-        data = {}
-        try:
-            new_email = payload.get("new_email", "")
-            new_email = get_valid_email(new_email)
-            auth_service = UserService(session)
-            req_hash, req_code = auth_service.request_email_change(g.user, new_email)
-        except (EmailSyntaxError, EmailAlreadyUsedError) as e:
-            return ResponseAPI.get_400_response(str(e))
-        except AttributeError as e:
-            logger.warning(f"400 Error: {e}")
-            return ResponseAPI.get_400_response()
 
-        with current_app.trans.get_translation_session("users", g.user.locale) as trans:
-            old_email_message = ChangeEmailToOldEmail(
-                trans, [g.user.email], g.user.first_name, req_code
-            )
-            new_email_message = ChangeEmailToNewEmail(
-                trans, [new_email], g.user.first_name, req_hash
-            )
+    payload: dict = request.get_json()
+    data = {}
+    try:
+        new_email = payload.get("new_email", "")
+        new_email = get_valid_email(new_email)
+        auth_service = UserService(services=current_app.dependencies)
+        auth_service.request_email_change(g.user, new_email)
 
-        current_app.notification.add_message(old_email_message)
-        current_app.notification.add_message(new_email_message)
-        current_app.notification.notify_all()
+    except (EmailSyntaxError, EmailAlreadyUsedError) as e:
+        return ResponseAPI.get_400_response(str(e))
+    except AttributeError as e:
+        logger.warning(f"400 Error: {e}")
+        return ResponseAPI.get_400_response()
 
-        return ResponseAPI.get_response(data, 200)
+    return ResponseAPI.get_response(data, 200)
 
 
 api_item = {
@@ -175,26 +161,25 @@ def new_email():
         return ResponseAPI.get_400_response()
 
     try:
-        with current_app.sql.get_session() as session:
-            user_service = UserService(session)
-            try:
-                if (
-                    old_email
-                    and new_email
-                    and request_hash
-                    and code
-                    and user_service.set_new_email(
-                        old_email=old_email,
-                        new_email=new_email,
-                        hash=request_hash,
-                        code=code,
-                    )
-                ):
-                    data = {}
-                    return ResponseAPI.get_response(data, 200)
-            except EmailSyntaxError as e:
-                return ResponseAPI.get_400_response(str(e))
-            return ResponseAPI.get_400_response()
+        user_service = UserService(services=current_app.dependencies)
+        try:
+            if (
+                old_email
+                and new_email
+                and request_hash
+                and code
+                and user_service.set_new_email(
+                    old_email=old_email,
+                    new_email=new_email,
+                    hash=request_hash,
+                    code=code,
+                )
+            ):
+                data = {}
+                return ResponseAPI.get_response(data, 200)
+        except EmailSyntaxError as e:
+            return ResponseAPI.get_400_response(str(e))
+        return ResponseAPI.get_400_response()
     except Exception as e:
         logger.error(f"500 Error: {e}")
         return ResponseAPI.get_500_response()

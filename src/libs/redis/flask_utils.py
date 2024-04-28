@@ -20,7 +20,11 @@ def rate_limited(
 
             try:
                 RateLimit(
-                    current_app.nosql.get_engine(), identifier, path, hit, period
+                    current_app.dependencies.cache.get_engine(),
+                    identifier,
+                    path,
+                    hit,
+                    period,
                 )()
                 return func(*args, **kwargs)
             except LimitExceededError as e:

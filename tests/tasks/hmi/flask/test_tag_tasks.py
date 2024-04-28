@@ -25,7 +25,7 @@ class TestTagTasksAPI(BaseTestCase):
 
     def test_tag_tasks(self):
         headers = self.get_token_headers()
-        with self.app.sql.get_session() as session:
+        with self.app.dependencies.persistence.get_session() as session:
             self.create_data(session)
 
             response = self.client.get(
@@ -42,7 +42,7 @@ class TestTagTasksAPI(BaseTestCase):
 
     def test_tag_tasks_with_filter(self):
         headers = self.get_token_headers()
-        with self.app.sql.get_session() as session:
+        with self.app.dependencies.persistence.get_session() as session:
             self.create_data(session)
 
             response = self.client.get(

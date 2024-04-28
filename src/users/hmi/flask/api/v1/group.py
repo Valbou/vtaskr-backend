@@ -67,26 +67,24 @@ def groups():
     """
 
     if request.method == "GET":
-        with current_app.sql.get_session() as session:
-            qsf = QueryStringFilter(
-                query_string=request.query_string.decode(), dto=GroupDTO
-            )
+        qsf = QueryStringFilter(
+            query_string=request.query_string.decode(), dto=GroupDTO
+        )
 
-            group_service = GroupService(session)
-            groups = group_service.get_all_groups(g.user.id, qsf.get_filters())
+        group_service = GroupService(current_app.dependencies)
+        groups = group_service.get_all_groups(g.user.id, qsf.get_filters())
 
-            groups_dto = list_models_to_list_dto(GroupMapperDTO, groups)
-            return ResponseAPI.get_response(list_dto_to_dict(groups_dto), 200)
+        groups_dto = list_models_to_list_dto(GroupMapperDTO, groups)
+        return ResponseAPI.get_response(list_dto_to_dict(groups_dto), 200)
 
     if request.method == "POST":
         group_dto = GroupDTO(**request.get_json())
 
-        with current_app.sql.get_session() as session:
-            group_service = GroupService(session)
-            group = group_service.create_group(g.user.id, group_dto.name)
+        group_service = GroupService(current_app.dependencies)
+        group = group_service.create_group(g.user.id, group_dto.name)
 
-            group_dto = GroupMapperDTO.model_to_dto(group)
-            return ResponseAPI.get_response(dto_to_dict(group_dto), 201)
+        group_dto = GroupMapperDTO.model_to_dto(group)
+        return ResponseAPI.get_response(dto_to_dict(group_dto), 201)
 
     else:
         return ResponseAPI.get_405_response()
@@ -205,30 +203,29 @@ openapi.register_path(f"{V1}/group/{{group_id}}", api_item)
 @login_required(logger)
 @rate_limited(logger=logger, hit=5, period=timedelta(seconds=60))
 def group(group_id: str):
-    with current_app.sql.get_session() as session:
-        group_service = GroupService(session)
-        group = group_service.get_group(g.user.id, group_id)
+    group_service = GroupService(current_app.dependencies)
+    group = group_service.get_group(g.user.id, group_id)
 
-        if group:
-            if request.method == "GET":
+    if group:
+        if request.method == "GET":
+            group_dto = GroupMapperDTO.model_to_dto(group)
+            return ResponseAPI.get_response(dto_to_dict(group_dto), 200)
+
+        if request.method in ["PUT", "PATCH"]:
+            group_dto = GroupDTO(**request.get_json())
+            group = GroupMapperDTO.dto_to_model(group_dto, group)
+            if group_service.update_group(g.user.id, group):
                 group_dto = GroupMapperDTO.model_to_dto(group)
                 return ResponseAPI.get_response(dto_to_dict(group_dto), 200)
+            return ResponseAPI.get_403_response()
 
-            if request.method in ["PUT", "PATCH"]:
-                group_dto = GroupDTO(**request.get_json())
-                group = GroupMapperDTO.dto_to_model(group_dto, group)
-                if group_service.update_group(g.user.id, group):
-                    group_dto = GroupMapperDTO.model_to_dto(group)
-                    return ResponseAPI.get_response(dto_to_dict(group_dto), 200)
-                return ResponseAPI.get_403_response()
-
-            if request.method == "DELETE":
-                if group_service.delete_group(g.user.id, group):
-                    return ResponseAPI.get_response("", 204)
-                return ResponseAPI.get_403_response()
-
-            else:
-                return ResponseAPI.get_405_response()
+        if request.method == "DELETE":
+            if group_service.delete_group(g.user.id, group):
+                return ResponseAPI.get_response("", 204)
+            return ResponseAPI.get_403_response()
 
         else:
-            return ResponseAPI.get_404_response()
+            return ResponseAPI.get_405_response()
+
+    else:
+        return ResponseAPI.get_404_response()

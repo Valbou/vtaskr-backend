@@ -22,7 +22,7 @@ class TestTasksAPI(BaseTestCase):
         )
         self.assertEqual(response.status_code, 401)
 
-        with self.app.sql.get_session() as session:
+        with self.app.dependencies.persistence.get_session() as session:
             self.assertFalse(self.task_db.exists(session, response.json.get("id")))
 
     def test_create_task(self):
@@ -36,7 +36,7 @@ class TestTasksAPI(BaseTestCase):
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.json.get("title"), title)
         self.assertIsInstance(response.json.get("id"), str)
-        with self.app.sql.get_session() as session:
+        with self.app.dependencies.persistence.get_session() as session:
             self.assertTrue(self.task_db.exists(session, response.json.get("id")))
 
     def test_get_tasks_no_login(self):
@@ -46,7 +46,7 @@ class TestTasksAPI(BaseTestCase):
     def test_get_tasks(self):
         headers = self.get_token_headers()
         task = Task(tenant_id=self.group.id, title=self.fake.sentence(nb_words=8))
-        with self.app.sql.get_session() as session:
+        with self.app.dependencies.persistence.get_session() as session:
             self.task_db.save(session, task)
 
             response = self.client.get(f"{URL_API}/tasks", headers=headers)
@@ -59,7 +59,7 @@ class TestTasksAPI(BaseTestCase):
     def test_get_tasks_with_filter(self):
         headers = self.get_token_headers()
         task = Task(tenant_id=self.group.id, title=self.fake.sentence(nb_words=8))
-        with self.app.sql.get_session() as session:
+        with self.app.dependencies.persistence.get_session() as session:
             self.task_db.save(session, task)
 
             response = self.client.get(

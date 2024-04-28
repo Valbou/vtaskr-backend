@@ -1,6 +1,6 @@
 from .event import Observer
 
-# Import observers Here
+# Declare observers Here
 
 
 class TestObserver(Observer):

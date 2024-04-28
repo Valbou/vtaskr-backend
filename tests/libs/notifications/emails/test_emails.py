@@ -1,12 +1,13 @@
 import os
-from unittest import TestCase
+from unittest import TestCase, skip
 from unittest.mock import patch
 
-from src.libs.notifications.emails import MultiSMTPEmail, SMTPEmail
+from src.notifications.services import MultiSMTPEmail, SMTPEmail
 
 DEFAULT_SMTP_SENDER = os.getenv("DEFAULT_SMTP_SENDER")
 
 
+@skip(reason="SPAM SMTP connection")
 class TestSMTPEmail(TestCase):
     def _create_email(self) -> SMTPEmail:
         return SMTPEmail(

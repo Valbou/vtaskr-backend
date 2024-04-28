@@ -1,8 +1,7 @@
 from unittest import TestCase
 
-from email_validator import EmailSyntaxError
-
 from src.libs.security.validators import (
+    EmailSyntaxError,
     PasswordChecker,
     PasswordComplexityError,
     get_valid_email,

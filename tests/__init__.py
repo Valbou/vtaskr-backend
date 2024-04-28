@@ -1,28 +1,34 @@
 from flask import Flask
+from src.libs.babel.translations import TranslationService
+from src.libs.dependencies import DependencyInjector, DependencyType
 from src.libs.eventbus import EventBusService
-from src.libs.flask.main import create_flask_app
-from src.libs.notifications import TestNotificationService
-from src.libs.redis.database import TestNoSQLService
+from src.libs.flask import create_flask_app
+from src.libs.iam.config import PermissionControl
+from src.libs.redis.database import TestCacheService
 from src.libs.sqlalchemy.database import TestSQLService
+from src.notifications.services import TestNotificationService
+
+di = DependencyInjector()
+di.add_dependency(DependencyType.PERSISTENCE, TestSQLService, echo=False)
+di.add_dependency(DependencyType.CACHE, TestCacheService)
+di.add_dependency(DependencyType.EVENTBUS, EventBusService)
+di.add_dependency(DependencyType.IDENTITY, PermissionControl)
+di.add_dependency(DependencyType.NOTIFICATION, TestNotificationService)
+di.add_dependency(DependencyType.TRANSLATION, TranslationService)
+
+di.instantiate_dependencies()
 
 # Clean cache
-nosql_test = TestNoSQLService()
-redis = nosql_test.get_engine()
-redis.flushdb()
+cache = di.cache.get_engine()
+cache.flushdb()
 
 # Clean database
 print("Install Tables...")
-sql_test = TestSQLService(echo=False)
-sql_test.drop_tables()
-sql_test.create_tables()
+di.persistence.drop_tables()
+di.persistence.create_tables()
 
 # Set APP
-APP: Flask = create_flask_app(
-    sql_class=TestSQLService,
-    nosql_class=TestNoSQLService,
-    notification_class=TestNotificationService,
-    eventbus_class=EventBusService,
-)
+APP: Flask = create_flask_app(dependencies=di)
 
 print("All registered routes:")
 for rule in APP.url_map.iter_rules():

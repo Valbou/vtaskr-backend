@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
 
 from src.settings import REQUEST_DAYS_HISTORY
 from src.users.models import RequestChange, RequestType
@@ -16,7 +17,7 @@ class TestRequestChangeAdapter(BaseTestCase):
         )
 
     def test_complete_crud_request_change(self):
-        with self.app.sql.get_session() as session:
+        with self.app.dependencies.persistence.get_session() as session:
             self.assertIsNone(
                 self.request_change_db.load(session, self.request_change.id)
             )
@@ -38,7 +39,7 @@ class TestRequestChangeAdapter(BaseTestCase):
             )
 
     def test_in_history(self):
-        with self.app.sql.get_session() as session:
+        with self.app.dependencies.persistence.get_session() as session:
             self.request_change_db.save(session, self.request_change)
             self.assertTrue(
                 self.request_change_db.exists(session, self.request_change.id)
@@ -49,12 +50,12 @@ class TestRequestChangeAdapter(BaseTestCase):
             )
 
     def test_not_in_history(self):
-        self.request_change.created_at = datetime.now() - timedelta(
+        self.request_change.created_at = datetime.now(ZoneInfo("UTC")) - timedelta(
             days=REQUEST_DAYS_HISTORY
             + 1  # To avoid unaccurate hours between winter and summer
         )
 
-        with self.app.sql.get_session() as session:
+        with self.app.dependencies.persistence.get_session() as session:
             self.request_change_db.save(session, self.request_change)
             self.assertTrue(
                 self.request_change_db.exists(session, self.request_change.id)

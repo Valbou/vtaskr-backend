@@ -47,12 +47,12 @@ class BaseTestCase(TestCase):
     def assertTableExists(self, table_name: str):
         params = {"table": table_name}
         stmt = text_query_table_exists()
-        with self.app.sql.get_session() as session:
+        with self.app.dependencies.persistence.get_session() as session:
             result = session.execute(stmt, params=params).scalar_one_or_none()
             self.assertTrue(result, f"Table {table_name} doesn't exists")
 
     def assertColumnsExists(self, table_name: str, columns_name: list[str]):
-        with self.app.sql.get_session() as session:
+        with self.app.dependencies.persistence.get_session() as session:
             for column_name in columns_name:
                 params = {
                     "table": table_name,
@@ -81,29 +81,28 @@ class BaseTestCase(TestCase):
             timezone=TIMEZONE,
         )
 
-        with self.app.sql.get_session() as session:
-            session.expire_on_commit = False
-
-            user_service = UserService(session)
-            self.user, self.group = user_service.register(
-                self.user_dto, password=self.password
-            )
+        user_service = UserService(services=self.app.dependencies)
+        self.user, self.group = user_service.register(
+            self.user_dto, password=self.password
+        )
 
     def get_json_headers(self):
         return {"Content-Type": "application/json"}
 
     def get_token_headers(self, valid: bool = True) -> dict:
         self.create_user()
-        with self.app.sql.get_session() as session:
-            session.expire_on_commit = False
-            auth_service = UserService(session)
-            self.token, _ = auth_service.authenticate(
-                email=self.user.email, password=self.password
+
+        auth_service = UserService(services=self.app.dependencies)
+        self.token, _ = auth_service.authenticate(
+            email=self.user.email, password=self.password
+        )
+
+        if valid:
+            auth_service.get_token(
+                sha_token=self.token.sha_token, code=self.token.temp_code
             )
-            if valid:
-                self.token.validate_token(self.token.temp_code)
-            session.commit()
-            sha_token = self.token.sha_token
+
+        sha_token = self.token.sha_token
         headers = {
             "Content-Type": "application/json",
             "Authorization": f"Bearer {sha_token}",

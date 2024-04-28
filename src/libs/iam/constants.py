@@ -11,6 +11,9 @@ class Resources(str, Enum):
     TASK = "task"
     TAG = "tag"
 
+    # Nofitications
+    SUBSCRIPTION = "subscription"
+
 
 class Permissions(IntFlag):
     READ = auto()
@@ -18,3 +21,4 @@ class Permissions(IntFlag):
     UPDATE = auto()
     CREATE = auto()
     DELETE = auto()
+    SUSCRIBE = auto()

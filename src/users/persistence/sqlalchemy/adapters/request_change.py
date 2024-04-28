@@ -19,5 +19,6 @@ class RequestChangeDB(AbstractRequestChangePort, DefaultDB):
     def clean_history(self, session: Session, autocommit: bool = True):
         self.qs.delete().expired()
         session.execute(self.qs.statement)
+
         if autocommit:
             session.commit()

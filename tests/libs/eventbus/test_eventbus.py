@@ -9,7 +9,7 @@ class TestError(Exception):
 
 class TestEventBus(BaseTestCase):
     def test_0_auto_subscribe(self):
-        with self.app.eventbus as eventbus_service:
+        with self.app.dependencies.eventbus as eventbus_service:
             self.assertIn("tests:send:event", eventbus_service.index)
             self.assertEqual(len(eventbus_service.index.get("tests:send:event")), 1)
             self.assertIsInstance(
@@ -20,7 +20,7 @@ class TestEventBus(BaseTestCase):
         def test_function(ctx, event_type, event):
             pass
 
-        with self.app.eventbus as eventbus_service:
+        with self.app.dependencies.eventbus as eventbus_service:
             self.assertIsNone(eventbus_service.index.get("test"))
             eventbus_service.subscribe("test", test_function)
             self.assertEqual(len(eventbus_service.index.get("test")), 1)
@@ -32,7 +32,7 @@ class TestEventBus(BaseTestCase):
         event = Event(tenant_id="123", event_type="test", data={"foo": "bar"})
 
         with self.assertRaises(TestError) as e:
-            with self.app.eventbus as eventbus_service:
+            with self.app.dependencies.eventbus as eventbus_service:
                 eventbus_service.subscribe("test", test_raise_function)
                 eventbus_service.emit("test", event)
 

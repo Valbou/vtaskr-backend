@@ -70,14 +70,13 @@ def tags():
     if request.method == "GET":
         qsf = QueryStringFilter(query_string=request.query_string.decode(), dto=TaskDTO)
 
-        with current_app.sql.get_session() as session:
-            tag_service = TagService(session)
-            tags = tag_service.get_tags(g.user.id, qsf.get_filters())
-            if tags:
-                tags_dto = list_models_to_list_dto(TagMapperDTO, tags)
-                return ResponseAPI.get_response(list_dto_to_dict(tags_dto), 200)
-            else:
-                return ResponseAPI.get_response([], 200)
+        tag_service = TagService(current_app.dependencies)
+        tags = tag_service.get_tags(g.user.id, qsf.get_filters())
+        if tags:
+            tags_dto = list_models_to_list_dto(TagMapperDTO, tags)
+            return ResponseAPI.get_response(list_dto_to_dict(tags_dto), 200)
+        else:
+            return ResponseAPI.get_response([], 200)
 
     elif request.method == "POST":
         try:
@@ -87,11 +86,10 @@ def tags():
             logger.warning(f"400 Error: {e}")
             return ResponseAPI.get_400_response(f"Bad request {e}")
 
-        with current_app.sql.get_session() as session:
-            tag_service = TagService(session)
-            tag_service.save_tag(user_id=g.user.id, tag=tag)
-            tag_dto = TagMapperDTO.model_to_dto(tag)
-            return ResponseAPI.get_response(dto_to_dict(tag_dto), 201)
+        tag_service = TagService(current_app.dependencies)
+        tag_service.save_tag(user_id=g.user.id, tag=tag)
+        tag_dto = TagMapperDTO.model_to_dto(tag)
+        return ResponseAPI.get_response(dto_to_dict(tag_dto), 201)
 
     else:
         return ResponseAPI.get_405_response()
@@ -208,32 +206,31 @@ openapi.register_path(f"{V1}/tag/{{tag_id}}", api_item)
 def tag(tag_id: str):
     """URL to current tenant tag - Token required"""
 
-    with current_app.sql.get_session() as session:
-        tag_service = TagService(session)
-        tag = tag_service.get_tag(g.user.id, tag_id)
+    tag_service = TagService(current_app.dependencies)
+    tag = tag_service.get_tag(g.user.id, tag_id)
 
-        if tag:
-            if request.method == "GET":
-                tag_dto = TagMapperDTO.model_to_dto(tag)
-                return ResponseAPI.get_response(dto_to_dict(tag_dto), 200)
+    if tag:
+        if request.method == "GET":
+            tag_dto = TagMapperDTO.model_to_dto(tag)
+            return ResponseAPI.get_response(dto_to_dict(tag_dto), 200)
 
-            elif request.method in ("PUT", "PATCH"):
-                tag_dto = TagDTO(**request.get_json())
-                tag = TagMapperDTO.dto_to_model(tag_dto, tag)
-                tag_service.update_tag(g.user.id, tag)
+        elif request.method in ("PUT", "PATCH"):
+            tag_dto = TagDTO(**request.get_json())
+            tag = TagMapperDTO.dto_to_model(tag_dto, tag)
+            tag_service.update_tag(g.user.id, tag)
 
-                tag_dto = TagMapperDTO.model_to_dto(tag)
-                return ResponseAPI.get_response(dto_to_dict(tag_dto), 200)
+            tag_dto = TagMapperDTO.model_to_dto(tag)
+            return ResponseAPI.get_response(dto_to_dict(tag_dto), 200)
 
-            elif request.method == "DELETE":
-                tag_service.delete_tag(g.user.id, tag)
-                return ResponseAPI.get_response("", 204)
-
-            else:
-                return ResponseAPI.get_405_response()
+        elif request.method == "DELETE":
+            tag_service.delete_tag(g.user.id, tag)
+            return ResponseAPI.get_response("", 204)
 
         else:
-            return ResponseAPI.get_404_response()
+            return ResponseAPI.get_405_response()
+
+    else:
+        return ResponseAPI.get_404_response()
 
 
 api_item = {
@@ -275,26 +272,23 @@ def tag_tasks(tag_id: str):
     """Give all tasks associated to a specific tag"""
 
     if request.method == "GET":
-        with current_app.sql.get_session() as session:
-            qsf = QueryStringFilter(
-                query_string=request.query_string.decode(), dto=TaskDTO
+        qsf = QueryStringFilter(query_string=request.query_string.decode(), dto=TaskDTO)
+
+        tag_service = TagService(current_app.dependencies)
+        tag = tag_service.get_tag(g.user.id, tag_id)
+        if tag:
+            task_service = TaskService(current_app.dependencies)
+            tasks_dto = list_models_to_list_dto(
+                TaskMapperDTO,
+                task_service.get_tag_tasks(
+                    g.user.id, tag.id, tag.tenant_id, qsf.get_filters()
+                ),
             )
 
-            tag_service = TagService(session)
-            tag = tag_service.get_tag(g.user.id, tag_id)
-            if tag:
-                task_service = TaskService(session)
-                tasks_dto = list_models_to_list_dto(
-                    TaskMapperDTO,
-                    task_service.get_tag_tasks(
-                        g.user.id, tag.id, tag.tenant_id, qsf.get_filters()
-                    ),
-                )
-
-                if tasks_dto:
-                    return ResponseAPI.get_response(list_dto_to_dict(tasks_dto), 200)
-                return ResponseAPI.get_response([], 200)
-            else:
-                return ResponseAPI.get_404_response("Tag not found")
+            if tasks_dto:
+                return ResponseAPI.get_response(list_dto_to_dict(tasks_dto), 200)
+            return ResponseAPI.get_response([], 200)
+        else:
+            return ResponseAPI.get_404_response("Tag not found")
     else:
         return ResponseAPI.get_405_response()

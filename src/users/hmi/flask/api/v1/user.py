@@ -121,10 +121,9 @@ def update_me():
     user_dto = UserDTO(**request.get_json())
     g.user = UserMapperDTO.dto_to_model(user_dto, g.user)
 
-    with current_app.sql.get_session() as session:
-        user_service = UserService(session=session)
-        user_service.update(g.user)
-        user_dto = UserMapperDTO.model_to_dto(g.user)
+    user_service = UserService(services=current_app.dependencies)
+    user_service.update(g.user)
+    user_dto = UserMapperDTO.model_to_dto(g.user)
 
     return ResponseAPI.get_response(dto_to_dict(user_dto), 200)
 
@@ -161,16 +160,15 @@ def delete_me():
     Return a jsonify user deleted
     """
 
-    with current_app.sql.get_session() as session:
-        user_service = UserService(session=session)
-        if user_service.delete(g.user):
-            user_dto = UserMapperDTO.model_to_dto(g.user)
+    user_service = UserService(services=current_app.dependencies)
+    if user_service.delete(g.user):
+        user_dto = UserMapperDTO.model_to_dto(g.user)
 
-            return ResponseAPI.get_response(dto_to_dict(user_dto), 204)
+        return ResponseAPI.get_response(dto_to_dict(user_dto), 204)
 
-        return ResponseAPI.get_403_response(
-            message=(
-                "Check you haven't anymore roles in some groups, "
-                "You may need to leave all groups except your private group"
-            )
+    return ResponseAPI.get_403_response(
+        message=(
+            "Check you haven't anymore roles in some groups, "
+            "You may need to leave all groups except your private group"
         )
+    )

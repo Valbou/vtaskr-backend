@@ -14,7 +14,7 @@ class TestTagAdapter(BaseTestCase):
         )
 
     def test_complete_crud_tag(self):
-        with self.app.sql.get_session() as session:
+        with self.app.dependencies.persistence.get_session() as session:
             self.assertIsNone(self.tag_db.load(session, self.tag.id))
             self.tag_db.save(session, self.tag)
             self.assertTrue(self.tag_db.exists(session, self.tag.id))
@@ -30,7 +30,7 @@ class TestTagAdapter(BaseTestCase):
     def test_add_new_task(self):
         task_1 = Task(self.user.id, self.fake.text(max_nb_chars=50))
         task_2 = Task(self.user.id, self.fake.text(max_nb_chars=50))
-        with self.app.sql.get_session() as session:
+        with self.app.dependencies.persistence.get_session() as session:
             self.tag.add_tasks([task_1, task_2])
             self.tag_db.save(session, self.tag)
 

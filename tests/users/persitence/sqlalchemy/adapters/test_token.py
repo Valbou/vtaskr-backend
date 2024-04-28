@@ -22,7 +22,7 @@ class TestTokenAdapter(BaseTestCase):
             hash_password=self.fake.password(),
         )
 
-        with self.app.sql.get_session() as session:
+        with self.app.dependencies.persistence.get_session() as session:
             self.user_db.save(session, self.user)
             self.token = Token(user_id=self.user.id)
             self.token.set_token(
@@ -30,7 +30,7 @@ class TestTokenAdapter(BaseTestCase):
             )
 
     def test_complete_crud_token(self):
-        with self.app.sql.get_session() as session:
+        with self.app.dependencies.persistence.get_session() as session:
             self.assertIsNone(self.token_db.load(session, self.token.id))
             self.token_db.save(session, self.token)
             self.assertTrue(self.token_db.exists(session, self.token.id))
@@ -44,7 +44,7 @@ class TestTokenAdapter(BaseTestCase):
             self.assertFalse(self.token_db.exists(session, self.token.id))
 
     def test_activity_update(self):
-        with self.app.sql.get_session() as session:
+        with self.app.dependencies.persistence.get_session() as session:
             last_activity = self.token.last_activity_at
             self.token_db.activity_update(session, self.token)
             self.assertLess(last_activity, self.token.last_activity_at)
@@ -55,7 +55,7 @@ class TestTokenAdapter(BaseTestCase):
             created_at=datetime.now(tz=ZoneInfo("UTC"))
             - timedelta(seconds=TOKEN_VALIDITY),
         )
-        with self.app.sql.get_session() as session:
+        with self.app.dependencies.persistence.get_session() as session:
             self.token_db.save(session, token)
             self.assertTrue(self.token_db.exists(session, token.id))
             self.token_db.clean_expired(session)
@@ -68,7 +68,7 @@ class TestTokenAdapter(BaseTestCase):
             created_at=datetime.now(tz=ZoneInfo("UTC"))
             - timedelta(seconds=TOKEN_TEMP_VALIDITY),
         )
-        with self.app.sql.get_session() as session:
+        with self.app.dependencies.persistence.get_session() as session:
             self.token_db.save(session, token)
             self.assertTrue(self.token_db.exists(session, token.id))
             self.token_db.clean_expired(session)
@@ -78,7 +78,7 @@ class TestTokenAdapter(BaseTestCase):
         token = Token(
             self.user.id, temp=False, created_at=datetime.now(tz=ZoneInfo("UTC"))
         )
-        with self.app.sql.get_session() as session:
+        with self.app.dependencies.persistence.get_session() as session:
             self.token_db.save(session, token)
             self.assertTrue(self.token_db.exists(session, token.id))
             self.token_db.clean_expired(session)
@@ -91,7 +91,7 @@ class TestTokenAdapter(BaseTestCase):
             created_at=datetime.now(tz=ZoneInfo("UTC"))
             - timedelta(seconds=TOKEN_TEMP_VALIDITY / 2),
         )
-        with self.app.sql.get_session() as session:
+        with self.app.dependencies.persistence.get_session() as session:
             self.token_db.save(session, token)
             self.assertTrue(self.token_db.exists(session, token.id))
             self.token_db.clean_expired(session)
@@ -104,7 +104,7 @@ class TestTokenAdapter(BaseTestCase):
             created_at=datetime.now(tz=ZoneInfo("UTC"))
             - timedelta(seconds=TOKEN_TEMP_VALIDITY),
         )
-        with self.app.sql.get_session() as session:
+        with self.app.dependencies.persistence.get_session() as session:
             self.token_db.save(session, token)
             self.assertTrue(self.token_db.exists(session, token.id))
             self.token_db.clean_expired(session)

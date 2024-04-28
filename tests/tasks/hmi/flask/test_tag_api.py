@@ -14,7 +14,7 @@ class TestTagAPI(BaseTestCase):
     def test_get_tag_no_login(self):
         self.create_user()
         tag = Tag(tenant_id=self.group.id, title=self.fake.text(max_nb_chars=50))
-        with self.app.sql.get_session() as session:
+        with self.app.dependencies.persistence.get_session() as session:
             self.tag_db.save(session, tag)
 
             response = self.client.get(f"{URL_API}/tag/{tag.id}", headers=self.headers)
@@ -23,7 +23,7 @@ class TestTagAPI(BaseTestCase):
     def test_get_tag(self):
         headers = self.get_token_headers()
         tag = Tag(tenant_id=self.group.id, title=self.fake.text(max_nb_chars=50))
-        with self.app.sql.get_session() as session:
+        with self.app.dependencies.persistence.get_session() as session:
             self.tag_db.save(session, tag)
 
             response = self.client.get(f"{URL_API}/tag/{tag.id}", headers=headers)
@@ -32,7 +32,7 @@ class TestTagAPI(BaseTestCase):
     def test_update_tag_put(self):
         headers = self.get_token_headers()
         tag = Tag(tenant_id=self.group.id, title=self.fake.text(max_nb_chars=50))
-        with self.app.sql.get_session() as session:
+        with self.app.dependencies.persistence.get_session() as session:
             self.tag_db.save(session, tag)
 
             new_title = self.fake.text(max_nb_chars=50)
@@ -56,7 +56,7 @@ class TestTagAPI(BaseTestCase):
     def test_update_tag_patch(self):
         headers = self.get_token_headers()
         tag = Tag(tenant_id=self.group.id, title=self.fake.text(max_nb_chars=50))
-        with self.app.sql.get_session() as session:
+        with self.app.dependencies.persistence.get_session() as session:
             self.tag_db.save(session, tag)
 
             new_title = self.fake.text(max_nb_chars=50)
@@ -80,7 +80,7 @@ class TestTagAPI(BaseTestCase):
     def test_delete_tag(self):
         headers = self.get_token_headers()
         tag = Tag(tenant_id=self.group.id, title=self.fake.text(max_nb_chars=50))
-        with self.app.sql.get_session() as session:
+        with self.app.dependencies.persistence.get_session() as session:
             self.tag_db.save(session, tag)
 
             response = self.client.delete(f"{URL_API}/tag/{tag.id}", headers=headers)
