@@ -32,7 +32,7 @@ class Template(BaseModelUpdate):
     @classmethod
     def temp_template_from_context(cls, context: dict) -> TTemplate:
         return Template(
-            event_type=context.pop("message_type"),
+            event_type=context.get("message_type"),
             event_name="None",
             sender=context.pop("sender"),
             name=context.pop("template"),

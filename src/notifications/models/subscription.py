@@ -21,7 +21,7 @@ class Subscription(BaseModelUpdate):
     @classmethod
     def temp_template_from_context(cls, context: dict) -> TSubscription:
         return Subscription(
-            event_type=context.pop("message_type"),
+            event_type=context.get("message_type"),
             event_name="None",
             tenant_id=context.pop("tenant_id"),
             to=context.pop("to"),
