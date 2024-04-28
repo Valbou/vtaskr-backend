@@ -65,9 +65,9 @@ class NotificationPort(InjectablePort, ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def notify_event(self, sql_service: InjectablePort, event_name: str, context: dict):
+    def notify_event(self, event_name: str, context: dict):
         raise NotImplementedError
 
     @abstractmethod
-    def subscribe(self, event_name: str, event_type: Enum, tenant_id: str):
+    def subscribe(self, event_name: str, event_type: Enum, tenant_id: str, to: str):
         raise NotImplementedError

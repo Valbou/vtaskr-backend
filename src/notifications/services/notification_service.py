@@ -5,7 +5,6 @@ from src.ports import (
     AbstractSender,
     MessageType,
     NotificationPort,
-    SQLPort,
 )
 
 
@@ -16,6 +15,9 @@ class NotificationService(NotificationPort):
         self.subscription_db = SubscriptionDB()
         self.template_db = TemplateDB()
         self.messages = []
+
+    def set_context(self, **ctx) -> None:
+        self.app = ctx.pop("app")
 
     def build_message(context: dict) -> AbstractMessage:
         message_type = context.pop("message_type")
@@ -45,8 +47,8 @@ class NotificationService(NotificationPort):
         # Flush all messages
         self.messages.clear()
 
-    def notify_event(self, sql_service: SQLPort, event_name: str, context: dict):
-        with sql_service.get_session() as session:
+    def notify_event(self, event_name: str, context: dict):
+        with self.app.dependencies.persistence.get_session() as session:
             for event_type in MessageType:
                 subscriptions = self.subscription_db.get_subscriptions_for_event(
                     session=session, event_name=event_name, event_type=event_type
@@ -70,12 +72,23 @@ class NotificationService(NotificationPort):
 
             self.notify_all()
 
+    def subscribe(self, event_name: str, event_type: MessageType, tenant_id: str, to: str):
+        subscription = Subscription(
+            event_type=event_type,
+            event_name=event_name,
+            tenant_id=tenant_id,
+            to=to,
+        )
+
+        with self.app.dependencies.persistence.get_session() as session:
+            self.subscription_db.save(session, subscription)
+
 
 class TestNotificationService(NotificationService):
     def notify_all(self):
         """No send in test environnement"""
         pass
 
-    def notify_event(self, sql_service: SQLPort, event_name: str, context: dict):
+    def notify_event(self, event_name: str, context: dict):
         """No send in test environnement"""
         pass
