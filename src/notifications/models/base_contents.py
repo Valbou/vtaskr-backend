@@ -1,10 +1,11 @@
-from src.ports import AbstractMessage
+from src.ports import AbstractMessage, MessageType
 
 from .subscription import Subscription
 from .template import Template
 
 
 class BaseEmailContent(AbstractMessage):
+    message_type = MessageType.EMAIL
     sender: str | None = None
     to: list[str] = []
     subject: str = ""
@@ -16,7 +17,6 @@ class BaseEmailContent(AbstractMessage):
     def __init__(
         self, subscriptions: list[Subscription | str], template: Template, context: dict
     ) -> None:
-        super().__init__()
 
         if subscriptions and isinstance(subscriptions[0], Subscription):
             self.to = [s.to for s in subscriptions]
@@ -30,13 +30,13 @@ class BaseEmailContent(AbstractMessage):
 
 
 class BaseTelegramContent(AbstractMessage):
+    message_type = MessageType.TELEGRAM
     to: list[str] = []
     text: str = ""
 
     def __init__(
         self, subscriptions: list[Subscription | str], template: Template, context: dict
     ) -> None:
-        super().__init__()
 
         if subscriptions and isinstance(subscriptions[0], Subscription):
             self.to = [s.to for s in subscriptions]

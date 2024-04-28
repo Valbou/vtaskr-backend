@@ -19,9 +19,10 @@ class NotificationService(NotificationPort):
         template = Template.temp_template_from_context(context=context)
         subscription = Subscription.temp_template_from_context(context=context)
 
-        return MessageFabric.get_base_message_class(event_type=message_type)(
-            subscriptions=[subscription], template=template, context=context
-        )
+        with self.app.app_context():
+            message_class = MessageFabric.get_message_class(event_type=message_type)
+            message = message_class(subscriptions=[subscription], template=template, context=context)
+            return message
 
     def add_message(self, message: AbstractMessage):
         self.messages.append(message)
@@ -55,15 +56,11 @@ class NotificationService(NotificationPort):
                     )
 
                     if template:
-                        message = MessageFabric.get_base_message_class(
-                            event_type=event_type
-                        )(
-                            subscriptions=subscriptions,
-                            template=template,
-                            context=context,
-                        )
+                        with self.app.app_context():
+                            message_class = MessageFabric.get_message_class(event_type=event_type)
+                            message = message_class(subscriptions=subscriptions, template=template, context=context)
 
-                        self.add_notification(message)
+                            self.add_message(message)
 
             self.notify_all()
 

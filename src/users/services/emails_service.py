@@ -71,7 +71,7 @@ class EmailService:
                 ),
                 "paragraph_2": _("To login, please copy/paste the following code:"),
                 "code": code,
-                "paragraph_3": self._(
+                "paragraph_3": _(
                     "This code stay valid only three minutes, after,"
                     "you need to make a new login attempt."
                 ),
