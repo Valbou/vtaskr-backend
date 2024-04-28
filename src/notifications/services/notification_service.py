@@ -1,11 +1,6 @@
 from src.notifications.models import MessageFabric, Subscription, Template
 from src.notifications.persistence.sqlalchemy.adapters import SubscriptionDB, TemplateDB
-from src.ports import (
-    AbstractMessage,
-    AbstractSender,
-    MessageType,
-    NotificationPort,
-)
+from src.ports import AbstractMessage, AbstractSender, MessageType, NotificationPort
 
 
 class NotificationService(NotificationPort):
@@ -72,7 +67,9 @@ class NotificationService(NotificationPort):
 
             self.notify_all()
 
-    def subscribe(self, event_name: str, event_type: MessageType, tenant_id: str, to: str):
+    def subscribe(
+        self, event_name: str, event_type: MessageType, tenant_id: str, to: str
+    ):
         subscription = Subscription(
             event_type=event_type,
             event_name=event_name,
