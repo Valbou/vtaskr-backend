@@ -14,7 +14,7 @@ class NotificationService(NotificationPort):
     def set_context(self, **ctx) -> None:
         self.app = ctx.pop("app")
 
-    def build_message(context: dict) -> AbstractMessage:
+    def build_message(self, context: dict) -> AbstractMessage:
         message_type = context.pop("message_type")
         template = Template.temp_template_from_context(context=context)
         subscription = Subscription.temp_template_from_context(context=context)
