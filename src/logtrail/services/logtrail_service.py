@@ -22,15 +22,11 @@ class LogTrailService:
         self,
         tenant_id: str,
         log_type: str,
-        content: str,
         event: dict,
-        separator: str = "|",
     ) -> LogTrail:
         logtrail = LogTrail(
             tenant_id=tenant_id,
-            separator=separator,
             log_type=log_type,
-            content=content,
             event=event,
         )
 

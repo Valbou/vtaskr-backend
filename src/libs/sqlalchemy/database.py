@@ -1,4 +1,3 @@
-import os
 from typing import Literal
 
 from sqlalchemy import Engine, create_engine

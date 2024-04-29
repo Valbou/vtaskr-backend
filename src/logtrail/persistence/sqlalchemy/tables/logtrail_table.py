@@ -11,12 +11,13 @@ logtrails_table = Table(
     mapper_registry.metadata,
     Column("id", String, primary_key=True),
     Column(
-        "created_at", DateTime(timezone=True), default=datetime.now(tz=ZoneInfo("UTC"))
+        "created_at",
+        DateTime(timezone=True),
+        default=datetime.now(tz=ZoneInfo("UTC")),
+        nullable=False,
     ),
     Column("tenant_id", String, nullable=False),
-    Column("separator", String(5), nullable=False),
     Column("log_type", String, nullable=False),
-    Column("content", String, nullable=True),
     Column("event", types.JSON, nullable=True),
 )
 
