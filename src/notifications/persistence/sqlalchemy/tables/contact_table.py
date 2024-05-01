@@ -1,12 +1,11 @@
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
-from sqlalchemy.orm import relationship
 from sqlalchemy import Column, DateTime, String, Table
+from sqlalchemy.orm import relationship
 
 from src.libs.sqlalchemy.base import mapper_registry
 from src.notifications.models import Contact
-
 
 contact_table = Table(
     "contacts",
@@ -34,6 +33,8 @@ mapper_registry.map_imperatively(
     Contact,
     contact_table,
     properties={
-        "subscriptions": relationship("Subscription", back_populates="contact", passive_deletes=False),
+        "subscriptions": relationship(
+            "Subscription", back_populates="contact", passive_deletes=False
+        ),
     },
 )

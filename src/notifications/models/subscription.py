@@ -29,5 +29,5 @@ class Subscription(BaseModelUpdate):
                 email=context.pop("email", ""),
                 telegram=context.pop("telegram", ""),
                 phone_number=context.pop("phone_number", ""),
-            )
+            ),
         )

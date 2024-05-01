@@ -46,12 +46,16 @@ def upgrade() -> None:
         sa.Column("event_type", messagetype_enum, nullable=False),
         sa.PrimaryKeyConstraint("id"),
         sa.ForeignKeyConstraint(
-            ["contact_id"], ["contacts.id"],
+            ["contact_id"],
+            ["contacts.id"],
             name="fk_subscriptions_contact_id",
-            ondelete="CASCADE"
+            ondelete="CASCADE",
         ),
         sa.UniqueConstraint(
-            "event_name", "event_type", "contact_id", name="subscriptions_events_contact_id"
+            "event_name",
+            "event_type",
+            "contact_id",
+            name="subscriptions_events_contact_id",
         ),
     )
     op.create_index(

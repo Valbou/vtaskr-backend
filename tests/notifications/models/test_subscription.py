@@ -2,7 +2,7 @@ from unittest import TestCase
 
 from faker import Faker
 
-from src.notifications.models import Subscription, Contact
+from src.notifications.models import Contact, Subscription
 from src.ports import MessageType
 
 
@@ -17,7 +17,7 @@ class TestSubscription(TestCase):
             contact=Contact(
                 id="1234abcd",
                 email="text@example.com",
-            )
+            ),
         )
 
     def test_table_fields(self):

@@ -1,13 +1,21 @@
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
+from sqlalchemy import (
+    Column,
+    DateTime,
+    Enum,
+    ForeignKey,
+    Index,
+    String,
+    Table,
+    UniqueConstraint,
+)
 from sqlalchemy.orm import relationship
-from sqlalchemy import Column, DateTime, Enum, Index, String, Table, UniqueConstraint, ForeignKey
 
 from src.libs.sqlalchemy.base import mapper_registry
 from src.notifications.models import Subscription
 from src.ports import MessageType
-
 
 subscription_table = Table(
     "subscriptions",
@@ -28,7 +36,9 @@ subscription_table = Table(
     Column(
         "contact_id",
         String,
-        ForeignKey("contacts.id", ondelete="CASCADE", name="fk_subscription_contact_id"),
+        ForeignKey(
+            "contacts.id", ondelete="CASCADE", name="fk_subscription_contact_id"
+        ),
         nullable=False,
     ),
     Column("event_name", String(150), nullable=False),
@@ -41,7 +51,7 @@ subscription_table = Table(
         "event_name",
         "event_type",
         "contact_id",
-        unique=True
+        unique=True,
     ),
 )
 
@@ -50,6 +60,11 @@ mapper_registry.map_imperatively(
     Subscription,
     subscription_table,
     properties={
-        "contact": relationship("Contact", back_populates="subscriptions", passive_deletes=True, lazy="joined"),
+        "contact": relationship(
+            "Contact",
+            back_populates="subscriptions",
+            passive_deletes=True,
+            lazy="joined",
+        ),
     },
 )
