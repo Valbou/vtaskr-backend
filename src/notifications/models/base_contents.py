@@ -18,7 +18,7 @@ class BaseEmailContent(AbstractMessage):
         self, subscriptions: list[Subscription | str], template: Template, context: dict
     ) -> None:
         if subscriptions and isinstance(subscriptions[0], Subscription):
-            self.to = [s.to for s in subscriptions]
+            self.to = [s.contact.email for s in subscriptions]
         else:
             self.to = subscriptions
 
@@ -37,9 +37,8 @@ class BaseTelegramContent(AbstractMessage):
         self, subscriptions: list[Subscription | str], template: Template, context: dict
     ) -> None:
         if subscriptions and isinstance(subscriptions[0], Subscription):
-            self.to = [s.to for s in subscriptions]
+            self.to = [s.contact.telegram for s in subscriptions]
         else:
             self.to = subscriptions
 
-        self.to = [s.to for s in subscriptions]
         self.text = template.interpolate_text(context=context)

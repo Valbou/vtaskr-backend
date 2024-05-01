@@ -19,7 +19,7 @@ class TestRequestChange(TestCase):
         email = email or self.fake.email(domain="valbou.fr")
         return RequestChange(type, email)
 
-    def test_request_change_table_fields(self):
+    def test_table_fields(self):
         self.assertEqual(RequestChange.__annotations__.get("id"), str | None)
         self.assertEqual(
             RequestChange.__annotations__.get("created_at"), datetime | None

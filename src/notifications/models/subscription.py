@@ -4,6 +4,8 @@ from typing import TypeVar
 from src.libs.sqlalchemy.base_model import BaseModelUpdate
 from src.ports import MessageType
 
+from .contact import Contact
+
 TSubscription = TypeVar("TSubscription", bound="Subscription")
 
 
@@ -13,18 +15,19 @@ class Subscription(BaseModelUpdate):
 
     event_type: MessageType
     event_name: str
-    tenant_id: str
-    to: str
-    cc: str = ""  # coma separated values
-    bcc: str = ""  # coma separated values
+    contact_id: str
+    contact: Contact
 
     @classmethod
-    def temp_template_from_context(cls, context: dict) -> TSubscription:
+    def temp_subscription_from_context(cls, context: dict) -> TSubscription:
         return Subscription(
             event_type=context.get("message_type"),
             event_name="None",
-            tenant_id=context.pop("tenant_id"),
-            to=context.pop("to"),
-            cc="",
-            bcc="",
+            contact_id=context.get("tenant_id"),
+            contact=Contact(
+                id=context.pop("tenant_id"),
+                email=context.pop("email", ""),
+                telegram=context.pop("telegram", ""),
+                phone_number=context.pop("phone_number", ""),
+            )
         )

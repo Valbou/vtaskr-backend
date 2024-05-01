@@ -17,7 +17,7 @@ class NotificationService(NotificationPort):
     def build_message(self, context: dict) -> AbstractMessage:
         message_type = context.pop("message_type")
         template = Template.temp_template_from_context(context=context)
-        subscription = Subscription.temp_template_from_context(context=context)
+        subscription = Subscription.temp_subscription_from_context(context=context)
 
         with self.app.app_context():
             message_class = MessageFabric.get_message_class(event_type=message_type)

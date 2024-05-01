@@ -17,7 +17,7 @@ class TestRight(TestCase):
             permissions=Permissions.CREATE,
         )
 
-    def test_user_table_fields(self):
+    def test_table_fields(self):
         self.assertEqual(Right.__annotations__.get("id"), str | None)
         self.assertEqual(Right.__annotations__.get("created_at"), datetime | None)
         self.assertEqual(Right.__annotations__.get("roletype_id"), str)

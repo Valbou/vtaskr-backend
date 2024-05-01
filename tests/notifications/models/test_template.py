@@ -16,7 +16,7 @@ class TestTemplate(TestCase):
             sender="test@example.com",
         )
 
-    def test_user_table_fields(self):
+    def test_table_fields(self):
         self.assertEqual(Template.__annotations__.get("event_type"), MessageType)
         self.assertEqual(Template.__annotations__.get("event_name"), str)
         self.assertEqual(Template.__annotations__.get("sender"), str)

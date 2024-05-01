@@ -20,7 +20,7 @@ class TestUser(TestCase):
             hash_password="1234",
         )
 
-    def test_user_table_fields(self):
+    def test_table_fields(self):
         self.assertEqual(User.__annotations__.get("id"), str | None)
         self.assertEqual(User.__annotations__.get("first_name"), str)
         self.assertEqual(User.__annotations__.get("last_name"), str)
