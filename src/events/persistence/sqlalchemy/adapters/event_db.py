@@ -1,0 +1,22 @@
+from sqlalchemy.orm import Session
+
+from src.libs.sqlalchemy.default_adapter import DefaultDB
+from src.events.models import Event
+from src.events.persistence.ports import AbstractEventPort
+from src.events.persistence.sqlalchemy.querysets import EventQueryset
+
+
+class EventDB(AbstractEventPort, DefaultDB):
+    def __init__(self) -> None:
+        super().__init__()
+        self.qs = EventQueryset()
+
+    def get_all(self, session: Session) -> list[Event]:
+        self.qs.select().order_by(created_at="DESC").limit(100)
+        return session.scalars(self.qs.statement).all()
+
+    def get_all_from_tenant(self, session: Session, tenant_id: str) -> list[Event]:
+        self.qs.select().where(Event.tenant_id == tenant_id).order_by(
+            created_at="DESC"
+        ).limit(100)
+        return session.scalars(self.qs.statement).all()

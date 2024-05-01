@@ -60,17 +60,13 @@ def upgrade() -> None:
         "templates_events_index", "templates", ["event_name", "event_type"], unique=True
     )
     op.create_table(
-        "logtrails",
+        "events",
         sa.Column("id", sa.String, primary_key=True),
         sa.Column("created_at", sa.DateTime(timezone=True), nullable=False),
         sa.Column("tenant_id", sa.String, nullable=False),
-        sa.Column("log_type", sa.String, nullable=False),
-        sa.Column("event", sa.types.JSON, nullable=True),
+        sa.Column("name", sa.String, nullable=False),
+        sa.Column("data", sa.types.JSON, nullable=True),
         sa.PrimaryKeyConstraint("id"),
-        sa.UniqueConstraint("event_name", "event_type", name="templates_events"),
-    )
-    op.create_index(
-        "templates_events_index", "templates", ["event_name", "event_type"], unique=True
     )
 
 

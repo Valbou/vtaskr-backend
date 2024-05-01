@@ -1,6 +1,6 @@
 # Users Module
 # Tasks Module
-from src.logtrail.persistence.sqlalchemy.tables import logtrails_table
+from src.events.persistence.sqlalchemy.tables import events_table
 from src.notifications.persistence.sqlalchemy.tables import (
     subscription_table,
     template_table,
@@ -34,5 +34,5 @@ LIST_TABLES = [
     role_table,
     subscription_table,
     template_table,
-    logtrails_table,
+    events_table,
 ]

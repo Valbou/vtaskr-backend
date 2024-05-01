@@ -6,7 +6,6 @@ from jinja2 import ChoiceLoader
 
 from flask import Flask
 from src.libs.dependencies import DependencyInjector
-from src.libs.eventbus.register import *  # noqa E401 F403
 from src.settings import AVAILABLE_LANGUAGES, INSTALLED_APPS
 
 
