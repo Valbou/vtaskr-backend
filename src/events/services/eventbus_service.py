@@ -1,9 +1,9 @@
 from copy import copy
 from typing import Callable
 
-from src.ports import EventBusPort, ObserverPort
-from src.events.persistence.sqlalchemy import EventDB
 from src.events.models import Event
+from src.events.persistence.sqlalchemy import EventDB
+from src.ports import EventBusPort, ObserverPort
 
 
 class EventBusService(EventBusPort):

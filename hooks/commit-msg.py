@@ -8,7 +8,7 @@ from colorama import Back, Style
 
 
 def check_git_commit_name(msg):
-    if re.match(r"^(feat|fix|doc|test|perf|refacto|chore):([ \w]+)$", msg):
+    if re.match(r"^(feat|fix|doc|test|perf|refactor|chore):([ \w+]+)$", msg):
         return 0
     print(
         f"{Back.RED} Message commit match regex {Style.RESET_ALL}.",

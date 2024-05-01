@@ -1,7 +1,7 @@
 from typing import TypeVar
 
-from src.libs.sqlalchemy.queryset import Queryset
 from src.events.models import Event
+from src.libs.sqlalchemy.queryset import Queryset
 
 TEventQueryset = TypeVar("TEventQueryset", bound="EventQueryset")
 

@@ -1,6 +1,6 @@
-from src.libs.dependencies import DependencyInjector
 from src.events.models import Event
 from src.events.persistence.sqlalchemy.adapters import EventDB
+from src.libs.dependencies import DependencyInjector
 
 
 class EventService:

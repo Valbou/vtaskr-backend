@@ -3,7 +3,6 @@ from typing import Callable, TypeVar
 
 from .base_port import InjectablePort
 
-
 TObserverPort = TypeVar("TObserverPort", bound="ObserverPort")
 
 

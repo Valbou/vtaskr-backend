@@ -1,10 +1,10 @@
 from flask import Flask
+from src.events.services import EventBusService
 from src.libs.babel.translations import TranslationService
 from src.libs.dependencies import DependencyInjector, DependencyType
 from src.libs.iam.config import PermissionControl
 from src.libs.redis.database import CacheService
 from src.libs.sqlalchemy.database import SQLService
-from src.events.services import EventBusService
 from src.notifications.services import NotificationService
 
 from .libs.flask import create_flask_app

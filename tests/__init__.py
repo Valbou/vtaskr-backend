@@ -1,11 +1,11 @@
 from flask import Flask
+from src.events.services import EventBusService
 from src.libs.babel.translations import TranslationService
 from src.libs.dependencies import DependencyInjector, DependencyType
 from src.libs.flask import create_flask_app
 from src.libs.iam.config import PermissionControl
 from src.libs.redis.database import TestCacheService
 from src.libs.sqlalchemy.database import TestSQLService
-from src.events.services import EventBusService
 from src.notifications.services import TestNotificationService
 
 di = DependencyInjector()

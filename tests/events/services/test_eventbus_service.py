@@ -1,7 +1,6 @@
 from src.ports import ObserverPort
 from tests.base_test import BaseTestCase
 
-
 EVENT_NAME_TEST = "tests:send:event"
 
 

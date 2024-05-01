@@ -3,8 +3,8 @@ from zoneinfo import ZoneInfo
 
 from sqlalchemy import Column, DateTime, String, Table, types
 
-from src.libs.sqlalchemy.base import mapper_registry
 from src.events.models import Event
+from src.libs.sqlalchemy.base import mapper_registry
 
 events_table = Table(
     "events",

@@ -1,8 +1,8 @@
 from flask import current_app
-from src.libs.flask.utils import ResponseAPI
-from src.libs.hmi import list_dto_to_dict, list_models_to_list_dto
 from src.events.hmi.dto import EventDTOMapperDTO
 from src.events.services import EventService
+from src.libs.flask.utils import ResponseAPI
+from src.libs.hmi import list_dto_to_dict, list_models_to_list_dto
 
 from .. import V1, events_bp
 

@@ -1,9 +1,9 @@
 from sqlalchemy.orm import Session
 
-from src.libs.sqlalchemy.default_adapter import DefaultDB
 from src.events.models import Event
 from src.events.persistence.ports import AbstractEventPort
 from src.events.persistence.sqlalchemy.querysets import EventQueryset
+from src.libs.sqlalchemy.default_adapter import DefaultDB
 
 
 class EventDB(AbstractEventPort, DefaultDB):
