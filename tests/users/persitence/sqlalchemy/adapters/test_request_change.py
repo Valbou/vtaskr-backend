@@ -22,18 +22,23 @@ class TestRequestChangeAdapter(BaseTestCase):
                 self.request_change_db.load(session, self.request_change.id)
             )
             self.request_change_db.save(session, self.request_change)
+            session.commit()
             self.assertTrue(
                 self.request_change_db.exists(session, self.request_change.id)
             )
+
             old_code = self.request_change.code
             self.request_change.code = "abc"  # nosec
+            self.request_change_db.update(session, self.request_change)
             session.commit()
+
             request_change = self.request_change_db.load(
                 session, self.request_change.id
             )
             self.assertNotEqual(old_code, request_change.code)
             self.assertEqual(request_change.id, self.request_change.id)
             self.request_change_db.delete(session, self.request_change)
+            session.commit()
             self.assertFalse(
                 self.request_change_db.exists(session, self.request_change.id)
             )
@@ -41,6 +46,7 @@ class TestRequestChangeAdapter(BaseTestCase):
     def test_in_history(self):
         with self.app.dependencies.persistence.get_session() as session:
             self.request_change_db.save(session, self.request_change)
+            session.commit()
             self.assertTrue(
                 self.request_change_db.exists(session, self.request_change.id)
             )
@@ -57,6 +63,7 @@ class TestRequestChangeAdapter(BaseTestCase):
 
         with self.app.dependencies.persistence.get_session() as session:
             self.request_change_db.save(session, self.request_change)
+            session.commit()
             self.assertTrue(
                 self.request_change_db.exists(session, self.request_change.id)
             )

@@ -58,7 +58,8 @@ class EventBusService(EventBusPort):
 
         for event_name, events in local_events.items():
             with self.services.persistence.get_session() as session:
-                self.event_db.bulk_save(session=session, objs=events, autocommit=False)
+                self.event_db.bulk_save(session, objs=events)
+                session.commit()
 
                 for event in events:
                     observers = self.index.get(event_name, [])

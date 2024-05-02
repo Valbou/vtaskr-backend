@@ -15,9 +15,7 @@ class TemplateDB(TemplateDBPort, DefaultDB):
         super().__init__()
         self.qs = TemplateQueryset()
 
-    def update(
-        self, session: Session, template: Template, autocommit: bool = True
-    ) -> bool:
+    def update(self, session: Session, template: Template) -> bool:
         self.qs.update().id(template.id).values(
             name=template.name,
             sender=template.sender,
@@ -29,9 +27,6 @@ class TemplateDB(TemplateDBPort, DefaultDB):
             updated_at=datetime.now(tz=ZoneInfo("UTC")),
         )
         session.execute(self.qs.statement)
-
-        if autocommit:
-            session.commit()
 
     def get_template_for_event(
         self, session: Session, event_name: str, event_type: MessageType

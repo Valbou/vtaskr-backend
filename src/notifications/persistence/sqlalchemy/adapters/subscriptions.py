@@ -14,9 +14,7 @@ class SubscriptionDB(SubscriptionDBPort, DefaultDB):
         super().__init__()
         self.qs = SubscriptionQueryset()
 
-    def update(
-        self, session: Session, subscription: Subscription, autocommit: bool = True
-    ) -> bool:
+    def update(self, session: Session, subscription: Subscription) -> bool:
         self.qs.update().id(subscription.id).values(
             to=subscription.to,
             cc=subscription.cc,
@@ -26,9 +24,6 @@ class SubscriptionDB(SubscriptionDBPort, DefaultDB):
             updated_at=datetime.now(tz=ZoneInfo("UTC")),
         )
         session.execute(self.qs.statement)
-
-        if autocommit:
-            session.commit()
 
     def get_subscriptions_for_event(
         self, session: Session, event_name: str, event_type: MessageType

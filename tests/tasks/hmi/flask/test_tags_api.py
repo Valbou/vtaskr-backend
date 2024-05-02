@@ -51,13 +51,14 @@ class TestTagsAPI(BaseTestCase):
         tag = Tag(tenant_id=self.group.id, title=self.fake.text(max_nb_chars=50))
         with self.app.dependencies.persistence.get_session() as session:
             self.tag_db.save(session, tag)
+            session.commit()
 
-            response = self.client.get(f"{URL_API}/tags", headers=headers)
-            self.assertEqual(response.status_code, 200)
-            result = response.json
-            self.assertIsInstance(result, list)
-            self.assertEqual(len(result), 1)
-            self.assertEqual(result[0].get("id"), tag.id)
+        response = self.client.get(f"{URL_API}/tags", headers=headers)
+        self.assertEqual(response.status_code, 200)
+        result = response.json
+        self.assertIsInstance(result, list)
+        self.assertEqual(len(result), 1)
+        self.assertEqual(result[0].get("id"), tag.id)
 
     def test_no_put(self):
         response = self.client.put(f"{URL_API}/tags", headers=self.headers)

@@ -27,6 +27,7 @@ class GroupService:
         with self.services.persistence.get_session() as session:
             group = Group(name=group_name)
             self.group_db.save(session, group)
+            session.commit()
 
         from .roletype_service import RoleTypeService
 
@@ -87,6 +88,7 @@ class GroupService:
                 session, Permissions.UPDATE, user_id, group.id, resource=Resources.GROUP
             ):
                 self.group_db.save(session, group)
+                session.commit()
                 return True
             return False
 
@@ -98,5 +100,6 @@ class GroupService:
                 session, Permissions.DELETE, user_id, group.id, resource=Resources.GROUP
             ):
                 self.group_db.delete(session, group)
+                session.commit()
                 return True
             return False

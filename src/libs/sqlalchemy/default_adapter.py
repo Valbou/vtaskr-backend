@@ -17,17 +17,14 @@ class DefaultDB(AbstractDBPort):
             result = session.scalars(self.qs.statement).one_or_none()
         return result
 
-    def save(self, session: Session, obj: object, autocommit: bool = True) -> None:
+    def save(self, session: Session, obj: object) -> None:
         session.add(obj)
-        if autocommit:
-            session.commit()
 
     def bulk_save(
         self,
         session: Session,
         objs: list[object],
         number_per_loop: int = 500,
-        autocommit: bool = True,
     ) -> None:
         objs_size = len(objs)
         pages = objs_size // number_per_loop + 1
@@ -41,13 +38,8 @@ class DefaultDB(AbstractDBPort):
                     session.add_all(objs[start:end])
                 session.flush()
 
-        if autocommit:
-            session.commit()
-
-    def delete(self, session: Session, obj: object, autocommit: bool = True) -> None:
+    def delete(self, session: Session, obj: object) -> None:
         session.delete(obj)
-        if autocommit:
-            session.commit()
 
     def exists(self, session: Session, id: str) -> bool:
         self.qs.id(id)

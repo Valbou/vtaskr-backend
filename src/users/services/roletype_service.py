@@ -21,6 +21,7 @@ class RoleTypeService:
             roletype, created = self.roletype_db.get_or_create(
                 session=session, roletype=admin_roletype
             )
+            session.commit()
 
             if created:
                 from .right_service import RightService
@@ -38,6 +39,7 @@ class RoleTypeService:
             roletype, created = self.roletype_db.get_or_create(
                 session=session, roletype=observer_roletype
             )
+            session.commit()
 
             if created:
                 from .right_service import RightService
@@ -54,6 +56,7 @@ class RoleTypeService:
             roletype, _created = self.roletype_db.get_or_create(
                 session=session, roletype=roletype
             )
+            session.commit()
 
         return roletype
 
@@ -96,6 +99,7 @@ class RoleTypeService:
                 resource=Resources.ROLETYPE,
             ):
                 self.roletype_db.save(session, roletype)
+                session.commit()
                 return True
             return False
 
@@ -112,5 +116,6 @@ class RoleTypeService:
                 resource=Resources.ROLETYPE,
             ):
                 self.roletype_db.delete(session, roletype)
+                session.commit()
                 return True
             return False

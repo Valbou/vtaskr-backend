@@ -34,6 +34,7 @@ class EventService:
         )
 
         with self.services.persistence.get_session() as session:
-            self.event_db.save(session=session, obj=event)
+            self.event_db.save(session, obj=event)
+            session.commit()
 
         return event

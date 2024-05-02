@@ -14,9 +14,7 @@ class ContactDB(ContactDBPort, DefaultDB):
         super().__init__()
         self.qs = ContactQueryset()
 
-    def update(
-        self, session: Session, contact: Contact, autocommit: bool = True
-    ) -> bool:
+    def update(self, session: Session, contact: Contact) -> bool:
         self.qs.update().id(contact.id).values(
             email=contact.email,
             telegram=contact.telegram,
@@ -24,6 +22,3 @@ class ContactDB(ContactDBPort, DefaultDB):
             updated_at=datetime.now(tz=ZoneInfo("UTC")),
         )
         session.execute(self.qs.statement)
-
-        if autocommit:
-            session.commit()

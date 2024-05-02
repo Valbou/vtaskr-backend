@@ -53,7 +53,6 @@ class TaskDB(TaskDBPort, DefaultDB):
         tenant_ids: list[str],
         task: Task,
         tag_ids: list[str],
-        autocommit: bool = True,
     ) -> None:
         """Bulk add tags to tenant's task"""
 
@@ -63,13 +62,9 @@ class TaskDB(TaskDBPort, DefaultDB):
         tags = session.execute(tag_qs.statement).scalars().all()
 
         task.tags = tags
-        if autocommit:
-            session.commit()
 
-    def clean_tags(self, session: Session, task: Task, autocommit: bool = True) -> None:
+    def clean_tags(self, session: Session, task: Task) -> None:
         """Clean all associations with tags"""
 
         task = self.load(session=session, id=task.id)
         task.tags = []
-        if autocommit:
-            session.commit()

@@ -12,29 +12,23 @@ class UserDB(UserDBPort, DefaultDB):
         super().__init__()
         self.qs = UserQueryset()
 
-    def update(self, session: Session, user: User, autocommit: bool = True):
+    def update(self, session: Session, user: User):
         self.qs.update().id(user.id).values(
             first_name=user.first_name,
             last_name=user.last_name,
             email=user.email,
             hash_password=user.hash_password,
         )
-
         session.execute(self.qs.statement)
-        if autocommit:
-            session.commit()
 
     def find_login(self, session: Session, email: str) -> User | None:
         self.qs.select().by_email(email)
         result = session.scalars(self.qs.statement).one_or_none()
         return result
 
-    def clean_unused(self, session: Session, autocommit: bool = True):
+    def clean_unused(self, session: Session):
         self.qs.delete().unused()
         session.execute(self.qs.statement)
-
-        if autocommit:
-            session.commit()
 
     def has_permissions(
         self,

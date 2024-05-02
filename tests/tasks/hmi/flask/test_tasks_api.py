@@ -51,27 +51,29 @@ class TestTasksAPI(BaseTestCase):
         task = Task(tenant_id=self.group.id, title=self.fake.sentence(nb_words=8))
         with self.app.dependencies.persistence.get_session() as session:
             self.task_db.save(session, task)
+            session.commit()
 
-            response = self.client.get(f"{URL_API}/tasks", headers=headers)
-            self.assertEqual(response.status_code, 200)
-            result = response.json
-            self.assertIsInstance(result, list)
-            self.assertEqual(len(result), 1)
-            self.assertEqual(result[0].get("id"), task.id)
+        response = self.client.get(f"{URL_API}/tasks", headers=headers)
+        self.assertEqual(response.status_code, 200)
+        result = response.json
+        self.assertIsInstance(result, list)
+        self.assertEqual(len(result), 1)
+        self.assertEqual(result[0].get("id"), task.id)
 
     def test_get_tasks_with_filter(self):
         headers = self.get_token_headers()
         task = Task(tenant_id=self.group.id, title=self.fake.sentence(nb_words=8))
         with self.app.dependencies.persistence.get_session() as session:
             self.task_db.save(session, task)
+            session.commit()
 
-            response = self.client.get(
-                f"{URL_API}/tasks?title_ncontains={task.title}", headers=headers
-            )
-            self.assertEqual(response.status_code, 200)
-            result = response.json
-            self.assertIsInstance(result, list)
-            self.assertEqual(len(result), 0)
+        response = self.client.get(
+            f"{URL_API}/tasks?title_ncontains={task.title}", headers=headers
+        )
+        self.assertEqual(response.status_code, 200)
+        result = response.json
+        self.assertIsInstance(result, list)
+        self.assertEqual(len(result), 0)
 
     def test_no_put(self):
         response = self.client.put(f"{URL_API}/tasks", headers=self.headers)

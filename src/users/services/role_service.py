@@ -37,6 +37,7 @@ class RoleService:
 
         with self.services.persistence.get_session() as session:
             self.role_db.save(session, role)
+            session.commit()
 
         return role
 
@@ -53,6 +54,7 @@ class RoleService:
                 exception=True,
             ):
                 self.role_db.save(session, role)
+                session.commit()
                 return role
             return None
 
@@ -93,6 +95,7 @@ class RoleService:
                 resource=Resources.ROLE,
             ):
                 self.role_db.save(session, role)
+                session.commit()
                 return True
             return False
 
@@ -109,5 +112,6 @@ class RoleService:
                 resource=Resources.ROLE,
             ):
                 self.role_db.delete(session, role)
+                session.commit()
                 return True
             return False

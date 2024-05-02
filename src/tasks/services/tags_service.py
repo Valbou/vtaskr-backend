@@ -84,6 +84,7 @@ class TagService:
                 resource=Resources.TAG,
             ):
                 self.tag_db.save(session, tag)
+                session.commit()
 
     def update_tag(self, user_id: str, tag: Tag):
         """Update a tag if update permission was given"""
@@ -97,6 +98,7 @@ class TagService:
                 resource=Resources.TAG,
             ):
                 self.tag_db.save(session, tag)
+                session.commit()
 
     def delete_tag(self, user_id: str, tag: Tag):
         """Delete a tag if delete permission was given"""
@@ -110,3 +112,4 @@ class TagService:
                 resource=Resources.TAG,
             ):
                 self.tag_db.delete(session, tag)
+                session.commit()

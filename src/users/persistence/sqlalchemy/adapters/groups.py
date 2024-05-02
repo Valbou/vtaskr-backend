@@ -13,12 +13,9 @@ class GroupDB(GroupDBPort, DefaultDB):
         super().__init__()
         self.qs = GroupQueryset()
 
-    def update(self, session: Session, group: Group, autocommit: bool = True) -> bool:
+    def update(self, session: Session, group: Group) -> bool:
         self.qs.update().id(group.id).values(name=group.name)
         session.execute(self.qs.statement)
-
-        if autocommit:
-            session.commit()
 
     def accessibles_by_user_with_permission(
         self,

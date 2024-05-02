@@ -92,6 +92,7 @@ class NotificationService(NotificationPort):
 
         with self.app.dependencies.persistence.get_session() as session:
             self.subscription_db.save(session, subscription)
+            session.commit()
 
 
 class TestNotificationService(NotificationService):

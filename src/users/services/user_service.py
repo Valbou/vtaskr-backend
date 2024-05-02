@@ -46,6 +46,7 @@ class UserService:
                 raise ValueError(f"User {user.email} already exists")
 
             self.user_db.save(session, user)
+            session.commit()
 
         from .group_service import GroupService
 
@@ -78,15 +79,17 @@ class UserService:
 
         with self.services.persistence.get_session() as session:
             self.token_db.clean_expired(session)
+            session.commit()
+
             user = self.user_db.find_login(session, email)
 
             if isinstance(user, User) and user.check_password(password):
                 # Many tokens can be active for a unique user (it's assumed)
                 user.update_last_login()
-                session.commit()
 
                 token = Token(user_id=user.id)
                 self.token_db.save(session, token)
+                session.commit()
 
                 email_service = EmailService(services=self.services)
                 context = email_service.get_login_context(
@@ -102,8 +105,10 @@ class UserService:
     def get_token(self, sha_token: str, code: str) -> Token | None:
         with self.services.persistence.get_session() as session:
             token = self.token_db.get_token(session, sha_token=sha_token)
+
             if code and token and token.is_temp_valid() and token.validate_token(code):
                 self.token_db.save(session, token)
+                session.commit()
                 return token
             return None
 
@@ -114,6 +119,7 @@ class UserService:
             token = self.token_db.get_token(session, sha_token)
             if token:
                 self.token_db.delete(session, token)
+                session.commit()
                 return True
             return False
 
@@ -177,12 +183,15 @@ class UserService:
             self.request_change_db.clean_history(session)
             request_change = RequestChange(request_type, email=email)
             self.request_change_db.save(session, request_change)
+            session.commit()
+
             return request_change
 
     def update(self, user: User) -> None:
         """Update user"""
         with self.services.persistence.get_session() as session:
             self.user_db.update(session, user)
+            session.commit()
 
     def set_new_password(self, email: str, hash: str, password: str) -> bool:
         """Set the new password to user if request is ok"""
@@ -234,5 +243,6 @@ class UserService:
             )
             if len(group_id) <= 1:
                 self.user_db.delete(session, user)
+                session.commit()
                 return True
             return False

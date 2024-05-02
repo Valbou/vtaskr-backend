@@ -19,4 +19,7 @@ class UsersRegisterObserver(ObserverPort):
         contact_db: ContactDBPort = app_ctx.dependencies.persistence.get_repository(
             APP_NAME, "Contact"
         )
-        contact_db.save(contact)
+
+        with app_ctx.dependencies.persistence.get_session() as session:
+            contact_db.save(session, obj=contact)
+            session.commit()

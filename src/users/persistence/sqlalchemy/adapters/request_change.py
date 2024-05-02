@@ -11,14 +11,17 @@ class RequestChangeDB(RequestChangeDBPort, DefaultDB):
         super().__init__()
         self.qs = RequestChangeQueryset()
 
+    def update(self, session, request_change: RequestChange) -> None:
+        self.qs.update().id(request_change.id).values(
+            code=request_change.code,
+        )
+        session.execute(self.qs.statement)
+
     def find_request(self, session: Session, email: str) -> RequestChange | None:
         self.qs.valid_for(email).last()
         result = session.scalars(self.qs.statement).one_or_none()
         return result
 
-    def clean_history(self, session: Session, autocommit: bool = True):
+    def clean_history(self, session: Session):
         self.qs.delete().expired()
         session.execute(self.qs.statement)
-
-        if autocommit:
-            session.commit()

@@ -24,29 +24,36 @@ class TestTokenAdapter(BaseTestCase):
 
         with self.app.dependencies.persistence.get_session() as session:
             self.user_db.save(session, self.user)
-            self.token = Token(user_id=self.user.id)
-            self.token.set_token(
-                token=sha256(self.fake.password().encode()).hexdigest()
-            )
+            session.commit()
+
+        self.token = Token(user_id=self.user.id)
+        self.token.set_token(
+            token=sha256(self.fake.password().encode()).hexdigest()
+        )
 
     def test_complete_crud_token(self):
         with self.app.dependencies.persistence.get_session() as session:
             self.assertIsNone(self.token_db.load(session, self.token.id))
             self.token_db.save(session, self.token)
+            session.commit()
+
             self.assertTrue(self.token_db.exists(session, self.token.id))
             old_sha_token = self.token.sha_token
             self.token.sha_token = "abc"  # nosec
             session.commit()
+
             token = self.token_db.load(session, self.token.id)
             self.assertNotEqual(old_sha_token, token.sha_token)
             self.assertEqual(token.id, self.token.id)
             self.token_db.delete(session, self.token)
+            session.commit()
             self.assertFalse(self.token_db.exists(session, self.token.id))
 
     def test_activity_update(self):
         with self.app.dependencies.persistence.get_session() as session:
             last_activity = self.token.last_activity_at
             self.token_db.activity_update(session, self.token)
+            session.commit()
             self.assertLess(last_activity, self.token.last_activity_at)
 
     def test_clean_expired(self):
@@ -57,8 +64,11 @@ class TestTokenAdapter(BaseTestCase):
         )
         with self.app.dependencies.persistence.get_session() as session:
             self.token_db.save(session, token)
+            session.commit()
             self.assertTrue(self.token_db.exists(session, token.id))
+
             self.token_db.clean_expired(session)
+            session.commit()
             self.assertFalse(self.token_db.exists(session, token.id))
 
     def test_not_clean_expire_soon_not_temp(self):
@@ -70,8 +80,11 @@ class TestTokenAdapter(BaseTestCase):
         )
         with self.app.dependencies.persistence.get_session() as session:
             self.token_db.save(session, token)
+            session.commit()
             self.assertTrue(self.token_db.exists(session, token.id))
+
             self.token_db.clean_expired(session)
+            session.commit()
             self.assertTrue(self.token_db.exists(session, token.id))
 
     def test_not_clean_not_expired_not_temp(self):
@@ -80,8 +93,11 @@ class TestTokenAdapter(BaseTestCase):
         )
         with self.app.dependencies.persistence.get_session() as session:
             self.token_db.save(session, token)
+            session.commit()
             self.assertTrue(self.token_db.exists(session, token.id))
+
             self.token_db.clean_expired(session)
+            session.commit()
             self.assertTrue(self.token_db.exists(session, token.id))
 
     def test_not_clean_not_expired_temp(self):
@@ -93,8 +109,11 @@ class TestTokenAdapter(BaseTestCase):
         )
         with self.app.dependencies.persistence.get_session() as session:
             self.token_db.save(session, token)
+            session.commit()
             self.assertTrue(self.token_db.exists(session, token.id))
+
             self.token_db.clean_expired(session)
+            session.commit()
             self.assertTrue(self.token_db.exists(session, token.id))
 
     def test_temp_clean_expired(self):
@@ -106,6 +125,9 @@ class TestTokenAdapter(BaseTestCase):
         )
         with self.app.dependencies.persistence.get_session() as session:
             self.token_db.save(session, token)
+            session.commit()
             self.assertTrue(self.token_db.exists(session, token.id))
+
             self.token_db.clean_expired(session)
+            session.commit()
             self.assertFalse(self.token_db.exists(session, token.id))

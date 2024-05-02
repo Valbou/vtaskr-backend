@@ -97,6 +97,7 @@ class TaskService:
             )
 
             self.task_db.add_tags(session, tenant_ids, task, tag_ids)
+            session.commit()
 
     def save_task(self, user_id: str, task: Task) -> None:
         """Save a new task"""
@@ -110,6 +111,7 @@ class TaskService:
                 resource=Resources.TASK,
             ):
                 self.task_db.save(session, task)
+                session.commit()
 
     def update_task(self, user_id: str, task: Task):
         """Update a task if update permission was given"""
@@ -123,6 +125,7 @@ class TaskService:
                 resource=Resources.TASK,
             ):
                 self.task_db.save(session, task)
+                session.commit()
 
     def clean_task_tags(self, user_id: str, task: Task):
         """Clean all tags of a task if update permission was given on task"""
@@ -136,6 +139,7 @@ class TaskService:
                 resource=Resources.TASK,
             ):
                 self.task_db.clean_tags(session, task)
+                session.commit()
 
     def delete_task(self, user_id: str, task: Task):
         """Delete a task if delete permission was given"""
@@ -149,3 +153,4 @@ class TaskService:
                 resource=Resources.TASK,
             ):
                 self.task_db.delete(session, task)
+                session.commit()

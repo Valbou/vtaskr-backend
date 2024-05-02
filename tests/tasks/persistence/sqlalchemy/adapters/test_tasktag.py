@@ -57,10 +57,13 @@ class TestTaskTagAssociation(BaseTestCase):
     def test_add_many_tags_to_a_task(self):
         with self.app.dependencies.persistence.get_session() as session:
             tags = [self._create_tag() for _ in range(5)]
-            [self.tag_db.save(session, t, autocommit=False) for t in tags]
+            [self.tag_db.save(session, t) for t in tags]
+
             task = self._create_task()
             task_id = task.id
+
             self.task_db.save(session, task)
+            session.commit()
 
             tags_id = [t.id for t in tags]
             self.task_db.add_tags(
@@ -71,18 +74,21 @@ class TestTaskTagAssociation(BaseTestCase):
                 task,
                 tags_id,
             )
+            session.commit()
 
-        with self.app.dependencies.persistence.get_session() as session:
             task = self.task_db.load(session, task_id)
             self.assertEqual(len(task.tags), 5)
 
     def test_overwrite_task_tags(self):
         with self.app.dependencies.persistence.get_session() as session:
             tags = [self._create_tag() for _ in range(5)]
-            [self.tag_db.save(session, t, autocommit=False) for t in tags]
+            [self.tag_db.save(session, t) for t in tags]
+
             task = self._create_task()
             task_id = task.id
+
             self.task_db.save(session, task)
+            session.commit()
 
             tags_id = [t.id for t in tags]
             self.task_db.add_tags(
@@ -93,10 +99,11 @@ class TestTaskTagAssociation(BaseTestCase):
                 task,
                 tags_id,
             )
+            session.commit()
 
         with self.app.dependencies.persistence.get_session() as session:
             tags_2 = [self._create_tag() for _ in range(2)]
-            [self.tag_db.save(session, t, autocommit=False) for t in tags_2]
+            [self.tag_db.save(session, t) for t in tags_2]
             task = self.task_db.load(session, task_id)
             tags_id_2 = [t.id for t in tags_2]
             self.task_db.add_tags(
@@ -107,7 +114,8 @@ class TestTaskTagAssociation(BaseTestCase):
                 task,
                 tags_id_2,
             )
+            session.commit()
 
         with self.app.dependencies.persistence.get_session() as session:
             task = self.task_db.load(session, task_id)
-            self.assertEqual(len(task.tags), 2)
+        self.assertEqual(len(task.tags), 2)

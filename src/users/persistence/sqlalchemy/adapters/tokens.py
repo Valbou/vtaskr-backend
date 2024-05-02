@@ -16,16 +16,12 @@ class TokenDB(TokenDBPort, DefaultDB):
         result = session.scalars(self.qs.statement).one_or_none()
         return result
 
-    def activity_update(self, session: Session, token: Token, autocommit: bool = True):
+    def activity_update(self, session: Session, token: Token):
         self.qs.update().id(token.id).values(
             last_activity_at=token.update_last_activity()
         )
         session.execute(self.qs.statement)
-        if autocommit:
-            session.commit()
 
-    def clean_expired(self, session: Session, autocommit: bool = True):
+    def clean_expired(self, session: Session):
         self.qs.delete().expired()
         session.execute(self.qs.statement)
-        if autocommit:
-            session.commit()

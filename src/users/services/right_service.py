@@ -25,7 +25,6 @@ class RightService:
                             resource=res,
                             permissions=[perm for perm in Permissions],
                         ),
-                        autocommit=False,
                     )
                     for res in Resources
                 ]
@@ -50,7 +49,6 @@ class RightService:
                                 Permissions.READ,
                             ],
                         ),
-                        autocommit=False,
                     )
                     for res in Resources
                 ]
@@ -84,6 +82,7 @@ class RightService:
 
         with self.services.persistence.get_session() as session:
             self.right_db.save(session, right)
+            session.commit()
 
         return right
 
@@ -100,6 +99,7 @@ class RightService:
                 exception=True,
             ):
                 self.right_db.save(session, right)
+                session.commit()
                 return right
             return None
 
@@ -144,6 +144,7 @@ class RightService:
                 )
             ):
                 self.right_db.save(session, right)
+                session.commit()
                 return True
             return False
 
@@ -164,5 +165,6 @@ class RightService:
                 )
             ):
                 self.right_db.delete(session, right)
+                session.commit()
                 return True
             return False

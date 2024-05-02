@@ -12,12 +12,9 @@ class RoleDB(RoleDBPort, DefaultDB):
         super().__init__()
         self.qs = RoleQueryset()
 
-    def update(self, session: Session, role: Role, autocommit: bool = True) -> bool:
+    def update(self, session: Session, role: Role) -> bool:
         self.qs.update().id(role.id).values(roletype_id=role.roletype_id)
         session.execute(self.qs.statement)
-
-        if autocommit:
-            session.commit()
 
     def get_a_user_role(
         self, session: Session, user_id: str, role_id: str, group_ids: list[str]

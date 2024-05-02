@@ -27,6 +27,7 @@ class TestTagTasksAPI(BaseTestCase):
         )
         self.tag.add_tasks([self.task_1, self.task_2])
         self.tag_db.save(session, self.tag)
+        session.commit()
 
     def test_tag_tasks(self):
         headers = self.get_token_headers()
