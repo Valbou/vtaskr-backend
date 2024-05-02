@@ -5,9 +5,9 @@ from src.ports import AbstractDBPort
 
 class RequestChangeDBPort(AbstractDBPort, ABC):
     @abstractmethod
-    def clean_history(self):
+    def find_request(self, session, email: str):
         raise NotImplementedError
 
     @abstractmethod
-    def find_request(self):
+    def clean_history(self, session):
         raise NotImplementedError

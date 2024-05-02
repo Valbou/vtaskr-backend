@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 
-from src.libs.flask.querystring import Filter
+from src.libs.hmi.querystring import Filter
 from src.libs.iam.constants import Permissions, Resources
 from src.libs.sqlalchemy.default_adapter import DefaultDB
 from src.users.models import Group, Right, Role, RoleType

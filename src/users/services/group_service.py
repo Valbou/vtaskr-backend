@@ -1,5 +1,5 @@
 from src.libs.dependencies import DependencyInjector
-from src.libs.flask.querystring import Filter
+from src.libs.hmi.querystring import Filter
 from src.libs.iam.constants import Permissions, Resources
 from src.users.models import Group
 from src.users.persistence import GroupDBPort

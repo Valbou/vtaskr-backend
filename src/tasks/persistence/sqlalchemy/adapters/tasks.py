@@ -2,7 +2,7 @@ from logging import Logger
 
 from sqlalchemy.orm import Session
 
-from src.libs.flask.querystring import Filter
+from src.libs.hmi.querystring import Filter
 from src.libs.sqlalchemy.default_adapter import DefaultDB
 from src.tasks import Task
 from src.tasks.persistence.ports import TaskDBPort
@@ -54,7 +54,7 @@ class TaskDB(TaskDBPort, DefaultDB):
         task: Task,
         tag_ids: list[str],
         autocommit: bool = True,
-    ):
+    ) -> None:
         """Bulk add tags to tenant's task"""
 
         task = self.load(session=session, id=task.id)
@@ -66,7 +66,7 @@ class TaskDB(TaskDBPort, DefaultDB):
         if autocommit:
             session.commit()
 
-    def clean_tags(self, session: Session, task: Task, autocommit: bool = True):
+    def clean_tags(self, session: Session, task: Task, autocommit: bool = True) -> None:
         """Clean all associations with tags"""
 
         task = self.load(session=session, id=task.id)

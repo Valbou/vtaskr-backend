@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 
-from src.libs.flask.querystring import Filter
+from src.libs.hmi.querystring import Filter
 from src.libs.sqlalchemy.default_adapter import DefaultDB
 from src.tasks.models import Tag
 from src.tasks.persistence import TagDBPort

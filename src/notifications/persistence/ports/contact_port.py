@@ -6,5 +6,5 @@ from src.ports import AbstractDBPort
 
 class ContactDBPort(AbstractDBPort, ABC):
     @abstractmethod
-    def update(self, contact: Contact) -> bool:
+    def update(self, session, contact: Contact) -> bool:
         raise NotImplementedError()

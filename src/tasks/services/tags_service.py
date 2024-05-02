@@ -1,5 +1,5 @@
 from src.libs.dependencies import DependencyInjector
-from src.libs.flask.querystring import Filter
+from src.libs.hmi.querystring import Filter
 from src.libs.iam.constants import Permissions, Resources
 from src.tasks.models import Tag
 from src.tasks.persistence import TagDBPort
