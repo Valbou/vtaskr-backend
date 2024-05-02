@@ -4,7 +4,11 @@ from unittest.mock import patch
 from sqlalchemy import Engine
 from sqlalchemy.orm import Session
 
-from src.libs.sqlalchemy.database import PersistenceService, TestPersistenceService, SQLSession
+from src.libs.sqlalchemy.database import (
+    PersistenceService,
+    SQLSession,
+    TestPersistenceService,
+)
 from tests.utils.db_utils import check_connection_query
 
 
