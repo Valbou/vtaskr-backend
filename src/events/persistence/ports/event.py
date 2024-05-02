@@ -1,7 +1,7 @@
 from abc import ABC
 
-from src.libs.sqlalchemy.default_port import AbstractPort
+from src.ports import AbstractDBPort
 
 
-class AbstractEventPort(AbstractPort, ABC):
+class EventDBPort(AbstractDBPort, ABC):
     pass

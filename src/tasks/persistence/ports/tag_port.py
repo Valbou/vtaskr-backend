@@ -1,10 +1,10 @@
 from abc import ABC, abstractmethod
 
-from src.libs.sqlalchemy.default_port import AbstractPort
+from src.ports import AbstractDBPort
 from src.tasks import Tag
 
 
-class AbstractTagPort(AbstractPort, ABC):
+class TagDBPort(AbstractDBPort, ABC):
     @abstractmethod
     def tags(self, user_id: str) -> list[Tag]:
         raise NotImplementedError()

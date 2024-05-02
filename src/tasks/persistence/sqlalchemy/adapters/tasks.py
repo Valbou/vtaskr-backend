@@ -5,13 +5,13 @@ from sqlalchemy.orm import Session
 from src.libs.flask.querystring import Filter
 from src.libs.sqlalchemy.default_adapter import DefaultDB
 from src.tasks import Task
-from src.tasks.persistence.ports import AbstractTaskPort
+from src.tasks.persistence.ports import TaskDBPort
 from src.tasks.persistence.sqlalchemy.querysets import TagQueryset, TaskQueryset
 
 logger = Logger(__name__)
 
 
-class TaskDB(AbstractTaskPort, DefaultDB):
+class TaskDB(TaskDBPort, DefaultDB):
     def __init__(self) -> None:
         super().__init__()
         self.qs = TaskQueryset()

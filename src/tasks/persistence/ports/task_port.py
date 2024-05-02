@@ -1,10 +1,10 @@
 from abc import ABC, abstractmethod
 
-from src.libs.sqlalchemy.default_port import AbstractPort
+from src.ports import AbstractDBPort
 from src.tasks import Task
 
 
-class AbstractTaskPort(AbstractPort, ABC):
+class TaskDBPort(AbstractDBPort, ABC):
     @abstractmethod
     def tasks(self, user_id: str) -> list[Task]:
         """Retrieve all tenant's tasks"""

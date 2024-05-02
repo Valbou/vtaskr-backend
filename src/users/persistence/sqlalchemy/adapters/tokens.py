@@ -2,11 +2,11 @@ from sqlalchemy.orm import Session
 
 from src.libs.sqlalchemy.default_adapter import DefaultDB
 from src.users.models import Token
-from src.users.persistence.ports import AbstractTokenPort
+from src.users.persistence.ports import TokenDBPort
 from src.users.persistence.sqlalchemy.querysets import TokenQueryset
 
 
-class TokenDB(AbstractTokenPort, DefaultDB):
+class TokenDB(TokenDBPort, DefaultDB):
     def __init__(self) -> None:
         super().__init__()
         self.qs = TokenQueryset()

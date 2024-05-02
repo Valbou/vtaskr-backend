@@ -5,11 +5,11 @@ from sqlalchemy.orm import Session
 
 from src.libs.sqlalchemy.default_adapter import DefaultDB
 from src.notifications.models import MessageType, Subscription
-from src.notifications.persistence.ports import AbstractSubscriptionPort
+from src.notifications.persistence.ports import SubscriptionDBPort
 from src.notifications.persistence.sqlalchemy.querysets import SubscriptionQueryset
 
 
-class SubscriptionDB(AbstractSubscriptionPort, DefaultDB):
+class SubscriptionDB(SubscriptionDBPort, DefaultDB):
     def __init__(self) -> None:
         super().__init__()
         self.qs = SubscriptionQueryset()

@@ -2,11 +2,11 @@ from sqlalchemy.orm import Session
 
 from src.libs.sqlalchemy.default_adapter import DefaultDB
 from src.users.models import RequestChange
-from src.users.persistence.ports import AbstractRequestChangePort
+from src.users.persistence.ports import RequestChangeDBPort
 from src.users.persistence.sqlalchemy.querysets import RequestChangeQueryset
 
 
-class RequestChangeDB(AbstractRequestChangePort, DefaultDB):
+class RequestChangeDB(RequestChangeDBPort, DefaultDB):
     def __init__(self) -> None:
         super().__init__()
         self.qs = RequestChangeQueryset()

@@ -1,10 +1,10 @@
 from abc import ABC, abstractmethod
 
-from src.libs.sqlalchemy.default_port import AbstractPort
+from src.ports import AbstractDBPort
 from src.users import User
 
 
-class AbstractUserPort(AbstractPort, ABC):
+class UserDBPort(AbstractDBPort, ABC):
     @abstractmethod
     def find_login(self, email: str) -> User:
         raise NotImplementedError()

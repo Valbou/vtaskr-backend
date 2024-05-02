@@ -4,11 +4,11 @@ from src.libs.flask.querystring import Filter
 from src.libs.iam.constants import Permissions, Resources
 from src.libs.sqlalchemy.default_adapter import DefaultDB
 from src.users.models import Group, Right, Role, RoleType
-from src.users.persistence.ports import AbstractGroupPort
+from src.users.persistence.ports import GroupDBPort
 from src.users.persistence.sqlalchemy.querysets import GroupQueryset
 
 
-class GroupDB(AbstractGroupPort, DefaultDB):
+class GroupDB(GroupDBPort, DefaultDB):
     def __init__(self) -> None:
         super().__init__()
         self.qs = GroupQueryset()

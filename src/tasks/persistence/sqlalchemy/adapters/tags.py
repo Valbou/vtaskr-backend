@@ -3,11 +3,11 @@ from sqlalchemy.orm import Session
 from src.libs.flask.querystring import Filter
 from src.libs.sqlalchemy.default_adapter import DefaultDB
 from src.tasks.models import Tag
-from src.tasks.persistence.ports import AbstractTagPort
+from src.tasks.persistence import TagDBPort
 from src.tasks.persistence.sqlalchemy.querysets import TagQueryset
 
 
-class TagDB(AbstractTagPort, DefaultDB):
+class TagDB(TagDBPort, DefaultDB):
     def __init__(self) -> None:
         super().__init__()
         self.qs = TagQueryset()

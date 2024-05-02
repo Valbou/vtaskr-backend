@@ -1,10 +1,10 @@
 from abc import ABC, abstractmethod
 
-from src.libs.sqlalchemy.default_port import AbstractPort
+from src.ports import AbstractDBPort
 from src.users import Token
 
 
-class AbstractTokenPort(AbstractPort, ABC):
+class TokenDBPort(AbstractDBPort, ABC):
     @abstractmethod
     def get_token(self, token: str) -> Token:
         raise NotImplementedError()

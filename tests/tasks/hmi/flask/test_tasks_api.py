@@ -1,5 +1,6 @@
 from src.tasks.models import Task
-from src.tasks.persistence import TaskDB
+from src.tasks.persistence import TaskDBPort
+from src.tasks.settings import APP_NAME
 from tests.base_test import BaseTestCase
 
 URL_API = "/api/v1"
@@ -9,7 +10,9 @@ class TestTasksAPI(BaseTestCase):
     def setUp(self) -> None:
         super().setUp()
         self.headers = self.get_json_headers()
-        self.task_db = TaskDB()
+        self.task_db: TaskDBPort = self.app.dependencies.persistence.get_repository(
+            APP_NAME, "Task"
+        )
 
     def test_create_task_no_login(self):
         title = self.fake.sentence(nb_words=8)

@@ -2,13 +2,16 @@ from src.libs.dependencies import DependencyInjector
 from src.libs.flask.querystring import Filter
 from src.libs.iam.constants import Permissions, Resources
 from src.tasks.models import Tag
-from src.tasks.persistence import TagDB
+from src.tasks.persistence import TagDBPort
+from src.tasks.settings import APP_NAME
 
 
 class TagService:
     def __init__(self, services: DependencyInjector) -> None:
         self.services = services
-        self.tag_db = TagDB()
+        self.tag_db: TagDBPort = self.services.persistence.get_repository(
+            APP_NAME, "Tag"
+        )
 
     def get_tags(
         self, user_id: str, qs_filters: list[Filter] | None = None

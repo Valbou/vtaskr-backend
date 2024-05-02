@@ -1,9 +1,9 @@
 from abc import ABC, abstractmethod
 
-from src.libs.sqlalchemy.default_port import AbstractPort
+from src.ports import AbstractDBPort
 
 
-class AbstractRequestChangePort(AbstractPort, ABC):
+class RequestChangeDBPort(AbstractDBPort, ABC):
     @abstractmethod
     def clean_history(self):
         raise NotImplementedError

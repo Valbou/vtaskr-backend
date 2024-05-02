@@ -2,13 +2,16 @@ from src.libs.dependencies import DependencyInjector
 from src.libs.flask.querystring import Filter
 from src.libs.iam.constants import Permissions, Resources
 from src.tasks.models import Task
-from src.tasks.persistence import TaskDB
+from src.tasks.persistence import TaskDBPort
+from src.tasks.settings import APP_NAME
 
 
 class TaskService:
     def __init__(self, services: DependencyInjector) -> None:
         self.services = services
-        self.task_db = TaskDB()
+        self.task_db: TaskDBPort = self.services.persistence.get_repository(
+            APP_NAME, "Task"
+        )
 
     def get_tasks(
         self, user_id: str, qs_filters: list[Filter] | None = None

@@ -1,18 +1,26 @@
+from src.libs.dependencies import DependencyInjector
 from src.notifications.models import MessageFabric, Subscription, Template
-from src.notifications.persistence.sqlalchemy.adapters import SubscriptionDB, TemplateDB
+from src.notifications.persistence import SubscriptionDBPort, TemplateDBPort
+from src.notifications.settings import APP_NAME
 from src.ports import AbstractMessage, AbstractSender, MessageType, NotificationPort
 
 
 class NotificationService(NotificationPort):
     messages: list[AbstractMessage] = []
 
-    def __init__(self) -> None:
-        self.subscription_db = SubscriptionDB()
-        self.template_db = TemplateDB()
+    def __init__(self, **kwargs) -> None:
         self.messages = []
 
     def set_context(self, **ctx) -> None:
         self.app = ctx.pop("app")
+        self.services: DependencyInjector = self.app.dependencies
+
+        self.subscription_db: SubscriptionDBPort = (
+            self.services.persistence.get_repository(APP_NAME, "Subscription")
+        )
+        self.template_db: TemplateDBPort = self.services.persistence.get_repository(
+            APP_NAME, "Subscription"
+        )
 
     def build_message(self, context: dict) -> AbstractMessage:
         message_type = context.pop("message_type")

@@ -1,10 +1,10 @@
 from abc import ABC, abstractmethod
 
-from src.libs.sqlalchemy.default_port import AbstractPort
 from src.notifications.models import Subscription
+from src.ports import AbstractDBPort
 
 
-class AbstractSubscriptionPort(AbstractPort, ABC):
+class SubscriptionDBPort(AbstractDBPort, ABC):
     @abstractmethod
     def update(self, subscription: Subscription) -> bool:
         raise NotImplementedError()

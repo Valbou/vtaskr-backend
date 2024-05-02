@@ -1,5 +1,6 @@
 from src.tasks.models import Tag
-from src.tasks.persistence import TagDB
+from src.tasks.persistence import TagDBPort
+from src.tasks.settings import APP_NAME
 from tests.base_test import BaseTestCase
 
 URL_API = "/api/v1"
@@ -9,7 +10,9 @@ class TestTagsAPI(BaseTestCase):
     def setUp(self) -> None:
         super().setUp()
         self.headers = self.get_json_headers()
-        self.tag_db = TagDB()
+        self.tag_db: TagDBPort = self.app.dependencies.persistence.get_repository(
+            APP_NAME, "Tag"
+        )
 
     def test_create_tag_no_login(self):
         title = self.fake.text(max_nb_chars=50)

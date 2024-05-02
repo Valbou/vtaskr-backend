@@ -3,11 +3,11 @@ from sqlalchemy.orm import Session
 from src.libs.iam.constants import Permissions, Resources
 from src.libs.sqlalchemy.default_adapter import DefaultDB
 from src.users.models import Right, Role, RoleType, User
-from src.users.persistence.ports import AbstractUserPort
+from src.users.persistence.ports import UserDBPort
 from src.users.persistence.sqlalchemy.querysets import UserQueryset
 
 
-class UserDB(AbstractUserPort, DefaultDB):
+class UserDB(UserDBPort, DefaultDB):
     def __init__(self) -> None:
         super().__init__()
         self.qs = UserQueryset()

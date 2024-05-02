@@ -8,7 +8,7 @@ TObserverPort = TypeVar("TObserverPort", bound="ObserverPort")
 
 class EventBusPort(InjectablePort, ABC):
     @abstractmethod
-    def emit(self, event_type: str, event: dict | object) -> None:
+    def emit(self, tenant_id: str, event_name: str, event_data: dict) -> None:
         raise NotImplementedError
 
     @abstractmethod

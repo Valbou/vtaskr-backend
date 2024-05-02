@@ -3,8 +3,10 @@ from typing import Tuple
 from src.libs.dependencies import DependencyInjector
 from src.libs.iam.constants import Permissions, Resources
 from src.users import Group, RequestChange, RequestType, Token, User
+from src.users.events import UsersEventService
 from src.users.hmi.dto import UserDTO
-from src.users.persistence import RequestChangeDB, TokenDB, UserDB
+from src.users.persistence import RequestChangeDBPort, TokenDBPort, UserDBPort
+from src.users.settings import APP_NAME
 
 from .emails_service import EmailService
 
@@ -16,9 +18,17 @@ class EmailAlreadyUsedError(Exception):
 class UserService:
     def __init__(self, services: DependencyInjector) -> None:
         self.services = services
-        self.user_db = UserDB()
-        self.token_db = TokenDB()
-        self.request_change_db = RequestChangeDB()
+        self.event = UsersEventService(self.services.eventbus)
+
+        self.user_db: UserDBPort = self.services.persistence.get_repository(
+            APP_NAME, "User"
+        )
+        self.token_db: TokenDBPort = self.services.persistence.get_repository(
+            APP_NAME, "Token"
+        )
+        self.request_change_db: RequestChangeDBPort = (
+            self.services.persistence.get_repository(APP_NAME, "RequestChange")
+        )
 
     def register(self, user_dto: UserDTO, password: str) -> tuple[User, Group]:
         """Add a new user and his group with admin role"""
@@ -41,6 +51,8 @@ class UserService:
 
         group_service = GroupService(services=self.services)
         group = group_service.create_private_group(user_id=user.id)
+
+        self.event.send_register_event(user=user, group=group)
 
         email_service = EmailService(services=self.services)
         context = email_service.get_register_context(user=user)

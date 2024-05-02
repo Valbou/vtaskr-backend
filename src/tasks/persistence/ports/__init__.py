@@ -1,2 +1,2 @@
-from .tag_port import AbstractTagPort
-from .task_port import AbstractTaskPort
+from .tag_port import TagDBPort
+from .task_port import TaskDBPort

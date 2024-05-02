@@ -2,13 +2,16 @@ from src.libs.dependencies import DependencyInjector
 from src.libs.flask.querystring import Filter
 from src.libs.iam.constants import Permissions, Resources
 from src.users.models import Right, RoleType
-from src.users.persistence import RightDB
+from src.users.persistence import RightDBPort
+from src.users.settings import APP_NAME
 
 
 class RightService:
     def __init__(self, services: DependencyInjector) -> None:
         self.services = services
-        self.right_db = RightDB()
+        self.right_db: RightDBPort = self.services.persistence.get_repository(
+            APP_NAME, "Right"
+        )
 
     def create_admin_rights(self, roletype: RoleType) -> int:
         """Give all rights on all resources for the given roletype (Admin)"""

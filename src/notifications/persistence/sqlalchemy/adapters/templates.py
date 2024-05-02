@@ -5,12 +5,12 @@ from sqlalchemy.orm import Session
 
 from src.libs.sqlalchemy.default_adapter import DefaultDB
 from src.notifications.models import Template
-from src.notifications.persistence.ports import AbstractTemplatePort
+from src.notifications.persistence.ports import TemplateDBPort
 from src.notifications.persistence.sqlalchemy.querysets import TemplateQueryset
 from src.ports import MessageType
 
 
-class TemplateDB(AbstractTemplatePort, DefaultDB):
+class TemplateDB(TemplateDBPort, DefaultDB):
     def __init__(self) -> None:
         super().__init__()
         self.qs = TemplateQueryset()

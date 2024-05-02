@@ -1,5 +1,5 @@
 from src.tasks import Tag, Task
-from src.tasks.persistence import TagDB, TaskDB
+from src.tasks.persistence.sqlalchemy import TagDB, TaskDB
 from tests.base_test import BaseTestCase
 
 

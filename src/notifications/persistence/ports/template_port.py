@@ -1,10 +1,10 @@
 from abc import ABC, abstractmethod
 
-from src.libs.sqlalchemy.default_port import AbstractPort
 from src.notifications.models import Template
+from src.ports import AbstractDBPort
 
 
-class AbstractTemplatePort(AbstractPort, ABC):
+class TemplateDBPort(AbstractDBPort, ABC):
     @abstractmethod
     def update(self, template: Template) -> bool:
         raise NotImplementedError()

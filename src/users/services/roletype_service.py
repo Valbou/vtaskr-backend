@@ -2,13 +2,16 @@ from src.libs.dependencies import DependencyInjector
 from src.libs.flask.querystring import Filter
 from src.libs.iam.constants import Permissions, Resources
 from src.users.models import RoleType
-from src.users.persistence import RoleTypeDB
+from src.users.persistence import RoleTypeDBPort
+from src.users.settings import APP_NAME
 
 
 class RoleTypeService:
     def __init__(self, services: DependencyInjector) -> None:
         self.services = services
-        self.roletype_db = RoleTypeDB()
+        self.roletype_db: RoleTypeDBPort = self.services.persistence.get_repository(
+            APP_NAME, "RoleType"
+        )
 
     def get_default_admin(self) -> RoleType:
         """Looking for a default roletype named: Admin"""

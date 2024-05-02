@@ -2,7 +2,8 @@ from src.libs.dependencies import DependencyInjector
 from src.libs.flask.querystring import Filter
 from src.libs.iam.constants import Permissions, Resources
 from src.users.models import Role
-from src.users.persistence import RoleDB
+from src.users.persistence import RoleDBPort
+from src.users.settings import APP_NAME
 
 # TODO:
 # User cannot delete/change an admin rôle if he is the last admin
@@ -17,7 +18,9 @@ from src.users.persistence import RoleDB
 class RoleService:
     def __init__(self, services: DependencyInjector) -> None:
         self.services = services
-        self.role_db = RoleDB()
+        self.role_db: RoleDBPort = self.services.persistence.get_repository(
+            APP_NAME, "Role"
+        )
 
     def add_role(self, user_id: str, group_id: str, roletype_id: str) -> Role:
         """

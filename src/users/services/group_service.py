@@ -2,7 +2,8 @@ from src.libs.dependencies import DependencyInjector
 from src.libs.flask.querystring import Filter
 from src.libs.iam.constants import Permissions, Resources
 from src.users.models import Group
-from src.users.persistence import GroupDB
+from src.users.persistence import GroupDBPort
+from src.users.settings import APP_NAME
 
 # TODO:
 # Since foreign key are not permitted between bounded context
@@ -16,7 +17,9 @@ from src.users.persistence import GroupDB
 class GroupService:
     def __init__(self, services: DependencyInjector) -> None:
         self.services = services
-        self.group_db = GroupDB()
+        self.group_db: GroupDBPort = self.services.persistence.get_repository(
+            APP_NAME, "Group"
+        )
 
     def create_group(self, user_id: str, group_name: str) -> Group:
         """Create a new user group"""

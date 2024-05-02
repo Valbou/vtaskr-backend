@@ -1,10 +1,10 @@
 from abc import ABC, abstractmethod
 
-from src.libs.sqlalchemy.default_port import AbstractPort
+from src.ports import AbstractDBPort
 from src.users import Group
 
 
-class AbstractGroupPort(AbstractPort, ABC):
+class GroupDBPort(AbstractDBPort, ABC):
     @abstractmethod
     def update(self, user: Group) -> bool:
         raise NotImplementedError()

@@ -1,5 +1,6 @@
 from src.users import RequestChange, RequestType
-from src.users.persistence import RequestChangeDB, UserDB
+from src.users.persistence import RequestChangeDBPort, UserDBPort
+from src.users.settings import APP_NAME
 from tests.base_test import BaseTestCase
 
 URL_API = "/api/v1"
@@ -8,7 +9,9 @@ URL_API = "/api/v1"
 class TestUserV1ForgottenPassword(BaseTestCase):
     def setUp(self) -> None:
         super().setUp()
-        self.request_change_db = RequestChangeDB()
+        self.request_change_db: RequestChangeDBPort = (
+            self.app.dependencies.persistence.get_repository(APP_NAME, "RequestChange")
+        )
         self.headers = self.get_json_headers()
 
     def test_forgotten_password(self):
@@ -66,8 +69,12 @@ class TestUserV1ForgottenPassword(BaseTestCase):
 class TestUserV1NewPassword(BaseTestCase):
     def setUp(self) -> None:
         super().setUp()
-        self.request_change_db = RequestChangeDB()
-        self.user_db = UserDB()
+        self.request_change_db: RequestChangeDBPort = (
+            self.app.dependencies.persistence.get_repository(APP_NAME, "RequestChange")
+        )
+        self.user_db: UserDBPort = self.app.dependencies.persistence.get_repository(
+            APP_NAME, "User"
+        )
         self.headers = self.get_json_headers()
         self.new_password = self.fake.bothify("A??? ###a??? ###")
 

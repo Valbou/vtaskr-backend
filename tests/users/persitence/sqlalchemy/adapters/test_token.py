@@ -4,7 +4,7 @@ from zoneinfo import ZoneInfo
 
 from src.settings import TOKEN_TEMP_VALIDITY, TOKEN_VALIDITY
 from src.users.models import Token, User
-from src.users.persistence import TokenDB, UserDB
+from src.users.persistence.sqlalchemy import TokenDB, UserDB
 from tests.base_test import BaseTestCase
 
 

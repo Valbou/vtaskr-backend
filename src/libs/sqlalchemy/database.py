@@ -20,10 +20,7 @@ from .settings import (
 
 
 class SQLService(SQLPort):
-    def __init__(
-        self,
-        echo: None | bool | Literal["debug"] = False,
-    ) -> None:
+    def __init__(self, echo: None | bool | Literal["debug"] = False, **kwargs) -> None:
         debug = False
         if DEBUG_SQL == "true":
             debug = bool(DEBUG_SQL)
@@ -31,7 +28,13 @@ class SQLService(SQLPort):
             debug = DEBUG_SQL
 
         self.echo = echo or debug
+        self._repository_registry = {}
         self.mapping()
+
+    def set_context(self, **ctx) -> None:
+        repositories = ctx.get("repositories", [])
+        for repository_data in repositories:
+            self.register_repository(*repository_data)
 
     def get_database_url(self) -> str:
         return (

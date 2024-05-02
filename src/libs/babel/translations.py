@@ -34,7 +34,7 @@ class TranslationSession:
 
 
 class TranslationService(TranslationPort):
-    def __init__(self):
+    def __init__(self, **kwargs):
         self.domains: list = []
         self.languages: list = []
         self.dirname: str = "translations"

@@ -3,7 +3,7 @@ from zoneinfo import ZoneInfo
 
 from src.settings import REQUEST_DAYS_HISTORY
 from src.users.models import RequestChange, RequestType
-from src.users.persistence import RequestChangeDB
+from src.users.persistence.sqlalchemy import RequestChangeDB
 from tests.base_test import BaseTestCase
 
 

@@ -1,5 +1,6 @@
 from src.tasks.models import Tag, Task
-from src.tasks.persistence import TagDB, TaskDB
+from src.tasks.persistence import TagDBPort, TaskDBPort
+from src.tasks.settings import APP_NAME
 from tests.base_test import BaseTestCase
 
 URL_API = "/api/v1"
@@ -9,8 +10,12 @@ class TestTaskTagsAPI(BaseTestCase):
     def setUp(self) -> None:
         super().setUp()
         self.headers = self.get_json_headers()
-        self.tag_db = TagDB()
-        self.task_db = TaskDB()
+        self.tag_db: TagDBPort = self.app.dependencies.persistence.get_repository(
+            APP_NAME, "Tag"
+        )
+        self.task_db: TaskDBPort = self.app.dependencies.persistence.get_repository(
+            APP_NAME, "Task"
+        )
 
     def create_data(self, session):
         self.task = Task(tenant_id=self.group.id, title=self.fake.text(max_nb_chars=50))

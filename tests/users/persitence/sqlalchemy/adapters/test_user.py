@@ -3,7 +3,7 @@ from zoneinfo import ZoneInfo
 
 from src.settings import UNUSED_ACCOUNT_DELAY
 from src.users.models import User
-from src.users.persistence import UserDB
+from src.users.persistence.sqlalchemy import UserDB
 from tests.base_test import BaseTestCase
 
 

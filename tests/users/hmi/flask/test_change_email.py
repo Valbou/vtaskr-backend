@@ -1,5 +1,6 @@
 from src.users import RequestChange, RequestType, User
-from src.users.persistence import RequestChangeDB, UserDB
+from src.users.persistence import RequestChangeDBPort, UserDBPort
+from src.users.settings import APP_NAME
 from tests.base_test import BaseTestCase
 
 URL_API = "/api/v1"
@@ -8,7 +9,9 @@ URL_API = "/api/v1"
 class TestUserV1ChangeEmail(BaseTestCase):
     def setUp(self) -> None:
         super().setUp()
-        self.request_change_db = RequestChangeDB()
+        self.request_change_db: RequestChangeDBPort = (
+            self.app.dependencies.persistence.get_repository(APP_NAME, "RequestChange")
+        )
         self.new_email = self.generate_email()
         self.headers = self.get_json_headers()
 
@@ -71,8 +74,12 @@ class TestUserV1NewEmail(BaseTestCase):
     def setUp(self) -> None:
         super().setUp()
         self.headers = self.get_json_headers()
-        self.request_change_db = RequestChangeDB()
-        self.user_db = UserDB()
+        self.request_change_db: RequestChangeDBPort = (
+            self.app.dependencies.persistence.get_repository(APP_NAME, "RequestChange")
+        )
+        self.user_db: UserDBPort = self.app.dependencies.persistence.get_repository(
+            APP_NAME, "User"
+        )
         self.new_email = self.generate_email()
 
     def _create_request_change_email(self) -> RequestChange:

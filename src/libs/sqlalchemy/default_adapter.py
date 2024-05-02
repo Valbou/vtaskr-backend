@@ -1,11 +1,10 @@
 from sqlalchemy.orm import Session
 
 from src.libs.sqlalchemy.queryset import Queryset
+from src.ports import AbstractDBPort
 
-from .default_port import AbstractPort
 
-
-class DefaultDB(AbstractPort):
+class DefaultDB(AbstractDBPort):
     qs = Queryset(None)
 
     def load(

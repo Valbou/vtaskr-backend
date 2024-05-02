@@ -25,7 +25,7 @@ AVAILABLE_LANGUAGES = {
     "en": "English",
 }
 
-INSTALLED_APPS = ["libs", "base", "users", "notifications", "tasks"]
+INSTALLED_APPS = ["libs", "base", "users", "events", "notifications", "tasks"]
 
 LOCALE = os.getenv("LOCALE", "en_GB")
 TIMEZONE = os.getenv("TIMEZONE", "Europe/London")

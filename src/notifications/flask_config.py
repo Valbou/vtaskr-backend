@@ -1,7 +1,26 @@
-from flask import Flask
+from jinja2 import FileSystemLoader
 
-APP_NAME = "tasks"
+from flask import Flask
+from src.notifications.persistence.sqlalchemy.adapters import (
+    ContactDB,
+    SubscriptionDB,
+    TemplateDB,
+)
+
+APP_NAME = "notifications"
 
 
 def setup_flask(app: Flask, project_dir: str) -> dict:
-    return {}
+    return {
+        "domains": [APP_NAME],
+        "loaders": [
+            FileSystemLoader(
+                f"{project_dir}/src/{APP_NAME.lower()}/hmi/flask/templates"
+            )
+        ],
+        "repositories": [
+            (APP_NAME, "Subscription", SubscriptionDB()),
+            (APP_NAME, "Template", TemplateDB()),
+            (APP_NAME, "Contact", ContactDB()),
+        ],
+    }
