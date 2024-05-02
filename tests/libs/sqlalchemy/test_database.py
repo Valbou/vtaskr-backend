@@ -4,7 +4,7 @@ from unittest.mock import patch
 from sqlalchemy import Engine
 from sqlalchemy.orm import Session
 
-from src.libs.sqlalchemy.database import PersistenceService, TestPersistenceService
+from src.libs.sqlalchemy.database import PersistenceService, TestPersistenceService, SQLSession
 from tests.utils.db_utils import check_connection_query
 
 
@@ -29,7 +29,10 @@ class TestFakePersistenceService(TestCase):
         self.assertIsInstance(self.sql_test.get_engine(), Engine)
 
     def test_get_session(self):
-        self.assertIsInstance(self.sql_test.get_session(), Session)
+        sql_session = self.sql_test.get_session()
+        self.assertIsInstance(sql_session, SQLSession)
+        with sql_session as session:
+            self.assertIsInstance(session, Session)
 
     def test_db_connection(self):
         with Session(self.sql_test.get_engine()) as session:

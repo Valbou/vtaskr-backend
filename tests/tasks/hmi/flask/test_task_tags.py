@@ -90,5 +90,6 @@ class TestTaskTagsAPI(BaseTestCase):
             )
             self.assertEqual(response.status_code, 204)
 
+        with self.app.dependencies.persistence.get_session() as session:
             task = self.task_db.load(session, self.task.id)
             self.assertEqual(len(task.tags), 0)
