@@ -24,9 +24,7 @@ class TestTaskAPI(BaseTestCase):
             self.task_db.save(session, task)
             session.commit()
 
-        response = self.client.get(
-            f"{URL_API}/task/{task.id}", headers=self.headers
-        )
+        response = self.client.get(f"{URL_API}/task/{task.id}", headers=self.headers)
         self.assertEqual(response.status_code, 401)
 
     def test_get_task(self):
