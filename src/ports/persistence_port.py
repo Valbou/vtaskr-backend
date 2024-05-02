@@ -1,7 +1,9 @@
 from abc import ABC, abstractmethod
-from typing import Any, ContextManager
+from typing import Any, TypeVar
 
 from .base_port import InjectablePort
+
+TSessionPort = TypeVar("TSessionPort", bound="SessionPort")
 
 
 class AbstractDBPort(ABC):
@@ -22,6 +24,14 @@ class AbstractDBPort(ABC):
         raise NotImplementedError()
 
 
+class SessionPort(ABC):
+    def __enter__(self) -> TSessionPort:
+        return self
+
+    def __exit__(self, type, value, traceback) -> None:
+        self.close()
+
+
 class PersistencePort(InjectablePort, ABC):
     _repository_registry: dict[str, AbstractDBPort]
 
@@ -34,7 +44,7 @@ class PersistencePort(InjectablePort, ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def get_session(self) -> ContextManager:
+    def get_session(self) -> SessionPort:
         raise NotImplementedError
 
     def register_repository(

@@ -3,7 +3,7 @@ from typing import Literal
 from sqlalchemy import Engine, create_engine
 from sqlalchemy.orm import Session, registry, scoped_session, sessionmaker
 
-from src.ports import PersistencePort
+from src.ports import PersistencePort, SessionPort
 
 from .base import mapper_registry
 from .settings import (
@@ -17,6 +17,18 @@ from .settings import (
     DB_USER,
     DEBUG_SQL,
 )
+
+
+class SQLSession(SessionPort):
+    def __init__(self, session: Session) -> None:
+        self.session = session
+
+    def __enter__(self) -> Session:
+        return self.session
+
+    def __exit__(self, type, value, traceback) -> None:
+        self.session.commit()
+        self.close()
 
 
 class PersistenceService(PersistencePort):
@@ -48,10 +60,12 @@ class PersistenceService(PersistencePort):
     def get_engine(self) -> Engine:
         return create_engine(self.get_database_url(), pool_size=20, echo=self.echo)
 
-    def get_session(self, expire_on_commit=False) -> Session:
-        return scoped_session(
-            sessionmaker(self.get_engine(), expire_on_commit=expire_on_commit)
-        )()
+    def get_session(self, expire_on_commit=False) -> SQLSession:
+        return SQLSession(
+            scoped_session(
+                sessionmaker(self.get_engine(), expire_on_commit=expire_on_commit)
+            )()
+        )
 
     def get_registry(self) -> registry:
         return mapper_registry
