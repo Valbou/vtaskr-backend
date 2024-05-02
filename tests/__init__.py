@@ -5,11 +5,11 @@ from src.libs.dependencies import DependencyInjector, DependencyType
 from src.libs.flask import create_flask_app
 from src.libs.iam.config import PermissionControl
 from src.libs.redis.database import TestCacheService
-from src.libs.sqlalchemy.database import TestSQLService
+from src.libs.sqlalchemy.database import TestPersistenceService
 from src.notifications.services import TestNotificationService
 
 di = DependencyInjector()
-di.add_dependency(DependencyType.PERSISTENCE, TestSQLService, echo=False)
+di.add_dependency(DependencyType.PERSISTENCE, TestPersistenceService, echo=False)
 di.add_dependency(DependencyType.CACHE, TestCacheService)
 di.add_dependency(DependencyType.EVENTBUS, EventBusService)
 di.add_dependency(DependencyType.IDENTITY, PermissionControl)

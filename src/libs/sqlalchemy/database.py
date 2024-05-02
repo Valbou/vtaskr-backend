@@ -3,7 +3,7 @@ from typing import Literal
 from sqlalchemy import Engine, create_engine
 from sqlalchemy.orm import Session, registry, scoped_session, sessionmaker
 
-from src.ports import SQLPort
+from src.ports import PersistencePort
 
 from .base import mapper_registry
 from .settings import (
@@ -19,7 +19,7 @@ from .settings import (
 )
 
 
-class SQLService(SQLPort):
+class PersistenceService(PersistencePort):
     def __init__(self, echo: None | bool | Literal["debug"] = False, **kwargs) -> None:
         debug = False
         if DEBUG_SQL == "true":
@@ -63,7 +63,7 @@ class SQLService(SQLPort):
         mapper_registry.metadata.drop_all(bind=self.get_engine())
 
 
-class TestSQLService(SQLService):
+class TestPersistenceService(PersistenceService):
     def get_database_url(self) -> str:
         return (
             f"{DB_TYPE}+{BD_DRIVER}://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_TEST}"

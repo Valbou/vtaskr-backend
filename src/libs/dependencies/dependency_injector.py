@@ -6,7 +6,7 @@ from src.ports import (
     IdentityAccessManagementPort,
     InjectablePort,
     NotificationPort,
-    SQLPort,
+    PersistencePort,
     TranslationPort,
 )
 
@@ -25,7 +25,7 @@ class DependencyInjector:
     eventbus: EventBusPort
     identity: IdentityAccessManagementPort
     notification: NotificationPort
-    persistence: SQLPort
+    persistence: PersistencePort
     translation: TranslationPort
 
     def add_dependency(

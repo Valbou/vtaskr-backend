@@ -22,7 +22,7 @@ class AbstractDBPort(ABC):
         raise NotImplementedError()
 
 
-class SQLPort(InjectablePort, ABC):
+class PersistencePort(InjectablePort, ABC):
     _repository_registry: dict[str, AbstractDBPort]
 
     @abstractmethod
