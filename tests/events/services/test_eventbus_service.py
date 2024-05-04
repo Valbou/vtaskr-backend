@@ -1,3 +1,5 @@
+from src.events.persistence import EventDBPort
+from src.events.settings import APP_NAME
 from src.ports import ObserverPort
 from tests.base_test import BaseTestCase
 
@@ -10,6 +12,14 @@ class ObserverTest(ObserverPort):
     @classmethod
     def run(cls, app_ctx, event_name: str, event_data: dict):
         pass
+
+
+class OtherObserverTest(ObserverPort):
+    event_name = "tests:send_nothing"
+
+    @classmethod
+    def run(cls, app_ctx, event_name: str, event_data: dict):
+        raise Exception("Must not raise !")
 
 
 class TestError(Exception):
@@ -49,4 +59,11 @@ class TestEventBus(BaseTestCase):
                     event_data={"foo": "bar"},
                 )
 
-        self.assertEqual(str(e.exception), ("{'foo': 'bar'}"))
+            self.assertEqual(str(e.exception), ("{'foo': 'bar'}"))
+
+        event_db: EventDBPort = self.app.dependencies.persistence.get_repository(
+            APP_NAME, "Event"
+        )
+        with self.app.dependencies.persistence.get_session() as session:
+            events = event_db.get_all(session)
+            self.assertEqual(len(events), 1)

@@ -1,6 +1,6 @@
 import os
 
-APP_NAME = "tasks"
+APP_NAME = "notifications"
 
 DEFAULT_SMTP_HOST = os.getenv("DEFAULT_SMTP_HOST")
 DEFAULT_SMTP_PORT = os.getenv("DEFAULT_SMTP_PORT")

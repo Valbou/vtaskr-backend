@@ -6,8 +6,7 @@ from src.notifications.persistence.sqlalchemy.adapters import (
     SubscriptionDB,
     TemplateDB,
 )
-
-APP_NAME = "notifications"
+from src.notifications.settings import APP_NAME
 
 
 def setup_flask(app: Flask, project_dir: str) -> dict:
