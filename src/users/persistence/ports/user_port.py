@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from src.libs.iam.constants import Permissions, Resources
+from src.libs.iam.constants import Permissions
 from src.ports import AbstractDBPort
 from src.users.models import User
 
@@ -23,7 +23,7 @@ class UserDBPort(AbstractDBPort, ABC):
         self,
         session,
         id: str,
-        resource: Resources,
+        resource: str,
         permission: Permissions,
         group_id: str,
     ) -> bool:

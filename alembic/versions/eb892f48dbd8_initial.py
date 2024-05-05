@@ -128,7 +128,7 @@ def upgrade() -> None:
         sa.Column("id", sa.String(), nullable=False),
         sa.Column("created_at", sa.DateTime(timezone=True), nullable=True),
         sa.Column("roletype_id", sa.String(), nullable=False),
-        sa.Column("resource", resources_enum, nullable=False),
+        sa.Column("resource", sa.String(length=80), nullable=False),
         sa.Column("permissions", PermissionsType(), nullable=False),
         sa.ForeignKeyConstraint(
             ["roletype_id"],

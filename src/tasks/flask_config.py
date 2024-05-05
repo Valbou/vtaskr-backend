@@ -21,4 +21,5 @@ def setup_flask(app: Flask, project_dir: str) -> dict:
             (APP_NAME, "Tag", TagDB()),
             (APP_NAME, "Task", TaskDB()),
         ],
+        "permissions_resources": ["Task", "Tag"],
     }

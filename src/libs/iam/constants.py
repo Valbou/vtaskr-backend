@@ -1,21 +1,4 @@
-from enum import Enum, IntFlag
-
-
-class Resources(str, Enum):
-    # Users
-    GROUP = "group"
-    ROLE = "role"
-    ROLETYPE = "roletype"
-
-    # Tasks
-    TASK = "task"
-    TAG = "tag"
-
-    # Nofitications
-    SUBSCRIPTION = "subscription"
-
-
-# TODO: Resources = Enum("Resources", {"GROUP": "group", "ROLE": "role"})
+from enum import IntFlag
 
 
 class Permissions(IntFlag):

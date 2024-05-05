@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 
 from src.libs.hmi.querystring import Filter
-from src.libs.iam.constants import Permissions, Resources
+from src.libs.iam.constants import Permissions
 from src.libs.sqlalchemy.default_adapter import DefaultDB
 from src.users.models import Group, Right, Role, RoleType
 from src.users.persistence.ports import GroupDBPort
@@ -22,7 +22,7 @@ class GroupDB(GroupDBPort, DefaultDB):
         session: Session,
         permission: Permissions,
         user_id: str,
-        resource: Resources,
+        resource: str,
     ) -> list[str] | None:
         self.qs.select(Group.id).join(Group.roles).join(Role.roletype).join(
             RoleType.rights

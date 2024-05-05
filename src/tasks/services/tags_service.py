@@ -1,6 +1,6 @@
 from src.libs.dependencies import DependencyInjector
 from src.libs.hmi.querystring import Filter
-from src.libs.iam.constants import Permissions, Resources
+from src.libs.iam.constants import Permissions
 from src.tasks.models import Tag
 from src.tasks.persistence import TagDBPort
 from src.tasks.settings import APP_NAME
@@ -23,7 +23,7 @@ class TagService:
                 session,
                 permission=Permissions.READ,
                 user_id=user_id,
-                resource=Resources.TAG,
+                resource="Tag",
             )
 
             return self.tag_db.tags(session, tenant_ids, qs_filters)
@@ -42,7 +42,7 @@ class TagService:
                         Permissions.READ,
                         user_id,
                         tag.tenant_id,
-                        resource=Resources.TAG,
+                        resource="Tag",
                     )
                     else None
                 )
@@ -59,7 +59,7 @@ class TagService:
                 Permissions.READ,
                 user_id,
                 task_tenant_id,
-                resource=Resources.TASK,
+                resource="Task",
             ):
                 return None
 
@@ -67,7 +67,7 @@ class TagService:
                 session,
                 permission=Permissions.READ,
                 user_id=user_id,
-                resource=Resources.TAG,
+                resource="Task",
             )
 
             return self.tag_db.task_tags(session, tenant_ids, task_id)
@@ -81,7 +81,7 @@ class TagService:
                 Permissions.CREATE,
                 user_id,
                 tag.tenant_id,
-                resource=Resources.TAG,
+                resource="Task",
             ):
                 self.tag_db.save(session, tag)
                 session.commit()
@@ -95,7 +95,7 @@ class TagService:
                 Permissions.UPDATE,
                 user_id,
                 tag.tenant_id,
-                resource=Resources.TAG,
+                resource="Tag",
             ):
                 self.tag_db.save(session, tag)
                 session.commit()
@@ -109,7 +109,7 @@ class TagService:
                 Permissions.DELETE,
                 user_id,
                 tag.tenant_id,
-                resource=Resources.TAG,
+                resource="Tag",
             ):
                 self.tag_db.delete(session, tag)
                 session.commit()

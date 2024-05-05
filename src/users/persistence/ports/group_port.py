@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 from src.libs.hmi.querystring import Filter
-from src.libs.iam.constants import Permissions, Resources
+from src.libs.iam.constants import Permissions
 from src.ports import AbstractDBPort
 from src.users.models import Group
 
@@ -17,7 +17,7 @@ class GroupDBPort(AbstractDBPort, ABC):
         session,
         permission: Permissions,
         user_id: str,
-        resource: Resources,
+        resource: str,
     ) -> list[str] | None:
         raise NotImplementedError()
 

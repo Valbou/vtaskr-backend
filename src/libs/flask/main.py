@@ -21,6 +21,7 @@ def create_flask_app(dependencies: DependencyInjector) -> Flask:
     loaders = []
     domains: list[str] = []
     repositories: list[tuple] = []
+    permissions_resources: list[str] = []
     for module in INSTALLED_APPS:
         setup_app: Callable = getattr(
             import_module(f"src.{module}.flask_config"), "setup_flask"
@@ -30,6 +31,7 @@ def create_flask_app(dependencies: DependencyInjector) -> Flask:
         loaders.extend(result.get("loaders", []))
         domains.extend(result.get("domains", []))
         repositories.extend(result.get("repositories", []))
+        permissions_resources.extend(result.get("permissions_resources", []))
 
     app.jinja_env.add_extension("jinja2.ext.i18n")
     app.jinja_env.loader = ChoiceLoader(loaders)
@@ -40,6 +42,7 @@ def create_flask_app(dependencies: DependencyInjector) -> Flask:
         domains=domains,
         languages=list(AVAILABLE_LANGUAGES.keys()),
         repositories=repositories,
+        permissions_resources=permissions_resources,
     )
 
     return app

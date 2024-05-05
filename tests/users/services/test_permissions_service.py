@@ -1,4 +1,4 @@
-from src.libs.iam.constants import Permissions, Resources
+from src.libs.iam.constants import Permissions
 from src.users.services import RightService, RoleTypeService, UserService
 from tests.base_test import BaseTestCase
 
@@ -13,7 +13,7 @@ class CheckCanMixin:
                 permission=permission,
                 user_id=user_id,
                 group_id_resource=group_id_resource,
-                resource=Resources.ROLETYPE,
+                resource="RoleType",
                 exception=False,
             )
 
@@ -128,7 +128,7 @@ class TestPermissionControlOnOthersGroups(BaseTestCase, CheckCanMixin):
         right_service = RightService(self.app.dependencies)
         right_service.add_right(
             roletype_id=roletype.id,
-            resource=Resources.ROLETYPE,
+            resource="RoleType",
             permissions=[Permissions.READ, Permissions.EXECUTE],
         )
 
@@ -177,7 +177,7 @@ class TestPermissionControlOnOthersGroups(BaseTestCase, CheckCanMixin):
                     session,
                     permission=Permissions.READ,
                     user_id=self.user.id,
-                    resource=Resources.ROLETYPE,
+                    resource="RoleType",
                 )
             )
 
@@ -192,7 +192,7 @@ class TestPermissionControlOnOthersGroups(BaseTestCase, CheckCanMixin):
                     session,
                     permission=Permissions.CREATE,
                     user_id=self.user.id,
-                    resource=Resources.ROLETYPE,
+                    resource="RoleType",
                 )
             )
 
@@ -207,7 +207,7 @@ class TestPermissionControlOnOthersGroups(BaseTestCase, CheckCanMixin):
                     session,
                     permission=Permissions.READ,
                     user_id=self.user.id,
-                    resource=Resources.GROUP,
+                    resource="Group",
                 )
             )
 

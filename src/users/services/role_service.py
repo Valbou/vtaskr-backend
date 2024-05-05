@@ -1,6 +1,6 @@
 from src.libs.dependencies import DependencyInjector
 from src.libs.hmi.querystring import Filter
-from src.libs.iam.constants import Permissions, Resources
+from src.libs.iam.constants import Permissions
 from src.users.models import Role
 from src.users.persistence import RoleDBPort
 from src.users.settings import APP_NAME
@@ -31,7 +31,7 @@ class RoleService:
                 Permissions.CREATE,
                 user_id=user_id,
                 group_id_resource=role.group_id,
-                resource=Resources.GROUP,
+                resource="Group",
                 exception=True,
             ):
                 self.role_db.save(session, role)
@@ -44,7 +44,7 @@ class RoleService:
 
         with self.services.persistence.get_session() as session:
             group_ids = self.services.identity.all_tenants_with_access(
-                session, Permissions.CREATE, user_id=user_id, resource=Resources.ROLE
+                session, Permissions.CREATE, user_id=user_id, resource="Role"
             )
             return self.role_db.get_a_user_role(
                 session, user_id, role_id, group_ids=group_ids
@@ -57,7 +57,7 @@ class RoleService:
 
         with self.services.persistence.get_session() as session:
             group_ids = self.services.identity.all_tenants_with_access(
-                session, Permissions.CREATE, user_id=user_id, resource=Resources.ROLE
+                session, Permissions.CREATE, user_id=user_id, resource="Role"
             )
             return self.role_db.get_all_user_roles(
                 session, user_id, group_ids=group_ids, filters=qs_filters
@@ -73,7 +73,7 @@ class RoleService:
                 Permissions.UPDATE,
                 user_id,
                 role.group_id,
-                resource=Resources.ROLE,
+                resource="Role",
             ):
                 self.role_db.save(session, role)
                 session.commit()
@@ -90,7 +90,7 @@ class RoleService:
                 Permissions.DELETE,
                 user_id,
                 role.group_id,
-                resource=Resources.ROLE,
+                resource="Role",
             ):
                 self.role_db.delete(session, role)
                 session.commit()

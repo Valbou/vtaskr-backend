@@ -1,6 +1,6 @@
 from src.libs.dependencies import DependencyInjector
 from src.libs.hmi.querystring import Filter
-from src.libs.iam.constants import Permissions, Resources
+from src.libs.iam.constants import Permissions
 from src.tasks.models import Task
 from src.tasks.persistence import TaskDBPort
 from src.tasks.settings import APP_NAME
@@ -23,7 +23,7 @@ class TaskService:
                 session,
                 permission=Permissions.READ,
                 user_id=user_id,
-                resource=Resources.TASK,
+                resource="Task",
             )
 
             return self.task_db.tasks(session, tenant_ids, qs_filters)
@@ -42,7 +42,7 @@ class TaskService:
                         Permissions.READ,
                         user_id,
                         task.tenant_id,
-                        resource=Resources.TASK,
+                        resource="Task",
                     )
                     else None
                 )
@@ -63,7 +63,7 @@ class TaskService:
                 Permissions.READ,
                 user_id,
                 tag_tenant_id,
-                resource=Resources.TAG,
+                resource="Tag",
             ):
                 return None
 
@@ -71,7 +71,7 @@ class TaskService:
                 session,
                 permission=Permissions.READ,
                 user_id=user_id,
-                resource=Resources.TASK,
+                resource="Task",
             )
 
             return self.task_db.tag_tasks(session, tenant_ids, tag_id, qs_filters)
@@ -85,7 +85,7 @@ class TaskService:
                 Permissions.UPDATE,
                 user_id,
                 task.tenant_id,
-                resource=Resources.TASK,
+                resource="Task",
             ):
                 return None
 
@@ -93,7 +93,7 @@ class TaskService:
                 session,
                 permission=Permissions.READ,
                 user_id=user_id,
-                resource=Resources.TAG,
+                resource="Tag",
             )
 
             self.task_db.add_tags(session, tenant_ids, task, tag_ids)
@@ -108,7 +108,7 @@ class TaskService:
                 Permissions.CREATE,
                 user_id,
                 task.tenant_id,
-                resource=Resources.TASK,
+                resource="Task",
             ):
                 self.task_db.save(session, task)
                 session.commit()
@@ -122,7 +122,7 @@ class TaskService:
                 Permissions.UPDATE,
                 user_id,
                 task.tenant_id,
-                resource=Resources.TASK,
+                resource="Task",
             ):
                 self.task_db.save(session, task)
                 session.commit()
@@ -136,7 +136,7 @@ class TaskService:
                 Permissions.UPDATE,
                 user_id,
                 task.tenant_id,
-                resource=Resources.TASK,
+                resource="Task",
             ):
                 self.task_db.clean_tags(session, task)
                 session.commit()
@@ -150,7 +150,7 @@ class TaskService:
                 Permissions.DELETE,
                 user_id,
                 task.tenant_id,
-                resource=Resources.TASK,
+                resource="Task",
             ):
                 self.task_db.delete(session, task)
                 session.commit()

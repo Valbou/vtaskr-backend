@@ -1,4 +1,4 @@
-from src.libs.iam.constants import Permissions, Resources
+from src.libs.iam.constants import Permissions
 from src.users.models import Right
 from src.users.services import RightService, RoleTypeService
 from tests.base_test import BaseTestCase
@@ -36,7 +36,9 @@ class TestRightAPI(BaseTestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertIsInstance(response.json, list)
-        self.assertEqual(len(response.json), len(Resources))
+        self.assertEqual(
+            len(response.json), len(self.app.dependencies.identity.get_resources())
+        )
 
     def test_create_a_new_right(self):
         headers = self.get_token_headers()
@@ -47,7 +49,7 @@ class TestRightAPI(BaseTestCase):
         )
 
         data = {
-            "resource": Resources.GROUP,
+            "resource": "Group",
             "permissions": sum([Permissions.READ, Permissions.EXECUTE]),
             "roletype_id": roletype.id,
         }
@@ -67,7 +69,7 @@ class TestRightAPI(BaseTestCase):
         right_service = RightService(self.app.dependencies)
         right = Right(
             roletype_id=roletype.id,
-            resource=Resources.ROLETYPE,
+            resource="RoleType",
             permissions=[Permissions.READ, Permissions.EXECUTE],
         )
         right = right_service.create_right(self.user.id, self.group.id, right)
@@ -96,7 +98,7 @@ class TestRightAPI(BaseTestCase):
         right_service = RightService(self.app.dependencies)
         right = Right(
             roletype_id=roletype.id,
-            resource=Resources.ROLETYPE,
+            resource="RoleType",
             permissions=[Permissions.READ, Permissions.EXECUTE],
         )
         right = right_service.create_right(self.user.id, self.group.id, right)
@@ -137,7 +139,7 @@ class TestRightAPI(BaseTestCase):
         right_service = RightService(self.app.dependencies)
         right = Right(
             roletype_id=roletype.id,
-            resource=Resources.ROLETYPE,
+            resource="RoleType",
             permissions=[Permissions.READ, Permissions.EXECUTE],
         )
         right = right_service.create_right(self.user.id, self.group.id, right)
@@ -158,7 +160,7 @@ class TestRightAPI(BaseTestCase):
         right_service = RightService(self.app.dependencies)
         right = Right(
             roletype_id=roletype.id,
-            resource=Resources.ROLETYPE,
+            resource="RoleType",
             permissions=[Permissions.READ, Permissions.EXECUTE],
         )
         right = right_service.create_right(self.user.id, self.group.id, right)

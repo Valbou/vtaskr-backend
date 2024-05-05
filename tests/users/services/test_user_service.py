@@ -2,7 +2,6 @@ from datetime import datetime, timedelta
 from unittest.mock import MagicMock
 from zoneinfo import ZoneInfo
 
-from src.libs.iam.constants import Resources
 from src.settings import LOCALE, TIMEZONE
 from src.users.hmi.dto import UserDTO
 from src.users.models import Group, RequestChange, RequestType, RoleType, Token, User
@@ -29,7 +28,7 @@ class TestUserService(DummyBaseTestCase):
     def test_create_admin_rights(self):
         self.us.right_db = MagicMock()
         num_results = self.us._create_admin_rights(roletype_id="132abc")
-        self.assertEqual(len(Resources), num_results)
+        self.assertEqual(len(self.us.services.identity.get_resources()), num_results)
 
     def test_get_default_admin(self):
         new_roletype = RoleType(name="Admin", group_id=None)

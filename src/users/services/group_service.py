@@ -1,6 +1,6 @@
 from src.libs.dependencies import DependencyInjector
 from src.libs.hmi.querystring import Filter
-from src.libs.iam.constants import Permissions, Resources
+from src.libs.iam.constants import Permissions
 from src.users.models import Group
 from src.users.persistence import GroupDBPort
 from src.users.settings import APP_NAME
@@ -47,7 +47,7 @@ class GroupService:
                         Permissions.READ,
                         user_id,
                         group.id,
-                        resource=Resources.GROUP,
+                        resource="Group",
                     )
                     else None
                 )
@@ -58,7 +58,7 @@ class GroupService:
 
         with self.services.persistence.get_session() as session:
             if self.services.identity.can(
-                session, Permissions.UPDATE, user_id, group.id, resource=Resources.GROUP
+                session, Permissions.UPDATE, user_id, group.id, resource="Group"
             ):
                 self.group_db.save(session, group)
                 session.commit()
@@ -70,7 +70,7 @@ class GroupService:
 
         with self.services.persistence.get_session() as session:
             if self.services.identity.can(
-                session, Permissions.DELETE, user_id, group.id, resource=Resources.GROUP
+                session, Permissions.DELETE, user_id, group.id, resource="Group"
             ):
                 self.group_db.delete(session, group)
                 session.commit()

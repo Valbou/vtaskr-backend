@@ -1,6 +1,6 @@
 from src.libs.dependencies import DependencyInjector
 from src.libs.hmi.querystring import Filter
-from src.libs.iam.constants import Permissions, Resources
+from src.libs.iam.constants import Permissions
 from src.users.models import RoleType
 from src.users.persistence import RoleTypeDBPort
 from src.users.settings import APP_NAME
@@ -47,7 +47,7 @@ class RoleTypeService:
 
         with self.services.persistence.get_session() as session:
             group_ids = self.services.identity.all_tenants_with_access(
-                session, Permissions.READ, user_id=user_id, resource=Resources.ROLETYPE
+                session, Permissions.READ, user_id=user_id, resource="RoleType"
             )
 
             return self.roletype_db.get_a_user_roletype(
@@ -61,7 +61,7 @@ class RoleTypeService:
 
         with self.services.persistence.get_session() as session:
             group_ids = self.services.identity.all_tenants_with_access(
-                session, Permissions.READ, user_id=user_id, resource=Resources.ROLETYPE
+                session, Permissions.READ, user_id=user_id, resource="RoleType"
             )
 
             return self.roletype_db.get_all_user_roletypes(
@@ -78,7 +78,7 @@ class RoleTypeService:
                 Permissions.UPDATE,
                 user_id,
                 roletype.group_id,
-                resource=Resources.ROLETYPE,
+                resource="RoleType",
             ):
                 self.roletype_db.save(session, roletype)
                 session.commit()
@@ -95,7 +95,7 @@ class RoleTypeService:
                 Permissions.DELETE,
                 user_id,
                 roletype.group_id,
-                resource=Resources.ROLETYPE,
+                resource="RoleType",
             ):
                 self.roletype_db.delete(session, roletype)
                 session.commit()

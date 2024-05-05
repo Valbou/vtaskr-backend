@@ -22,4 +22,5 @@ def setup_flask(app: Flask, project_dir: str) -> dict:
             (APP_NAME, "Template", TemplateDB()),
             (APP_NAME, "Contact", ContactDB()),
         ],
+        "permissions_resources": ["Subscription"],
     }

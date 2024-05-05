@@ -34,4 +34,5 @@ def setup_flask(app: Flask, project_dir: str) -> dict:
             (APP_NAME, "RequestChange", RequestChangeDB()),
             (APP_NAME, "Token", TokenDB()),
         ],
+        "permissions_resources": ["Group", "Role", "RoleType"],
     }

@@ -1,6 +1,6 @@
 from src.libs.dependencies import DependencyInjector
 from src.libs.hmi.querystring import Filter
-from src.libs.iam.constants import Permissions, Resources
+from src.libs.iam.constants import Permissions
 from src.users.models import Right, RoleType
 from src.users.persistence import RightDBPort
 from src.users.settings import APP_NAME
@@ -28,7 +28,7 @@ class RightService:
                             ],
                         ),
                     )
-                    for res in Resources
+                    for res in self.services.identity.get_resources()
                 ]
             )
 
@@ -40,7 +40,7 @@ class RightService:
     def add_right(
         self,
         roletype_id: str,
-        resource: Resources,
+        resource: str,
         permissions: list[Permissions] | Permissions,
     ) -> Right:
         """
@@ -73,7 +73,7 @@ class RightService:
                 Permissions.CREATE,
                 user_id=user_id,
                 group_id_resource=group_id,
-                resource=Resources.ROLETYPE,
+                resource="RoleType",
                 exception=True,
             ):
                 self.right_db.save(session, right)
@@ -86,7 +86,7 @@ class RightService:
 
         with self.services.persistence.get_session() as session:
             group_ids = self.services.identity.all_tenants_with_access(
-                session, Permissions.READ, user_id=user_id, resource=Resources.ROLETYPE
+                session, Permissions.READ, user_id=user_id, resource="RoleType"
             )
             return self.right_db.get_a_user_right(
                 session, user_id, right_id, group_ids=group_ids
@@ -99,7 +99,7 @@ class RightService:
 
         with self.services.persistence.get_session() as session:
             group_ids = self.services.identity.all_tenants_with_access(
-                session, Permissions.READ, user_id=user_id, resource=Resources.ROLETYPE
+                session, Permissions.READ, user_id=user_id, resource="RoleType"
             )
             return self.right_db.get_all_user_rights(
                 session, group_ids=group_ids, filters=qs_filters
@@ -118,7 +118,7 @@ class RightService:
                     Permissions.UPDATE,
                     user_id,
                     roletype.group_id,
-                    resource=Resources.ROLETYPE,
+                    resource="RoleType",
                 )
             ):
                 self.right_db.save(session, right)
@@ -139,7 +139,7 @@ class RightService:
                     Permissions.DELETE,
                     user_id,
                     roletype.group_id,
-                    resource=Resources.ROLETYPE,
+                    resource="RoleType",
                 )
             ):
                 self.right_db.delete(session, right)

@@ -1,7 +1,7 @@
 from typing import Tuple
 
 from src.libs.dependencies import DependencyInjector
-from src.libs.iam.constants import Permissions, Resources
+from src.libs.iam.constants import Permissions
 from src.users.events import UsersEventService
 from src.users.hmi.dto import UserDTO
 from src.users.models import (
@@ -75,7 +75,7 @@ class UserService:
                             permissions=[perm for perm in Permissions],
                         ),
                     )
-                    for res in Resources
+                    for res in self.services.identity.get_resources()
                 ]
             )
 
@@ -349,7 +349,7 @@ class UserService:
 
         with self.services.persistence.get_session() as session:
             group_ids = self.services.identity.all_tenants_with_access(
-                session, Permissions.CREATE, user.id, Resources.ROLETYPE
+                session, Permissions.CREATE, user.id, "RoleType"
             )
             if len(group_ids) <= 1:
                 self.user_db.delete(session, user)

@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 
-from src.libs.iam.constants import Permissions, Resources
+from src.libs.iam.constants import Permissions
 from src.libs.sqlalchemy.default_adapter import DefaultDB
 from src.users.models import Right, Role, RoleType, User
 from src.users.persistence.ports import UserDBPort
@@ -34,7 +34,7 @@ class UserDB(UserDBPort, DefaultDB):
         self,
         session: Session,
         id: str,
-        resource: Resources,
+        resource: str,
         permission: Permissions,
         group_id: str,
     ) -> bool:

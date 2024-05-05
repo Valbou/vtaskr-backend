@@ -1,7 +1,7 @@
 from typing import ContextManager
 
 from src.libs.dependencies import DependencyInjector
-from src.libs.iam.constants import Permissions, Resources
+from src.libs.iam.constants import Permissions
 from src.ports import IdentityAccessManagementPort
 from src.users.persistence import GroupDBPort, UserDBPort
 from src.users.settings import APP_NAME
@@ -19,7 +19,11 @@ class PermissionControl(IdentityAccessManagementPort):
 
     def set_context(self, **ctx) -> None:
         self.app = ctx.pop("app")
+        self.resources = ctx.pop("permissions_resources")
         self.services: DependencyInjector = self.app.dependencies
+
+    def get_resources(self) -> list[str]:
+        return self.resources
 
     def can(
         self,
@@ -27,7 +31,7 @@ class PermissionControl(IdentityAccessManagementPort):
         permission: Permissions,
         user_id: str,
         group_id_resource: str,
-        resource: Resources,
+        resource: str,
         exception: bool = True,
     ) -> bool:
         user_db: UserDBPort = self.services.persistence.get_repository(APP_NAME, "User")
@@ -49,7 +53,7 @@ class PermissionControl(IdentityAccessManagementPort):
         session: ContextManager,
         permission: Permissions,
         user_id: str,
-        resource: Resources,
+        resource: str,
     ) -> list[str]:
         group_db: GroupDBPort = self.services.persistence.get_repository(
             APP_NAME, "Group"
