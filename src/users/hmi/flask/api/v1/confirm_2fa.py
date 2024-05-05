@@ -74,7 +74,7 @@ def confirm_2fa():
 
     try:
         token_service = UserService(current_app.dependencies)
-        token = token_service.get_token(sha_token, code)
+        token = token_service.get_temp_token(sha_token, code)
 
         if token:
             data = {}

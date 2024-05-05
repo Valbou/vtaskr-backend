@@ -9,5 +9,5 @@ class IdentityAccessManagementPort(InjectablePort, ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def all_tenants_with_access(self, permission, tenant_id: str) -> bool:
+    def all_tenants_with_access(self, permission, tenant_id: str) -> list[str]:
         raise NotImplementedError

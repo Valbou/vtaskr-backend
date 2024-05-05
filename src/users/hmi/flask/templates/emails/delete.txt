@@ -1,0 +1,4 @@
+{{ title }}
+{{ content_title }}
+{{ paragraph_1 }}
+{{ paragraph_2 }}

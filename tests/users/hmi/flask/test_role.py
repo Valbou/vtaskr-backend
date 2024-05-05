@@ -1,5 +1,5 @@
 from src.users.models import Role
-from src.users.services import RoleService, RoleTypeService
+from src.users.services import RoleService, RoleTypeService, UserService
 from tests.base_test import BaseTestCase
 
 URL_API = "/api/v1"
@@ -20,8 +20,8 @@ class TestRoleAPI(BaseTestCase):
         self.create_user()
 
         role_service = RoleService(self.app.dependencies)
-        roletype_service = RoleTypeService(self.app.dependencies)
-        roletype = roletype_service.get_default_admin()
+        user_service = UserService(self.app.dependencies)
+        roletype = user_service._get_default_admin()
 
         role = Role(self.user.id, self.group_0.id, roletype_id=roletype.id)
         return role_service.create_role(
@@ -56,8 +56,8 @@ class TestRoleAPI(BaseTestCase):
         self.user_0, self.group_0 = self.user, self.group
         self.create_user()
 
-        roletype_service = RoleTypeService(self.app.dependencies)
-        roletype = roletype_service.get_default_admin()
+        user_service = UserService(self.app.dependencies)
+        roletype = user_service._get_default_admin()
 
         data = {
             "user_id": self.user.id,

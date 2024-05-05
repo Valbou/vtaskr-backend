@@ -1,5 +1,5 @@
 from src.libs.iam.constants import Permissions, Resources
-from src.users.services import GroupService, RightService, RoleService, RoleTypeService
+from src.users.services import RightService, RoleTypeService, UserService
 from tests.base_test import BaseTestCase
 
 
@@ -34,7 +34,7 @@ class TestPermissionControl(BaseTestCase, CheckCanMixin):
         )
         self.assertTrue(
             self.check_can(
-                permission=Permissions.ACHIEVE,
+                permission=Permissions.EXECUTE,
                 user_id=self.user.id,
                 group_id_resource=self.group.id,
             )
@@ -71,7 +71,7 @@ class TestPermissionControl(BaseTestCase, CheckCanMixin):
         )
         self.assertFalse(
             self.check_can(
-                permission=Permissions.ACHIEVE,
+                permission=Permissions.EXECUTE,
                 user_id=self.user.id,
                 group_id_resource=self.fake_group_id,
             )
@@ -108,8 +108,8 @@ class TestPermissionControlOnOthersGroups(BaseTestCase, CheckCanMixin):
 
         self.assertNotEqual(first_user.id, self.user.id)
 
-        group_service = GroupService(self.app.dependencies)
-        self.shared_group = group_service.create_group(
+        user_service = UserService(self.app.dependencies)
+        self.shared_group = user_service.create_group(
             user_id=first_user.id, group_name="My Shared Group"
         )
 
@@ -118,8 +118,8 @@ class TestPermissionControlOnOthersGroups(BaseTestCase, CheckCanMixin):
             name="Read and Create on RoleType only", group_id=self.shared_group.id
         )
 
-        role_service = RoleService(self.app.dependencies)
-        role_service.add_role(
+        user_service = UserService(self.app.dependencies)
+        user_service.add_role(
             user_id=self.user.id,
             group_id=self.shared_group.id,
             roletype_id=roletype.id,
@@ -129,7 +129,7 @@ class TestPermissionControlOnOthersGroups(BaseTestCase, CheckCanMixin):
         right_service.add_right(
             roletype_id=roletype.id,
             resource=Resources.ROLETYPE,
-            permissions=[Permissions.READ, Permissions.ACHIEVE],
+            permissions=[Permissions.READ, Permissions.EXECUTE],
         )
 
     # On a group with a custom role (partial access)
@@ -143,7 +143,7 @@ class TestPermissionControlOnOthersGroups(BaseTestCase, CheckCanMixin):
         )
         self.assertTrue(
             self.check_can(
-                permission=Permissions.ACHIEVE,
+                permission=Permissions.EXECUTE,
                 user_id=self.user.id,
                 group_id_resource=self.shared_group.id,
             )

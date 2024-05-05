@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 from src.libs.hmi.querystring import Filter
 from src.libs.iam.constants import Permissions, Resources
 from src.ports import AbstractDBPort
-from src.users import Group
+from src.users.models import Group
 
 
 class GroupDBPort(AbstractDBPort, ABC):

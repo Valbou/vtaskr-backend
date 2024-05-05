@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 
 from src.libs.iam.constants import Permissions, Resources
 from src.ports import AbstractDBPort
-from src.users import User
+from src.users.models import User
 
 
 class UserDBPort(AbstractDBPort, ABC):
@@ -11,7 +11,7 @@ class UserDBPort(AbstractDBPort, ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    def find_login(self, session, email: str) -> User:
+    def find_user_by_email(self, session, email: str) -> User:
         raise NotImplementedError()
 
     @abstractmethod

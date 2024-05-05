@@ -3,7 +3,7 @@ from unittest import TestCase
 
 from faker import Faker
 
-from src.users import Group
+from src.users.models import Group
 
 
 class TestGroup(TestCase):

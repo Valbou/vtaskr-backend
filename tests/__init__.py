@@ -1,22 +1,9 @@
 from flask import Flask
-from src.events.services import EventBusService
-from src.libs.babel.translations import TranslationService
-from src.libs.dependencies import DependencyInjector, DependencyType
 from src.libs.flask import create_flask_app
-from src.libs.iam.config import PermissionControl
-from src.libs.redis.database import TestCacheService
-from src.libs.sqlalchemy.database import TestPersistenceService
-from src.notifications.services import TestNotificationService
 
-di = DependencyInjector()
-di.add_dependency(DependencyType.PERSISTENCE, TestPersistenceService, echo=False)
-di.add_dependency(DependencyType.CACHE, TestCacheService)
-di.add_dependency(DependencyType.EVENTBUS, EventBusService)
-di.add_dependency(DependencyType.IDENTITY, PermissionControl)
-di.add_dependency(DependencyType.NOTIFICATION, TestNotificationService)
-di.add_dependency(DependencyType.TRANSLATION, TranslationService)
+from .helpers import get_dummy_di, get_test_di
 
-di.instantiate_dependencies()
+di = get_test_di()
 
 # Clean cache
 cache = di.cache.get_engine()
@@ -34,3 +21,5 @@ print("All registered routes:")
 for rule in APP.url_map.iter_rules():
     print(f"{rule.endpoint:-<30} {rule.rule}")
 print(" ----- ")
+
+DUMMY_APP: Flask = create_flask_app(dependencies=get_dummy_di())

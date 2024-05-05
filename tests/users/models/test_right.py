@@ -4,7 +4,7 @@ from unittest import TestCase
 from faker import Faker
 
 from src.libs.iam.constants import Permissions, Resources
-from src.users import Right
+from src.users.models import Right
 
 
 class TestRight(TestCase):

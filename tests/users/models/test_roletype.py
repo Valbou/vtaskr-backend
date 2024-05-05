@@ -3,7 +3,7 @@ from unittest import TestCase
 
 from faker import Faker
 
-from src.users import RoleType
+from src.users.models import RoleType
 
 
 class TestRoleType(TestCase):

@@ -96,10 +96,13 @@ class NotificationService(NotificationPort):
 
 
 class TestNotificationService(NotificationService):
+    notify_all_calls = []
+    notify_event_calls = []
+
     def notify_all(self):
         """No send in test environnement"""
-        pass
+        self.notify_all_calls.append(None)
 
     def notify_event(self, event_name: str, context: dict):
         """No send in test environnement"""
-        pass
+        self.notify_event_calls.append({"event_name": event_name, "context": context})

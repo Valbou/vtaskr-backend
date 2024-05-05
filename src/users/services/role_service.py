@@ -22,25 +22,6 @@ class RoleService:
             APP_NAME, "Role"
         )
 
-    def add_role(self, user_id: str, group_id: str, roletype_id: str) -> Role:
-        """
-        Add a role for internal usage in other services only
-        (example: admin access to a new group or unittesting)
-
-        For an external request, use create_role() instead, with permission controls
-        """
-        role = Role(
-            user_id=user_id,
-            group_id=group_id,
-            roletype_id=roletype_id,
-        )
-
-        with self.services.persistence.get_session() as session:
-            self.role_db.save(session, role)
-            session.commit()
-
-        return role
-
     def create_role(self, user_id: str, role: Role) -> Role | None:
         """Add a role with permission controls"""
 

@@ -5,7 +5,7 @@ from zoneinfo import ZoneInfo
 from faker import Faker
 
 from src.settings import REQUEST_DAYS_HISTORY, REQUEST_VALIDITY
-from src.users import RequestChange, RequestType
+from src.users.models import RequestChange, RequestType
 
 
 class TestRequestChange(TestCase):

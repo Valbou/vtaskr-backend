@@ -13,24 +13,6 @@ class RoleTypeService:
             APP_NAME, "RoleType"
         )
 
-    def get_default_admin(self) -> RoleType:
-        """Looking for a default roletype named: Admin"""
-
-        with self.services.persistence.get_session() as session:
-            admin_roletype = RoleType(name="Admin", group_id=None)
-            roletype, created = self.roletype_db.get_or_create(
-                session=session, roletype=admin_roletype
-            )
-            session.commit()
-
-            if created:
-                from .right_service import RightService
-
-                right_service = RightService(self.services)
-                right_service.create_admin_rights(roletype=roletype)
-
-            return roletype
-
     def get_default_observer(self) -> RoleType:
         """Looking for a default roletype named: Observer"""
 

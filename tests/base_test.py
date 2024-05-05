@@ -9,7 +9,7 @@ from src.users.hmi.dto import UserDTO
 from src.users.services import UserService
 from tests.utils.db_utils import text_query_column_exists, text_query_table_exists
 
-from . import APP
+from . import APP, DUMMY_APP
 
 
 class FlaskTemplateCapture:
@@ -31,7 +31,27 @@ class FlaskTemplateCapture:
         return self.recorded_templates
 
 
-class BaseTestCase(TestCase):
+class MixinTestCase:
+    def generate_email(self):
+        return self.fake.bothify("???###?#-").lower() + self.fake.email(
+            domain="valbou.fr"
+        )
+
+    def generate_password(self):
+        return self.fake.password(
+            length=10, special_chars=True, digits=True, upper_case=True, lower_case=True
+        )
+
+
+class DummyBaseTestCase(MixinTestCase, TestCase):
+    app: Flask = DUMMY_APP
+
+    def setUp(self) -> None:
+        super().setUp()
+        self.fake = Faker()
+
+
+class BaseTestCase(MixinTestCase, TestCase):
     app: Flask = APP
 
     def setUp(self) -> None:
@@ -64,14 +84,9 @@ class BaseTestCase(TestCase):
                     result, f"Column {column_name} doesn't exists in {table_name} Table"
                 )
 
-    def generate_email(self):
-        return self.fake.bothify("???###?#-").lower() + self.fake.email(
-            domain="valbou.fr"
-        )
-
     def create_user(self):
         """Create a default test user and his group, role etc..."""
-        self.password = self.fake.password() + "Aa1#"
+        self.password = self.generate_password()
 
         self.user_dto = UserDTO(
             first_name=self.fake.first_name(),
@@ -98,7 +113,7 @@ class BaseTestCase(TestCase):
         )
 
         if valid:
-            auth_service.get_token(
+            auth_service.get_temp_token(
                 sha_token=self.token.sha_token, code=self.token.temp_code
             )
 

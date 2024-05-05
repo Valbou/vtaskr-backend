@@ -25,7 +25,7 @@ class TestUserV1Login(BaseTestCase):
     def test_post_login_unknown_user(self):
         payload = {
             "email": self.fake.email(domain="valbou.fr"),
-            "password": self.fake.password(),
+            "password": self.generate_password(),
         }
         response = self.client.post(
             f"{URL_API_USERS}/login", headers=self.headers, json=payload
@@ -39,7 +39,7 @@ class TestUserV1Login(BaseTestCase):
     def test_post_login_known_user_bad_password(self):
         payload = {
             "email": self.user.email,
-            "password": self.fake.password(),
+            "password": self.generate_password(),
         }
         response = self.client.post(
             f"{URL_API_USERS}/login", headers=self.headers, json=payload

@@ -199,3 +199,30 @@ class EmailService:
             }
 
             return context_new_password
+
+    def get_delete_context(self, user: User) -> dict:
+        with self.services.translation.get_translation_session(
+            domain=NAME, locale=user.locale
+        ) as trans:
+            _ = trans.gettext
+
+            context_login = {
+                "message_type": MessageType.EMAIL,
+                "sender": DEFAULT_SENDER,
+                "template": "emails/delete",
+                "to": user.email,
+                "subject": _("{APP_NAME} - Account deleted").format(APP_NAME=APP_NAME),
+                "tenant_id": user.id,
+                "logo": EMAIL_LOGO,
+                "title": _("Account deleted"),
+                "content_title": _("Hi {first_name} !").format(
+                    first_name=user.first_name
+                ),
+                "paragraph_1": _(
+                    "Your account id definitely deleted, "
+                    "all associated data are definitely removed."
+                ),
+                "paragraph_2": _("We hope to see you soon ! Bye !"),
+            }
+
+            return context_login

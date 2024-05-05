@@ -1,4 +1,4 @@
-from src.users.services import GroupService
+from src.users.services import UserService
 from tests.base_test import BaseTestCase
 
 URL_API_USERS = "/api/v1/users"
@@ -71,8 +71,8 @@ class TestUserV1Update(BaseTestCase):
     def test_no_delete_with_2_admin_groups(self):
         headers = self.get_token_headers()
 
-        group_service = GroupService(self.app.dependencies)
-        group_service.create_group(self.user.id, "Another Group")
+        user_service = UserService(self.app.dependencies)
+        user_service.create_group(self.user.id, "Another Group")
 
         response = self.client.delete(f"{URL_API_USERS}/me", headers=headers)
         self.assertEqual(response.status_code, 403)

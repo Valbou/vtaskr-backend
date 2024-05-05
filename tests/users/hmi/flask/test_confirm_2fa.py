@@ -22,7 +22,7 @@ class TestUserV1Confirm2FA(BaseTestCase):
     def test_post_bad_code_2FA(self):
         headers = self.get_token_headers(valid=False)
         payload = {
-            "code_2FA": self.fake.password(),
+            "code_2FA": self.generate_password(),
         }
         response = self.client.post(
             f"{URL_API_USERS}/2fa", headers=headers, json=payload

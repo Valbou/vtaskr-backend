@@ -1,4 +1,5 @@
 from typing import Literal
+from unittest.mock import MagicMock
 
 from sqlalchemy import Engine, create_engine
 from sqlalchemy.orm import Session, registry, scoped_session, sessionmaker
@@ -82,3 +83,17 @@ class TestPersistenceService(PersistenceService):
         return (
             f"{DB_TYPE}+{BD_DRIVER}://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_TEST}"
         )
+
+
+class DummyPersistenceService(PersistenceService):
+    def get_database_url(sef) -> None:
+        pass
+
+    def get_engine(self) -> None:
+        pass
+
+    def get_session(self) -> MagicMock:
+        return MagicMock()
+
+    def get_repository(self, *arg, **kwargs) -> MagicMock:
+        return MagicMock()

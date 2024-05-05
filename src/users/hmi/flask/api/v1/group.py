@@ -7,7 +7,7 @@ from src.libs.hmi.querystring import QueryStringFilter
 from src.libs.redis import rate_limited
 from src.users.hmi.dto import GROUP_COMPONENT, GroupDTO, GroupMapperDTO
 from src.users.hmi.flask.decorators import login_required
-from src.users.services import GroupService
+from src.users.services import GroupService, UserService
 
 from .. import API_ERROR_COMPONENT, V1, logger, openapi, users_bp
 
@@ -80,8 +80,8 @@ def groups():
     if request.method == "POST":
         group_dto = GroupDTO(**request.get_json())
 
-        group_service = GroupService(current_app.dependencies)
-        group = group_service.create_group(g.user.id, group_dto.name)
+        user_service = UserService(current_app.dependencies)
+        group = user_service.create_group(g.user.id, group_dto.name)
 
         group_dto = GroupMapperDTO.model_to_dto(group)
         return ResponseAPI.get_response(dto_to_dict(group_dto), 201)

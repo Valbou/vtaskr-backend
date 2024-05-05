@@ -21,33 +21,6 @@ class GroupService:
             APP_NAME, "Group"
         )
 
-    def create_group(self, user_id: str, group_name: str) -> Group:
-        """Create a new user group"""
-
-        with self.services.persistence.get_session() as session:
-            group = Group(name=group_name)
-            self.group_db.save(session, group)
-            session.commit()
-
-        from .roletype_service import RoleTypeService
-
-        roletype_service = RoleTypeService(self.services)
-        roletype = roletype_service.get_default_admin()
-
-        from .role_service import RoleService
-
-        role_service = RoleService(self.services)
-        role_service.add_role(
-            user_id=user_id, group_id=group.id, roletype_id=roletype.id
-        )
-
-        return group
-
-    def create_private_group(self, user_id: str) -> Group:
-        """Create a default mandatory group to use this app"""
-
-        return self.create_group(user_id=user_id, group_name="Private")
-
     def get_all_groups(
         self,
         user_id: str,

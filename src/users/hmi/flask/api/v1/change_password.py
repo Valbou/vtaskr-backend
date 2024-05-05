@@ -73,7 +73,7 @@ def forgotten_password():
 
     try:
         user_service = UserService(services=current_app.dependencies)
-        user = user_service.find_login(email)
+        user = user_service.find_user_by_email(email)
         if user:
             user_service.request_password_change(user)
 

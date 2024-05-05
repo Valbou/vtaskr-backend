@@ -1,4 +1,4 @@
-from src.users.services import GroupService
+from src.users.services import UserService
 from tests.base_test import BaseTestCase
 
 URL_API = "/api/v1"
@@ -75,8 +75,8 @@ class TestGroupAPI(BaseTestCase):
     def test_delete_group(self):
         headers = self.get_token_headers()
 
-        self.group_service = GroupService(self.app.dependencies)
-        group = self.group_service.create_group(
+        self.user_service = UserService(self.app.dependencies)
+        group = self.user_service.create_group(
             user_id=self.user.id, group_name=self.fake.word()
         )
 

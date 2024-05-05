@@ -10,7 +10,7 @@ class RequestChangeDBPort(AbstractDBPort, ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    def find_request(self, session, email: str):
+    def find_request(self, session, email: str) -> RequestChange | None:
         raise NotImplementedError
 
     @abstractmethod

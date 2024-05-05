@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 
 from src.libs.sqlalchemy.default_adapter import DefaultDB
-from src.users.models import RequestChange
+from src.users.models import RequestChange, RequestType
 from src.users.persistence.ports import RequestChangeDBPort
 from src.users.persistence.sqlalchemy.querysets import RequestChangeQueryset
 
@@ -17,8 +17,10 @@ class RequestChangeDB(RequestChangeDBPort, DefaultDB):
         )
         session.execute(self.qs.statement)
 
-    def find_request(self, session: Session, email: str) -> RequestChange | None:
-        self.qs.valid_for(email).last()
+    def find_request(
+        self, session: Session, email: str, request_type: RequestType
+    ) -> RequestChange | None:
+        self.qs.valid_for(email, request_type).last()
         result = session.scalars(self.qs.statement).one_or_none()
         return result
 

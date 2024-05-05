@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 
 from src.libs.hmi.querystring import Filter
 from src.ports import AbstractDBPort
-from src.users import Role
+from src.users.models import Role
 
 
 class RoleDBPort(AbstractDBPort, ABC):

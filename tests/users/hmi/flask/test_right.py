@@ -48,7 +48,7 @@ class TestRightAPI(BaseTestCase):
 
         data = {
             "resource": Resources.GROUP,
-            "permissions": sum([Permissions.READ, Permissions.ACHIEVE]),
+            "permissions": sum([Permissions.READ, Permissions.EXECUTE]),
             "roletype_id": roletype.id,
         }
         response = self.client.post(f"{URL_API}/rights", json=data, headers=headers)
@@ -68,7 +68,7 @@ class TestRightAPI(BaseTestCase):
         right = Right(
             roletype_id=roletype.id,
             resource=Resources.ROLETYPE,
-            permissions=[Permissions.READ, Permissions.ACHIEVE],
+            permissions=[Permissions.READ, Permissions.EXECUTE],
         )
         right = right_service.create_right(self.user.id, self.group.id, right)
 
@@ -81,7 +81,7 @@ class TestRightAPI(BaseTestCase):
             f"{URL_API}/right/{right.id}", json=data, headers=headers
         )
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json.get("permissions"), 8)
+        self.assertEqual(response.json.get("permissions"), 4)
 
     def test_update_stranger_right(self):
         headers = self.get_token_headers()
@@ -97,7 +97,7 @@ class TestRightAPI(BaseTestCase):
         right = Right(
             roletype_id=roletype.id,
             resource=Resources.ROLETYPE,
-            permissions=[Permissions.READ, Permissions.ACHIEVE],
+            permissions=[Permissions.READ, Permissions.EXECUTE],
         )
         right = right_service.create_right(self.user.id, self.group.id, right)
 
@@ -138,7 +138,7 @@ class TestRightAPI(BaseTestCase):
         right = Right(
             roletype_id=roletype.id,
             resource=Resources.ROLETYPE,
-            permissions=[Permissions.READ, Permissions.ACHIEVE],
+            permissions=[Permissions.READ, Permissions.EXECUTE],
         )
         right = right_service.create_right(self.user.id, self.group.id, right)
 
@@ -159,7 +159,7 @@ class TestRightAPI(BaseTestCase):
         right = Right(
             roletype_id=roletype.id,
             resource=Resources.ROLETYPE,
-            permissions=[Permissions.READ, Permissions.ACHIEVE],
+            permissions=[Permissions.READ, Permissions.EXECUTE],
         )
         right = right_service.create_right(self.user.id, self.group.id, right)
 

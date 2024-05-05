@@ -19,7 +19,7 @@ class TestTokenAdapter(BaseTestCase):
             first_name=self.fake.first_name(),
             last_name=self.fake.last_name(),
             email=self.generate_email(),
-            hash_password=self.fake.password(),
+            hash_password=self.generate_password(),
         )
 
         with self.app.dependencies.persistence.get_session() as session:
@@ -27,7 +27,9 @@ class TestTokenAdapter(BaseTestCase):
             session.commit()
 
         self.token = Token(user_id=self.user.id)
-        self.token.set_token(token=sha256(self.fake.password().encode()).hexdigest())
+        self.token.set_token(
+            token=sha256(self.generate_password().encode()).hexdigest()
+        )
 
     def test_complete_crud_token(self):
         with self.app.dependencies.persistence.get_session() as session:

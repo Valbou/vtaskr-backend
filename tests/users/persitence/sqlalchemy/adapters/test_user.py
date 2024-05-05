@@ -15,7 +15,7 @@ class TestUserAdapter(BaseTestCase):
             first_name=self.fake.first_name(),
             last_name=self.fake.last_name(),
             email=self.generate_email(),
-            hash_password=self.fake.password(),
+            hash_password=self.generate_password(),
         )
 
     def test_complete_crud_user(self):
@@ -38,12 +38,12 @@ class TestUserAdapter(BaseTestCase):
             session.commit()
             self.assertFalse(self.user_db.exists(session, self.user.id))
 
-    def test_user_find_login(self):
+    def test_user_find_user_by_email(self):
         with self.app.dependencies.persistence.get_session() as session:
             self.user_db.save(session, self.user)
             session.commit()
 
-            user = self.user_db.find_login(session, email=self.user.email)
+            user = self.user_db.find_user_by_email(session, email=self.user.email)
             self.assertEqual(user.first_name, self.user.first_name)
 
     def test_clean_unused_accounts(self):

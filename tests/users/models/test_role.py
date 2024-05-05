@@ -4,7 +4,7 @@ from unittest import TestCase
 from faker import Faker
 
 from src.colors.models.color import Color
-from src.users import Role
+from src.users.models import Role
 
 
 class TestRole(TestCase):

@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 from src.ports import AbstractDBPort
-from src.users import Token
+from src.users.models import Token
 
 
 class TokenDBPort(AbstractDBPort, ABC):

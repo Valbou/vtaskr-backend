@@ -47,10 +47,15 @@ class PersistencePort(InjectablePort, ABC):
     def get_session(self) -> SessionPort:
         raise NotImplementedError
 
+    def _compose_index(self, app_name: str, class_name: str) -> str:
+        return f"{app_name}:{class_name}"
+
     def register_repository(
         self, app_name: str, class_name: str, repository_instance: AbstractDBPort
     ) -> None:
-        self._repository_registry[f"{app_name}:{class_name}"] = repository_instance
+        index_name = self._compose_index(app_name, class_name)
+        self._repository_registry[index_name] = repository_instance
 
     def get_repository(self, app_name: str, class_name: str) -> AbstractDBPort | None:
-        return self._repository_registry.get(f"{app_name}:{class_name}")
+        index_name = self._compose_index(app_name, class_name)
+        return self._repository_registry.get(index_name)
