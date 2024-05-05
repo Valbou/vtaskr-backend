@@ -3,7 +3,7 @@ from datetime import timedelta
 from flask import current_app, request
 from src.libs.flask.utils import ResponseAPI, get_bearer_token
 from src.libs.redis import rate_limited
-from src.users.services import TokenService
+from src.users.services import UserService
 
 from .. import V1, logger, openapi, users_bp
 
@@ -73,17 +73,15 @@ def confirm_2fa():
         return ResponseAPI.get_400_response()
 
     try:
-        with current_app.sql.get_session() as session:
-            token_service = TokenService(session=session)
-            token = token_service.get_token(sha_token)
+        token_service = UserService(current_app.dependencies)
+        token = token_service.get_temp_token(sha_token, code)
 
-            if code and token and token.is_temp_valid() and token.validate_token(code):
-                session.commit()
-                data = {}
-                return ResponseAPI.get_response(data, 200)
-            else:
-                logger.warning("401 Error: Attempt with bad 2FA")
-                return ResponseAPI.get_401_response("Invalid 2FA code")
+        if token:
+            data = {}
+            return ResponseAPI.get_response(data, 200)
+        else:
+            logger.warning("401 Error: Attempt with bad 2FA")
+            return ResponseAPI.get_401_response("Invalid 2FA code")
     except Exception as e:
         logger.error(f"500 Error: {e}")
         return ResponseAPI.get_500_response()

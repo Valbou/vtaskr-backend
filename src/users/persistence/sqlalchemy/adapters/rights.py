@@ -1,13 +1,13 @@
 from sqlalchemy.orm import Session
 
-from src.libs.flask.querystring import Filter
+from src.libs.hmi.querystring import Filter
 from src.libs.sqlalchemy.default_adapter import DefaultDB
 from src.users.models import Right
-from src.users.persistence.ports import AbstractRightPort
+from src.users.persistence.ports import RightDBPort
 from src.users.persistence.sqlalchemy.querysets import RightQueryset
 
 
-class RightDB(AbstractRightPort, DefaultDB):
+class RightDB(RightDBPort, DefaultDB):
     def __init__(self) -> None:
         super().__init__()
         self.qs = RightQueryset()

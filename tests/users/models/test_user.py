@@ -6,7 +6,7 @@ from babel import Locale
 from faker import Faker
 
 from src.settings import UNUSED_ACCOUNT_DELAY
-from src.users import User
+from src.users.models import User
 
 
 class TestUser(TestCase):
@@ -20,7 +20,7 @@ class TestUser(TestCase):
             hash_password="1234",
         )
 
-    def test_user_table_fields(self):
+    def test_table_fields(self):
         self.assertEqual(User.__annotations__.get("id"), str | None)
         self.assertEqual(User.__annotations__.get("first_name"), str)
         self.assertEqual(User.__annotations__.get("last_name"), str)

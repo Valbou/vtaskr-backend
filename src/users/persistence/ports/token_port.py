@@ -1,18 +1,18 @@
 from abc import ABC, abstractmethod
 
-from src.libs.sqlalchemy.default_port import AbstractPort
-from src.users import Token
+from src.ports import AbstractDBPort
+from src.users.models import Token
 
 
-class AbstractTokenPort(AbstractPort, ABC):
+class TokenDBPort(AbstractDBPort, ABC):
     @abstractmethod
-    def get_token(self, token: str) -> Token:
+    def get_token(self, session, sha_token: str) -> Token:
         raise NotImplementedError()
 
     @abstractmethod
-    def activity_update(self, token: str) -> Token:
+    def activity_update(self, session, token: str) -> Token:
         raise NotImplementedError()
 
     @abstractmethod
-    def clean_expired(self) -> int:
+    def clean_expired(self, session) -> int:
         raise NotImplementedError()

@@ -3,7 +3,7 @@ from unittest import TestCase
 
 from faker import Faker
 
-from src.users import RoleType
+from src.users.models import RoleType
 
 
 class TestRoleType(TestCase):
@@ -15,7 +15,7 @@ class TestRoleType(TestCase):
             group_id=self.fake.word(),
         )
 
-    def test_user_table_fields(self):
+    def test_table_fields(self):
         self.assertEqual(RoleType.__annotations__.get("id"), str | None)
         self.assertEqual(RoleType.__annotations__.get("created_at"), datetime | None)
         self.assertEqual(RoleType.__annotations__.get("name"), str)

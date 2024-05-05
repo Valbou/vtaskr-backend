@@ -2,7 +2,7 @@ from typing import TypeVar
 
 from sqlalchemy import delete, not_, select, update
 
-from ..flask.querystring import Filter, Operations
+from src.libs.hmi.querystring import Filter, Operations
 
 TQueryset = TypeVar("TQueryset", bound="Queryset")
 
@@ -51,12 +51,28 @@ class Queryset:
         self._query = self._query.where(*args)
         return self
 
+    def order_by(self, **kwargs) -> TQueryset:
+        for k, v in kwargs.items():
+            if v.upper() == "ASC":
+                self._query = self._query.order_by(getattr(self.qs_class, k).asc())
+            else:
+                self._query = self._query.order_by(getattr(self.qs_class, k).desc())
+        return self
+
+    def limit(self, limit: int) -> TQueryset:
+        self._query = self._query.limit(limit)
+        return self
+
     def id(self, id: str) -> TQueryset:
         self._query = self._query.where(self.qs_class.id == id)
         return self
 
     def ids(self, ids: list[str]) -> TQueryset:
         self._query = self._query.where(self.qs_class.id.in_(ids))
+        return self
+
+    def options(self, *args, **kwargs) -> TQueryset:
+        self._query = self._query.options(*args, **kwargs)
         return self
 
     def page(self, page_number: int, per_page: int = 100) -> TQueryset:

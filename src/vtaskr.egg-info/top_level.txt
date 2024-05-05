@@ -3,6 +3,10 @@ base
 colors
 flask
 libs
+logtrail
+notifications
+ports
+settings
 static
 tasks
 users

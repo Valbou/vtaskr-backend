@@ -17,15 +17,13 @@ def login_required(logger: Logger):
                 if not sha_token:
                     return ResponseAPI.get_401_response("Invalid token")
 
-                with current_app.sql.get_session() as session:
-                    session.expire_on_commit = False
-                    auth_service = UserService(session)
-                    user = auth_service.user_from_token(sha_token)
-                    if user:
-                        g.token = sha_token
-                        g.user = user
-                    else:
-                        return ResponseAPI.get_401_response("Invalid token")
+                auth_service = UserService(services=current_app.dependencies)
+                user = auth_service.user_from_token(sha_token)
+                if user:
+                    g.token = sha_token
+                    g.user = user
+                else:
+                    return ResponseAPI.get_401_response("Invalid token")
                 return func(*args, **kwargs)
             except PermissionError as e:
                 logger.info(f"403 Error: {e}")

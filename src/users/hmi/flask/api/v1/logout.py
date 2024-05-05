@@ -42,10 +42,10 @@ def logout():
     Need a valid token
     Return a 204
     """
-    with current_app.sql.get_session() as session:
-        auth_service = UserService(session)
-        if auth_service.logout(g.token):
-            data = {}
-            return ResponseAPI.get_response(data, 204)
-        else:
-            return ResponseAPI.get_403_response("Unauthorized")
+
+    auth_service = UserService(services=current_app.dependencies)
+    if auth_service.logout(g.token):
+        data = {}
+        return ResponseAPI.get_response(data, 204)
+    else:
+        return ResponseAPI.get_403_response("Unauthorized")

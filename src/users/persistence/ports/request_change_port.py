@@ -1,13 +1,18 @@
 from abc import ABC, abstractmethod
 
-from src.libs.sqlalchemy.default_port import AbstractPort
+from src.ports import AbstractDBPort
+from src.users.models import RequestChange
 
 
-class AbstractRequestChangePort(AbstractPort, ABC):
+class RequestChangeDBPort(AbstractDBPort, ABC):
     @abstractmethod
-    def clean_history(self):
+    def update(self, session, request_change: RequestChange) -> bool:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def find_request(self, session, email: str) -> RequestChange | None:
         raise NotImplementedError
 
     @abstractmethod
-    def find_request(self):
+    def clean_history(self, session):
         raise NotImplementedError

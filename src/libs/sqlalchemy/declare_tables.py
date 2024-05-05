@@ -1,5 +1,10 @@
 # Users Module
 # Tasks Module
+from src.events.persistence.sqlalchemy.tables import events_table
+from src.notifications.persistence.sqlalchemy.tables import (
+    subscription_table,
+    template_table,
+)
 from src.tasks.persistence.sqlalchemy.tables import (
     tag_table,
     tasks_table,
@@ -27,4 +32,7 @@ LIST_TABLES = [
     roletype_table,
     right_table,
     role_table,
+    subscription_table,
+    template_table,
+    events_table,
 ]

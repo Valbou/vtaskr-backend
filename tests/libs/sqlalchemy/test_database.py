@@ -4,15 +4,19 @@ from unittest.mock import patch
 from sqlalchemy import Engine
 from sqlalchemy.orm import Session
 
-from src.libs.sqlalchemy.database import SQLService, TestSQLService
+from src.libs.sqlalchemy.database import (
+    PersistenceService,
+    SQLSession,
+    TestPersistenceService,
+)
 from tests.utils.db_utils import check_connection_query
 
 
-class TestFakeSQLService(TestCase):
+class TestFakePersistenceService(TestCase):
     def setUp(self) -> None:
         super().setUp()
-        self.sql_test = TestSQLService()
-        self.sql_prod = SQLService()
+        self.sql_test = TestPersistenceService()
+        self.sql_prod = PersistenceService()
 
     def test_db_test_not_equal_to_prod(self):
         self.assertNotEqual(
@@ -29,7 +33,10 @@ class TestFakeSQLService(TestCase):
         self.assertIsInstance(self.sql_test.get_engine(), Engine)
 
     def test_get_session(self):
-        self.assertIsInstance(self.sql_test.get_session(), Session)
+        sql_session = self.sql_test.get_session()
+        self.assertIsInstance(sql_session, SQLSession)
+        with sql_session as session:
+            self.assertIsInstance(session, Session)
 
     def test_db_connection(self):
         with Session(self.sql_test.get_engine()) as session:

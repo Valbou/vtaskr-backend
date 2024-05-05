@@ -1,9 +1,9 @@
 from datetime import timedelta
 
 from flask import current_app, g, request
-from src.libs.flask.querystring import QueryStringFilter
 from src.libs.flask.utils import ResponseAPI
 from src.libs.hmi import dto_to_dict, list_dto_to_dict, list_models_to_list_dto
+from src.libs.hmi.querystring import QueryStringFilter
 from src.libs.iam.flask.config import login_required
 from src.libs.redis import rate_limited
 from src.tasks.hmi.dto import TagMapperDTO, TaskDTO, TaskMapperDTO
@@ -70,29 +70,25 @@ openapi.register_path(f"{V1}/tasks", api_item)
 def tasks():
     """URL to current tenant tasks - Token required"""
     if request.method == "GET":
-        with current_app.sql.get_session() as session:
-            qsf = QueryStringFilter(
-                query_string=request.query_string.decode(), dto=TaskDTO
-            )
+        qsf = QueryStringFilter(query_string=request.query_string.decode(), dto=TaskDTO)
 
-            task_service = TaskService(session)
-            tasks = task_service.get_tasks(g.user.id, qsf.get_filters())
-            if tasks:
-                tasks_dto = list_models_to_list_dto(TaskMapperDTO, tasks)
-                return ResponseAPI.get_response(list_dto_to_dict(tasks_dto), 200)
-            else:
-                return ResponseAPI.get_response([], 200)
+        task_service = TaskService(current_app.dependencies)
+        tasks = task_service.get_tasks(g.user.id, qsf.get_filters())
+        if tasks:
+            tasks_dto = list_models_to_list_dto(TaskMapperDTO, tasks)
+            return ResponseAPI.get_response(list_dto_to_dict(tasks_dto), 200)
+        else:
+            return ResponseAPI.get_response([], 200)
 
     elif request.method == "POST":
         try:
             task_dto = TaskDTO(**request.get_json())
             task = TaskMapperDTO.dto_to_model(task_dto)
 
-            with current_app.sql.get_session() as session:
-                task_service = TaskService(session)
-                task_service.save_task(user_id=g.user.id, task=task)
-                task_dto = TaskMapperDTO.model_to_dto(task)
-                return ResponseAPI.get_response(dto_to_dict(task_dto), 201)
+            task_service = TaskService(current_app.dependencies)
+            task_service.save_task(user_id=g.user.id, task=task)
+            task_dto = TaskMapperDTO.model_to_dto(task)
+            return ResponseAPI.get_response(dto_to_dict(task_dto), 201)
         except Exception:
             return ResponseAPI.get_400_response()
 
@@ -218,31 +214,30 @@ openapi.register_path(f"{V1}/task/{{task_id}}", api_item)
 @rate_limited(logger=logger, hit=5, period=timedelta(seconds=1))
 def task(task_id: str):
     """URL to current tenant task - Token required"""
-    with current_app.sql.get_session() as session:
-        task_service = TaskService(session)
-        task = task_service.get_task(g.user.id, task_id)
-        if task:
-            if request.method == "GET":
-                task_dto = TaskMapperDTO.model_to_dto(task)
-                return ResponseAPI.get_response(dto_to_dict(task_dto), 200)
+    task_service = TaskService(current_app.dependencies)
+    task = task_service.get_task(g.user.id, task_id)
+    if task:
+        if request.method == "GET":
+            task_dto = TaskMapperDTO.model_to_dto(task)
+            return ResponseAPI.get_response(dto_to_dict(task_dto), 200)
 
-            elif request.method in ("PUT", "PATCH"):
-                task_dto = TaskDTO(**request.get_json())
-                task = TaskMapperDTO.dto_to_model(task_dto, task)
-                task_service.update_task(g.user.id, task)
+        elif request.method in ("PUT", "PATCH"):
+            task_dto = TaskDTO(**request.get_json())
+            task = TaskMapperDTO.dto_to_model(task_dto, task)
+            task_service.update_task(g.user.id, task)
 
-                task_dto = TaskMapperDTO.model_to_dto(task)
-                return ResponseAPI.get_response(dto_to_dict(task_dto), 200)
+            task_dto = TaskMapperDTO.model_to_dto(task)
+            return ResponseAPI.get_response(dto_to_dict(task_dto), 200)
 
-            elif request.method == "DELETE":
-                task_service.delete_task(g.user.id, task)
-                return ResponseAPI.get_response("", 204)
-
-            else:
-                return ResponseAPI.get_405_response()
+        elif request.method == "DELETE":
+            task_service.delete_task(g.user.id, task)
+            return ResponseAPI.get_response("", 204)
 
         else:
-            return ResponseAPI.get_404_response()
+            return ResponseAPI.get_405_response()
+
+    else:
+        return ResponseAPI.get_404_response()
 
 
 api_item = {
@@ -284,21 +279,20 @@ def task_tags(task_id: str):
     """Get all associated tags to a specific task"""
 
     if request.method == "GET":
-        with current_app.sql.get_session() as session:
-            task_service = TaskService(session)
-            task = task_service.get_task(g.user.id, task_id)
-            if task:
-                tag_service = TagService(session)
-                tags_dto = list_models_to_list_dto(
-                    TagMapperDTO,
-                    tag_service.get_task_tags(g.user.id, task.id, task.tenant_id),
-                )
+        task_service = TaskService(current_app.dependencies)
+        task = task_service.get_task(g.user.id, task_id)
+        if task:
+            tag_service = TagService(current_app.dependencies)
+            tags_dto = list_models_to_list_dto(
+                TagMapperDTO,
+                tag_service.get_task_tags(g.user.id, task.id, task.tenant_id),
+            )
 
-                if tags_dto:
-                    return ResponseAPI.get_response(list_dto_to_dict(tags_dto), 200)
-                return ResponseAPI.get_response([], 200)
-            else:
-                return ResponseAPI.get_404_response("Task not found")
+            if tags_dto:
+                return ResponseAPI.get_response(list_dto_to_dict(tags_dto), 200)
+            return ResponseAPI.get_response([], 200)
+        else:
+            return ResponseAPI.get_404_response("Task not found")
     else:
         return ResponseAPI.get_405_response()
 
@@ -365,15 +359,14 @@ def task_tags_set(task_id: str):
             return ResponseAPI.get_400_response()
 
     if request.method == "PUT":
-        with current_app.sql.get_session() as session:
-            task_service = TaskService(session)
-            task = task_service.get_task(g.user.id, task_id)
-            try:
-                task_service.set_task_tags(g.user.id, task, tag_ids)
-            except Exception as e:
-                logger.warning(f"400 Error: {e}")
-                return ResponseAPI.get_400_response()
-            return ResponseAPI.get_response("Created", 201)
+        task_service = TaskService(current_app.dependencies)
+        task = task_service.get_task(g.user.id, task_id)
+        try:
+            task_service.set_task_tags(g.user.id, task, tag_ids)
+        except Exception as e:
+            logger.warning(f"400 Error: {e}")
+            return ResponseAPI.get_400_response()
+        return ResponseAPI.get_response("Created", 201)
 
     else:
         return ResponseAPI.get_405_response()
@@ -412,12 +405,11 @@ def task_tags_clean(task_id: str):
     """Remove all associated tags to a specific task"""
 
     if request.method == "DELETE":
-        with current_app.sql.get_session() as session:
-            task_service = TaskService(session)
-            task = task_service.get_task(g.user.id, task_id)
-            task_service.clean_task_tags(g.user.id, task)
+        task_service = TaskService(current_app.dependencies)
+        task = task_service.get_task(g.user.id, task_id)
+        task_service.clean_task_tags(g.user.id, task)
 
-            return ResponseAPI.get_response("", 204)
+        return ResponseAPI.get_response("", 204)
 
     else:
         return ResponseAPI.get_405_response()

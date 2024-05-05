@@ -3,7 +3,7 @@ from unittest import TestCase
 
 from sqlalchemy import Column, Integer, String, Table
 
-from src.libs.flask.querystring import QueryStringFilter
+from src.libs.hmi.querystring import QueryStringFilter
 from src.libs.sqlalchemy.base import mapper_registry
 from src.libs.sqlalchemy.queryset import Queryset
 

@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 from sqlalchemy import engine_from_config, pool
 
 from alembic import context
-from src.libs.sqlalchemy.database import SQLService
+from src.libs.sqlalchemy.database import PersistenceService
 
 load_dotenv()
 
@@ -12,10 +12,10 @@ load_dotenv()
 # access to the values within the .ini file in use.
 config = context.config
 
-sql_service = SQLService()
+persistence_service = PersistenceService()
 
 # Avoid interpolation error with % char in password if it appear
-database_url = sql_service.get_database_url().replace("%", "%%")
+database_url = persistence_service.get_database_url().replace("%", "%%")
 config.set_main_option("sqlalchemy.url", database_url)
 
 # Interpret the config file for Python logging.
@@ -27,7 +27,7 @@ if config.config_file_name is not None:
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-mapper_registry = sql_service.get_registry()
+mapper_registry = persistence_service.get_registry()
 target_metadata = mapper_registry.metadata
 
 # other values from the config, defined by the needs of env.py,

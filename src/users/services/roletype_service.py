@@ -1,100 +1,103 @@
-from sqlalchemy.orm import Session
-
-from src.libs.flask.querystring import Filter
-from src.libs.iam.constants import Permissions, Resources
+from src.libs.dependencies import DependencyInjector
+from src.libs.hmi.querystring import Filter
+from src.libs.iam.constants import Permissions
 from src.users.models import RoleType
-from src.users.persistence import RoleTypeDB
-from src.users.services.permission_service import PermissionControl
+from src.users.persistence import RoleTypeDBPort
+from src.users.settings import APP_NAME
 
 
 class RoleTypeService:
-    def __init__(self, session: Session) -> None:
-        self.session: Session = session
-        self.roletype_db = RoleTypeDB()
-        self.control = PermissionControl(self.session)
-
-    def get_default_admin(self) -> RoleType:
-        """Looking for a default roletype named: Admin"""
-
-        admin_roletype = RoleType(name="Admin", group_id=None)
-        roletype, created = self.roletype_db.get_or_create(
-            session=self.session, roletype=admin_roletype
+    def __init__(self, services: DependencyInjector) -> None:
+        self.services = services
+        self.roletype_db: RoleTypeDBPort = self.services.persistence.get_repository(
+            APP_NAME, "RoleType"
         )
-
-        if created:
-            from .right_service import RightService
-
-            right_service = RightService(self.session)
-            right_service.create_admin_rights(roletype=roletype)
-
-        return roletype
 
     def get_default_observer(self) -> RoleType:
         """Looking for a default roletype named: Observer"""
 
-        observer_roletype = RoleType(name="Observer", group_id=None)
-        roletype, created = self.roletype_db.get_or_create(
-            session=self.session, roletype=observer_roletype
-        )
+        with self.services.persistence.get_session() as session:
+            observer_roletype = RoleType(name="Observer", group_id=None)
+            roletype, created = self.roletype_db.get_or_create(
+                session=session, roletype=observer_roletype
+            )
+            session.commit()
 
-        if created:
-            from .right_service import RightService
+            if created:
+                from .right_service import RightService
 
-            right_service = RightService(self.session)
-            right_service.create_observer_rights(roletype=roletype)
+                right_service = RightService(self.services)
+                right_service.create_observer_rights(roletype=roletype)
 
-        return roletype
+            return roletype
 
     def create_custom_roletype(self, name: str, group_id: str) -> RoleType:
         roletype = RoleType(name=name, group_id=group_id)
-        roletype, _created = self.roletype_db.get_or_create(
-            session=self.session, roletype=roletype
-        )
+
+        with self.services.persistence.get_session() as session:
+            roletype, _created = self.roletype_db.get_or_create(
+                session=session, roletype=roletype
+            )
+            session.commit()
 
         return roletype
 
     def get_roletype(self, user_id: str, roletype_id: str) -> RoleType | None:
         """Return the roletype expected if user has read permission"""
 
-        group_ids = self.control.all_tenants_with_access(
-            Permissions.READ, user_id=user_id, resource=Resources.ROLETYPE
-        )
+        with self.services.persistence.get_session() as session:
+            group_ids = self.services.identity.all_tenants_with_access(
+                session, Permissions.READ, user_id=user_id, resource="RoleType"
+            )
 
-        return self.roletype_db.get_a_user_roletype(
-            self.session, roletype_id, group_ids=group_ids
-        )
+            return self.roletype_db.get_a_user_roletype(
+                session, roletype_id, group_ids=group_ids
+            )
 
     def get_all_roletypes(
         self, user_id: str, qs_filters: list[Filter] | None = None
     ) -> list[RoleType]:
         """Return a list of all user's available roletypes"""
 
-        group_ids = self.control.all_tenants_with_access(
-            Permissions.READ, user_id=user_id, resource=Resources.ROLETYPE
-        )
+        with self.services.persistence.get_session() as session:
+            group_ids = self.services.identity.all_tenants_with_access(
+                session, Permissions.READ, user_id=user_id, resource="RoleType"
+            )
 
-        return self.roletype_db.get_all_user_roletypes(
-            self.session, group_ids=group_ids, filters=qs_filters
-        )
+            return self.roletype_db.get_all_user_roletypes(
+                session, group_ids=group_ids, filters=qs_filters
+            )
 
     def update_roletype(self, user_id: str, roletype: RoleType) -> bool:
         """Update a roletype if update permission was given"""
 
-        # A user can't change global roletypes
-        if self.control.can(
-            Permissions.UPDATE, user_id, roletype.group_id, resource=Resources.ROLETYPE
-        ):
-            self.roletype_db.save(self.session, roletype)
-            return True
-        return False
+        with self.services.persistence.get_session() as session:
+            # A user can't change global roletypes
+            if self.services.identity.can(
+                session,
+                Permissions.UPDATE,
+                user_id,
+                roletype.group_id,
+                resource="RoleType",
+            ):
+                self.roletype_db.save(session, roletype)
+                session.commit()
+                return True
+            return False
 
     def delete_roletype(self, user_id: str, roletype: RoleType) -> bool:
         """Delete a roletype if delete permission was given"""
 
-        # A user can't delete global roletypes
-        if roletype.group_id and self.control.can(
-            Permissions.DELETE, user_id, roletype.group_id, resource=Resources.ROLETYPE
-        ):
-            self.roletype_db.delete(self.session, roletype)
-            return True
-        return False
+        with self.services.persistence.get_session() as session:
+            # A user can't delete global roletypes
+            if roletype.group_id and self.services.identity.can(
+                session,
+                Permissions.DELETE,
+                user_id,
+                roletype.group_id,
+                resource="RoleType",
+            ):
+                self.roletype_db.delete(session, roletype)
+                session.commit()
+                return True
+            return False

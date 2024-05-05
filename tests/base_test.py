@@ -9,7 +9,7 @@ from src.users.hmi.dto import UserDTO
 from src.users.services import UserService
 from tests.utils.db_utils import text_query_column_exists, text_query_table_exists
 
-from . import APP
+from . import APP, DUMMY_APP
 
 
 class FlaskTemplateCapture:
@@ -31,7 +31,27 @@ class FlaskTemplateCapture:
         return self.recorded_templates
 
 
-class BaseTestCase(TestCase):
+class MixinTestCase:
+    def generate_email(self):
+        return self.fake.bothify("???###?#-").lower() + self.fake.email(
+            domain="valbou.fr"
+        )
+
+    def generate_password(self):
+        return self.fake.password(
+            length=10, special_chars=True, digits=True, upper_case=True, lower_case=True
+        )
+
+
+class DummyBaseTestCase(MixinTestCase, TestCase):
+    app: Flask = DUMMY_APP
+
+    def setUp(self) -> None:
+        super().setUp()
+        self.fake = Faker()
+
+
+class BaseTestCase(MixinTestCase, TestCase):
     app: Flask = APP
 
     def setUp(self) -> None:
@@ -47,12 +67,12 @@ class BaseTestCase(TestCase):
     def assertTableExists(self, table_name: str):
         params = {"table": table_name}
         stmt = text_query_table_exists()
-        with self.app.sql.get_session() as session:
+        with self.app.dependencies.persistence.get_session() as session:
             result = session.execute(stmt, params=params).scalar_one_or_none()
             self.assertTrue(result, f"Table {table_name} doesn't exists")
 
     def assertColumnsExists(self, table_name: str, columns_name: list[str]):
-        with self.app.sql.get_session() as session:
+        with self.app.dependencies.persistence.get_session() as session:
             for column_name in columns_name:
                 params = {
                     "table": table_name,
@@ -64,14 +84,9 @@ class BaseTestCase(TestCase):
                     result, f"Column {column_name} doesn't exists in {table_name} Table"
                 )
 
-    def generate_email(self):
-        return self.fake.bothify("???###?#-").lower() + self.fake.email(
-            domain="valbou.fr"
-        )
-
     def create_user(self):
         """Create a default test user and his group, role etc..."""
-        self.password = self.fake.password() + "Aa1#"
+        self.password = self.generate_password()
 
         self.user_dto = UserDTO(
             first_name=self.fake.first_name(),
@@ -81,29 +96,28 @@ class BaseTestCase(TestCase):
             timezone=TIMEZONE,
         )
 
-        with self.app.sql.get_session() as session:
-            session.expire_on_commit = False
-
-            user_service = UserService(session)
-            self.user, self.group = user_service.register(
-                self.user_dto, password=self.password
-            )
+        user_service = UserService(services=self.app.dependencies)
+        self.user, self.group = user_service.register(
+            self.user_dto, password=self.password
+        )
 
     def get_json_headers(self):
         return {"Content-Type": "application/json"}
 
     def get_token_headers(self, valid: bool = True) -> dict:
         self.create_user()
-        with self.app.sql.get_session() as session:
-            session.expire_on_commit = False
-            auth_service = UserService(session)
-            self.token, _ = auth_service.authenticate(
-                email=self.user.email, password=self.password
+
+        auth_service = UserService(services=self.app.dependencies)
+        self.token, _ = auth_service.authenticate(
+            email=self.user.email, password=self.password
+        )
+
+        if valid:
+            auth_service.get_temp_token(
+                sha_token=self.token.sha_token, code=self.token.temp_code
             )
-            if valid:
-                self.token.validate_token(self.token.temp_code)
-            session.commit()
-            sha_token = self.token.sha_token
+
+        sha_token = self.token.sha_token
         headers = {
             "Content-Type": "application/json",
             "Authorization": f"Bearer {sha_token}",

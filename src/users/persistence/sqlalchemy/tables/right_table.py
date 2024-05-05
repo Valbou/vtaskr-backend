@@ -5,7 +5,6 @@ from sqlalchemy import (
     Column,
     DateTime,
     Dialect,
-    Enum,
     ForeignKey,
     Index,
     Integer,
@@ -16,7 +15,7 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import relationship
 
-from src.libs.iam.constants import Permissions, Resources
+from src.libs.iam.constants import Permissions
 from src.libs.sqlalchemy.base import mapper_registry
 from src.users.models.right import Right
 
@@ -47,7 +46,7 @@ right_table = Table(
         ForeignKey("roletypes.id", ondelete="CASCADE", name="fk_rights_roletype_id"),
         nullable=False,
     ),
-    Column("resource", Enum(Resources), nullable=False),
+    Column("resource", String(80), nullable=False),
     Column("permissions", PermissionsType, nullable=False),
     UniqueConstraint("roletype_id", "resource", name="right_roletype_resource"),
     Index("right_roletype_resource_index", "roletype_id", "resource"),

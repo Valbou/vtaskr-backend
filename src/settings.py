@@ -2,9 +2,9 @@ import os
 
 from src.libs.security.utils import file_to_base64
 
-APP_NAME = "vtaskr"
+APP_NAME = "vTaskr"
 DESCRIPTION = "vTaskr is an open-source task manager"
-VERSION = "1.1.0"
+VERSION = "0.1.0"
 DOMAIN = "https://api.vtaskr.com"
 
 # Validators config
@@ -19,14 +19,13 @@ TOKEN_TEMP_VALIDITY = 60 * 3  # 3 minutes
 REQUEST_VALIDITY = 60 * 5
 REQUEST_DAYS_HISTORY = 90
 
-LINK_TO_CHANGE_EMAIL = os.getenv("LINK_TO_CHANGE_EMAIL", "")
-LINK_TO_CHANGE_PASSWORD = os.getenv("LINK_TO_CHANGE_PASSWORD", "")
-
 # i18n/l10n
 AVAILABLE_LANGUAGES = {
     "fr": "Français",
     "en": "English",
 }
+
+INSTALLED_APPS = ["libs", "base", "users", "events", "notifications", "tasks"]
 
 LOCALE = os.getenv("LOCALE", "en_GB")
 TIMEZONE = os.getenv("TIMEZONE", "Europe/London")
@@ -35,3 +34,5 @@ TIMEZONE = os.getenv("TIMEZONE", "Europe/London")
 EMAIL_LOGO = f"""data:image/svg+xml;base64,{
     file_to_base64("src/static/vtaskr-logo-light.svg")
 }"""
+
+TELEGRAM_BOT = os.getenv("TELEGRAM_BOT")

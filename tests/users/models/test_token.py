@@ -6,7 +6,7 @@ from faker import Faker
 
 from src.libs.security.utils import get_id
 from src.settings import TOKEN_TEMP_VALIDITY, TOKEN_VALIDITY
-from src.users import Token
+from src.users.models import Token
 
 
 class TestToken(TestCase):
@@ -17,7 +17,7 @@ class TestToken(TestCase):
     def create_token(self, temp: bool = True):
         return Token(user_id=get_id(), temp=temp)
 
-    def test_token_table_fields(self):
+    def test_table_fields(self):
         self.assertEqual(Token.__annotations__.get("id"), str | None)
         self.assertEqual(Token.__annotations__.get("created_at"), datetime | None)
         self.assertEqual(Token.__annotations__.get("last_activity_at"), datetime | None)

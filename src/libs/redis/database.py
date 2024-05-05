@@ -1,9 +1,11 @@
-import os
-
 from redis import Redis, from_url
 
+from src.ports import CachePort
 
-class NoSQLSession:
+from .settings import CACHE_HOST, CACHE_NAME, CACHE_PORT, CACHE_TEST, CACHE_TYPE
+
+
+class CacheSession:
     def __init__(self, redis: Redis) -> None:
         self.redis = redis
 
@@ -15,27 +17,17 @@ class NoSQLSession:
         self.pipe.execute()
 
 
-class NoSQLService:
+class CacheService(CachePort):
     def get_database_url(self) -> str:
-        CACHE_TYPE = os.getenv("CACHE_TYPE")
-        CACHE_HOST = os.getenv("CACHE_HOST")
-        CACHE_PORT = os.getenv("CACHE_PORT")
-        CACHE_NAME = os.getenv("CACHE_NAME")
-
         return f"{CACHE_TYPE}://{CACHE_HOST}:{CACHE_PORT}/{CACHE_NAME}"
 
     def get_engine(self) -> Redis:
         return from_url(self.get_database_url())
 
-    def get_session(self) -> NoSQLSession:
-        return NoSQLSession(self.get_engine())
+    def get_session(self) -> CacheSession:
+        return CacheSession(self.get_engine())
 
 
-class TestNoSQLService(NoSQLService):
+class TestCacheService(CacheService):
     def get_database_url(self) -> str:
-        CACHE_TYPE = os.getenv("CACHE_TYPE")
-        CACHE_HOST = os.getenv("CACHE_HOST")
-        CACHE_PORT = os.getenv("CACHE_PORT")
-        CACHE_NAME = os.getenv("CACHE_TEST")
-
-        return f"{CACHE_TYPE}://{CACHE_HOST}:{CACHE_PORT}/{CACHE_NAME}"
+        return f"{CACHE_TYPE}://{CACHE_HOST}:{CACHE_PORT}/{CACHE_TEST}"

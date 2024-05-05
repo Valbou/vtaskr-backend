@@ -3,7 +3,6 @@ from datetime import timedelta
 from flask import current_app, request
 from src.libs.flask.utils import ResponseAPI
 from src.libs.redis import rate_limited
-from src.users.hmi.flask.emails import LoginEmail
 from src.users.services import UserService
 
 from .. import V1, logger, openapi, users_bp
@@ -94,26 +93,15 @@ def login():
         return ResponseAPI.get_400_response()
 
     try:
-        with current_app.sql.get_session() as session:
-            auth_service = UserService(session)
-            token, user = auth_service.authenticate(email, password)
+        auth_service = UserService(services=current_app.dependencies)
+        token, user = auth_service.authenticate(email, password)
 
-            if token is not None:
-                with current_app.trans.get_translation_session(
-                    "users", user.locale
-                ) as trans:
-                    login_email = LoginEmail(
-                        trans, [user.email], user.first_name, token.temp_code
-                    )
-
-                current_app.notification.add_message(login_email)
-                current_app.notification.notify_all()
-
-                data = {"token": token.sha_token}
-                return ResponseAPI.get_response(data, 201)
-            else:
-                logger.warning("401 Error: Request token with invalid credentials")
-                return ResponseAPI.get_401_response("Invalid credentials")
+        if token is not None:
+            data = {"token": token.sha_token}
+            return ResponseAPI.get_response(data, 201)
+        else:
+            logger.warning("401 Error: Request token with invalid credentials")
+            return ResponseAPI.get_401_response("Invalid credentials")
     except Exception as e:
         logger.error(f"500 Error: {e}")
         return ResponseAPI.get_500_response()

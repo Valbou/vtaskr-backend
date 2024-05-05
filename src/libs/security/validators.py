@@ -1,14 +1,22 @@
+import re
 from gettext import gettext as _
 from string import ascii_lowercase, ascii_uppercase, digits, punctuation
-
-from email_validator import validate_email
 
 from src.settings import PASSWORD_MIN_LENGTH
 
 
-def get_valid_email(email: str) -> str | None:
-    validation = validate_email(email, check_deliverability=True)
-    return validation.email
+class EmailSyntaxError(Exception):
+    pass
+
+
+def get_valid_email(email: str) -> str:
+    # Regex from: https://emailregex.com/
+    email_regex = r"^(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])"  # noqa
+    match_email = re.fullmatch(email_regex, email)
+    if match_email:
+        return match_email.group()
+    else:
+        raise EmailSyntaxError()
 
 
 class PasswordComplexityError(Exception):

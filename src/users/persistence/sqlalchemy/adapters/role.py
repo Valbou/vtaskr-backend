@@ -1,23 +1,20 @@
 from sqlalchemy.orm import Session
 
-from src.libs.flask.querystring import Filter
+from src.libs.hmi.querystring import Filter
 from src.libs.sqlalchemy.default_adapter import DefaultDB
 from src.users.models import Role
-from src.users.persistence.ports import AbstractRolePort
+from src.users.persistence.ports import RoleDBPort
 from src.users.persistence.sqlalchemy.querysets import RoleQueryset
 
 
-class RoleDB(AbstractRolePort, DefaultDB):
+class RoleDB(RoleDBPort, DefaultDB):
     def __init__(self) -> None:
         super().__init__()
         self.qs = RoleQueryset()
 
-    def update(self, session: Session, role: Role, autocommit: bool = True) -> bool:
+    def update(self, session: Session, role: Role) -> bool:
         self.qs.update().id(role.id).values(roletype_id=role.roletype_id)
         session.execute(self.qs.statement)
-
-        if autocommit:
-            session.commit()
 
     def get_a_user_role(
         self, session: Session, user_id: str, role_id: str, group_ids: list[str]

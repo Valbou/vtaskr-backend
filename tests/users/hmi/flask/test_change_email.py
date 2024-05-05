@@ -1,5 +1,6 @@
-from src.users import RequestChange, RequestType, User
-from src.users.persistence import RequestChangeDB, UserDB
+from src.users.models import RequestChange, RequestType, User
+from src.users.persistence import RequestChangeDBPort, UserDBPort
+from src.users.settings import APP_NAME
 from tests.base_test import BaseTestCase
 
 URL_API = "/api/v1"
@@ -8,7 +9,9 @@ URL_API = "/api/v1"
 class TestUserV1ChangeEmail(BaseTestCase):
     def setUp(self) -> None:
         super().setUp()
-        self.request_change_db = RequestChangeDB()
+        self.request_change_db: RequestChangeDBPort = (
+            self.app.dependencies.persistence.get_repository(APP_NAME, "RequestChange")
+        )
         self.new_email = self.generate_email()
         self.headers = self.get_json_headers()
 
@@ -19,9 +22,10 @@ class TestUserV1ChangeEmail(BaseTestCase):
             f"{URL_API}/users/me/change-email", json=user_data, headers=headers
         )
         self.assertEqual(response.status_code, 200)
-        with self.app.sql.get_session() as session:
+
+        with self.app.dependencies.persistence.get_session() as session:
             request_change = self.request_change_db.find_request(
-                session, self.user.email
+                session, self.user.email, RequestType.EMAIL
             )
             self.assertIsInstance(request_change, RequestChange)
             self.assertEqual(request_change.request_type, RequestType.EMAIL)
@@ -70,8 +74,12 @@ class TestUserV1NewEmail(BaseTestCase):
     def setUp(self) -> None:
         super().setUp()
         self.headers = self.get_json_headers()
-        self.request_change_db = RequestChangeDB()
-        self.user_db = UserDB()
+        self.request_change_db: RequestChangeDBPort = (
+            self.app.dependencies.persistence.get_repository(APP_NAME, "RequestChange")
+        )
+        self.user_db: UserDBPort = self.app.dependencies.persistence.get_repository(
+            APP_NAME, "User"
+        )
         self.new_email = self.generate_email()
 
     def _create_request_change_email(self) -> RequestChange:
@@ -81,8 +89,10 @@ class TestUserV1NewEmail(BaseTestCase):
         self.client.post(
             f"{URL_API}/users/me/change-email", json=user_data, headers=headers
         )
-        with self.app.sql.get_session() as session:
-            return self.request_change_db.find_request(session, self.user.email)
+        with self.app.dependencies.persistence.get_session() as session:
+            return self.request_change_db.find_request(
+                session, self.user.email, RequestType.EMAIL
+            )
 
     def test_set_new_email(self):
         request_change = self._create_request_change_email()
@@ -99,8 +109,8 @@ class TestUserV1NewEmail(BaseTestCase):
             f"{URL_API}/new-email", json=user_data, headers=self.headers
         )
         self.assertEqual(response.status_code, 200)
-        with self.app.sql.get_session() as session:
-            user = self.user_db.find_login(session, self.new_email)
+        with self.app.dependencies.persistence.get_session() as session:
+            user = self.user_db.find_user_by_email(session, self.new_email)
             self.assertIsInstance(user, User)
             self.assertEqual(user.email, self.new_email)
 

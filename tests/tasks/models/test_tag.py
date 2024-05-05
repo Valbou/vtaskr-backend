@@ -16,7 +16,7 @@ class TestTag(TestCase):
             title=self.fake.text(max_nb_chars=50),
         )
 
-    def test_tag_table_fields(self):
+    def test_table_fields(self):
         self.assertEqual(Tag.__annotations__.get("id"), str | None)
         self.assertEqual(Tag.__annotations__.get("title"), str)
         self.assertEqual(Tag.__annotations__.get("tenant_id"), str)

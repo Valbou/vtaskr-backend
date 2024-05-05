@@ -1,18 +1,30 @@
 from abc import ABC, abstractmethod
 
-from src.libs.sqlalchemy.default_port import AbstractPort
-from src.users import User
+from src.libs.iam.constants import Permissions
+from src.ports import AbstractDBPort
+from src.users.models import User
 
 
-class AbstractUserPort(AbstractPort, ABC):
+class UserDBPort(AbstractDBPort, ABC):
     @abstractmethod
-    def find_login(self, email: str) -> User:
+    def update(self, session, user: User) -> bool:
         raise NotImplementedError()
 
     @abstractmethod
-    def clean_unused(self) -> User:
+    def find_user_by_email(self, session, email: str) -> User:
         raise NotImplementedError()
 
     @abstractmethod
-    def update(self, user: User) -> bool:
+    def clean_unused(self, session) -> User:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def has_permissions(
+        self,
+        session,
+        id: str,
+        resource: str,
+        permission: Permissions,
+        group_id: str,
+    ) -> bool:
         raise NotImplementedError()

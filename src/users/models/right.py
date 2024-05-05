@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
-from src.libs.iam.constants import Permissions, Resources
+from src.libs.iam.constants import Permissions
 from src.libs.security.utils import get_id
 
 
@@ -11,7 +11,7 @@ class Right:
     """EAV like model"""
 
     roletype_id: str
-    resource: Resources
+    resource: str
     permissions: list[Permissions] | None = None
     id: str | None = None
     created_at: datetime | None = None

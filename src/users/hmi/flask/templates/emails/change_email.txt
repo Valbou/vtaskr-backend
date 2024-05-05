@@ -1,0 +1,8 @@
+{{ title }}
+{{ paragraph_1 }}
+{{ paragraph_2 }}
+{{ paragraph_3 }} {% if code %}{{ code }}{% endif %}
+{{ paragraph_4 }}
+{% if call_to_action_link %}
+    {{ call_to_action_link }}
+{% endif %}
