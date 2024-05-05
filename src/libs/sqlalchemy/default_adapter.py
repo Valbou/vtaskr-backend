@@ -39,7 +39,7 @@ class DefaultDB(AbstractDBPort):
                 session.flush()
 
     def delete(self, session: Session, obj: object) -> None:
-        session.delete(obj)
+        session.delete(session, obj)
 
     def exists(self, session: Session, id: str) -> bool:
         self.qs.id(id)

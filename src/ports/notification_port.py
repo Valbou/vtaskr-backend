@@ -26,7 +26,7 @@ class AbstractMessage(ABC):
 
 class AbstractSender(ABC):
     handle_message_types: list[MessageType] = []
-    messages = []
+    messages: list[AbstractMessage] = []
     compatible_message_classes = []
 
     def __init__(self) -> None:

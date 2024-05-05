@@ -2,10 +2,9 @@ from copy import copy
 from typing import Callable
 
 from src.events.models import Event
-from src.events.persistence import EventDBPort
-from src.events.settings import APP_NAME
-from src.libs.dependencies import DependencyInjector
 from src.ports import EventBusPort, ObserverPort
+
+from .event_service import EventService
 
 
 class EventBusService(EventBusPort):
@@ -18,10 +17,7 @@ class EventBusService(EventBusPort):
 
     def set_context(self, **ctx) -> None:
         self.app = ctx.pop("app")
-        self.services: DependencyInjector = self.app.dependencies
-        self.event_db: EventDBPort = self.services.persistence.get_repository(
-            APP_NAME, "Event"
-        )
+        self.event_service = EventService(services=self.app.dependencies)
 
         # Auto Subscribe for Observer classes
         observers = ObserverPort.__subclasses__()
@@ -57,13 +53,12 @@ class EventBusService(EventBusPort):
         self.events.clear()
 
         for event_name, events in local_events.items():
-            with self.services.persistence.get_session() as session:
-                self.event_db.bulk_save(session, objs=events)
+            self.event_service.bulk_add(events)
 
-                for event in events:
-                    observers = self.index.get(event_name, [])
-                    for func in observers:
-                        func(self.app, event_name, event.data)
+            for event in events:
+                observers = self.index.get(event_name, [])
+                for func in observers:
+                    func(self.app, event_name, event.data)
 
         if len(self.events):
             self.execute()

@@ -29,12 +29,15 @@ class EventService:
     ) -> Event:
         event = Event(
             tenant_id=tenant_id,
-            event_name=event_name,
+            name=event_name,
             data=data,
         )
 
         with self.services.persistence.get_session() as session:
             self.event_db.save(session, obj=event)
-            session.commit()
 
         return event
+
+    def bulk_add(self, events: list[Event]) -> None:
+        with self.services.persistence.get_session() as session:
+            self.event_db.bulk_save(session, objs=events)

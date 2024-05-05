@@ -21,6 +21,9 @@ class NotificationService(NotificationPort):
         self.template_db: TemplateDBPort = self.services.persistence.get_repository(
             APP_NAME, "Subscription"
         )
+        self.contact_db: TemplateDBPort = self.services.persistence.get_repository(
+            APP_NAME, "Contact"
+        )
 
     def build_message(self, context: dict) -> AbstractMessage:
         message_type = context.pop("message_type")
@@ -81,18 +84,21 @@ class NotificationService(NotificationPort):
             self.notify_all()
 
     def subscribe(
-        self, event_name: str, event_type: MessageType, tenant_id: str, to: str
-    ):
-        subscription = Subscription(
-            event_type=event_type,
-            event_name=event_name,
-            tenant_id=tenant_id,
-            to=to,
-        )
-
+        self, event_name: str, event_type: MessageType, tenant_id: str
+    ) -> Subscription:
         with self.app.dependencies.persistence.get_session() as session:
+            contact = self.contact_db.load(session, id=tenant_id)
+
+            subscription = Subscription(
+                event_type=event_type,
+                event_name=event_name,
+                contact_id=tenant_id,
+                contact=contact,
+            )
+
             self.subscription_db.save(session, subscription)
-            session.commit()
+
+        return subscription
 
 
 class TestNotificationService(NotificationService):

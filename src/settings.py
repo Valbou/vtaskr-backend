@@ -34,3 +34,5 @@ TIMEZONE = os.getenv("TIMEZONE", "Europe/London")
 EMAIL_LOGO = f"""data:image/svg+xml;base64,{
     file_to_base64("src/static/vtaskr-logo-light.svg")
 }"""
+
+TELEGRAM_BOT = os.getenv("TELEGRAM_BOT")

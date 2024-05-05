@@ -111,6 +111,9 @@ class MultiSMTPEmail:
     def add_email(self, email: SMTPEmail):
         self.emails.append(email)
 
+    def add_emails(self, emails: list[SMTPEmail]):
+        self.emails.extend(emails)
+
     def send_all(
         self,
         host: str | None = None,

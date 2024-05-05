@@ -9,8 +9,8 @@ You can follow the [Roadmap](https://github.com/Valbou/vtaskr-backend/blob/maste
 
 ![License LGPLv3](https://img.shields.io/badge/license-LGPLv3-blue "License LGPLv3")
 ![Python v3.10](https://img.shields.io/badge/python-v3.10-blue "Python v3.10")
-![Tests 293 passed](https://img.shields.io/badge/tests-293%20passed-green "Tests 293 passed")
-![Coverage 91%](https://img.shields.io/badge/coverage-91%25-green "Coverage 91%")
+![Tests 337 passed](https://img.shields.io/badge/tests-337%20passed-green "Tests 337 passed")
+![Coverage 92%](https://img.shields.io/badge/coverage-92%25-green "Coverage 92%")
 [![CodeFactor](https://www.codefactor.io/repository/github/valbou/vtaskr-backend/badge)](https://www.codefactor.io/repository/github/valbou/vtaskr-backend)
 ![API](https://img.shields.io/website?url=https%3A%2F%2Fapi.vtaskr.com)
 

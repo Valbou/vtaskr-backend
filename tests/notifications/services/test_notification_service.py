@@ -1,4 +1,6 @@
-from src.notifications.models import BaseEmailContent
+from unittest.mock import MagicMock
+
+from src.notifications.models import BaseEmailContent, Contact
 from src.notifications.services import NotificationService
 from src.ports import MessageType
 from tests.base_test import BaseTestCase
@@ -32,3 +34,26 @@ class TestNotificationsService(BaseTestCase):
         self.assertIsInstance(message, BaseEmailContent)
         self.assertEqual(len(self.notification_service.messages), 1)
         self.assertEqual(message.subject, "Subject Test p1")
+
+    def test_subscribe(self):
+        telegram_chat_id = "a1b2c3d4"
+        tenant_id = "abc132"
+        contact = Contact(
+            id=tenant_id,
+            telegram=telegram_chat_id,
+        )
+        self.notification_service.contact_db.load = MagicMock(return_value=contact)
+        self.notification_service.subscription_db = MagicMock()
+
+        subscription = self.notification_service.subscribe(
+            event_name="test:subscribe",
+            event_type=MessageType.TELEGRAM,
+            tenant_id=tenant_id,
+        )
+
+        self.notification_service.contact_db.load.assert_called_once()
+        self.notification_service.subscription_db.save.assert_called_once()
+        self.assertEqual(subscription.contact_id, tenant_id)
+        self.assertEqual(subscription.contact.telegram, telegram_chat_id)
+        self.assertEqual(subscription.event_type, MessageType.TELEGRAM)
+        self.assertEqual(subscription.event_name, "test:subscribe")

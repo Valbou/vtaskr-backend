@@ -15,6 +15,17 @@ class TestUserService(DummyBaseTestCase):
         super().setUp()
         self.us = UserService(services=self.app.dependencies)
 
+        self.us.user_db.reset_mock()
+        self.us.group_db.reset_mock()
+        self.us.roletype_db.reset_mock()
+        self.us.role_db.reset_mock()
+        self.us.right_db.reset_mock()
+        self.us.request_change_db.reset_mock()
+        self.us.token_db.reset_mock()
+
+        self.us.services.notification.notify_all_calls.clear()
+        self.us.services.notification.messages.clear()
+
     def test_create_admin_rights(self):
         self.us.right_db = MagicMock()
         num_results = self.us._create_admin_rights(roletype_id="132abc")
@@ -103,8 +114,6 @@ class TestUserService(DummyBaseTestCase):
         )
         password = self.generate_password()
 
-        self.us.services.notification.notify_all_calls.clear()
-        self.us.services.notification.messages.clear()
         self.us.user_db.find_user_by_email.return_value = False
         self.us.roletype_db.get_or_create.return_value = (MagicMock(), MagicMock())
         self.us.event.send_register_event = MagicMock()
@@ -155,8 +164,6 @@ class TestUserService(DummyBaseTestCase):
         )
         user.set_password(password)
         self.us.user_db.find_user_by_email.return_value = user
-        self.us.services.notification.notify_all_calls.clear()
-        self.us.services.notification.messages.clear()
 
         token, user = self.us.authenticate(email=email, password=password)
 
@@ -280,8 +287,6 @@ class TestUserService(DummyBaseTestCase):
             timezone=TIMEZONE,
         )
 
-        self.us.services.notification.notify_all_calls.clear()
-        self.us.services.notification.messages.clear()
         self.us._request_change = MagicMock(
             return_value=RequestChange(
                 request_type=RequestType.PASSWORD,
@@ -306,8 +311,6 @@ class TestUserService(DummyBaseTestCase):
             timezone=TIMEZONE,
         )
 
-        self.us.services.notification.notify_all_calls.clear()
-        self.us.services.notification.messages.clear()
         self.us._request_change = MagicMock(
             return_value=RequestChange(
                 request_type=RequestType.EMAIL,
@@ -333,8 +336,6 @@ class TestUserService(DummyBaseTestCase):
             timezone=TIMEZONE,
         )
 
-        self.us.services.notification.notify_all_calls.clear()
-        self.us.services.notification.messages.clear()
         self.us._request_change = MagicMock(
             return_value=RequestChange(
                 request_type=RequestType.EMAIL,
@@ -479,8 +480,6 @@ class TestUserService(DummyBaseTestCase):
             locale=LOCALE,
             timezone=TIMEZONE,
         )
-        self.us.services.notification.notify_all_calls.clear()
-        self.us.services.notification.messages.clear()
         self.us.services.identity.all_tenants_with_access = MagicMock(
             return_value=["123", "456"]
         )
@@ -499,8 +498,6 @@ class TestUserService(DummyBaseTestCase):
             locale=LOCALE,
             timezone=TIMEZONE,
         )
-        self.us.services.notification.notify_all_calls.clear()
-        self.us.services.notification.messages.clear()
         self.us.services.identity.all_tenants_with_access = MagicMock(
             return_value=["123"]
         )
