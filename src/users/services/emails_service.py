@@ -25,7 +25,7 @@ class EmailService:
                 "message_type": MessageType.EMAIL,
                 "sender": DEFAULT_SENDER,
                 "template": "emails/register",
-                "to": user.email,
+                "email": user.email,
                 "subject": _("{APP_NAME} - Registration Success {first_name}").format(
                     first_name=user.first_name, APP_NAME=APP_NAME
                 ),
@@ -55,7 +55,7 @@ class EmailService:
                 "message_type": MessageType.EMAIL,
                 "sender": DEFAULT_SENDER,
                 "template": "emails/login",
-                "to": user.email,
+                "email": user.email,
                 "subject": _("{APP_NAME} - New login with your account").format(
                     APP_NAME=APP_NAME
                 ),
@@ -92,7 +92,7 @@ class EmailService:
                 "message_type": MessageType.EMAIL,
                 "sender": DEFAULT_SENDER,
                 "template": "emails/change_email",
-                "to": user.email,
+                "email": user.email,
                 "subject": _("{APP_NAME} - Change your Email").format(
                     first_name=user.first_name, APP_NAME=APP_NAME
                 ),
@@ -137,7 +137,7 @@ class EmailService:
                 "message_type": MessageType.EMAIL,
                 "sender": DEFAULT_SENDER,
                 "template": "emails/change_email",
-                "to": user.email,
+                "email": user.email,
                 "subject": _("{APP_NAME} - Change your Email").format(
                     first_name=user.first_name, APP_NAME=APP_NAME
                 ),
@@ -179,7 +179,7 @@ class EmailService:
                 "message_type": MessageType.EMAIL,
                 "sender": DEFAULT_SENDER,
                 "template": "emails/change_password",
-                "to": user.email,
+                "email": user.email,
                 "subject": _("{APP_NAME} - Password Change Request").format(
                     first_name=user.first_name, APP_NAME=APP_NAME
                 ),
@@ -210,7 +210,7 @@ class EmailService:
                 "message_type": MessageType.EMAIL,
                 "sender": DEFAULT_SENDER,
                 "template": "emails/delete",
-                "to": user.email,
+                "email": user.email,
                 "subject": _("{APP_NAME} - Account deleted").format(APP_NAME=APP_NAME),
                 "tenant_id": user.id,
                 "logo": EMAIL_LOGO,

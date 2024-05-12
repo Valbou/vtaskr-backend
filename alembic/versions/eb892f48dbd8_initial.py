@@ -19,7 +19,6 @@ branch_labels = None
 depends_on = None
 
 requesttype_enum = sa.Enum("EMAIL", "PASSWORD", name="requesttype")
-resources_enum = sa.Enum("GROUP", "ROLE", "ROLETYPE", "TASK", "TAG", name="resources")
 
 
 def upgrade() -> None:
@@ -190,5 +189,4 @@ def downgrade() -> None:
     op.drop_table("requestschanges")
     op.drop_table("groups")
     requesttype_enum.drop(op.get_bind(), checkfirst=False)
-    resources_enum.drop(op.get_bind(), checkfirst=False)
     # ### end Alembic commands ###

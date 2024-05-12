@@ -15,7 +15,7 @@ down_revision = "eb892f48dbd8"
 branch_labels = None
 depends_on = None
 
-messagetype_enum = sa.Enum("GROUP", "ROLE", "ROLETYPE", "TASK", "TAG", name="resources")
+messagetype_enum = sa.Enum("EMAIL", "SMS", "TELEGRAM", name="messagetype")
 
 
 def upgrade() -> None:

@@ -27,7 +27,7 @@ class AbstractMessage(ABC):
 class AbstractSender(ABC):
     handle_message_types: list[MessageType] = []
     messages: list[AbstractMessage] = []
-    compatible_message_classes = []
+    compatible_message_classes: list = []
 
     def __init__(self) -> None:
         self.messages = []
@@ -39,7 +39,7 @@ class AbstractSender(ABC):
         return message
 
     def add_message(self, message: AbstractMessage):
-        if isinstance(message, tuple(*self.compatible_message_classes)):
+        if isinstance(message, *self.compatible_message_classes):
             self.messages.append(self._convert_message(message))
 
     def add_messages(self, messages: list[AbstractMessage]):

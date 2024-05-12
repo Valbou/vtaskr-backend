@@ -32,5 +32,5 @@ class ObserverPort:
         raise NotImplementedError
 
     @classmethod
-    def self_subscribe(cls) -> tuple[str, TObserverPort]:
+    def self_subscribe(cls) -> tuple[str, Callable]:
         return (cls.event_name, cls.run)

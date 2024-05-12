@@ -8,11 +8,11 @@ class OpenApiRegistry:
     """
 
     def __init__(self) -> None:
-        self.infos = None
-        self.servers = []
-        self.tags = []
-        self.paths = dict()
-        self.components = {
+        self.infos: dict | None = None
+        self.servers: list[dict] = []
+        self.tags: list[dict] = []
+        self.paths: dict = {}
+        self.components: dict[str, dict] = {
             "schemas": {},
             "requestBodies": {},
             "headers": {},
@@ -21,7 +21,7 @@ class OpenApiRegistry:
             "securitySchemes": {},
         }
 
-    def register_infos(self, infos: dict):
+    def register_infos(self, infos: dict | None):
         self.infos = infos
 
     def register_server(self, url: str, description: str = ""):

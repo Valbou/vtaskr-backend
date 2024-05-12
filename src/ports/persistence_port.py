@@ -31,6 +31,10 @@ class SessionPort(ABC):
     def __exit__(self, type, value, traceback) -> None:
         self.close()
 
+    @abstractmethod
+    def close(self) -> None:
+        raise NotImplementedError
+
 
 class PersistencePort(InjectablePort, ABC):
     _repository_registry: dict[str, AbstractDBPort]

@@ -93,9 +93,10 @@ class SMTPEmail:
         cls, email: BaseEmailContent, from_email: str | None = None
     ):
         from_email = from_email or DEFAULT_SMTP_USER
+
         return SMTPEmail(
             from_email=from_email,
-            to_emails=email.to_emails,
+            to_emails=email.to,
             subject=email.subject,
             text=email.text,
             html=email.html,

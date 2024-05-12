@@ -29,6 +29,9 @@ class SQLSession(SessionPort):
 
     def __exit__(self, type, value, traceback) -> None:
         self.session.commit()
+        self.close()
+
+    def close(self):
         self.session.close()
 
 
