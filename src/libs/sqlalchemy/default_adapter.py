@@ -10,7 +10,7 @@ class DefaultDB(AbstractDBPort):
     def load(
         self, session: Session, id: str, with_unique: bool = False
     ) -> object | None:
-        self.qs.id(id)
+        self.qs.select().id(id)
         if with_unique:
             result = session.scalars(self.qs.statement).unique().one_or_none()
         else:
@@ -42,5 +42,5 @@ class DefaultDB(AbstractDBPort):
         session.delete(obj)
 
     def exists(self, session: Session, id: str) -> bool:
-        self.qs.id(id)
+        self.qs.select().id(id)
         return session.query(self.qs.statement.exists()).scalar()

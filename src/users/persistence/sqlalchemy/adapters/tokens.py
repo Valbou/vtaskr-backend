@@ -12,7 +12,7 @@ class TokenDB(TokenDBPort, DefaultDB):
         self.qs = TokenQueryset()
 
     def get_token(self, session: Session, sha_token: str) -> Token | None:
-        self.qs.by_sha(sha_token)
+        self.qs.select().by_sha(sha_token)
         result = session.scalars(self.qs.statement).one_or_none()
         return result
 

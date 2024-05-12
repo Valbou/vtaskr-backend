@@ -16,7 +16,6 @@ class Queryset:
     def __init__(self, qs_class):
         self.qs_class = qs_class
         self._query = None
-        self.select()
 
     @property
     def statement(self):
@@ -81,13 +80,16 @@ class Queryset:
         self._query = self._query.offset(offset).limit(per_page)
         return self
 
-    def from_filters(self, filters: list[Filter]) -> TQueryset:
+    def from_filters(self, filters: list[Filter] | None = None) -> TQueryset:
         """
         Build a query statement from query string filters
         """
-        self._add_where(filters)
-        self._add_order_by(filters)
-        self._add_page(filters)
+
+        if filters:
+            self._add_where(filters)
+            self._add_order_by(filters)
+            self._add_page(filters)
+
         return self
 
     def _add_where(self, filters: list[Filter]) -> None:

@@ -11,7 +11,3 @@ sys.path.append(BASE_DIR)
 logging.basicConfig(stream=sys.stderr)
 
 from src.flask import app as application  # noqa E402
-
-application.secret_key = os.getenv(
-    "SECRET_KEY", "fake_YM/92:>Dhqv=7p8+ixY=By?4i(%TU5L;W+4=dboG="
-)

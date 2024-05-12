@@ -20,7 +20,7 @@ class RequestChangeDB(RequestChangeDBPort, DefaultDB):
     def find_request(
         self, session: Session, email: str, request_type: RequestType
     ) -> RequestChange | None:
-        self.qs.valid_for(email, request_type).last()
+        self.qs.select().valid_for(email, request_type).last()
         result = session.scalars(self.qs.statement).one_or_none()
         return result
 

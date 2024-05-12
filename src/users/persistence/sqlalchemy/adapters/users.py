@@ -38,10 +38,14 @@ class UserDB(UserDBPort, DefaultDB):
         permission: Permissions,
         group_id: str,
     ) -> bool:
-        self.qs.join(User.roles).join(Role.roletype).join(RoleType.rights).where(
+        self.qs.select().join(User.roles).join(Role.roletype).join(
+            RoleType.rights
+        ).where(
             Role.group_id == group_id,
             Right.resource == resource,
             Right.permissions.bitwise_and(permission) > 0,
-        ).id(id)
+        ).id(
+            id
+        )
 
         return session.query(self.qs.statement.exists()).scalar()

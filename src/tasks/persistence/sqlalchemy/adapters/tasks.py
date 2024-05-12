@@ -24,11 +24,7 @@ class TaskDB(TaskDBPort, DefaultDB):
     ) -> list[Task]:
         """Retrieve all tenant's tasks"""
 
-        filters = filters or []
-        if filters:
-            self.qs.from_filters(filters)
-
-        self.qs.tenants(tenant_ids)
+        self.qs.select().from_filters(filters).tenants(tenant_ids)
         return session.execute(self.qs.statement).scalars().all()
 
     def tag_tasks(
@@ -40,11 +36,7 @@ class TaskDB(TaskDBPort, DefaultDB):
     ) -> list[Task]:
         """Retrieve all tenant's tasks with this tag"""
 
-        filters = filters or []
-        if filters:
-            self.qs.from_filters(filters)
-
-        self.qs.tenants(tenant_ids).tag(tag_id)
+        self.qs.select().from_filters(filters).tenants(tenant_ids).tag(tag_id)
         return session.execute(self.qs.statement).scalars().all()
 
     def add_tags(
@@ -58,7 +50,7 @@ class TaskDB(TaskDBPort, DefaultDB):
 
         task = self.load(session=session, id=task.id)
         tag_qs = TagQueryset()
-        tag_qs = tag_qs.tenants(tenant_ids).ids(tag_ids)
+        tag_qs = tag_qs.select().tenants(tenant_ids).ids(tag_ids)
         tags = session.execute(tag_qs.statement).scalars().all()
 
         task.tags = tags

@@ -20,11 +20,7 @@ class TagDB(TagDBPort, DefaultDB):
     ) -> list[Tag]:
         """Retrieve all tenant's tags"""
 
-        filters = filters or []
-        if filters:
-            self.qs.from_filters(filters)
-
-        self.qs.tenants(tenant_ids)
+        self.qs.select().from_filters(filters).tenants(tenant_ids)
 
         return session.execute(self.qs.statement).scalars().all()
 
@@ -37,10 +33,6 @@ class TagDB(TagDBPort, DefaultDB):
     ) -> list[Tag]:
         """Retrieve all tenant's tags for this task"""
 
-        filters = filters or []
-        if filters:
-            self.qs.from_filters(filters)
-
-        self.qs.tenants(tenant_ids).task(task_id)
+        self.qs.select().from_filters(filters).tenants(tenant_ids).task(task_id)
 
         return session.execute(self.qs.statement).scalars().all()

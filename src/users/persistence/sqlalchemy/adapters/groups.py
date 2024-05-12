@@ -40,11 +40,7 @@ class GroupDB(GroupDBPort, DefaultDB):
         user_id: str,
         filters: list[Filter] | None = None,
     ) -> list[Group] | None:
-        filters = filters or []
-        if filters:
-            self.qs.from_filters(filters)
-
-        self.qs.select().join(Group.roles).where(
+        self.qs.select().from_filters(filters).join(Group.roles).where(
             Role.user_id == user_id,
         )
 

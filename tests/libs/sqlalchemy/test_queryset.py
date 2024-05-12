@@ -35,6 +35,7 @@ class TestQueryset(TestCase):
     def setUp(self) -> None:
         super().setUp()
         self.queryset = Queryset(TestUser)
+        self.queryset.select()
 
     def assertInStatment(self, stmt: str, *args: str):
         for arg in args:

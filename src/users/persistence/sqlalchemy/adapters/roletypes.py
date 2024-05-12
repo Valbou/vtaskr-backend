@@ -41,10 +41,6 @@ class RoleTypeDB(RoleTypeDBPort, DefaultDB):
         group_ids: list[str],
         filters: list[Filter] | None = None,
     ) -> list[RoleType]:
-        filters = filters or []
-        if filters:
-            self.qs.from_filters(filters)
-
-        self.qs.select().user_can_use(group_ids=group_ids)
+        self.qs.select().from_filters(filters).user_can_use(group_ids=group_ids)
 
         return session.scalars(self.qs.statement).all()

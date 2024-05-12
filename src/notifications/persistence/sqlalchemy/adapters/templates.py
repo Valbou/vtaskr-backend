@@ -31,5 +31,5 @@ class TemplateDB(TemplateDBPort, DefaultDB):
     def get_template_for_event(
         self, session: Session, event_name: str, event_type: MessageType
     ) -> Template | None:
-        self.qs.event_template(event_name=event_name, event_type=event_type)
+        self.qs.select().event_template(event_name=event_name, event_type=event_type)
         return session.scalars(self.qs.statement).one_or_none()

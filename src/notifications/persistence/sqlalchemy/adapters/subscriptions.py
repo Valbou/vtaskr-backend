@@ -28,5 +28,7 @@ class SubscriptionDB(SubscriptionDBPort, DefaultDB):
     def get_subscriptions_for_event(
         self, session: Session, event_name: str, event_type: MessageType
     ) -> list[Subscription]:
-        self.qs.all_event_subscriptions(event_name=event_name, event_type=event_type)
+        self.qs.select().all_event_subscriptions(
+            event_name=event_name, event_type=event_type
+        )
         return session.scalars(self.qs.statement).all()

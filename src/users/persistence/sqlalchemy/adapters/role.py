@@ -32,11 +32,7 @@ class RoleDB(RoleDBPort, DefaultDB):
         group_ids: list[str],
         filters: list[Filter] | None = None,
     ) -> list[Role]:
-        filters = filters or []
-        if filters:
-            self.qs.from_filters(filters)
-
-        self.qs.select().both_is_mine_and_is_under_my_control(
+        self.qs.select().from_filters(filters).both_is_mine_and_is_under_my_control(
             user_id=user_id, group_ids=group_ids
         )
 
