@@ -131,7 +131,7 @@ class MultiSMTPEmail:
                 email.from_email, email.to_emails, email.message.as_string()
             )
 
-        self.emails = []
+        self.emails.clear()
         server.quit()
 
     @property

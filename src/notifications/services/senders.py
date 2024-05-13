@@ -23,6 +23,8 @@ class EmailSender(AbstractSender):
         if self.multi_smtp.has_messages:
             self.multi_smtp.send_all()
 
+        self.messages.clear()
+
 
 class TelegramSender(AbstractSender):
     handle_message_types = [MessageType.TELEGRAM]
@@ -34,3 +36,5 @@ class TelegramSender(AbstractSender):
             for to in message.to:
                 data = {"chat_id": to, "text": message.text}
                 requests.post(url, data)
+
+        self.messages.clear()
