@@ -107,7 +107,7 @@ class SMTPEmail:
 
 class MultiSMTPEmail:
     def __init__(self) -> None:
-        self.emails = []
+        self.emails: list[SMTPEmail] = []
 
     def add_email(self, email: SMTPEmail):
         self.emails.append(email)
@@ -123,7 +123,9 @@ class MultiSMTPEmail:
         password: str | None = None,
     ):
         server = get_smtp_server(host, port, user, password)
-        for email in self.emails:
+        while self.emails:
+            email = self.emails.pop()
+
             logger.info(
                 f"Send Multi from {email.from_email} to {email.to_emails} subject {email.subject}"
             )

@@ -19,11 +19,11 @@ class EmailSender(AbstractSender):
 
     def send(self):
         self.multi_smtp.add_emails(emails=self.messages)
+        self.messages.clear()
 
         if self.multi_smtp.has_messages:
             self.multi_smtp.send_all()
 
-        self.messages.clear()
 
 
 class TelegramSender(AbstractSender):

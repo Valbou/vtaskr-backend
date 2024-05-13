@@ -52,7 +52,7 @@ openapi.register_path(f"{V1}/users/2fa", api_item)
 
 
 @users_bp.route(f"{V1}/users/2fa", methods=["POST"])
-@rate_limited(logger=logger, hit=3, period=timedelta(seconds=60))
+@rate_limited(logger=logger, hit=6, period=timedelta(seconds=60))
 def confirm_2fa():
     """
     URL to confirm 2FA auth - Token required
