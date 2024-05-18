@@ -360,7 +360,7 @@ class TestUserService(DummyBaseTestCase):
         )
         self.us.event.send_update_user_event = MagicMock()
 
-        self.us.update(user)
+        self.us.update_user(user)
 
         self.us.user_db.update.assert_called_once()
         self.us.event.send_update_user_event.assert_called_once()
@@ -483,7 +483,7 @@ class TestUserService(DummyBaseTestCase):
             return_value=["123", "456"]
         )
 
-        self.us.delete(user)
+        self.us.delete_user(user)
 
         self.assertEqual(len(self.us.services.notification.messages), 0)
         self.assertEqual(len(self.us.services.notification.notify_all_calls), 0)
@@ -501,7 +501,7 @@ class TestUserService(DummyBaseTestCase):
             return_value=["123"]
         )
 
-        self.us.delete(user)
+        self.us.delete_user(user)
 
         self.assertEqual(len(self.us.services.notification.messages), 1)
         self.assertEqual(len(self.us.services.notification.notify_all_calls), 1)

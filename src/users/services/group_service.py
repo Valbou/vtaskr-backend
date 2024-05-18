@@ -1,5 +1,4 @@
 from src.libs.dependencies import DependencyInjector
-from src.libs.hmi.querystring import Filter
 from src.libs.iam.constants import Permissions
 from src.users.models import Group
 from src.users.persistence import GroupDBPort
@@ -20,18 +19,6 @@ class GroupService:
         self.group_db: GroupDBPort = self.services.persistence.get_repository(
             APP_NAME, "Group"
         )
-
-    def get_all_groups(
-        self,
-        user_id: str,
-        qs_filters: list[Filter] | None = None,
-    ) -> list[Group] | None:
-        """Return all user associated groups"""
-
-        with self.services.persistence.get_session() as session:
-            return self.group_db.get_all_user_groups(
-                session, user_id=user_id, filters=qs_filters
-            )
 
     def get_group(self, user_id: str, group_id: str) -> Group | None:
         """Retrieve just a group if permission was given"""

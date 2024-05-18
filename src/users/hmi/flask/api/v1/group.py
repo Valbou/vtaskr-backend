@@ -71,8 +71,8 @@ def groups():
             query_string=request.query_string.decode(), dto=GroupDTO
         )
 
-        group_service = GroupService(current_app.dependencies)
-        groups = group_service.get_all_groups(g.user.id, qsf.get_filters())
+        user_service = UserService(current_app.dependencies)
+        groups = user_service.get_all_groups(g.user.id, qsf.get_filters())
 
         groups_dto = list_models_to_list_dto(GroupMapperDTO, groups)
         return ResponseAPI.get_response(list_dto_to_dict(groups_dto), 200)

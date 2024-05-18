@@ -2,6 +2,7 @@ from typing import Tuple
 
 from src.libs.dependencies import DependencyInjector
 from src.libs.iam.constants import Permissions
+from src.libs.hmi.querystring import Filter
 from src.users.events import UsersEventService
 from src.users.hmi.dto import UserDTO
 from src.users.models import (
@@ -150,6 +151,18 @@ class UserService:
 
         return self.create_group(user_id=user_id, group_name="Private")
 
+    def get_all_groups(
+        self,
+        user_id: str,
+        qs_filters: list[Filter] | None = None,
+    ) -> list[Group] | None:
+        """Return all user associated groups"""
+
+        with self.services.persistence.get_session() as session:
+            return self.group_db.get_all_user_groups(
+                session, user_id=user_id, filters=qs_filters
+            )
+
     def register(self, user_dto: UserDTO, password: str) -> tuple[User, Group]:
         """Add a new user and his group with admin role"""
 
@@ -292,7 +305,7 @@ class UserService:
 
         self.services.notification.notify_all()
 
-    def update(self, user: User) -> None:
+    def update_user(self, user: User) -> None:
         """Update user"""
         with self.services.persistence.get_session() as session:
             self.user_db.update(session, user)
@@ -341,7 +354,7 @@ class UserService:
                 return True
             return False
 
-    def delete(self, user: User) -> bool:
+    def delete_user(self, user: User) -> bool:
         """
         Delete a user if he is not an admin of many groups
         Otherwise it can lead to a deadlock for members left

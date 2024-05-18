@@ -122,7 +122,7 @@ def update_me():
     g.user = UserMapperDTO.dto_to_model(user_dto, g.user)
 
     user_service = UserService(services=current_app.dependencies)
-    user_service.update(g.user)
+    user_service.update_user(g.user)
     user_dto = UserMapperDTO.model_to_dto(g.user)
 
     return ResponseAPI.get_response(dto_to_dict(user_dto), 200)
@@ -161,7 +161,7 @@ def delete_me():
     """
 
     user_service = UserService(services=current_app.dependencies)
-    if user_service.delete(g.user):
+    if user_service.delete_user(g.user):
         user_dto = UserMapperDTO.model_to_dto(g.user)
 
         return ResponseAPI.get_response(dto_to_dict(user_dto), 204)

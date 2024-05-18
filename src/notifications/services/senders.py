@@ -25,7 +25,6 @@ class EmailSender(AbstractSender):
             self.multi_smtp.send_all()
 
 
-
 class TelegramSender(AbstractSender):
     handle_message_types = [MessageType.TELEGRAM]
 

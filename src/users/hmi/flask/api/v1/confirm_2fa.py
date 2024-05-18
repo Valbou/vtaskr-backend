@@ -60,6 +60,7 @@ def confirm_2fa():
     Need a valid temp token and a code
     Return a 200
     """
+
     sha_token = get_bearer_token(request)
     if not sha_token:
         return ResponseAPI.get_401_response("Invalid token")
