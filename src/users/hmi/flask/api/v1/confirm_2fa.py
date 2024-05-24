@@ -1,7 +1,7 @@
 from datetime import timedelta
 
 from flask import current_app, request
-from src.libs.flask.utils import ResponseAPI, get_bearer_token
+from src.libs.flask.utils import ResponseAPI, get_auth_token
 from src.libs.redis import rate_limited
 from src.users.services import UserService
 
@@ -61,7 +61,7 @@ def confirm_2fa():
     Return a 200
     """
 
-    sha_token = get_bearer_token(request)
+    sha_token = get_auth_token(request)
     if not sha_token:
         return ResponseAPI.get_401_response("Invalid token")
 

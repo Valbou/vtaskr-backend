@@ -1,8 +1,8 @@
 from typing import Tuple
 
 from src.libs.dependencies import DependencyInjector
-from src.libs.iam.constants import Permissions
 from src.libs.hmi.querystring import Filter
+from src.libs.iam.constants import Permissions
 from src.users.events import UsersEventService
 from src.users.hmi.dto import UserDTO
 from src.users.models import (

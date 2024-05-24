@@ -10,6 +10,23 @@ def get_bearer_token(request: Request) -> str | None:
     return bearer
 
 
+def get_payload_token(request: Request) -> str | None:
+    token = request.get_json().get("token")
+    return token
+
+
+def get_auth_token(request: Request) -> str | None:
+    token = None
+    methods = [get_bearer_token, get_payload_token]
+
+    for method in methods:
+        token = method(request=request)
+        if token:
+            break
+
+    return token
+
+
 def get_ip(request) -> str:
     return (
         request.environ.get("HTTP_X_FORWARDED_FOR")

@@ -3,7 +3,7 @@ from logging import Logger
 from typing import Callable
 
 from flask import current_app, g, request
-from src.libs.flask.utils import ResponseAPI, get_bearer_token
+from src.libs.flask.utils import ResponseAPI, get_auth_token
 from src.libs.iam.config import PermissionError
 from src.users.services import UserService
 
@@ -13,7 +13,7 @@ def login_required(logger: Logger):
         @wraps(func)
         def wrapper(*args, **kwargs):
             try:
-                sha_token = get_bearer_token(request)
+                sha_token = get_auth_token(request)
                 if not sha_token:
                     return ResponseAPI.get_401_response("Invalid token")
 
