@@ -1,4 +1,8 @@
+import logging
+
 from flask import Request
+
+logger = logging.getLogger(__name__)
 
 BEARER = "Bearer "
 
@@ -11,18 +15,24 @@ def get_bearer_token(request: Request) -> str | None:
 
 
 def get_payload_token(request: Request) -> str | None:
-    token = request.get_json().get("token")
-    return token
+    return request.get_json().get("token")
+
+
+def get_querystring_token(request: Request) -> str | None:
+    return request.args.to_dict().get("token")
 
 
 def get_auth_token(request: Request) -> str | None:
     token = None
-    methods = [get_bearer_token, get_payload_token]
+    methods = [get_bearer_token, get_payload_token, get_querystring_token]
 
     for method in methods:
-        token = method(request=request)
-        if token:
-            break
+        try:
+            token = method(request=request)
+            if token:
+                break
+        except Exception as e:
+            logger.debug(f"Error in method {method.__name__}: {e}")
 
     return token
 
