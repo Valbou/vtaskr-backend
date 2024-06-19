@@ -11,6 +11,7 @@ class TestGroup(TestCase):
         super().setUp()
         self.fake = Faker()
         self.group = Group(
+            is_private=False,
             name=self.fake.word(),
         )
 
