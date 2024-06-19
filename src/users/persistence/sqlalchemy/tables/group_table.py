@@ -1,7 +1,7 @@
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
-from sqlalchemy import Column, DateTime, String, Table
+from sqlalchemy import Boolean, Column, DateTime, String, Table
 from sqlalchemy.orm import relationship
 
 from src.libs.sqlalchemy.base import mapper_registry
@@ -18,6 +18,7 @@ group_table = Table(
         nullable=False,
     ),
     Column("name", String(80), nullable=False),
+    Column("is_private", Boolean, default=True),
 )
 
 
@@ -28,6 +29,9 @@ mapper_registry.map_imperatively(
         "roles": relationship("Role", back_populates="group", passive_deletes=True),
         "roletypes": relationship(
             "RoleType", back_populates="group", passive_deletes=True
+        ),
+        "invitations": relationship(
+            "Invitation", back_populates="on_group", passive_deletes=True
         ),
     },
 )

@@ -4,6 +4,7 @@ from flask import Flask
 from src.users.hmi.flask import users_bp
 from src.users.persistence.sqlalchemy import (
     GroupDB,
+    InvitationDB,
     RequestChangeDB,
     RightDB,
     RoleDB,
@@ -33,6 +34,7 @@ def setup_flask(app: Flask, project_dir: str) -> dict:
             (APP_NAME, "RoleType", RoleTypeDB()),
             (APP_NAME, "RequestChange", RequestChangeDB()),
             (APP_NAME, "Token", TokenDB()),
+            (APP_NAME, "Invitation", InvitationDB()),
         ],
         "permissions_resources": ["Group", "Role", "RoleType"],
     }

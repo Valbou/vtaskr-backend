@@ -11,7 +11,7 @@ class TestRole(TestCase):
     def setUp(self) -> None:
         super().setUp()
         self.fake = Faker()
-        self.user = Role(
+        self.role = Role(
             user_id=self.fake.word(),
             group_id=self.fake.word(),
             roletype_id=self.fake.word(),

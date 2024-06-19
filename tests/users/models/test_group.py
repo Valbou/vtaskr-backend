@@ -10,7 +10,7 @@ class TestGroup(TestCase):
     def setUp(self) -> None:
         super().setUp()
         self.fake = Faker()
-        self.user = Group(
+        self.group = Group(
             name=self.fake.word(),
         )
 

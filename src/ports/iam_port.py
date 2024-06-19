@@ -1,4 +1,6 @@
 from abc import ABC, abstractmethod
+from enum import Enum
+from typing import ContextManager
 
 from .base_port import InjectablePort
 
@@ -9,9 +11,22 @@ class IdentityAccessManagementPort(InjectablePort, ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def can(self, permission, tenant_id: str) -> bool:
+    def can(
+        self,
+        session: ContextManager,
+        permission: Enum,
+        user_id: str,
+        group_id_resource: str,
+        resource: str,
+        exception: bool = True,
+    ) -> bool:
         raise NotImplementedError
 
     @abstractmethod
-    def all_tenants_with_access(self, permission, tenant_id: str) -> list[str]:
+    def all_tenants_with_access(
+        session: ContextManager,
+        permission: Enum,
+        user_id: str,
+        resource: str,
+    ) -> list[str]:
         raise NotImplementedError
