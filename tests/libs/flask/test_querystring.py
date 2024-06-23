@@ -220,7 +220,7 @@ class TestQueryStringFilterLimited(QSTestMixin):
         filters = qs_filter.get_filters()
         self.assertEqual(len(filters), 1)
         self.assertFilter(filters[0], "tenant_id", Operations.EQ, "bar")
-        self.assertIsInstance(filters[0].value, int)
+        self.assertIsInstance(filters[0].value, str)
 
     def test_filter_out_of_dto_fields(self):
         qs = "name_eq=val"
