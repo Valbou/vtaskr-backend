@@ -57,7 +57,7 @@ openapi.register_path(f"{V1}/groups", api_item)
 
 @users_bp.route(f"{V1}/groups", methods=["GET", "POST"])
 @login_required(logger)
-@rate_limited(logger=logger, hit=10, period=timedelta(seconds=60))
+@rate_limited(logger=logger, hit=30, period=timedelta(seconds=60))
 def groups():
     """
     URL to get current user groups - Token required
@@ -201,7 +201,7 @@ openapi.register_path(f"{V1}/group/{{group_id}}", api_item)
     f"{V1}/group/<string:group_id>", methods=["GET", "PUT", "PATCH", "DELETE"]
 )
 @login_required(logger)
-@rate_limited(logger=logger, hit=5, period=timedelta(seconds=60))
+@rate_limited(logger=logger, hit=30, period=timedelta(seconds=60))
 def group(group_id: str):
     group_service = GroupService(current_app.dependencies)
     group = group_service.get_group(g.user.id, group_id)

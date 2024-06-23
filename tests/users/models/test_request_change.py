@@ -83,7 +83,7 @@ class TestRequestChange(TestCase):
     def test_consistency_gen_hash(self):
         request_change = self.create_request_change()
         self.assertIsInstance(request_change.gen_hash(), str)
-        self.assertEqual(len(request_change.gen_hash()), 64)
+        self.assertEqual(len(request_change.gen_hash()), 128)
         self.assertEqual(request_change.gen_hash(), request_change.gen_hash())
         self.assertTrue(request_change.check_hash(request_change.gen_hash()))
 

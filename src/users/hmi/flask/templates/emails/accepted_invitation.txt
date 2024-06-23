@@ -1,0 +1,6 @@
+{{ title }}
+{{ content_title }}
+{{ paragraph_1 }}
+{% if call_to_action_link %}
+    {{ call_to_action_link }}
+{% endif %}

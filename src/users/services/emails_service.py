@@ -1,12 +1,13 @@
 from src.libs.dependencies import DependencyInjector
 from src.ports import MessageType
 from src.settings import APP_NAME, EMAIL_LOGO
-from src.users.models import RequestChange, User
+from src.users.models import Group, Invitation, RequestChange, RoleType, User
 from src.users.settings import APP_NAME as NAME
 from src.users.settings import (
     DEFAULT_SENDER,
     LINK_TO_CHANGE_EMAIL,
     LINK_TO_CHANGE_PASSWORD,
+    LINK_TO_JOIN_GROUP,
     LINK_TO_LOGIN,
 )
 
@@ -21,7 +22,7 @@ class EmailService:
         ) as trans:
             _ = trans.gettext
 
-            context_register = {
+            context = {
                 "message_type": MessageType.EMAIL,
                 "sender": DEFAULT_SENDER,
                 "template": "emails/register",
@@ -43,7 +44,7 @@ class EmailService:
                 "call_to_action_link": LINK_TO_LOGIN,
             }
 
-            return context_register
+            return context
 
     def get_login_context(self, user: User, code: str) -> dict:
         with self.services.translation.get_translation_session(
@@ -51,7 +52,7 @@ class EmailService:
         ) as trans:
             _ = trans.gettext
 
-            context_login = {
+            context = {
                 "message_type": MessageType.EMAIL,
                 "sender": DEFAULT_SENDER,
                 "template": "emails/login",
@@ -78,7 +79,7 @@ class EmailService:
                 "call_to_action": None,
             }
 
-            return context_login
+            return context
 
     def get_email_change_old_context(
         self, user: User, request_change: RequestChange
@@ -88,7 +89,7 @@ class EmailService:
         ) as trans:
             _ = trans.gettext
 
-            context_old_email = {
+            context = {
                 "message_type": MessageType.EMAIL,
                 "sender": DEFAULT_SENDER,
                 "template": "emails/change_email",
@@ -117,7 +118,7 @@ class EmailService:
                 "call_to_action": None,
             }
 
-            return context_old_email
+            return context
 
     def get_email_change_new_context(
         self, user: User, new_email: str, sec_hash: str
@@ -133,7 +134,7 @@ class EmailService:
                 else f"{LINK_TO_CHANGE_EMAIL}?hash={sec_hash}&email={new_email}"
             )
 
-            context_new_email = {
+            context = {
                 "message_type": MessageType.EMAIL,
                 "sender": DEFAULT_SENDER,
                 "template": "emails/change_email",
@@ -161,7 +162,7 @@ class EmailService:
                 "call_to_action_link": change_email_link,
             }
 
-            return context_new_email
+            return context
 
     def get_password_change_context(self, user: User, sec_hash: str) -> dict:
         with self.services.translation.get_translation_session(
@@ -175,7 +176,7 @@ class EmailService:
                 else f"{LINK_TO_CHANGE_PASSWORD}?hash={sec_hash}&email={user.email}"
             )
 
-            context_new_password = {
+            context = {
                 "message_type": MessageType.EMAIL,
                 "sender": DEFAULT_SENDER,
                 "template": "emails/change_password",
@@ -198,7 +199,7 @@ class EmailService:
                 "call_to_action_link": change_password_link,
             }
 
-            return context_new_password
+            return context
 
     def get_delete_context(self, user: User) -> dict:
         with self.services.translation.get_translation_session(
@@ -206,7 +207,7 @@ class EmailService:
         ) as trans:
             _ = trans.gettext
 
-            context_login = {
+            context = {
                 "message_type": MessageType.EMAIL,
                 "sender": DEFAULT_SENDER,
                 "template": "emails/delete",
@@ -225,4 +226,118 @@ class EmailService:
                 "paragraph_2": _("We hope to see you soon ! Bye !"),
             }
 
-            return context_login
+            return context
+
+    def get_invitation_context(
+        self, user: User, group: Group, roletype: RoleType, invitation: Invitation
+    ) -> dict:
+        with self.services.translation.get_translation_session(
+            domain=NAME, locale=user.locale
+        ) as trans:
+            _ = trans.gettext
+
+            join_group_link = (
+                f"{LINK_TO_JOIN_GROUP}&hash={invitation.gen_hash()}"
+                if "?" in LINK_TO_CHANGE_PASSWORD
+                else f"{LINK_TO_CHANGE_PASSWORD}?hash={invitation.gen_hash()}"
+            )
+
+            context = {
+                "message_type": MessageType.EMAIL,
+                "sender": DEFAULT_SENDER,
+                "template": "emails/invitation",
+                "email": invitation.to_user_email,
+                "subject": _(
+                    "{APP_NAME} - Invitation to join group {group_name} as {group_role}"
+                ).format(
+                    APP_NAME=APP_NAME, group_name=group.name, group_role=roletype.name
+                ),
+                "tenant_id": user.id,
+                "logo": EMAIL_LOGO,
+                "title": _("Invitation to group {group_name}").format(
+                    group_name=group.name
+                ),
+                "content_title": _("Hi !"),
+                "paragraph_1": _(
+                    "You are invited to contribute to the group {group_name} as {group_role}, "
+                    "by user {host_first_name}."
+                ).format(
+                    host_first_name=user.first_name,
+                    group_name=group.name,
+                    group_role=roletype.name,
+                ),
+                "paragraph_2": _("Click on the link below to join the group."),
+                "paragraph_3": _(
+                    "You need to be logged in to accept invitation. "
+                    "If necessary register first."
+                ),
+                "call_to_action": _("Join now"),
+                "call_to_action_link": join_group_link,
+            }
+
+            return context
+
+    def get_accepted_invitation_context(
+        self, user: User, group: Group, roletype: RoleType, host_user: User
+    ) -> dict:
+        with self.services.translation.get_translation_session(
+            domain=NAME, locale=user.locale
+        ) as trans:
+            _ = trans.gettext
+
+            context = {
+                "message_type": MessageType.EMAIL,
+                "sender": DEFAULT_SENDER,
+                "template": "emails/invitation",
+                "email": host_user.email,
+                "subject": _(
+                    "{APP_NAME} - {first_name} has joined group {group_name} as {group_role}"
+                ).format(
+                    APP_NAME=APP_NAME, group_name=group.name, group_role=roletype.name
+                ),
+                "tenant_id": host_user.id,
+                "logo": EMAIL_LOGO,
+                "title": _("Accepted invitation to group {group_name}"),
+                "content_title": _("Hi {host_first_name} !").format(
+                    host_first_name=host_user.first_name
+                ),
+                "paragraph_1": _(
+                    "{first_name} accept to contribute to the group {group_name} as {group_role}"
+                ).format(
+                    first_name=user.first_name,
+                    group_name=group.name,
+                    group_role=roletype.name,
+                ),
+            }
+
+            return context
+
+    def get_cancelled_invitation_context(
+        self, user: User, group: Group, invitation: Invitation
+    ) -> dict:
+        with self.services.translation.get_translation_session(
+            domain=NAME, locale=user.locale
+        ) as trans:
+            _ = trans.gettext
+
+            context = {
+                "message_type": MessageType.EMAIL,
+                "sender": DEFAULT_SENDER,
+                "template": "emails/invitation",
+                "email": invitation.to_user_email,
+                "subject": _(
+                    "{APP_NAME} - Invitation to {group_name} cancelled"
+                ).format(APP_NAME=APP_NAME, group_name=group.name),
+                "tenant_id": user.id,
+                "logo": EMAIL_LOGO,
+                "title": _("Invitation to group {group_name} cancelled"),
+                "content_title": _("Hi !"),
+                "paragraph_1": _(
+                    "Invitation to group {group_name} was cancelled by {host_first_name}"
+                ).format(
+                    host_first_name=user.first_name,
+                    group_name=group.name,
+                ),
+            }
+
+            return context

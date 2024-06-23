@@ -21,6 +21,9 @@ TOKEN_TEMP_VALIDITY = 60 * 3  # 3 minutes
 REQUEST_VALIDITY = 60 * 5
 REQUEST_DAYS_HISTORY = 90
 
+# Validity of group invitation
+INVITE_VALIDITY = 60 * 60 * 24 * 30  # almost 1 month
+
 # i18n/l10n
 AVAILABLE_LANGUAGES = {
     "fr": "Français",

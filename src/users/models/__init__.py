@@ -1,4 +1,5 @@
 from .group import Group
+from .invitation import Invitation
 from .request_change import RequestChange, RequestType
 from .right import Right
 from .role import Role

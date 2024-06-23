@@ -21,6 +21,7 @@ openapi.register_schemas_components("Group", group_component)
 class GroupDTO:
     id: str = ""
     name: str = ""
+    description: str = ""
     created_at: str = ""
 
 
@@ -30,14 +31,19 @@ class GroupMapperDTO:
         return GroupDTO(
             id=group.id,
             name=group.name,
+            description=group.description,
             created_at=group.created_at.isoformat(),
         )
 
     @classmethod
     def dto_to_model(cls, group_dto: GroupDTO, group: Group | None = None) -> Group:
         if not group:
-            group = Group(name=group_dto.name)
+            group = Group(
+                name=group_dto.name,
+                description=group_dto.description,
+            )
         else:
             group.name = group_dto.name
+            group.description = group.description
 
         return group

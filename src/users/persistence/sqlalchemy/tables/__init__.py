@@ -1,4 +1,5 @@
 from .group_table import *
+from .invitation_table import *
 from .request_change_table import *
 from .right_table import *
 from .role_table import *

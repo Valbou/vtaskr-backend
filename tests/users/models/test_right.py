@@ -11,7 +11,7 @@ class TestRight(TestCase):
     def setUp(self) -> None:
         super().setUp()
         self.fake = Faker()
-        self.user = Right(
+        self.right = Right(
             roletype_id=self.fake.word(),
             resource="Task",
             permissions=Permissions.CREATE,

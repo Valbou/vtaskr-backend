@@ -8,7 +8,7 @@ from src.users.models import Group
 
 class GroupDBPort(AbstractDBPort, ABC):
     @abstractmethod
-    def update(self, session, user: Group) -> bool:
+    def update(self, session, group: Group) -> bool:
         raise NotImplementedError()
 
     @abstractmethod

@@ -46,5 +46,8 @@ mapper_registry.map_imperatively(
     properties={
         "tokens": relationship("Token", back_populates="user", passive_deletes=True),
         "roles": relationship("Role", back_populates="user", passive_deletes=True),
+        "invitations": relationship(
+            "Invitation", back_populates="from_user", passive_deletes=True
+        ),
     },
 )

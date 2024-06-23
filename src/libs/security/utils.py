@@ -1,5 +1,5 @@
 from base64 import b64encode
-from hashlib import sha256
+from hashlib import sha512
 from secrets import choice, token_hex
 from string import ascii_lowercase, ascii_uppercase, digits
 from uuid import uuid4
@@ -22,7 +22,7 @@ def check_password(hash: str, password: str) -> bool:
 
 
 def hash_str(string: str) -> str:
-    return sha256(string.encode()).hexdigest()
+    return sha512(string.encode()).hexdigest()
 
 
 def get_id() -> str:

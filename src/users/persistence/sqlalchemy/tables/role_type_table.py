@@ -45,5 +45,8 @@ mapper_registry.map_imperatively(
             "Right", back_populates="roletype", passive_deletes=True
         ),
         "roles": relationship("Role", back_populates="roletype", passive_deletes=True),
+        "invitations": relationship(
+            "Invitation", back_populates="with_roletype", passive_deletes=True
+        ),
     },
 )
