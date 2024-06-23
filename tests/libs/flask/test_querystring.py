@@ -191,6 +191,7 @@ class TestQueryStringFilter(QSTestMixin):
 @dataclass
 class TestDTO:
     string: str = "foo"
+    tenant_id: str = "bar"
     integer: int = 42
     floating: float = 0.0
     boolean: bool = False
@@ -211,6 +212,14 @@ class TestQueryStringFilterLimited(QSTestMixin):
         filters = qs_filter.get_filters()
         self.assertEqual(len(filters), 1)
         self.assertFilter(filters[0], "opt_int", Operations.EQ, 42)
+        self.assertIsInstance(filters[0].value, int)
+
+    def test_filter_on_tenant_id_field(self):
+        qs = "tenant_id_eq=bar"
+        qs_filter = QueryStringFilter(query_string=qs, dto=self.dto)
+        filters = qs_filter.get_filters()
+        self.assertEqual(len(filters), 1)
+        self.assertFilter(filters[0], "tenant_id", Operations.EQ, "bar")
         self.assertIsInstance(filters[0].value, int)
 
     def test_filter_out_of_dto_fields(self):
