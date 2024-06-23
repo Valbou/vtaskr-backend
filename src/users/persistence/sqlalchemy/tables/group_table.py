@@ -18,6 +18,7 @@ group_table = Table(
         nullable=False,
     ),
     Column("name", String(80), nullable=False),
+    Column("description", String, default="", nullable=False),
     Column("is_private", Boolean, default=True),
 )
 
