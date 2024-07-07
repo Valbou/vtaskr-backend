@@ -44,3 +44,6 @@ optional-dependencies.dev = [
 ]
 
 [tool.setuptools_scm]
+
+[tool.isort]
+profile = "black"

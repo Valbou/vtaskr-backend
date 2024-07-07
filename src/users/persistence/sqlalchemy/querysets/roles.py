@@ -27,3 +27,7 @@ class RoleQueryset(Queryset):
             or_(self.qs_class.user_id == user_id, self.qs_class.group_id.in_(group_ids))
         )
         return self
+
+    def group_roles(self, group_id: str) -> TRoleQueryset:
+        self._query = self._query.where(self.qs_class.group_id == group_id)
+        return self

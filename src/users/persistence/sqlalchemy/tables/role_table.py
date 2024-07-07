@@ -54,10 +54,26 @@ mapper_registry.map_imperatively(
     Role,
     role_table,
     properties={
-        "user": relationship("User", back_populates="roles", passive_deletes=True),
-        "group": relationship("Group", back_populates="roles", passive_deletes=True),
+        "user": relationship(
+            "User",
+            back_populates="roles",
+            passive_deletes=True,
+            lazy="joined",
+            join_depth=1,
+        ),
+        "group": relationship(
+            "Group",
+            back_populates="roles",
+            passive_deletes=True,
+            lazy="joined",
+            join_depth=1,
+        ),
         "roletype": relationship(
-            "RoleType", back_populates="roles", passive_deletes=True
+            "RoleType",
+            back_populates="roles",
+            passive_deletes=True,
+            lazy="joined",
+            join_depth=1,
         ),
     },
 )

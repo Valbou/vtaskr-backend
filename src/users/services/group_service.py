@@ -1,7 +1,7 @@
 from src.libs.dependencies import DependencyInjector
 from src.libs.iam.constants import Permissions
-from src.users.models import Group
-from src.users.persistence import GroupDBPort
+from src.users.models import Group, Role
+from src.users.persistence import GroupDBPort, RoleDBPort
 from src.users.settings import APP_NAME
 
 # TODO:
@@ -18,6 +18,9 @@ class GroupService:
         self.services = services
         self.group_db: GroupDBPort = self.services.persistence.get_repository(
             APP_NAME, "Group"
+        )
+        self.role_db: RoleDBPort = self.services.persistence.get_repository(
+            APP_NAME, "Role"
         )
 
     def get_group(self, user_id: str, group_id: str) -> Group | None:
@@ -63,3 +66,13 @@ class GroupService:
                 session.commit()
                 return True
             return False
+
+    def get_members(self, user_id: str, group_id: str) -> Role | None:
+        with self.services.persistence.get_session() as session:
+            if self.services.identity.can(
+                session, Permissions.READ, user_id, group_id, resource="Group"
+            ):
+                roles = self.role_db.get_group_roles(session, group_id=group_id)
+
+                return roles
+            return None

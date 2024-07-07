@@ -25,3 +25,7 @@ class RoleDBPort(AbstractDBPort, ABC):
         filters: list[Filter] | None = None,
     ) -> list[Role]:
         raise NotImplementedError()
+
+    @abstractmethod
+    def get_group_roles(self, session, group_id: str) -> list[Role]:
+        raise NotImplementedError()

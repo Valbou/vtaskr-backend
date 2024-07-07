@@ -4,6 +4,7 @@ from zoneinfo import ZoneInfo
 
 from src.colors.models.color import Color
 from src.libs.security.utils import get_id
+from src.users.models import Group, RoleType, User
 
 
 @dataclass
@@ -11,6 +12,9 @@ class Role:
     user_id: str
     group_id: str
     roletype_id: str
+    user: User | None = None
+    group: Group | None = None
+    roletype: RoleType | None = None
     color: Color | None = None
     id: str | None = None
     created_at: datetime | None = None
