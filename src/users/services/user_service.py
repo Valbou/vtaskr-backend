@@ -129,10 +129,10 @@ class UserService:
 
         with self.services.persistence.get_session() as session:
             role = Role(
-            user_id=user_id,
-            group_id=group_id,
-            roletype_id=roletype_id,
-        )
+                user_id=user_id,
+                group_id=group_id,
+                roletype_id=roletype_id,
+            )
 
             self.role_db.save(session, role)
 

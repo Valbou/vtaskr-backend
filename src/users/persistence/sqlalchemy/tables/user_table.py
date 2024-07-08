@@ -44,8 +44,12 @@ mapper_registry.map_imperatively(
     User,
     user_table,
     properties={
-        "tokens": relationship("Token", back_populates="user", cascade="all, delete-orphan"),
-        "roles": relationship("Role", back_populates="user", cascade="all, delete-orphan"),
+        "tokens": relationship(
+            "Token", back_populates="user", cascade="all, delete-orphan"
+        ),
+        "roles": relationship(
+            "Role", back_populates="user", cascade="all, delete-orphan"
+        ),
         "invitations": relationship(
             "Invitation", back_populates="from_user", cascade="all, delete-orphan"
         ),

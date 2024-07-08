@@ -40,7 +40,9 @@ mapper_registry.map_imperatively(
     properties={
         "group": relationship("Group", back_populates="roletypes"),
         "rights": relationship("Right", back_populates="roletype"),
-        "roles": relationship("Role", back_populates="roletype", cascade="all, delete-orphan"),
+        "roles": relationship(
+            "Role", back_populates="roletype", cascade="all, delete-orphan"
+        ),
         "invitations": relationship(
             "Invitation", back_populates="with_roletype", cascade="all, delete-orphan"
         ),

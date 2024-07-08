@@ -27,7 +27,9 @@ mapper_registry.map_imperatively(
     Group,
     group_table,
     properties={
-        "roles": relationship("Role", back_populates="group", cascade="all, delete-orphan"),
+        "roles": relationship(
+            "Role", back_populates="group", cascade="all, delete-orphan"
+        ),
         "roletypes": relationship(
             "RoleType", back_populates="group", cascade="all, delete-orphan"
         ),
