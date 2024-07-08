@@ -57,8 +57,6 @@ mapper_registry.map_imperatively(
     Right,
     right_table,
     properties={
-        "roletype": relationship(
-            "RoleType", back_populates="rights", passive_deletes=True
-        ),
+        "roletype": relationship("RoleType", back_populates="rights"),
     },
 )

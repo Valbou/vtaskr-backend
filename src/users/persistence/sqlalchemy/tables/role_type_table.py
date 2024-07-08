@@ -38,15 +38,11 @@ mapper_registry.map_imperatively(
     RoleType,
     roletype_table,
     properties={
-        "group": relationship(
-            "Group", back_populates="roletypes", passive_deletes=True
-        ),
-        "rights": relationship(
-            "Right", back_populates="roletype", passive_deletes=True
-        ),
-        "roles": relationship("Role", back_populates="roletype", passive_deletes=True),
+        "group": relationship("Group", back_populates="roletypes"),
+        "rights": relationship("Right", back_populates="roletype"),
+        "roles": relationship("Role", back_populates="roletype", cascade="all, delete-orphan"),
         "invitations": relationship(
-            "Invitation", back_populates="with_roletype", passive_deletes=True
+            "Invitation", back_populates="with_roletype", cascade="all, delete-orphan"
         ),
     },
 )

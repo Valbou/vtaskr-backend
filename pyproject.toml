@@ -47,3 +47,12 @@ optional-dependencies.dev = [
 
 [tool.isort]
 profile = "black"
+
+[tool.coverage.run]
+omit = ["*/tests/*"]
+
+[tool.coverage.report]
+fail_under = 90
+skip_covered = true
+skip_empty = true
+sort = "cover"

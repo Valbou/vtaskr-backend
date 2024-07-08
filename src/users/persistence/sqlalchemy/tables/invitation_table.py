@@ -46,14 +46,8 @@ mapper_registry.map_imperatively(
     Invitation,
     invitation_table,
     properties={
-        "from_user": relationship(
-            "User", back_populates="invitations", passive_deletes=True
-        ),
-        "on_group": relationship(
-            "Group", back_populates="invitations", passive_deletes=True
-        ),
-        "with_roletype": relationship(
-            "RoleType", back_populates="invitations", passive_deletes=True
-        ),
+        "from_user": relationship("User", back_populates="invitations"),
+        "on_group": relationship("Group", back_populates="invitations"),
+        "with_roletype": relationship("RoleType", back_populates="invitations"),
     },
 )

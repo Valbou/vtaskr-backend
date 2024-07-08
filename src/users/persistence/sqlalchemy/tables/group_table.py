@@ -27,12 +27,12 @@ mapper_registry.map_imperatively(
     Group,
     group_table,
     properties={
-        "roles": relationship("Role", back_populates="group", passive_deletes=True),
+        "roles": relationship("Role", back_populates="group", cascade="all, delete-orphan"),
         "roletypes": relationship(
-            "RoleType", back_populates="group", passive_deletes=True
+            "RoleType", back_populates="group", cascade="all, delete-orphan"
         ),
         "invitations": relationship(
-            "Invitation", back_populates="on_group", passive_deletes=True
+            "Invitation", back_populates="on_group", cascade="all, delete-orphan"
         ),
     },
 )
