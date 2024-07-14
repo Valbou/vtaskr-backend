@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
 from src.libs.openapi.base import openapi
-from src.users.models import Invitation, Group, RoleType
+from src.users.models import Group, Invitation, RoleType
 
 INVITATION_COMPONENT = "#/components/schemas/Invitation"
 
@@ -37,9 +37,15 @@ class InvitationMapperDTO:
     def model_to_dto(cls, invitation: Invitation) -> InvitationDTO:
         from src.users.hmi.dto import GroupMapperDTO, RoleTypeMapperDTO
 
-        group_dto = GroupMapperDTO().model_to_dto(invitation.in_group) if invitation.in_group else None
+        group_dto = (
+            GroupMapperDTO().model_to_dto(invitation.in_group)
+            if invitation.in_group
+            else None
+        )
         roletype_dto = (
-            RoleTypeMapperDTO().model_to_dto(invitation.with_roletype) if invitation.with_roletype else None
+            RoleTypeMapperDTO().model_to_dto(invitation.with_roletype)
+            if invitation.with_roletype
+            else None
         )
 
         return InvitationDTO(
