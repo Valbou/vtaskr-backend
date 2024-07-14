@@ -19,3 +19,8 @@ class InvitationDB(InvitationDBPort, DefaultDB):
         self.qs.select().where(Invitation.hash == hash)
         invitation = session.scalars(self.qs.statement).one_or_none()
         return invitation
+
+    def get_from_group(self, session, group_id: str) -> list[Invitation]:
+        self.qs.select().where(Invitation.in_group_id == group_id)
+        invitations = session.scalars(self.qs.statement).all()
+        return invitations

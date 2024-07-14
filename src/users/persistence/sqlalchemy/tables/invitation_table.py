@@ -33,7 +33,7 @@ invitation_table = Table(
         "with_roletype_id",
         String(40),
         ForeignKey(
-            "roletypes.id", ondelete="CASCADE", name="fk_invitations_roletype_id"
+            "roletypes.id", ondelete="RESTRICT", name="fk_invitations_roletype_id"
         ),
         nullable=False,
     ),
@@ -46,8 +46,29 @@ mapper_registry.map_imperatively(
     Invitation,
     invitation_table,
     properties={
-        "from_user": relationship("User", back_populates="invitations"),
-        "on_group": relationship("Group", back_populates="invitations"),
-        "with_roletype": relationship("RoleType", back_populates="invitations"),
+        "from_user": relationship(
+            "User",
+            back_populates="invitations",
+            lazy="joined",
+            join_depth=1,
+            innerjoin=True,
+            viewonly=True,
+        ),
+        "on_group": relationship(
+            "Group",
+            back_populates="invitations",
+            lazy="joined",
+            join_depth=1,
+            innerjoin=True,
+            viewonly=True,
+        ),
+        "with_roletype": relationship(
+            "RoleType",
+            back_populates="invitations",
+            lazy="joined",
+            join_depth=1,
+            innerjoin=True,
+            viewonly=True,
+        ),
     },
 )

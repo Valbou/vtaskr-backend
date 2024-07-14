@@ -2,13 +2,55 @@ from datetime import timedelta
 
 from flask import current_app, g, request
 from src.libs.flask.utils import ResponseAPI
-from src.libs.hmi import dto_to_dict
+from src.libs.hmi import dto_to_dict, list_dto_to_dict, list_models_to_list_dto
 from src.libs.redis import rate_limited
 from src.users.hmi.dto import INVITATION_COMPONENT, InvitationMapperDTO
 from src.users.hmi.flask.decorators import login_required
 from src.users.services import UserService
 
 from .. import V1, logger, openapi, users_bp
+
+api_item = {
+    "get": {
+        "description": "Get invitations waiting for acceptation",
+        "summary": "Get invitations",
+        "operationId": "getInvitations",
+        "parameters": [
+            {
+                "name": "group_id",
+                "in": "path",
+                "description": "Id of the group's invitations you are looking for",
+                "required": True,
+                "schema": {"type": "string"},
+            },
+        ],
+        "responses": {
+            "200": {
+                "description": "An invitations list",
+                "content": {
+                    "application/json": {"schema": {"$ref": INVITATION_COMPONENT}}
+                },
+            },
+        },
+    },
+}
+openapi.register_path(f"{V1}/group/{{group_id}}/invitations", api_item)
+
+
+@users_bp.route(f"{V1}/group/<string:group_id>/invitations", methods=["GET"])
+@login_required(logger)
+@rate_limited(logger=logger, hit=30, period=timedelta(seconds=60))
+def group_invitations(group_id: str):
+    user_service = UserService(current_app.dependencies)
+    invitations = user_service.get_invitations(g.user.id, group_id)
+
+    if invitations is not None:
+        invitations_dto = list_models_to_list_dto(InvitationMapperDTO, invitations)
+        return ResponseAPI.get_response(list_dto_to_dict(invitations_dto), 200)
+
+    else:
+        return ResponseAPI.get_403_response()
+
 
 api_item = {
     "post": {
@@ -70,7 +112,7 @@ openapi.register_path(f"{V1}/invite", api_item)
 @users_bp.route(f"{V1}/invite", methods=["POST"])
 @login_required(logger)
 @rate_limited(logger=logger, hit=10, period=timedelta(seconds=300))
-def invitation():
+def invite():
     """
     URL to invite someone to contribute to an owned group
 

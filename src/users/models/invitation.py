@@ -4,6 +4,7 @@ from zoneinfo import ZoneInfo
 
 from src.libs.security.utils import get_id, hash_str
 from src.settings import INVITE_VALIDITY
+from src.users.models import Group, RoleType, User
 
 
 @dataclass
@@ -13,6 +14,9 @@ class Invitation:
     with_roletype_id: str
     in_group_id: str
     hash: str = ""
+    from_user: User | None = None
+    in_group: Group | None = None
+    with_roletype: RoleType | None = None
     id: str | None = None
     created_at: datetime | None = None
 

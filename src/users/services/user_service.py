@@ -382,8 +382,25 @@ class UserService:
                 return True
             return False
 
+    def get_invitations(self, user_id: str, group_id: str) -> list[Invitation]:
+        with self.services.persistence.get_session() as session:
+            if self.services.identity.can(
+                session=session,
+                permission=Permissions.READ,
+                user_id=user_id,
+                group_id_resource=group_id,
+                resource="Group",
+            ):
+                invitations = self.invitation_db.get_from_group(
+                    session=session, group_id=group_id
+                )
+            else:
+                raise PermissionError()
+
+        return invitations
+
     def invite_user_by_email(
-        self, user: User, user_email: str, group_id, roletype_id
+        self, user: User, user_email: str, group_id: str, roletype_id: str
     ) -> Invitation:
         with self.services.persistence.get_session() as session:
             group: Group = self.group_db.load(session=session, id=group_id)
