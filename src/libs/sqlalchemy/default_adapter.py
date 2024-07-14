@@ -41,6 +41,10 @@ class DefaultDB(AbstractDBPort):
     def delete(self, session: Session, obj: object) -> None:
         session.delete(obj)
 
+    def delete_by_id(self, session: Session, id: str) -> None:
+        self.qs.delete().id(id)
+        session.execute(self.qs.statement)
+
     def exists(self, session: Session, id: str) -> bool:
         self.qs.select().id(id)
         return session.query(self.qs.statement.exists()).scalar()

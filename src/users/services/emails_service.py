@@ -293,7 +293,10 @@ class EmailService:
                 "subject": _(
                     "{APP_NAME} - {first_name} has joined group {group_name} as {group_role}"
                 ).format(
-                    APP_NAME=APP_NAME, group_name=group.name, group_role=roletype.name
+                    APP_NAME=APP_NAME,
+                    first_name=user.first_name,
+                    group_name=group.name,
+                    group_role=roletype.name,
                 ),
                 "tenant_id": host_user.id,
                 "logo": EMAIL_LOGO,

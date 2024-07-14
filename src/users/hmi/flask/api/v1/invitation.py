@@ -125,6 +125,7 @@ def invite():
     to_user_email = payload.get("to_user_email", "")
     in_group_id = payload.get("in_group_id", "")
     with_roletype_id = payload.get("with_roletype_id", "")
+
     if not all([to_user_email, in_group_id, with_roletype_id]):
         logger.warning("400 Error: some required values missing")
         return ResponseAPI.get_400_response()

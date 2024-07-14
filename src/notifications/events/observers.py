@@ -65,4 +65,4 @@ class UsersDeleteUserObserver(ObserverPort):
                 APP_NAME, "Contact"
             )
             with app_ctx.dependencies.persistence.get_session() as session:
-                contact_db.delete(session, id=contact_id)
+                contact_db.delete_by_id(session, id=contact_id)

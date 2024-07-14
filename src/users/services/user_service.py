@@ -477,6 +477,8 @@ class UserService:
                 )
                 self._send_message(context=context)
 
+                self.invitation_db.delete(session=session, obj=invitation)
+
             elif invitation is None:
                 raise ValueError("Invitation doesn't exists")
             else:
@@ -494,7 +496,7 @@ class UserService:
                 group_id_resource=group.id,
                 resource="Group",
             ):
-                self.invitation_db.delete(session=session, id=invitation_id)
+                self.invitation_db.delete_by_id(session=session, id=invitation_id)
 
                 email_service = EmailService(services=self.services)
                 context = email_service.get_cancelled_invitation_context(
