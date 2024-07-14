@@ -432,7 +432,7 @@ class UserService:
                     in_group_id=group.id,
                     with_roletype_id=roletype.id,
                 )
-                self.invitation_db.save(session=session, item=invitation)
+                self.invitation_db.save(session=session, obj=invitation)
 
                 email_service = EmailService(services=self.services)
                 context = email_service.get_invitation_context(
@@ -461,7 +461,7 @@ class UserService:
                 role = self._create_role_from_invitation(
                     user=user, invitation=invitation
                 )
-                self.role_db.save(session=session, item=role)
+                self.role_db.save(session=session, obj=role)
 
                 host_user = self.user_db.load(
                     session=session, id=invitation.from_user_id

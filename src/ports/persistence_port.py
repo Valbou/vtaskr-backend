@@ -12,7 +12,7 @@ class AbstractDBPort(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    def save(self, session, item) -> object:
+    def save(self, session, obj) -> object:
         raise NotImplementedError()
 
     @abstractmethod
