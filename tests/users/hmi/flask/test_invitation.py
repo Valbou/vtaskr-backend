@@ -1,6 +1,5 @@
-from src.users.services import UserService, RoleTypeService
-from src.users.models import RoleType, Group, User
-
+from src.users.models import Group, RoleType, User
+from src.users.services import RoleTypeService, UserService
 from tests.base_test import BaseTestCase
 
 URL_API = "/api/v1"
@@ -51,11 +50,11 @@ class TestInvitationAPI(BaseTestCase):
 
         # Accept invitation
         headers_accept = self.get_token_headers()
-        data_accept = {
-            "hash": invitation.hash
-        }
+        data_accept = {"hash": invitation.hash}
 
-        response_accept = self.client.post(f"{URL_API}/invite/accepted", json=data_accept, headers=headers_accept)
+        response_accept = self.client.post(
+            f"{URL_API}/invite/accepted", json=data_accept, headers=headers_accept
+        )
         self.assertEqual(response_accept.status_code, 200)
 
         invitations = self.user_service.get_invitations(
@@ -90,7 +89,9 @@ class TestInvitationAPI(BaseTestCase):
         invitation = invitations[0]
 
         # Cancel invitation
-        response_accept = self.client.delete(f"{URL_API}/invite/{invitation.id}", headers=headers)
+        response_accept = self.client.delete(
+            f"{URL_API}/invite/{invitation.id}", headers=headers
+        )
         print(response.status_code)
         self.assertEqual(response_accept.status_code, 204)
 
