@@ -35,7 +35,7 @@ class UsersUpdateUserObserver(ObserverPort):
                 APP_NAME, "Contact"
             )
             with app_ctx.dependencies.persistence.get_session() as session:
-                contact: Contact = contact_db.load(session, id=contact_id)
+                contact: Contact | None = contact_db.load(session, id=contact_id)
 
                 if contact:
                     contact.email = event_data.get("email", "")
