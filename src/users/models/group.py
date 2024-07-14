@@ -8,6 +8,8 @@ from src.libs.security.utils import get_id
 @dataclass
 class Group:
     name: str
+    is_private: bool
+    description: str = ""
     id: str | None = None
     created_at: datetime | None = None
 

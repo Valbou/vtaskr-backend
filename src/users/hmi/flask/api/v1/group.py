@@ -5,7 +5,7 @@ from src.libs.flask.utils import ResponseAPI
 from src.libs.hmi import dto_to_dict, list_dto_to_dict, list_models_to_list_dto
 from src.libs.hmi.querystring import QueryStringFilter
 from src.libs.redis import rate_limited
-from src.users.hmi.dto import GROUP_COMPONENT, GroupDTO, GroupMapperDTO
+from src.users.hmi.dto import GROUP_COMPONENT, GroupDTO, GroupMapperDTO, RoleMapperDTO
 from src.users.hmi.flask.decorators import login_required
 from src.users.services import GroupService, UserService
 
@@ -57,7 +57,7 @@ openapi.register_path(f"{V1}/groups", api_item)
 
 @users_bp.route(f"{V1}/groups", methods=["GET", "POST"])
 @login_required(logger)
-@rate_limited(logger=logger, hit=10, period=timedelta(seconds=60))
+@rate_limited(logger=logger, hit=30, period=timedelta(seconds=60))
 def groups():
     """
     URL to get current user groups - Token required
@@ -201,7 +201,7 @@ openapi.register_path(f"{V1}/group/{{group_id}}", api_item)
     f"{V1}/group/<string:group_id>", methods=["GET", "PUT", "PATCH", "DELETE"]
 )
 @login_required(logger)
-@rate_limited(logger=logger, hit=5, period=timedelta(seconds=60))
+@rate_limited(logger=logger, hit=30, period=timedelta(seconds=60))
 def group(group_id: str):
     group_service = GroupService(current_app.dependencies)
     group = group_service.get_group(g.user.id, group_id)
@@ -229,3 +229,43 @@ def group(group_id: str):
 
     else:
         return ResponseAPI.get_404_response()
+
+
+api_item = {
+    "get": {
+        "description": "Get group's members",
+        "summary": "Get group's members",
+        "operationId": "getGroupMembers",
+        "parameters": [
+            {
+                "name": "group_id",
+                "in": "path",
+                "description": "Id of the group's members you are looking for",
+                "required": True,
+                "schema": {"type": "string"},
+            },
+        ],
+        "responses": {
+            "200": {
+                "description": "A members list",
+                "content": {"application/json": {"schema": {"$ref": GROUP_COMPONENT}}},
+            },
+        },
+    },
+}
+openapi.register_path(f"{V1}/group/{{group_id}}/members", api_item)
+
+
+@users_bp.route(f"{V1}/group/<string:group_id>/members", methods=["GET"])
+@login_required(logger)
+@rate_limited(logger=logger, hit=30, period=timedelta(seconds=60))
+def group_members(group_id: str):
+    group_service = GroupService(current_app.dependencies)
+    roles = group_service.get_members(g.user.id, group_id)
+
+    if roles is not None:
+        roles_dto = list_models_to_list_dto(RoleMapperDTO, roles)
+        return ResponseAPI.get_response(list_dto_to_dict(roles_dto), 200)
+
+    else:
+        return ResponseAPI.get_403_response()

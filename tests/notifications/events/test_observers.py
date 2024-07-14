@@ -87,4 +87,4 @@ class TestObservers(DummyBaseTestCase):
             self.app, event_name="users:delete:user", event_data=event_data
         )
 
-        self.repository_mock.delete.assert_called_once()
+        self.repository_mock.delete_by_id.assert_called_once()

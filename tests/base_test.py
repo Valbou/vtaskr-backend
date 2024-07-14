@@ -105,7 +105,8 @@ class BaseTestCase(MixinTestCase, TestCase):
         return {"Content-Type": "application/json"}
 
     def get_token_headers(self, valid: bool = True) -> dict:
-        self.create_user()
+        if not hasattr(self, "user"):
+            self.create_user()
 
         auth_service = UserService(services=self.app.dependencies)
         self.token, _ = auth_service.authenticate(

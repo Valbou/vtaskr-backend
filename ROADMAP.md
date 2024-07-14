@@ -27,6 +27,7 @@ As vTaskr is an non profit project without fulltime dev, no release date can be 
 - [x] User can delete his account efficiently (cannot delete a user if user has admin role on 2 groups or more !)
 - [x] Add filters on list endpoints (filter groups according to role or filter rights according to a group etc...)
 - [x] User can't modify tasks without the required role
+- [x] User can invite another in a non private group
 
 ## Go to v0.2.0
 - [ ] Code events developments

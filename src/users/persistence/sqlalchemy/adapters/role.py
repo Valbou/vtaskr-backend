@@ -32,9 +32,17 @@ class RoleDB(RoleDBPort, DefaultDB):
         group_ids: list[str],
         filters: list[Filter] | None = None,
     ) -> list[Role]:
-        self.qs.select().from_filters(filters).both_is_mine_and_is_under_my_control(
-            user_id=user_id, group_ids=group_ids
+        (
+            self.qs.select()
+            .from_filters(filters)
+            .both_is_mine_and_is_under_my_control(user_id=user_id, group_ids=group_ids)
         )
+
+        roles = session.scalars(self.qs.statement).all()
+        return roles
+
+    def get_group_roles(self, session: Session, group_id: str) -> list[Role]:
+        self.qs.select().group_roles(group_id)
 
         roles = session.scalars(self.qs.statement).all()
         return roles

@@ -7,6 +7,7 @@ from src.users.events import UsersEventService
 from src.users.hmi.dto import UserDTO
 from src.users.models import (
     Group,
+    Invitation,
     RequestChange,
     RequestType,
     Right,
@@ -17,6 +18,7 @@ from src.users.models import (
 )
 from src.users.persistence import (
     GroupDBPort,
+    InvitationDBPort,
     RequestChangeDBPort,
     RightDBPort,
     RoleDBPort,
@@ -39,6 +41,11 @@ class UserService:
         self.event = UsersEventService(self.services.eventbus)
         self._define_repositories()
 
+    def _send_message(self, context: dict):
+        message = self.services.notification.build_message(context)
+        self.services.notification.add_message(message=message)
+        self.services.notification.notify_all()
+
     def _define_repositories(self):
         self.user_db: UserDBPort = self.services.persistence.get_repository(
             APP_NAME, "User"
@@ -60,6 +67,9 @@ class UserService:
         )
         self.request_change_db: RequestChangeDBPort = (
             self.services.persistence.get_repository(APP_NAME, "RequestChange")
+        )
+        self.invitation_db: InvitationDBPort = self.services.persistence.get_repository(
+            APP_NAME, "Invitation"
         )
 
     def _create_admin_rights(self, roletype_id: str) -> int:
@@ -117,15 +127,14 @@ class UserService:
         For an external request, use create_role() instead, with permission controls
         """
 
-        role = Role(
-            user_id=user_id,
-            group_id=group_id,
-            roletype_id=roletype_id,
-        )
-
         with self.services.persistence.get_session() as session:
+            role = Role(
+                user_id=user_id,
+                group_id=group_id,
+                roletype_id=roletype_id,
+            )
+
             self.role_db.save(session, role)
-            session.commit()
 
         return role
 
@@ -133,11 +142,13 @@ class UserService:
         with self.services.persistence.get_session() as session:
             return self.user_db.find_user_by_email(session, email=email)
 
-    def create_group(self, user_id: str, group_name: str) -> Group:
+    def create_group(
+        self, user_id: str, group_name: str, is_private: bool = False
+    ) -> Group:
         """Create a new user group"""
 
         with self.services.persistence.get_session() as session:
-            group = Group(name=group_name)
+            group = Group(name=group_name, is_private=is_private)
             self.group_db.save(session, group)
             session.commit()
 
@@ -149,7 +160,7 @@ class UserService:
     def create_private_group(self, user_id: str) -> Group:
         """Create a default mandatory group to use this app"""
 
-        return self.create_group(user_id=user_id, group_name="Private")
+        return self.create_group(user_id=user_id, group_name="Private", is_private=True)
 
     def get_all_groups(
         self,
@@ -188,9 +199,7 @@ class UserService:
 
         email_service = EmailService(services=self.services)
         context = email_service.get_register_context(user=user)
-        message = self.services.notification.build_message(context)
-        self.services.notification.add_message(message=message)
-        self.services.notification.notify_all()
+        self._send_message(context=context)
 
         return (user, group)
 
@@ -222,9 +231,7 @@ class UserService:
                 context = email_service.get_login_context(
                     user=user, code=token.temp_code
                 )
-                message = self.services.notification.build_message(context)
-                self.services.notification.add_message(message=message)
-                self.services.notification.notify_all()
+                self._send_message(context=context)
 
                 return token, user
             return None, None
@@ -273,9 +280,7 @@ class UserService:
         context = email_service.get_password_change_context(
             user=user, sec_hash=request_hash
         )
-        message = self.services.notification.build_message(context)
-        self.services.notification.add_message(message=message)
-        self.services.notification.notify_all()
+        self._send_message(context=context)
 
     def request_email_change(self, user: User, new_email: str) -> None:
         """Generate process to change email"""
@@ -370,11 +375,135 @@ class UserService:
 
                 email_service = EmailService(services=self.services)
                 context = email_service.get_delete_context(user=user)
-                message = self.services.notification.build_message(context)
-                self.services.notification.add_message(message=message)
-                self.services.notification.notify_all()
+                self._send_message(context=context)
 
                 self.event.send_delete_user_event(user=user)
 
                 return True
             return False
+
+    def get_invitations(self, user_id: str, group_id: str) -> list[Invitation]:
+        with self.services.persistence.get_session() as session:
+            if self.services.identity.can(
+                session=session,
+                permission=Permissions.READ,
+                user_id=user_id,
+                group_id_resource=group_id,
+                resource="Group",
+            ):
+                invitations = self.invitation_db.get_from_group(
+                    session=session, group_id=group_id
+                )
+            else:
+                raise PermissionError()
+
+        return invitations
+
+    def invite_user_by_email(
+        self, user: User, user_email: str, group_id: str, roletype_id: str
+    ) -> Invitation:
+        with self.services.persistence.get_session() as session:
+            group: Group = self.group_db.load(session=session, id=group_id)
+            roletype: RoleType = self.roletype_db.load(session=session, id=roletype_id)
+
+            if (
+                not group.is_private
+                and self.services.identity.can(
+                    session=session,
+                    permission=Permissions.UPDATE,
+                    user_id=user.id,
+                    group_id_resource=group.id,
+                    resource="Group",
+                )
+                and (
+                    roletype.group_id is None
+                    or self.services.identity.can(
+                        session=session,
+                        permission=Permissions.READ,
+                        user_id=user.id,
+                        group_id_resource=roletype.group_id,
+                        resource="RoleType",
+                    )
+                )
+            ):
+                invitation = Invitation(
+                    from_user_id=user.id,
+                    to_user_email=user_email,
+                    in_group_id=group.id,
+                    with_roletype_id=roletype.id,
+                )
+                self.invitation_db.save(session=session, obj=invitation)
+
+                email_service = EmailService(services=self.services)
+                context = email_service.get_invitation_context(
+                    user=user, group=group, roletype=roletype, invitation=invitation
+                )
+                self._send_message(context=context)
+            else:
+                raise PermissionError()
+
+        return invitation
+
+    def _create_role_from_invitation(self, user: User, invitation: Invitation) -> Role:
+        return Role(
+            user_id=user.id,
+            group_id=invitation.in_group_id,
+            roletype_id=invitation.with_roletype_id,
+        )
+
+    def accept_invitation(self, user: User, hash: str) -> Role:
+        with self.services.persistence.get_session() as session:
+            invitation: Invitation | None = self.invitation_db.get_from_hash(
+                session=session, hash=hash
+            )
+
+            if invitation is not None and invitation.to_user_email == user.email:
+                role = self._create_role_from_invitation(
+                    user=user, invitation=invitation
+                )
+                self.role_db.save(session=session, obj=role)
+
+                host_user = self.user_db.load(
+                    session=session, id=invitation.from_user_id
+                )
+                group = self.group_db.load(session=session, id=invitation.in_group_id)
+                roletype = self.roletype_db.load(
+                    session=session, id=invitation.with_roletype_id
+                )
+
+                email_service = EmailService(services=self.services)
+                context = email_service.get_accepted_invitation_context(
+                    user=user, group=group, roletype=roletype, host_user=host_user
+                )
+                self._send_message(context=context)
+
+                self.invitation_db.delete(session=session, obj=invitation)
+
+                return role
+
+            elif invitation is None:
+                raise ValueError("Invitation doesn't exists")
+            else:
+                raise ValueError("Invitation mismatch user email")
+
+    def delete_invitation(self, user: User, invitation_id: str):
+        with self.services.persistence.get_session() as session:
+            invitation = self.invitation_db.load(session=session, id=invitation_id)
+            group = self.group_db.load(session=session, id=invitation.in_group_id)
+
+            if self.services.identity.can(
+                session=session,
+                permission=Permissions.UPDATE,
+                user_id=user.id,
+                group_id_resource=group.id,
+                resource="Group",
+            ):
+                self.invitation_db.delete_by_id(session=session, id=invitation_id)
+
+                email_service = EmailService(services=self.services)
+                context = email_service.get_cancelled_invitation_context(
+                    user=user, group=group, invitation=invitation
+                )
+                self._send_message(context=context)
+            else:
+                raise PermissionError()

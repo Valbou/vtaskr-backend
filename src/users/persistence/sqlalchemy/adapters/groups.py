@@ -14,7 +14,9 @@ class GroupDB(GroupDBPort, DefaultDB):
         self.qs = GroupQueryset()
 
     def update(self, session: Session, group: Group) -> bool:
-        self.qs.update().id(group.id).values(name=group.name)
+        self.qs.update().id(group.id).values(
+            name=group.name, description=group.description
+        )
         session.execute(self.qs.statement)
 
     def accessibles_by_user_with_permission(
