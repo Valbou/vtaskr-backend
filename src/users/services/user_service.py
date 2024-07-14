@@ -451,7 +451,7 @@ class UserService:
             roletype_id=invitation.with_roletype_id,
         )
 
-    def accept_invitation(self, user: User, hash: str):
+    def accept_invitation(self, user: User, hash: str) -> Role:
         with self.services.persistence.get_session() as session:
             invitation: Invitation | None = self.invitation_db.get_from_hash(
                 session=session, hash=hash
@@ -478,6 +478,8 @@ class UserService:
                 self._send_message(context=context)
 
                 self.invitation_db.delete(session=session, obj=invitation)
+
+                return role
 
             elif invitation is None:
                 raise ValueError("Invitation doesn't exists")

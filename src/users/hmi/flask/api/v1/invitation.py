@@ -4,7 +4,7 @@ from flask import current_app, g, request
 from src.libs.flask.utils import ResponseAPI
 from src.libs.hmi import dto_to_dict, list_dto_to_dict, list_models_to_list_dto
 from src.libs.redis import rate_limited
-from src.users.hmi.dto import INVITATION_COMPONENT, InvitationMapperDTO
+from src.users.hmi.dto import INVITATION_COMPONENT, InvitationMapperDTO, RoleMapperDTO
 from src.users.hmi.flask.decorators import login_required
 from src.users.services import UserService
 
@@ -210,10 +210,10 @@ def invitation_accepted():
 
     try:
         user_service = UserService(services=current_app.dependencies)
-        user_service.accept_invitation(user=g.user, hash=invitation_hash)
+        role = user_service.accept_invitation(user=g.user, hash=invitation_hash)
 
-        data = {}
-        return ResponseAPI.get_response(data, 200)
+        role_dto = RoleMapperDTO.model_to_dto(role)
+        return ResponseAPI.get_response(dto_to_dict(role_dto), 200)
 
     except Exception as e:
         logger.warning(f"400: Error during invitation acceptation process {e}")
