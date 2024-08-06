@@ -7,7 +7,7 @@ from src.libs.hmi.querystring import QueryStringFilter
 from src.libs.redis import rate_limited
 from src.users.hmi.dto import ROLETYPE_COMPONENT, RoleTypeDTO, RoleTypeMapperDTO
 from src.users.hmi.flask.decorators import login_required
-from src.users.services import RoleTypeService
+from src.users.managers import RoleTypeManager
 
 from .. import API_ERROR_COMPONENT, V1, logger, openapi, users_bp
 
@@ -70,21 +70,21 @@ def roletypes():
     Return a list of all role types the user can have or use
     """
 
-    roletype_service = RoleTypeService(current_app.dependencies)
+    roletype_manager = RoleTypeManager(current_app.dependencies)
 
     if request.method == "GET":
         qsf = QueryStringFilter(
             query_string=request.query_string.decode(), dto=RoleTypeDTO
         )
 
-        roletypes = roletype_service.get_all_roletypes(g.user.id, qsf.get_filters())
+        roletypes = roletype_manager.get_all_roletypes(g.user.id, qsf.get_filters())
         roletypes_dto = list_models_to_list_dto(RoleTypeMapperDTO, roletypes)
         return ResponseAPI.get_response(list_dto_to_dict(roletypes_dto), 200)
 
     if request.method == "POST":
         roletype_dto = RoleTypeDTO(**request.get_json())
 
-        roletype = roletype_service.create_custom_roletype(
+        roletype, _created = roletype_manager.create_custom_roletype(
             name=roletype_dto.name,
             group_id=roletype_dto.group_id,
         )
@@ -215,7 +215,7 @@ openapi.register_path(f"{V1}/roletype/{{roletype_id}}", api_item)
 @login_required(logger)
 @rate_limited(logger=logger, hit=10, period=timedelta(seconds=60))
 def roletype(roletype_id: str):
-    roletype_service = RoleTypeService(current_app.dependencies)
+    roletype_service = RoleTypeManager(current_app.dependencies)
     roletype = roletype_service.get_roletype(g.user.id, roletype_id)
 
     if roletype:

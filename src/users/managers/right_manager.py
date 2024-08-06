@@ -6,7 +6,7 @@ from src.users.persistence import RightDBPort
 from src.users.settings import APP_NAME
 
 
-class RightService:
+class RightManager:
     def __init__(self, services: DependencyInjector) -> None:
         self.services = services
         self.right_db: RightDBPort = self.services.persistence.get_repository(
@@ -15,6 +15,7 @@ class RightService:
 
     def create_observer_rights(self, roletype: RoleType) -> int:
         """Give reader rights on all resources for the given roletype (Admin)"""
+
         with self.services.persistence.get_session() as session:
             num_rights = len(
                 [
@@ -37,6 +38,25 @@ class RightService:
 
         return num_rights
 
+    def create_admin_rights(self, session, roletype_id: str) -> int:
+        """Give all rights on all resources for the given roletype (Admin)"""
+
+        num_rights = len(
+            [
+                self.right_db.save(
+                    session,
+                    Right(
+                        roletype_id=roletype_id,
+                        resource=res,
+                        permissions=[perm for perm in Permissions],
+                    ),
+                )
+                for res in self.services.identity.get_resources()
+            ]
+        )
+
+        return num_rights
+
     def add_right(
         self,
         roletype_id: str,
@@ -47,6 +67,7 @@ class RightService:
         Helper to add right to a roletype
         Prefer create_right for unsafe use
         """
+
         if isinstance(permissions, Permissions):
             permissions = [
                 permissions,
@@ -78,8 +99,10 @@ class RightService:
             ):
                 self.right_db.save(session, right)
                 session.commit()
+
                 return right
-            return None
+
+        return None
 
     def get_right(self, user_id, right_id) -> Right | None:
         """Return the right expected if user has read permission"""
@@ -123,8 +146,10 @@ class RightService:
             ):
                 self.right_db.save(session, right)
                 session.commit()
+
                 return True
-            return False
+
+        return False
 
     def delete_right(self, user_id: str, right: Right, roletype: RoleType) -> bool:
         """Delete a right if delete permission was given"""
@@ -144,5 +169,7 @@ class RightService:
             ):
                 self.right_db.delete(session, right)
                 session.commit()
+
                 return True
-            return False
+
+        return False

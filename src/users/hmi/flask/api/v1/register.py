@@ -6,7 +6,7 @@ from src.libs.hmi import dto_to_dict
 from src.libs.redis import rate_limited
 from src.libs.security.validators import EmailSyntaxError, PasswordComplexityError
 from src.users.hmi.dto.user import UserDTO, UserMapperDTO
-from src.users.services import UserService
+from src.users.services import UsersService
 
 from .. import V1, logger, openapi, users_bp
 
@@ -75,7 +75,7 @@ def register():
         password = payload.pop("password")
         user_dto = UserDTO(**payload)
 
-        auth_service = UserService(services=current_app.dependencies)
+        auth_service = UsersService(services=current_app.dependencies)
         auth_service.clean_unused_accounts()
 
         user, _group = auth_service.register(user_dto, password)

@@ -5,7 +5,7 @@ from typing import Callable
 from flask import current_app, g, request
 from src.libs.flask.utils import ResponseAPI, get_auth_token
 from src.libs.iam.config import PermissionError
-from src.users.services import UserService
+from src.users.services import UsersService
 
 
 def login_required(logger: Logger):
@@ -17,7 +17,7 @@ def login_required(logger: Logger):
                 if not sha_token:
                     return ResponseAPI.get_401_response("Invalid token")
 
-                auth_service = UserService(services=current_app.dependencies)
+                auth_service = UsersService(services=current_app.dependencies)
                 user = auth_service.user_from_token(sha_token)
                 if user:
                     g.token = sha_token

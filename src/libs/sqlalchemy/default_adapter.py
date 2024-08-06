@@ -10,6 +10,8 @@ class DefaultDB(AbstractDBPort):
     def load(
         self, session: Session, id: str, with_unique: bool = False
     ) -> object | None:
+        """Load an object with id from database"""
+
         self.qs.select().id(id)
         if with_unique:
             result = session.scalars(self.qs.statement).unique().one_or_none()
@@ -18,7 +20,11 @@ class DefaultDB(AbstractDBPort):
         return result
 
     def save(self, session: Session, obj: object) -> None:
+        """Save an object in database"""
+
         session.add(obj)
+
+        return obj
 
     def bulk_save(
         self,
@@ -26,6 +32,8 @@ class DefaultDB(AbstractDBPort):
         objs: list[object],
         number_per_loop: int = 500,
     ) -> None:
+        """Save many objects in database in an optimized number of hits"""
+
         objs_size = len(objs)
         pages = objs_size // number_per_loop + 1
         for p in range(pages):
@@ -39,12 +47,18 @@ class DefaultDB(AbstractDBPort):
                 session.flush()
 
     def delete(self, session: Session, obj: object) -> None:
+        """Delete an object from database"""
+
         session.delete(obj)
 
     def delete_by_id(self, session: Session, id: str) -> None:
+        """Delete an object from database from id"""
+
         self.qs.delete().id(id)
         session.execute(self.qs.statement)
 
     def exists(self, session: Session, id: str) -> bool:
+        """Check if an object exists in database"""
+
         self.qs.select().id(id)
         return session.query(self.qs.statement.exists()).scalar()

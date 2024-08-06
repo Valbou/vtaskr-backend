@@ -4,7 +4,7 @@ from flask import current_app, request
 from src.libs.flask.utils import ResponseAPI
 from src.libs.redis import rate_limited
 from src.libs.security.validators import PasswordComplexityError
-from src.users.services import UserService
+from src.users.services import UsersService
 
 from .. import V1, logger, openapi, users_bp
 
@@ -72,7 +72,7 @@ def forgotten_password():
         return ResponseAPI.get_400_response()
 
     try:
-        user_service = UserService(services=current_app.dependencies)
+        user_service = UsersService(services=current_app.dependencies)
         user = user_service.find_user_by_email(email)
         if user:
             user_service.request_password_change(user)
@@ -159,7 +159,7 @@ def new_password():
         return ResponseAPI.get_400_response()
 
     try:
-        user_service = UserService(services=current_app.dependencies)
+        user_service = UsersService(services=current_app.dependencies)
         try:
             if (
                 email

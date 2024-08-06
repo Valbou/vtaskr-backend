@@ -1,5 +1,5 @@
+from src.users.managers import RoleTypeManager
 from src.users.models import RoleType
-from src.users.services import RoleTypeService
 from tests.base_test import BaseTestCase
 
 URL_API = "/api/v1"
@@ -11,7 +11,7 @@ class TestRoleTypeAPI(BaseTestCase):
         self.headers = self.get_json_headers()
 
     def get_a_user_roletype(self) -> RoleType:
-        roletype_service = RoleTypeService(self.app.dependencies)
+        roletype_service = RoleTypeManager(self.app.dependencies)
         roletypes = roletype_service.get_all_roletypes(self.user.id)
         return roletypes[0]
 
@@ -58,8 +58,8 @@ class TestRoleTypeAPI(BaseTestCase):
     def test_update_roletype_put(self):
         headers = self.get_token_headers()
 
-        roletype_service = RoleTypeService(self.app.dependencies)
-        roletype = roletype_service.create_custom_roletype(
+        roletype_service = RoleTypeManager(self.app.dependencies)
+        roletype, _created = roletype_service.create_custom_roletype(
             self.fake.word(), self.group.id
         )
 
@@ -79,8 +79,8 @@ class TestRoleTypeAPI(BaseTestCase):
         self.user_0, self.group_0 = self.user, self.group
         self.create_user()
 
-        roletype_service = RoleTypeService(self.app.dependencies)
-        roletype = roletype_service.create_custom_roletype(
+        roletype_service = RoleTypeManager(self.app.dependencies)
+        roletype, _created = roletype_service.create_custom_roletype(
             self.fake.word(), self.group.id
         )
 
@@ -112,8 +112,8 @@ class TestRoleTypeAPI(BaseTestCase):
     def test_delete_associated_roletype(self):
         headers = self.get_token_headers()
 
-        roletype_service = RoleTypeService(self.app.dependencies)
-        roletype = roletype_service.create_custom_roletype(
+        roletype_service = RoleTypeManager(self.app.dependencies)
+        roletype, _created = roletype_service.create_custom_roletype(
             self.fake.word(), self.group.id
         )
 
@@ -127,8 +127,8 @@ class TestRoleTypeAPI(BaseTestCase):
         self.user_0, self.group_0 = self.user, self.group
         self.create_user()
 
-        roletype_service = RoleTypeService(self.app.dependencies)
-        roletype = roletype_service.create_custom_roletype(
+        roletype_service = RoleTypeManager(self.app.dependencies)
+        roletype, _created = roletype_service.create_custom_roletype(
             self.fake.word(), self.group.id
         )
 

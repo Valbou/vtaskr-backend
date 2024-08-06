@@ -6,14 +6,14 @@ from src.users.persistence import RoleTypeDBPort
 from src.users.settings import APP_NAME
 
 
-class RoleTypeService:
+class RoleTypeManager:
     def __init__(self, services: DependencyInjector) -> None:
         self.services = services
         self.roletype_db: RoleTypeDBPort = self.services.persistence.get_repository(
             APP_NAME, "RoleType"
         )
 
-    def get_default_observer(self) -> RoleType:
+    def get_default_observer(self) -> tuple[RoleType, bool]:
         """Looking for a default roletype named: Observer"""
 
         with self.services.persistence.get_session() as session:
@@ -21,26 +21,30 @@ class RoleTypeService:
             roletype, created = self.roletype_db.get_or_create(
                 session=session, roletype=observer_roletype
             )
-            session.commit()
 
-            if created:
-                from .right_service import RightService
+        return roletype, created
 
-                right_service = RightService(self.services)
-                right_service.create_observer_rights(roletype=roletype)
+    def get_default_admin(self) -> tuple[RoleType, bool]:
+        """Looking for a default roletype named: Admin"""
 
-            return roletype
+        admin_roletype = RoleType(name="Admin", group_id=None)
 
-    def create_custom_roletype(self, name: str, group_id: str) -> RoleType:
+        with self.services.persistence.get_session() as session:
+            roletype, created = self.roletype_db.get_or_create(
+                session=session, roletype=admin_roletype
+            )
+
+        return roletype, created
+
+    def create_custom_roletype(self, name: str, group_id: str) -> tuple[RoleType, bool]:
         roletype = RoleType(name=name, group_id=group_id)
 
         with self.services.persistence.get_session() as session:
-            roletype, _created = self.roletype_db.get_or_create(
+            roletype, created = self.roletype_db.get_or_create(
                 session=session, roletype=roletype
             )
-            session.commit()
 
-        return roletype
+        return roletype, created
 
     def get_roletype(self, user_id: str, roletype_id: str) -> RoleType | None:
         """Return the roletype expected if user has read permission"""
@@ -50,9 +54,11 @@ class RoleTypeService:
                 session, Permissions.READ, user_id=user_id, resource="RoleType"
             )
 
-            return self.roletype_db.get_a_user_roletype(
+            roletype = self.roletype_db.get_a_user_roletype(
                 session, roletype_id, group_ids=group_ids
             )
+
+        return roletype
 
     def get_all_roletypes(
         self, user_id: str, qs_filters: list[Filter] | None = None
@@ -64,9 +70,11 @@ class RoleTypeService:
                 session, Permissions.READ, user_id=user_id, resource="RoleType"
             )
 
-            return self.roletype_db.get_all_user_roletypes(
+            roletypes = self.roletype_db.get_all_user_roletypes(
                 session, group_ids=group_ids, filters=qs_filters
             )
+
+        return roletypes
 
     def update_roletype(self, user_id: str, roletype: RoleType) -> bool:
         """Update a roletype if update permission was given"""
@@ -82,8 +90,10 @@ class RoleTypeService:
             ):
                 self.roletype_db.save(session, roletype)
                 session.commit()
+
                 return True
-            return False
+
+        return False
 
     def delete_roletype(self, user_id: str, roletype: RoleType) -> bool:
         """Delete a roletype if delete permission was given"""
@@ -99,5 +109,7 @@ class RoleTypeService:
             ):
                 self.roletype_db.delete(session, roletype)
                 session.commit()
+
                 return True
-            return False
+
+        return False

@@ -1,5 +1,6 @@
+from src.users.managers import GroupManager, RoleTypeManager
 from src.users.models import Group, RoleType, User
-from src.users.services import RoleTypeService, UserService
+from src.users.services import UsersService
 from tests.base_test import BaseTestCase
 
 URL_API = "/api/v1"
@@ -8,12 +9,13 @@ URL_API = "/api/v1"
 class TestInvitationAPI(BaseTestCase):
     def setUp(self) -> None:
         super().setUp()
-        self.user_service = UserService(self.app.dependencies)
-        self.roletype_service = RoleTypeService(self.app.dependencies)
+        self.user_service = UsersService(self.app.dependencies)
+        self.group_manager = GroupManager(self.app.dependencies)
+        self.roletype_service = RoleTypeManager(self.app.dependencies)
 
-    def create_group(self, user: User) -> Group:
-        self.shared_group = self.user_service.create_group(
-            user_id=user.id, group_name="My Shared Group"
+    def _create_group(self, user: User) -> Group:
+        self.shared_group = self.user_service.create_new_group(
+            user_id=user.id, group_name="My Shared Group", is_private=False
         )
 
     def get_a_user_roletype(self, user: User) -> RoleType:
@@ -25,7 +27,7 @@ class TestInvitationAPI(BaseTestCase):
         self.user_0, self.group_0 = self.user, self.group
         self.create_user()
 
-        self.create_group(user=self.user_0)
+        self._create_group(user=self.user_0)
         roletype = self.get_a_user_roletype(user=self.user_0)
 
         invitations = self.user_service.get_invitations(
@@ -65,7 +67,7 @@ class TestInvitationAPI(BaseTestCase):
     def test_invite_and_cancel(self):
         headers = self.get_token_headers()
 
-        self.create_group(user=self.user)
+        self._create_group(user=self.user)
         roletype = self.get_a_user_roletype(user=self.user)
 
         invitations = self.user_service.get_invitations(

@@ -3,7 +3,7 @@ from datetime import timedelta
 from flask import current_app, request
 from src.libs.flask.utils import ResponseAPI, get_auth_token
 from src.libs.redis import rate_limited
-from src.users.services import UserService
+from src.users.services import UsersService
 
 from .. import V1, logger, openapi, users_bp
 
@@ -74,7 +74,7 @@ def confirm_2fa():
         return ResponseAPI.get_400_response()
 
     try:
-        token_service = UserService(current_app.dependencies)
+        token_service = UsersService(current_app.dependencies)
         token = token_service.get_temp_token(sha_token, code)
 
         if token:

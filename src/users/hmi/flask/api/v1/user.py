@@ -6,7 +6,7 @@ from src.libs.hmi import dto_to_dict
 from src.libs.redis import rate_limited
 from src.users.hmi.dto import USER_COMPONENT, UserDTO, UserMapperDTO
 from src.users.hmi.flask.decorators import login_required
-from src.users.services import UserService
+from src.users.services import UsersService
 
 from .. import API_ERROR_COMPONENT, V1, logger, openapi, users_bp
 
@@ -121,7 +121,7 @@ def update_me():
     user_dto = UserDTO(**request.get_json())
     g.user = UserMapperDTO.dto_to_model(user_dto, g.user)
 
-    user_service = UserService(services=current_app.dependencies)
+    user_service = UsersService(services=current_app.dependencies)
     user_service.update_user(g.user)
     user_dto = UserMapperDTO.model_to_dto(g.user)
 
@@ -160,7 +160,7 @@ def delete_me():
     Return a jsonify user deleted
     """
 
-    user_service = UserService(services=current_app.dependencies)
+    user_service = UsersService(services=current_app.dependencies)
     if user_service.delete_user(g.user):
         user_dto = UserMapperDTO.model_to_dto(g.user)
 

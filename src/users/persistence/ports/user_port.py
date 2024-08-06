@@ -11,11 +11,11 @@ class UserDBPort(AbstractDBPort, ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    def find_user_by_email(self, session, email: str) -> User:
+    def find_user_by_email(self, session, email: str) -> User | None:
         raise NotImplementedError()
 
     @abstractmethod
-    def clean_unused(self, session) -> User:
+    def clean_unused(self, session) -> None:
         raise NotImplementedError()
 
     @abstractmethod

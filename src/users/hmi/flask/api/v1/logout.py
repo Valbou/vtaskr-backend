@@ -4,7 +4,7 @@ from flask import current_app, g
 from src.libs.flask.utils import ResponseAPI
 from src.libs.redis import rate_limited
 from src.users.hmi.flask.decorators import login_required
-from src.users.services import UserService
+from src.users.services import UsersService
 
 from .. import V1, logger, openapi, users_bp
 
@@ -43,7 +43,7 @@ def logout():
     Return a 204
     """
 
-    auth_service = UserService(services=current_app.dependencies)
+    auth_service = UsersService(services=current_app.dependencies)
     if auth_service.logout(g.token):
         data = {}
         return ResponseAPI.get_response(data, 204)

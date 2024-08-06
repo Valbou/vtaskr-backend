@@ -7,7 +7,7 @@ from src.libs.hmi.querystring import QueryStringFilter
 from src.libs.redis import rate_limited
 from src.users.hmi.dto import ROLE_COMPONENT, RoleDTO, RoleMapperDTO
 from src.users.hmi.flask.decorators import login_required
-from src.users.services import RoleService
+from src.users.managers import RoleManager
 
 from .. import API_ERROR_COMPONENT, V1, logger, openapi, users_bp
 
@@ -69,7 +69,7 @@ def roles():
     if request.method == "GET":
         qsf = QueryStringFilter(query_string=request.query_string.decode(), dto=RoleDTO)
 
-        role_service = RoleService(current_app.dependencies)
+        role_service = RoleManager(current_app.dependencies)
         roles = role_service.get_all_roles(g.user.id, qsf.get_filters())
 
         roles_dto = list_models_to_list_dto(RoleMapperDTO, roles)
@@ -78,7 +78,7 @@ def roles():
     if request.method == "POST":
         role_dto = RoleDTO(**request.get_json())
 
-        role_service = RoleService(current_app.dependencies)
+        role_service = RoleManager(current_app.dependencies)
         role = role_service.create_role(
             g.user.id,
             RoleMapperDTO.dto_to_model(role_dto),
@@ -204,7 +204,7 @@ openapi.register_path(f"{V1}/role/{{role_id}}", api_item)
 @login_required(logger)
 @rate_limited(logger=logger, hit=5, period=timedelta(seconds=60))
 def role(role_id: str):
-    role_service = RoleService(current_app.dependencies)
+    role_service = RoleManager(current_app.dependencies)
     role = role_service.get_role(g.user.id, role_id)
 
     if role:

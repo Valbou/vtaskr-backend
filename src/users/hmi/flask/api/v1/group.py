@@ -7,7 +7,8 @@ from src.libs.hmi.querystring import QueryStringFilter
 from src.libs.redis import rate_limited
 from src.users.hmi.dto import GROUP_COMPONENT, GroupDTO, GroupMapperDTO, RoleMapperDTO
 from src.users.hmi.flask.decorators import login_required
-from src.users.services import GroupService, UserService
+from src.users.managers import GroupManager, RoleManager
+from src.users.services import UsersService
 
 from .. import API_ERROR_COMPONENT, V1, logger, openapi, users_bp
 
@@ -71,8 +72,8 @@ def groups():
             query_string=request.query_string.decode(), dto=GroupDTO
         )
 
-        user_service = UserService(current_app.dependencies)
-        groups = user_service.get_all_groups(g.user.id, qsf.get_filters())
+        group_manager = GroupManager(current_app.dependencies)
+        groups = group_manager.get_all_groups(g.user.id, qsf.get_filters())
 
         groups_dto = list_models_to_list_dto(GroupMapperDTO, groups)
         return ResponseAPI.get_response(list_dto_to_dict(groups_dto), 200)
@@ -80,8 +81,10 @@ def groups():
     if request.method == "POST":
         group_dto = GroupDTO(**request.get_json())
 
-        user_service = UserService(current_app.dependencies)
-        group = user_service.create_group(g.user.id, group_dto.name)
+        user_service = UsersService(current_app.dependencies)
+        group = user_service.create_new_group(
+            user_id=g.user.id, group_name=group_dto.name, is_private=False
+        )
 
         group_dto = GroupMapperDTO.model_to_dto(group)
         return ResponseAPI.get_response(dto_to_dict(group_dto), 201)
@@ -203,7 +206,7 @@ openapi.register_path(f"{V1}/group/{{group_id}}", api_item)
 @login_required(logger)
 @rate_limited(logger=logger, hit=30, period=timedelta(seconds=60))
 def group(group_id: str):
-    group_service = GroupService(current_app.dependencies)
+    group_service = GroupManager(current_app.dependencies)
     group = group_service.get_group(g.user.id, group_id)
 
     if group:
@@ -260,10 +263,10 @@ openapi.register_path(f"{V1}/group/{{group_id}}/members", api_item)
 @login_required(logger)
 @rate_limited(logger=logger, hit=30, period=timedelta(seconds=60))
 def group_members(group_id: str):
-    group_service = GroupService(current_app.dependencies)
-    roles = group_service.get_members(g.user.id, group_id)
+    role_manager = RoleManager(current_app.dependencies)
+    roles = role_manager.get_members(g.user.id, group_id)
 
-    if roles is not None:
+    if roles:
         roles_dto = list_models_to_list_dto(RoleMapperDTO, roles)
         return ResponseAPI.get_response(list_dto_to_dict(roles_dto), 200)
 

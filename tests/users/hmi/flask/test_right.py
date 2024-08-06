@@ -1,6 +1,6 @@
 from src.libs.iam.constants import Permissions
+from src.users.managers import RightManager, RoleTypeManager
 from src.users.models import Right
-from src.users.services import RightService, RoleTypeService
 from tests.base_test import BaseTestCase
 
 URL_API = "/api/v1"
@@ -12,7 +12,7 @@ class TestRightAPI(BaseTestCase):
         self.headers = self.get_json_headers()
 
     def get_a_user_right(self) -> Right:
-        right_service = RightService(self.app.dependencies)
+        right_service = RightManager(self.app.dependencies)
         rights = right_service.get_all_rights(self.user.id)
         return rights[0]
 
@@ -43,8 +43,8 @@ class TestRightAPI(BaseTestCase):
     def test_create_a_new_right(self):
         headers = self.get_token_headers()
 
-        roletype_service = RoleTypeService(self.app.dependencies)
-        roletype = roletype_service.create_custom_roletype(
+        roletype_service = RoleTypeManager(self.app.dependencies)
+        roletype, _created = roletype_service.create_custom_roletype(
             self.fake.word(), self.group.id
         )
 
@@ -61,12 +61,12 @@ class TestRightAPI(BaseTestCase):
     def test_update_associated_right_put(self):
         headers = self.get_token_headers()
 
-        roletype_service = RoleTypeService(self.app.dependencies)
-        roletype = roletype_service.create_custom_roletype(
+        roletype_service = RoleTypeManager(self.app.dependencies)
+        roletype, _created = roletype_service.create_custom_roletype(
             self.fake.word(), self.group.id
         )
 
-        right_service = RightService(self.app.dependencies)
+        right_service = RightManager(self.app.dependencies)
         right = Right(
             roletype_id=roletype.id,
             resource="RoleType",
@@ -90,12 +90,12 @@ class TestRightAPI(BaseTestCase):
         self.user_0, self.group_0 = self.user, self.group
         self.create_user()
 
-        roletype_service = RoleTypeService(self.app.dependencies)
-        roletype = roletype_service.create_custom_roletype(
+        roletype_service = RoleTypeManager(self.app.dependencies)
+        roletype, _created = roletype_service.create_custom_roletype(
             self.fake.word(), self.group.id
         )
 
-        right_service = RightService(self.app.dependencies)
+        right_service = RightManager(self.app.dependencies)
         right = Right(
             roletype_id=roletype.id,
             resource="RoleType",
@@ -131,12 +131,12 @@ class TestRightAPI(BaseTestCase):
     def test_delete_associated_right(self):
         headers = self.get_token_headers()
 
-        roletype_service = RoleTypeService(self.app.dependencies)
-        roletype = roletype_service.create_custom_roletype(
+        roletype_service = RoleTypeManager(self.app.dependencies)
+        roletype, _created = roletype_service.create_custom_roletype(
             self.fake.word(), self.group.id
         )
 
-        right_service = RightService(self.app.dependencies)
+        right_service = RightManager(self.app.dependencies)
         right = Right(
             roletype_id=roletype.id,
             resource="RoleType",
@@ -152,12 +152,12 @@ class TestRightAPI(BaseTestCase):
         self.user_0, self.group_0 = self.user, self.group
         self.create_user()
 
-        roletype_service = RoleTypeService(self.app.dependencies)
-        roletype = roletype_service.create_custom_roletype(
+        roletype_service = RoleTypeManager(self.app.dependencies)
+        roletype, _created = roletype_service.create_custom_roletype(
             self.fake.word(), self.group.id
         )
 
-        right_service = RightService(self.app.dependencies)
+        right_service = RightManager(self.app.dependencies)
         right = Right(
             roletype_id=roletype.id,
             resource="RoleType",

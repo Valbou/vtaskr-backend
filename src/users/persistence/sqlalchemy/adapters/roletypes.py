@@ -19,6 +19,7 @@ class RoleTypeDB(RoleTypeDBPort, DefaultDB):
             RoleType.name == roletype.name, RoleType.group_id == roletype.group_id
         )
         roletype_from_db = session.scalars(self.qs.statement).one_or_none()
+        session.commit()
 
         created = False
         if not roletype_from_db:

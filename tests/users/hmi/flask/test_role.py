@@ -1,5 +1,5 @@
+from src.users.managers import RoleManager, RoleTypeManager
 from src.users.models import Role
-from src.users.services import RoleService, RoleTypeService, UserService
 from tests.base_test import BaseTestCase
 
 URL_API = "/api/v1"
@@ -11,7 +11,7 @@ class TestRoleAPI(BaseTestCase):
         self.headers = self.get_json_headers()
 
     def get_a_test_user_role(self) -> Role:
-        self.role_service = RoleService(self.app.dependencies)
+        self.role_service = RoleManager(self.app.dependencies)
         roles = self.role_service.get_all_roles(self.user.id)
         return roles[0]
 
@@ -19,15 +19,18 @@ class TestRoleAPI(BaseTestCase):
         self.user_0, self.group_0 = self.user, self.group
         self.create_user()
 
-        role_service = RoleService(self.app.dependencies)
-        user_service = UserService(self.app.dependencies)
-        roletype = user_service._get_default_admin()
+        role_manager = RoleManager(self.app.dependencies)
+        roletype_manager = RoleTypeManager(self.app.dependencies)
+
+        roletype, _created = roletype_manager.get_default_admin()
 
         role = Role(self.user.id, self.group_0.id, roletype_id=roletype.id)
-        return role_service.create_role(
+        created_role = role_manager.create_role(
             user_id=self.user_0.id,
             role=role,
         )
+
+        return created_role
 
     def test_get_role_no_login(self):
         self.create_user()
@@ -56,8 +59,8 @@ class TestRoleAPI(BaseTestCase):
         self.user_0, self.group_0 = self.user, self.group
         self.create_user()
 
-        user_service = UserService(self.app.dependencies)
-        roletype = user_service._get_default_admin()
+        roletype_manager = RoleTypeManager(self.app.dependencies)
+        roletype, _created = roletype_manager.get_default_admin()
 
         data = {
             "user_id": self.user.id,
@@ -83,8 +86,8 @@ class TestRoleAPI(BaseTestCase):
         role = self.get_a_colleague_role()
 
         # Downgrade to Observer role
-        self.roletype_service = RoleTypeService(self.app.dependencies)
-        roletype = self.roletype_service.get_default_observer()
+        self.roletype_service = RoleTypeManager(self.app.dependencies)
+        roletype, _created = self.roletype_service.get_default_observer()
 
         data = {
             "group_id": role.group_id,
@@ -105,8 +108,8 @@ class TestRoleAPI(BaseTestCase):
         role = self.get_a_test_user_role()
 
         # Downgrade to Observer role
-        self.roletype_service = RoleTypeService(self.app.dependencies)
-        roletype = self.roletype_service.get_default_observer()
+        self.roletype_service = RoleTypeManager(self.app.dependencies)
+        roletype, _created = self.roletype_service.get_default_observer()
 
         data = {
             "group_id": role.group_id,
@@ -125,8 +128,8 @@ class TestRoleAPI(BaseTestCase):
         role = self.get_a_colleague_role()
 
         # Downgrade to Observer role
-        self.roletype_service = RoleTypeService(self.app.dependencies)
-        roletype = self.roletype_service.get_default_observer()
+        self.roletype_service = RoleTypeManager(self.app.dependencies)
+        roletype, _created = self.roletype_service.get_default_observer()
 
         data = {
             "group_id": role.group_id,

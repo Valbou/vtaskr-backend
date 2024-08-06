@@ -14,5 +14,5 @@ class TokenDBPort(AbstractDBPort, ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    def clean_expired(self, session) -> int:
+    def clean_expired(self, session) -> None:
         raise NotImplementedError()

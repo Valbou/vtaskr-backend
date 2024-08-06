@@ -3,7 +3,7 @@ from src.events.services import EventService
 from tests.base_test import DummyBaseTestCase
 
 
-class TestUserService(DummyBaseTestCase):
+class TestUsersService(DummyBaseTestCase):
     def setUp(self) -> None:
         super().setUp()
         self.es = EventService(services=self.app.dependencies)

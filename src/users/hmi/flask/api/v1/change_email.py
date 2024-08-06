@@ -5,7 +5,7 @@ from src.libs.flask.utils import ResponseAPI
 from src.libs.redis import rate_limited
 from src.libs.security.validators import EmailSyntaxError, get_valid_email
 from src.users.hmi.flask.decorators import login_required
-from src.users.services import EmailAlreadyUsedError, UserService
+from src.users.services import EmailAlreadyUsedError, UsersService
 
 from .. import V1, logger, openapi, users_bp
 
@@ -67,7 +67,7 @@ def change_email():
     try:
         new_email = payload.get("new_email", "")
         new_email = get_valid_email(new_email)
-        auth_service = UserService(services=current_app.dependencies)
+        auth_service = UsersService(services=current_app.dependencies)
         auth_service.request_email_change(g.user, new_email)
 
     except (EmailSyntaxError, EmailAlreadyUsedError) as e:
@@ -161,7 +161,7 @@ def new_email():
         return ResponseAPI.get_400_response()
 
     try:
-        user_service = UserService(services=current_app.dependencies)
+        user_service = UsersService(services=current_app.dependencies)
         try:
             if (
                 old_email

@@ -36,5 +36,5 @@ def setup_flask(app: Flask, project_dir: str) -> dict:
             (APP_NAME, "Token", TokenDB()),
             (APP_NAME, "Invitation", InvitationDB()),
         ],
-        "permissions_resources": ["Group", "Role", "RoleType"],
+        "permissions_resources": ["Group", "Role", "RoleType", "Invitation"],
     }

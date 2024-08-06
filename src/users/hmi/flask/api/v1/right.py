@@ -7,7 +7,7 @@ from src.libs.hmi.querystring import QueryStringFilter
 from src.libs.redis import rate_limited
 from src.users.hmi.dto import RIGHT_COMPONENT, RightDTO, RightMapperDTO
 from src.users.hmi.flask.decorators import login_required
-from src.users.services import RightService, RoleTypeService
+from src.users.managers import RightManager, RoleTypeManager
 
 from .. import API_ERROR_COMPONENT, V1, logger, openapi, users_bp
 
@@ -65,7 +65,7 @@ def rights():
     Need a valid token
     Return a list of all rights the user can have or use
     """
-    right_service = RightService(current_app.dependencies)
+    right_service = RightManager(current_app.dependencies)
 
     if request.method == "GET":
         qsf = QueryStringFilter(
@@ -79,7 +79,7 @@ def rights():
     if request.method == "POST":
         right_dto = RightDTO(**request.get_json())
 
-        roletype_service = RoleTypeService(current_app.dependencies)
+        roletype_service = RoleTypeManager(current_app.dependencies)
         roletype = roletype_service.get_roletype(g.user.id, right_dto.roletype_id)
 
         if roletype:
@@ -212,11 +212,11 @@ openapi.register_path(f"{V1}/right/{{right_id}}", api_item)
 @login_required(logger)
 @rate_limited(logger=logger, hit=10, period=timedelta(seconds=60))
 def right(right_id: str):
-    right_service = RightService(current_app.dependencies)
+    right_service = RightManager(current_app.dependencies)
     right = right_service.get_right(g.user.id, right_id)
 
     if right:
-        roletype_service = RoleTypeService(current_app.dependencies)
+        roletype_service = RoleTypeManager(current_app.dependencies)
         roletype = roletype_service.get_roletype(g.user.id, right.roletype_id)
 
         if roletype:

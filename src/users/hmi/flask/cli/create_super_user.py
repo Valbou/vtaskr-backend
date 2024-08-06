@@ -3,7 +3,7 @@ from getpass import getpass
 from flask import current_app
 from flask.cli import with_appcontext
 from src.users.hmi.dto import UserDTO
-from src.users.services import UserService
+from src.users.services import UsersService
 
 from . import users_cli_bp
 
@@ -11,7 +11,7 @@ from . import users_cli_bp
 @users_cli_bp.cli.command("create_super_user")
 @with_appcontext
 def create_super_user():
-    user_service = UserService(services=current_app.dependencies)
+    user_service = UsersService(services=current_app.dependencies)
     user_dto = UserDTO(
         first_name=input("First name"),
         last_name=input("Last name"),

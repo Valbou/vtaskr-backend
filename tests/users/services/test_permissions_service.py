@@ -1,5 +1,6 @@
 from src.libs.iam.constants import Permissions
-from src.users.services import RightService, RoleTypeService, UserService
+from src.users.managers import RightManager, RoleManager, RoleTypeManager
+from src.users.services import UsersService
 from tests.base_test import BaseTestCase
 
 
@@ -108,24 +109,26 @@ class TestPermissionControlOnOthersGroups(BaseTestCase, CheckCanMixin):
 
         self.assertNotEqual(first_user.id, self.user.id)
 
-        user_service = UserService(self.app.dependencies)
-        self.shared_group = user_service.create_group(
-            user_id=first_user.id, group_name="My Shared Group"
+        user_service = UsersService(self.app.dependencies)
+        self.shared_group = user_service.create_new_group(
+            user_id=first_user.id, group_name="My Shared Group", is_private=False
         )
 
-        roletype_service = RoleTypeService(self.app.dependencies)
-        roletype = roletype_service.create_custom_roletype(
+        roletype_service = RoleTypeManager(self.app.dependencies)
+        roletype, _created = roletype_service.create_custom_roletype(
             name="Read and Create on RoleType only", group_id=self.shared_group.id
         )
 
-        user_service = UserService(self.app.dependencies)
-        user_service.add_role(
-            user_id=self.user.id,
-            group_id=self.shared_group.id,
-            roletype_id=roletype.id,
-        )
+        with self.app.dependencies.persistence.get_session() as session:
+            role_manager = RoleManager(self.app.dependencies)
+            role_manager.add_role(
+                session=session,
+                user_id=self.user.id,
+                group_id=self.shared_group.id,
+                roletype_id=roletype.id,
+            )
 
-        right_service = RightService(self.app.dependencies)
+        right_service = RightManager(self.app.dependencies)
         right_service.add_right(
             roletype_id=roletype.id,
             resource="RoleType",

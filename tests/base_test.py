@@ -6,7 +6,7 @@ from faker import Faker
 from flask import Flask, template_rendered
 from src.settings import LOCALE, TIMEZONE
 from src.users.hmi.dto import UserDTO
-from src.users.services import UserService
+from src.users.services import UsersService
 from tests.utils.db_utils import text_query_column_exists, text_query_table_exists
 
 from . import APP, DUMMY_APP
@@ -27,17 +27,17 @@ class FlaskTemplateCapture:
     def add(self, sender, template, context, **extra):
         self.recorded_templates.append(template.name or "string template")
 
-    def get_recorded_templates(self):
+    def get_recorded_templates(self) -> list[str]:
         return self.recorded_templates
 
 
 class MixinTestCase:
-    def generate_email(self):
+    def generate_email(self) -> str:
         return self.fake.bothify("???###?#-").lower() + self.fake.email(
             domain="valbou.fr"
         )
 
-    def generate_password(self):
+    def generate_password(self) -> str:
         return self.fake.password(
             length=10, special_chars=True, digits=True, upper_case=True, lower_case=True
         )
@@ -96,7 +96,7 @@ class BaseTestCase(MixinTestCase, TestCase):
             timezone=TIMEZONE,
         )
 
-        user_service = UserService(services=self.app.dependencies)
+        user_service = UsersService(services=self.app.dependencies)
         self.user, self.group = user_service.register(
             self.user_dto, password=self.password
         )
@@ -108,7 +108,7 @@ class BaseTestCase(MixinTestCase, TestCase):
         if not hasattr(self, "user"):
             self.create_user()
 
-        auth_service = UserService(services=self.app.dependencies)
+        auth_service = UsersService(services=self.app.dependencies)
         self.token, _ = auth_service.authenticate(
             email=self.user.email, password=self.password
         )

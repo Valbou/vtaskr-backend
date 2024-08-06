@@ -8,7 +8,7 @@ TSessionPort = TypeVar("TSessionPort", bound="SessionPort")
 
 class AbstractDBPort(ABC):
     @abstractmethod
-    def load(self, session, id: str) -> object:
+    def load(self, session, id: str) -> object | None:
         raise NotImplementedError()
 
     @abstractmethod

@@ -12,7 +12,7 @@ from src.users.settings import (
 )
 
 
-class EmailService:
+class EmailManager:
     def __init__(self, services: DependencyInjector) -> None:
         self.services = services
 

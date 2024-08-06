@@ -6,7 +6,7 @@ from src.libs.hmi import dto_to_dict, list_dto_to_dict, list_models_to_list_dto
 from src.libs.redis import rate_limited
 from src.users.hmi.dto import INVITATION_COMPONENT, InvitationMapperDTO, RoleMapperDTO
 from src.users.hmi.flask.decorators import login_required
-from src.users.services import UserService
+from src.users.services import UsersService
 
 from .. import V1, logger, openapi, users_bp
 
@@ -41,7 +41,7 @@ openapi.register_path(f"{V1}/group/{{group_id}}/invitations", api_item)
 @login_required(logger)
 @rate_limited(logger=logger, hit=30, period=timedelta(seconds=60))
 def group_invitations(group_id: str):
-    user_service = UserService(current_app.dependencies)
+    user_service = UsersService(current_app.dependencies)
     invitations = user_service.get_invitations(g.user.id, group_id)
 
     if invitations is not None:
@@ -131,7 +131,7 @@ def invite():
         return ResponseAPI.get_400_response()
 
     try:
-        user_service = UserService(services=current_app.dependencies)
+        user_service = UsersService(services=current_app.dependencies)
         invitation = user_service.invite_user_by_email(
             user=g.user,
             user_email=to_user_email,
@@ -209,7 +209,7 @@ def invitation_accepted():
     invitation_hash = payload.get("hash", "")
 
     try:
-        user_service = UserService(services=current_app.dependencies)
+        user_service = UsersService(services=current_app.dependencies)
         role = user_service.accept_invitation(user=g.user, hash=invitation_hash)
 
         role_dto = RoleMapperDTO.model_to_dto(role)
@@ -256,7 +256,7 @@ def invitation_cancel(invitation_id: str):
     """
 
     try:
-        user_service = UserService(services=current_app.dependencies)
+        user_service = UsersService(services=current_app.dependencies)
         user_service.delete_invitation(user=g.user, invitation_id=invitation_id)
 
         data = {}

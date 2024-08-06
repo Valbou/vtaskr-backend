@@ -3,7 +3,7 @@ from datetime import timedelta
 from flask import current_app, request
 from src.libs.flask.utils import ResponseAPI
 from src.libs.redis import rate_limited
-from src.users.services import UserService
+from src.users.services import UsersService
 
 from .. import V1, logger, openapi, users_bp
 
@@ -93,7 +93,7 @@ def login():
         return ResponseAPI.get_400_response()
 
     try:
-        auth_service = UserService(services=current_app.dependencies)
+        auth_service = UsersService(services=current_app.dependencies)
         token, user = auth_service.authenticate(email, password)
 
         if token is not None:

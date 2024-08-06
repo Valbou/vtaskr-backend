@@ -6,7 +6,7 @@ from src.users.models import Invitation
 
 class InvitationDBPort(AbstractDBPort, ABC):
     @abstractmethod
-    def clean_expired(self, session):
+    def clean_expired(self, session) -> None:
         raise NotImplementedError()
 
     @abstractmethod
