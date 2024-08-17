@@ -1,5 +1,6 @@
 from unittest.mock import MagicMock, call
 
+from src.libs.iam.constants import Permissions
 from src.settings import LOCALE, TIMEZONE
 from src.users.hmi.dto import UserDTO
 from src.users.models import (
@@ -7,6 +8,7 @@ from src.users.models import (
     Invitation,
     RequestChange,
     RequestType,
+    Right,
     Role,
     RoleType,
     Token,
@@ -75,6 +77,49 @@ class TestUsersService(DummyBaseTestCase):
 
         self.assertEqual(group.id, new_group.id)
         self.assertEqual(group.name, new_group.name)
+
+    def test_get_group(self):
+        self.users_service.group_manager.get_group = MagicMock()
+
+        self.users_service.get_group(user_id="user_123", group_id="group_123")
+
+        self.users_service.group_manager.get_group.assert_called_once_with(
+            user_id="user_123", group_id="group_123"
+        )
+
+    def test_get_update_group(self):
+        group = Group(name="Test Group", is_private=False)
+        self.users_service.group_manager.update_group = MagicMock()
+
+        self.users_service.update_group(user_id="user_123", group=group)
+
+        self.users_service.group_manager.update_group.assert_called_once()
+
+    def test_get_all_user_groups(self):
+        self.users_service.group_manager.get_all_groups = MagicMock()
+
+        self.users_service.get_all_user_groups(user_id="user_123")
+
+        self.users_service.group_manager.get_all_groups.assert_called_once_with(
+            user_id="user_123", qs_filters=[]
+        )
+
+    def test_get_delete_group(self):
+        group = Group(name="Test Group", is_private=False)
+        self.users_service.group_manager.delete_group = MagicMock()
+
+        self.users_service.delete_group(user_id="user_123", group=group)
+
+        self.users_service.group_manager.delete_group.assert_called_once()
+
+    def test_get_group_members(self):
+        self.users_service.role_manager.get_members = MagicMock()
+
+        self.users_service.get_group_members(user_id="user_123", group_id="group_123")
+
+        self.users_service.role_manager.get_members.assert_called_once_with(
+            user_id="user_123", group_id="group_123"
+        )
 
     def test_find_user_by_email(self):
         self.users_service.user_manager.find_user_by_email = MagicMock()
@@ -162,7 +207,7 @@ class TestUsersService(DummyBaseTestCase):
         self.users_service.email_manager.get_login_context = MagicMock(return_value={})
         self.users_service._send_message = MagicMock()
 
-        token, user = self.users_service.authenticate(email=email, password=password)
+        token = self.users_service.authenticate(email=email, password=password)
 
         self.users_service.token_manager.clean_expired.assert_called_once()
         self.users_service.user_manager.find_user_by_email.assert_called_once()
@@ -176,8 +221,6 @@ class TestUsersService(DummyBaseTestCase):
 
         self.assertIsInstance(token, Token)
         self.assertEqual(base_token.id, token.id)
-        self.assertIsInstance(user, User)
-        self.assertEqual(base_user.id, user.id)
 
     def test_authenticate_fail(self):
         base_user = self._get_user()
@@ -195,7 +238,7 @@ class TestUsersService(DummyBaseTestCase):
         self.users_service.email_manager.get_login_context = MagicMock()
         self.users_service._send_message = MagicMock()
 
-        token, user = self.users_service.authenticate(email=email, password=password)
+        token = self.users_service.authenticate(email=email, password=password)
 
         self.users_service.token_manager.clean_expired.assert_called_once()
         self.users_service.user_manager.find_user_by_email.assert_called_once()
@@ -207,7 +250,6 @@ class TestUsersService(DummyBaseTestCase):
         self.users_service._send_message.assert_not_called()
 
         self.assertIsNone(token)
-        self.assertIsNone(user)
 
     def test_get_temp_token(self):
         base_token = self._get_token()
@@ -767,3 +809,198 @@ class TestUsersService(DummyBaseTestCase):
         self.users_service.invitation_manager.delete_invitation_by_id.assert_called_once()
         self.users_service.email_manager.get_cancelled_invitation_context.assert_not_called()
         self.users_service._send_message.assert_not_called()
+
+    def test_create_new_right(self):
+        base_right = Right(
+            roletype_id="roletype_123",
+            resource="Test",
+            permissions=[Permissions.EXECUTE],
+        )
+
+        self.users_service.right_manager.create_right = MagicMock(
+            return_value=base_right
+        )
+
+        right: Right = self.users_service.create_new_right(
+            user_id="user_123", group_id="right_123", right=base_right
+        )
+
+        self.assertIsInstance(right, Right)
+        self.assertEqual(right.roletype_id, "roletype_123")
+        self.assertIs(right.permissions[0], Permissions.EXECUTE)
+
+        self.users_service.right_manager.create_right.assert_called_once()
+
+    def test_get_user_right(self):
+        self.users_service.right_manager.get_right = MagicMock(return_value=None)
+
+        result = self.users_service.get_user_right(
+            user_id="user_123", right_id="right_123"
+        )
+
+        self.assertIsNone(result)
+
+        self.users_service.right_manager.get_right.assert_called_once()
+
+    def test_get_all_user_rights(self):
+        self.users_service.right_manager.get_all_rights = MagicMock(return_value=[])
+
+        result = self.users_service.get_all_user_rights(user_id="user_123")
+
+        self.assertIsInstance(result, list)
+        self.assertEqual(len(result), 0)
+
+        self.users_service.right_manager.get_all_rights.assert_called_once()
+
+    def test_update_user_right(self):
+        self.users_service.right_manager.update_right = MagicMock(return_value=True)
+
+        result = self.users_service.update_user_right(
+            user_id="user_id", right=MagicMock(), roletype=MagicMock()
+        )
+
+        self.assertTrue(result)
+
+        self.users_service.right_manager.update_right.assert_called_once()
+
+    def test_delete_user_right(self):
+        self.users_service.right_manager.delete_right = MagicMock(return_value=True)
+
+        result = self.users_service.right_manager.delete_right(
+            user_id="user_123", right=MagicMock(), roletype=MagicMock()
+        )
+
+        self.assertTrue(result)
+
+        self.users_service.right_manager.delete_right.assert_called_once()
+
+    def test_create_new_role(self):
+        base_role = Role(
+            user_id="user_123",
+            group_id="group_123",
+            roletype_id="roletype_123",
+        )
+
+        self.users_service.role_manager.create_role = MagicMock(return_value=base_role)
+
+        role: Role = self.users_service.create_new_role(
+            user_id="user_123", role=base_role
+        )
+
+        self.assertIsInstance(role, Role)
+        self.assertEqual(role.roletype_id, "roletype_123")
+        self.assertEqual(role.group_id, "group_123")
+
+        self.users_service.role_manager.create_role.assert_called_once()
+
+    def test_get_user_role(self):
+        self.users_service.role_manager.get_role = MagicMock(return_value=None)
+
+        result = self.users_service.get_user_role(
+            user_id="user_123", role_id="role_123"
+        )
+
+        self.assertIsNone(result)
+
+        self.users_service.role_manager.get_role.assert_called_once()
+
+    def test_get_all_user_roles(self):
+        self.users_service.role_manager.get_all_roles = MagicMock(return_value=[])
+
+        result = self.users_service.get_all_user_roles(user_id="user_123")
+
+        self.assertIsInstance(result, list)
+        self.assertEqual(len(result), 0)
+
+        self.users_service.role_manager.get_all_roles.assert_called_once()
+
+    def test_update_user_role(self):
+        self.users_service.role_manager.update_role = MagicMock(return_value=True)
+
+        result = self.users_service.update_user_role(
+            user_id="user_id", role=MagicMock()
+        )
+
+        self.assertTrue(result)
+
+        self.users_service.role_manager.update_role.assert_called_once()
+
+    def test_delete_user_role(self):
+        self.users_service.role_manager.delete_role = MagicMock(return_value=True)
+
+        result = self.users_service.role_manager.delete_role(
+            user_id="user_123", role=MagicMock()
+        )
+
+        self.assertTrue(result)
+
+        self.users_service.role_manager.delete_role.assert_called_once()
+
+    def test_create_new_roletype(self):
+        base_roletype = RoleType(
+            name="Test",
+            group_id="group_123",
+        )
+
+        self.users_service.roletype_manager.create_custom_roletype = MagicMock(
+            return_value=base_roletype
+        )
+
+        roletype: RoleType = self.users_service.create_new_roletype(
+            name="Test", group_id="group_123"
+        )
+
+        self.assertIsInstance(roletype, RoleType)
+        self.assertEqual(roletype.name, "Test")
+        self.assertEqual(roletype.group_id, "group_123")
+
+        self.users_service.roletype_manager.create_custom_roletype.assert_called_once()
+
+    def test_get_user_roletype(self):
+        self.users_service.roletype_manager.get_roletype = MagicMock(return_value=None)
+
+        result = self.users_service.get_user_roletype(
+            user_id="user_123", roletype_id="roletype_123"
+        )
+
+        self.assertIsNone(result)
+
+        self.users_service.roletype_manager.get_roletype.assert_called_once()
+
+    def test_get_all_user_roletypes(self):
+        self.users_service.roletype_manager.get_all_roletypes = MagicMock(
+            return_value=[]
+        )
+
+        result = self.users_service.get_all_user_roletypes(user_id="user_123")
+
+        self.assertIsInstance(result, list)
+        self.assertEqual(len(result), 0)
+
+        self.users_service.roletype_manager.get_all_roletypes.assert_called_once()
+
+    def test_update_user_roletype(self):
+        self.users_service.roletype_manager.update_roletype = MagicMock(
+            return_value=True
+        )
+
+        result = self.users_service.update_user_roletype(
+            user_id="user_id", roletype=MagicMock()
+        )
+
+        self.assertTrue(result)
+
+        self.users_service.roletype_manager.update_roletype.assert_called_once()
+
+    def test_delete_user_roletype(self):
+        self.users_service.roletype_manager.delete_roletype = MagicMock(
+            return_value=True
+        )
+
+        result = self.users_service.roletype_manager.delete_roletype(
+            user_id="user_123", roletype=MagicMock()
+        )
+
+        self.assertTrue(result)
+
+        self.users_service.roletype_manager.delete_roletype.assert_called_once()

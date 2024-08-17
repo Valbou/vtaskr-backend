@@ -13,28 +13,24 @@ class RightManager:
             APP_NAME, "Right"
         )
 
-    def create_observer_rights(self, roletype: RoleType) -> int:
+    def create_observer_rights(self, session, roletype_id: str) -> int:
         """Give reader rights on all resources for the given roletype (Admin)"""
 
-        with self.services.persistence.get_session() as session:
-            num_rights = len(
-                [
-                    self.right_db.save(
-                        session,
-                        Right(
-                            roletype_id=roletype.id,
-                            resource=res,
-                            permissions=[
-                                Permissions.READ,
-                            ],
-                        ),
-                    )
-                    for res in self.services.identity.get_resources()
-                ]
-            )
-
-            # bulk insert
-            session.commit()
+        num_rights = len(
+            [
+                self.right_db.save(
+                    session,
+                    Right(
+                        roletype_id=roletype_id,
+                        resource=res,
+                        permissions=[
+                            Permissions.READ,
+                        ],
+                    ),
+                )
+                for res in self.services.identity.get_resources()
+            ]
+        )
 
         return num_rights
 

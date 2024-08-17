@@ -7,7 +7,7 @@ from src.libs.hmi.querystring import QueryStringFilter
 from src.libs.redis import rate_limited
 from src.users.hmi.dto import ROLE_COMPONENT, RoleDTO, RoleMapperDTO
 from src.users.hmi.flask.decorators import login_required
-from src.users.managers import RoleManager
+from src.users.services import UsersService
 
 from .. import API_ERROR_COMPONENT, V1, logger, openapi, users_bp
 
@@ -66,11 +66,12 @@ def roles():
     Return a list of all roles in which the user have rights
     """
 
+    users_service = UsersService(services=current_app.dependencies)
+
     if request.method == "GET":
         qsf = QueryStringFilter(query_string=request.query_string.decode(), dto=RoleDTO)
 
-        role_service = RoleManager(current_app.dependencies)
-        roles = role_service.get_all_roles(g.user.id, qsf.get_filters())
+        roles = users_service.get_all_user_roles(g.user.id, qsf.get_filters())
 
         roles_dto = list_models_to_list_dto(RoleMapperDTO, roles)
         return ResponseAPI.get_response(list_dto_to_dict(roles_dto), 200)
@@ -78,8 +79,7 @@ def roles():
     if request.method == "POST":
         role_dto = RoleDTO(**request.get_json())
 
-        role_service = RoleManager(current_app.dependencies)
-        role = role_service.create_role(
+        role = users_service.create_new_role(
             g.user.id,
             RoleMapperDTO.dto_to_model(role_dto),
         )
@@ -204,8 +204,8 @@ openapi.register_path(f"{V1}/role/{{role_id}}", api_item)
 @login_required(logger)
 @rate_limited(logger=logger, hit=5, period=timedelta(seconds=60))
 def role(role_id: str):
-    role_service = RoleManager(current_app.dependencies)
-    role = role_service.get_role(g.user.id, role_id)
+    users_service = UsersService(services=current_app.dependencies)
+    role = users_service.get_user_role(g.user.id, role_id)
 
     if role:
         if request.method == "GET":
@@ -216,14 +216,16 @@ def role(role_id: str):
             role_dto = RoleDTO(**request.get_json())
             role = RoleMapperDTO.dto_to_model(role_dto, role)
 
-            if role_service.update_role(g.user.id, role):
+            if users_service.update_user_role(g.user.id, role):
                 role_dto = RoleMapperDTO.model_to_dto(role)
                 return ResponseAPI.get_response(dto_to_dict(role_dto), 200)
+
             return ResponseAPI.get_403_response()
 
         if request.method == "DELETE":
-            if role_service.delete_role(g.user.id, role):
+            if users_service.delete_user_role(g.user.id, role):
                 return ResponseAPI.get_response({}, 204)
+
             return ResponseAPI.get_403_response()
 
         else:

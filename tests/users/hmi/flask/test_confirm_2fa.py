@@ -1,3 +1,5 @@
+from unittest.mock import MagicMock, patch
+
 from tests.base_test import BaseTestCase
 
 URL_API_USERS = "/api/v1/users"
@@ -8,27 +10,47 @@ class TestUserV1Confirm2FA(BaseTestCase):
         super().setUp()
         self.headers = self.get_json_headers()
 
-    def test_post_confirm_2FA(self):
+    @patch(
+        "src.users.hmi.flask.api.v1.confirm_2fa.UsersService.get_temp_token",
+        return_value="token_123",
+    )
+    def test_post_confirm_2FA(self, mock: MagicMock):
         headers = self.get_token_headers(valid=False)
         payload = {
             "code_2FA": self.token.temp_code,
         }
+
         response = self.client.post(
             f"{URL_API_USERS}/2fa", headers=headers, json=payload
         )
+
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.content_type, "application/json")
 
-    def test_post_bad_code_2FA(self):
+        mock.assert_called_once_with(
+            sha_token=self.token.sha_token, code=payload.get("code_2FA")
+        )
+
+    @patch(
+        "src.users.hmi.flask.api.v1.confirm_2fa.UsersService.get_temp_token",
+        return_value=None,
+    )
+    def test_post_bad_code_2FA(self, mock: MagicMock):
         headers = self.get_token_headers(valid=False)
         payload = {
             "code_2FA": self.generate_password(),
         }
+
         response = self.client.post(
             f"{URL_API_USERS}/2fa", headers=headers, json=payload
         )
+
         self.assertEqual(response.status_code, 401)
         self.assertEqual(response.content_type, "application/json")
+
+        mock.assert_called_once_with(
+            sha_token=self.token.sha_token, code=payload.get("code_2FA")
+        )
 
     def test_no_get(self):
         response = self.client.get(f"{URL_API_USERS}/2fa", headers=self.headers)

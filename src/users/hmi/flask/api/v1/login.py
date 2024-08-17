@@ -93,8 +93,8 @@ def login():
         return ResponseAPI.get_400_response()
 
     try:
-        auth_service = UsersService(services=current_app.dependencies)
-        token, user = auth_service.authenticate(email, password)
+        users_service = UsersService(services=current_app.dependencies)
+        token = users_service.authenticate(email=email, password=password)
 
         if token is not None:
             data = {"token": token.sha_token}

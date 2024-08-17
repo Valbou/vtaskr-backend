@@ -7,7 +7,7 @@ from src.libs.hmi.querystring import QueryStringFilter
 from src.libs.redis import rate_limited
 from src.users.hmi.dto import RIGHT_COMPONENT, RightDTO, RightMapperDTO
 from src.users.hmi.flask.decorators import login_required
-from src.users.managers import RightManager, RoleTypeManager
+from src.users.services import UsersService
 
 from .. import API_ERROR_COMPONENT, V1, logger, openapi, users_bp
 
@@ -65,25 +65,23 @@ def rights():
     Need a valid token
     Return a list of all rights the user can have or use
     """
-    right_service = RightManager(current_app.dependencies)
+    users_service = UsersService(services=current_app.dependencies)
 
     if request.method == "GET":
         qsf = QueryStringFilter(
             query_string=request.query_string.decode(), dto=RightDTO
         )
 
-        rights = right_service.get_all_rights(g.user.id, qsf.get_filters())
+        rights = users_service.get_all_user_rights(g.user.id, qsf.get_filters())
         rights_dto = list_models_to_list_dto(RightMapperDTO, rights)
         return ResponseAPI.get_response(list_dto_to_dict(rights_dto), 200)
 
     if request.method == "POST":
         right_dto = RightDTO(**request.get_json())
-
-        roletype_service = RoleTypeManager(current_app.dependencies)
-        roletype = roletype_service.get_roletype(g.user.id, right_dto.roletype_id)
+        roletype = users_service.get_user_roletype(g.user.id, right_dto.roletype_id)
 
         if roletype:
-            right = right_service.create_right(
+            right = users_service.create_new_right(
                 user_id=g.user.id,
                 group_id=roletype.group_id,
                 right=RightMapperDTO.dto_to_model(right_dto),
@@ -212,12 +210,13 @@ openapi.register_path(f"{V1}/right/{{right_id}}", api_item)
 @login_required(logger)
 @rate_limited(logger=logger, hit=10, period=timedelta(seconds=60))
 def right(right_id: str):
-    right_service = RightManager(current_app.dependencies)
-    right = right_service.get_right(g.user.id, right_id)
+    users_service = UsersService(services=current_app.dependencies)
+    right = users_service.get_user_right(user_id=g.user.id, right_id=right_id)
 
     if right:
-        roletype_service = RoleTypeManager(current_app.dependencies)
-        roletype = roletype_service.get_roletype(g.user.id, right.roletype_id)
+        roletype = users_service.get_user_roletype(
+            user_id=g.user.id, roletype_id=right.roletype_id
+        )
 
         if roletype:
             if request.method == "GET":
@@ -227,13 +226,15 @@ def right(right_id: str):
             if request.method in ["PUT", "PATCH"]:
                 right_dto = RightDTO(**request.get_json())
                 right = RightMapperDTO.dto_to_model(right_dto, right)
-                if right_service.update_right(g.user.id, right, roletype):
+
+                if users_service.update_user_right(g.user.id, right, roletype):
                     right_dto = RightMapperDTO.model_to_dto(right)
                     return ResponseAPI.get_response(dto_to_dict(right_dto), 200)
+
                 return ResponseAPI.get_403_response()
 
             if request.method == "DELETE":
-                if right_service.delete_right(g.user.id, right, roletype):
+                if users_service.delete_user_right(g.user.id, right, roletype):
                     return ResponseAPI.get_response({}, 204)
                 return ResponseAPI.get_403_response()
 

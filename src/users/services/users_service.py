@@ -1,6 +1,5 @@
-from typing import Tuple
-
 from src.libs.dependencies import DependencyInjector
+from src.libs.hmi.querystring import Filter
 from src.libs.iam.constants import Permissions
 from src.users.events import UsersEventService
 from src.users.hmi.dto import UserDTO
@@ -15,7 +14,16 @@ from src.users.managers import (
     TokenManager,
     UserManager,
 )
-from src.users.models import Group, Invitation, RequestType, Role, Token, User
+from src.users.models import (
+    Group,
+    Invitation,
+    RequestType,
+    Right,
+    Role,
+    RoleType,
+    Token,
+    User,
+)
 
 
 class EmailAlreadyUsedError(Exception):
@@ -29,6 +37,8 @@ class UsersService:
         self._define_managers()
 
     def _send_message(self, context: dict):
+        """Helper to send notification message"""
+
         message = self.services.notification.build_message(context)
         self.services.notification.add_message(message=message)
         self.services.notification.notify_all()
@@ -49,13 +59,17 @@ class UsersService:
     def _prepare_observer_roletype(self, session):
         """Prepare observer role to add people with minimum rights"""
 
-        (
-            observer_roletype,
-            observer_created,
-        ) = self.roletype_manager.get_default_observer()
+        with self.services.persistence.get_session() as session:
+            (
+                observer_roletype,
+                observer_created,
+            ) = self.roletype_manager.get_default_observer(session=session)
+            session.commit()
 
-        if observer_created:
-            self.right_manager.create_observer_rights(session, observer_roletype.id)
+            if observer_created:
+                self.right_manager.create_observer_rights(
+                    session=session, roletype_id=observer_roletype.id
+                )
 
     def create_new_group(
         self, user_id: str, group_name: str, is_private: bool = False
@@ -64,9 +78,12 @@ class UsersService:
         Create a group and create relation between user and group
         """
 
-        admin_roletype, admin_created = self.roletype_manager.get_default_admin()
-
         with self.services.persistence.get_session() as session:
+            admin_roletype, admin_created = self.roletype_manager.get_default_admin(
+                session=session
+            )
+            session.commit()
+
             group = self.group_manager.create_group(
                 session, group_name=group_name, is_private=is_private
             )
@@ -86,7 +103,36 @@ class UsersService:
 
         return group
 
+    def get_group(self, user_id: str, group_id: str) -> Group:
+        """Return a user's group"""
+
+        return self.group_manager.get_group(user_id=user_id, group_id=group_id)
+
+    def update_group(self, user_id: str, group: Group) -> bool:
+        """Update a user's group"""
+
+        return self.group_manager.update_group(user_id=user_id, group=group)
+
+    def get_all_user_groups(
+        self, user_id: str, qs_filters: list[Filter] = []
+    ) -> list[Group]:
+        """Return a filtered list of user's groups"""
+
+        return self.group_manager.get_all_groups(user_id=user_id, qs_filters=qs_filters)
+
+    def delete_group(self, user_id: str, group: Group) -> bool:
+        """Delete a user's group"""
+
+        return self.group_manager.delete_group(user_id=user_id, group=group)
+
+    def get_group_members(self, user_id: str, group_id: str) -> list[Role]:
+        """Return all group's members"""
+
+        return self.role_manager.get_members(user_id=user_id, group_id=group_id)
+
     def find_user_by_email(self, email: str) -> User | None:
+        """Find a user from an email"""
+
         with self.services.persistence.get_session() as session:
             return self.user_manager.find_user_by_email(session, email=email)
 
@@ -123,9 +169,7 @@ class UsersService:
         """Clean all account whithout last_login_at"""
         self.user_manager.clean_users()
 
-    def authenticate(
-        self, email: str, password: str
-    ) -> Tuple[Token | None, User | None]:
+    def authenticate(self, email: str, password: str) -> Token | None:
         """Create a token only if user and password are ok"""
 
         with self.services.persistence.get_session() as session:
@@ -148,11 +192,13 @@ class UsersService:
                 )
                 self._send_message(context=context)
 
-                return token, user
+                return token
 
-        return None, None
+        return None
 
     def get_temp_token(self, sha_token: str, code: str) -> Token | None:
+        """Return a temporary token"""
+
         with self.services.persistence.get_session() as session:
             token = self.token_manager.get_token(session, sha_token=sha_token)
 
@@ -240,6 +286,7 @@ class UsersService:
 
     def update_user(self, user: User) -> None:
         """Update user"""
+
         with self.services.persistence.get_session() as session:
             self.user_manager.update_user(session, user)
             session.commit()
@@ -325,6 +372,8 @@ class UsersService:
     def invite_user_by_email(
         self, user: User, user_email: str, group_id: str, roletype_id: str
     ) -> Invitation:
+        """Invite an user to join a group using his/her email"""
+
         with self.services.persistence.get_session() as session:
             group = self.group_manager.get_group(user_id=user.id, group_id=group_id)
             roletype = self.roletype_manager.get_roletype(
@@ -352,6 +401,8 @@ class UsersService:
         return invitation
 
     def accept_invitation(self, user: User, hash: str) -> Role:
+        """Permit to a user invited by email to join a group"""
+
         with self.services.persistence.get_session() as session:
             invitation: Invitation | None = self.invitation_manager.get_from_hash(
                 session=session, hash=hash
@@ -398,6 +449,8 @@ class UsersService:
                 raise ValueError("Invitation mismatch user email")
 
     def delete_invitation(self, user: User, invitation_id: str):
+        """Remove access to a group"""
+
         with self.services.persistence.get_session() as session:
             invitation: Invitation = self.invitation_manager.get_invitation(
                 session=session, invitation_id=invitation_id
@@ -420,3 +473,96 @@ class UsersService:
                     user=user, group=group, invitation=invitation
                 )
                 self._send_message(context=context)
+
+    def create_new_right(
+        self, user_id: str, group_id: str, right: Right
+    ) -> Right | None:
+        """Create a new right"""
+
+        return self.right_manager.create_right(
+            user_id=user_id, group_id=group_id, right=right
+        )
+
+    def get_user_right(self, user_id: str, right_id: str) -> Right | None:
+        """Return a specific user's right"""
+
+        return self.right_manager.get_right(user_id=user_id, right_id=right_id)
+
+    def get_all_user_rights(
+        self, user_id: str, qs_filter: list[Filter] | None = None
+    ) -> list[Right]:
+        """Return all rights of one user"""
+
+        return self.right_manager.get_all_rights(user_id=user_id, qs_filters=qs_filter)
+
+    def update_user_right(self, user_id: str, right: Right, roletype: RoleType) -> bool:
+        """Update right associated to user"""
+
+        return self.right_manager.update_right(
+            user_id=user_id, right=right, roletype=roletype
+        )
+
+    def delete_user_right(self, user_id: str, right: Right, roletype: RoleType) -> bool:
+        """Delete a user right"""
+
+        self.right_manager.delete_right(user_id=user_id, right=right, roletype=roletype)
+
+    def create_new_role(self, user_id: str, role: Role) -> Role | None:
+        """Create a new role"""
+
+        return self.role_manager.create_role(user_id=user_id, right=role)
+
+    def get_user_role(self, user_id: str, role_id: str) -> Role | None:
+        """Return a specific user's role"""
+
+        return self.role_manager.get_role(user_id=user_id, role_id=role_id)
+
+    def get_all_user_roles(
+        self, user_id: str, qs_filter: list[Filter] | None = None
+    ) -> list[Role]:
+        """Return all roles of one user"""
+
+        return self.role_manager.get_all_roles(user_id=user_id, qs_filters=qs_filter)
+
+    def update_user_role(self, user_id: str, role: Role) -> bool:
+        """Update role associated to user"""
+
+        return self.role_manager.update_role(user_id=user_id, role=role)
+
+    def delete_user_role(self, user_id: str, role: Role) -> bool:
+        """Delete a user role"""
+
+        self.role_manager.delete_role(user_id=user_id, role=role)
+
+    def create_new_roletype(self, name: str, group_id: str) -> RoleType | None:
+        """Create a new roletype"""
+
+        return self.roletype_manager.create_custom_roletype(
+            name=name, group_id=group_id
+        )
+
+    def get_user_roletype(self, user_id: str, roletype_id: str) -> RoleType | None:
+        """Return a specific user's roletype"""
+
+        return self.roletype_manager.get_roletype(
+            user_id=user_id, roletype_id=roletype_id
+        )
+
+    def get_all_user_roletypes(
+        self, user_id: str, qs_filter: list[Filter] | None = None
+    ) -> list[RoleType]:
+        """Return all roletypes of one user"""
+
+        return self.roletype_manager.get_all_roletypes(
+            user_id=user_id, qs_filters=qs_filter
+        )
+
+    def update_user_roletype(self, user_id: str, roletype: RoleType) -> bool:
+        """Update roletype associated to user"""
+
+        return self.roletype_manager.update_roletype(user_id=user_id, roletype=roletype)
+
+    def delete_user_roletype(self, user_id: str, roletype: RoleType) -> bool:
+        """Delete a user roletype"""
+
+        self.roletype_manager.delete_roletype(user_id=user_id, roletype=roletype)

@@ -1,90 +1,168 @@
-from src.users.services import UsersService
-from tests.base_test import BaseTestCase
+from unittest.mock import MagicMock, patch
+
+from src.users.models import Group
+from tests.base_test import DummyBaseTestCase, set_fake_authentication
 
 URL_API = "/api/v1"
 
 
-class TestGroupAPI(BaseTestCase):
+class TestGroupAPI(DummyBaseTestCase):
     def setUp(self) -> None:
         super().setUp()
         self.headers = self.get_json_headers()
 
-    def test_get_group_no_login(self):
+    @patch(
+        "src.users.hmi.flask.api.v1.group.UsersService.get_group",
+        return_value=Group(name="Test Group", is_private=False),
+    )
+    def test_get_group_no_login(self, mock_group: MagicMock):
         self.create_user()
+
         response = self.client.get(
             f"{URL_API}/group/{self.group.id}", headers=self.headers
         )
+
+        mock_group.assert_not_called()
+
         self.assertEqual(response.status_code, 401)
 
-    def test_get_group(self):
+    @patch(
+        "src.users.hmi.flask.api.v1.group.UsersService.get_group",
+        return_value=Group(name="Test Group", is_private=False),
+    )
+    def test_get_group(self, mock: MagicMock):
         headers = self.get_token_headers()
-        response = self.client.get(f"{URL_API}/group/{self.group.id}", headers=headers)
+
+        with set_fake_authentication(app=self.app, user=self.user, token=self.token):
+            response = self.client.get(
+                f"{URL_API}/group/{self.group.id}", headers=headers
+            )
+
         self.assertEqual(response.status_code, 200)
 
-    def test_create_group(self):
+        mock.assert_called_once_with(user_id=self.user.id, group_id=self.group.id)
+
+    @patch(
+        "src.users.hmi.flask.api.v1.group.UsersService.create_new_group",
+        return_value=Group(name="Test Group", is_private=False),
+    )
+    def test_create_group(self, mock: MagicMock):
         headers = self.get_token_headers()
 
-        name = self.fake.word()
+        name = "Test Group"
         data = {"name": name}
-        response = self.client.post(f"{URL_API}/groups", json=data, headers=headers)
+
+        with set_fake_authentication(app=self.app, user=self.user, token=self.token):
+            response = self.client.post(f"{URL_API}/groups", json=data, headers=headers)
+
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.json.get("name"), name)
 
-    def test_get_all_groups(self):
+        mock.assert_called_with(user_id=self.user.id, group_name=name, is_private=False)
+
+    @patch(
+        "src.users.hmi.flask.api.v1.group.UsersService.get_all_user_groups",
+        return_value=[Group(name="Test Group", is_private=False)],
+    )
+    def test_get_all_groups(self, mock: MagicMock):
         headers = self.get_token_headers()
-        response = self.client.get(f"{URL_API}/groups", headers=headers)
+
+        with set_fake_authentication(app=self.app, user=self.user, token=self.token):
+            response = self.client.get(f"{URL_API}/groups", headers=headers)
+
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json), 1)
 
-    def test_update_group_put(self):
+        mock.assert_called_once()
+
+    @patch(
+        "src.users.hmi.flask.api.v1.group.UsersService.update_group", return_value=True
+    )
+    @patch(
+        "src.users.hmi.flask.api.v1.group.UsersService.get_group",
+        return_value=Group(name="Private", is_private=True),
+    )
+    def test_update_group_put(self, mock_get: MagicMock, mock_update: MagicMock):
         headers = self.get_token_headers()
 
         new_name = self.fake.word()
         data = {"name": new_name}
-        response = self.client.put(
-            f"{URL_API}/group/{self.group.id}", json=data, headers=headers
-        )
+
+        with set_fake_authentication(app=self.app, user=self.user, token=self.token):
+            response = self.client.put(
+                f"{URL_API}/group/{self.group.id}", json=data, headers=headers
+            )
 
         self.assertEqual(response.status_code, 200)
         self.assertNotEqual(self.group.name, new_name)
         self.assertEqual(response.json.get("name"), new_name)
 
-    def test_update_group_patch(self):
+        mock_get.assert_called_once_with(user_id=self.user.id, group_id=self.group.id)
+        mock_update.assert_called_once()
+
+    @patch(
+        "src.users.hmi.flask.api.v1.group.UsersService.update_group", return_value=True
+    )
+    @patch(
+        "src.users.hmi.flask.api.v1.group.UsersService.get_group",
+        return_value=Group(name="Private", is_private=True),
+    )
+    def test_update_group_patch(self, mock_get: MagicMock, mock_update: MagicMock):
         headers = self.get_token_headers()
 
         new_name = self.fake.word()
         data = {"name": new_name}
-        response = self.client.patch(
-            f"{URL_API}/group/{self.group.id}", json=data, headers=headers
-        )
+
+        with set_fake_authentication(app=self.app, user=self.user, token=self.token):
+            response = self.client.patch(
+                f"{URL_API}/group/{self.group.id}", json=data, headers=headers
+            )
 
         self.assertEqual(response.status_code, 200)
         self.assertNotEqual(self.group.name, new_name)
         self.assertEqual(response.json.get("name"), new_name)
 
-    def test_delete_private_group(self):
+        mock_get.assert_called_once_with(user_id=self.user.id, group_id=self.group.id)
+        mock_update.assert_called_once()
+
+    @patch(
+        "src.users.hmi.flask.api.v1.group.UsersService.delete_group", return_value=True
+    )
+    @patch(
+        "src.users.hmi.flask.api.v1.group.UsersService.get_group",
+        return_value=Group(name="Private", is_private=True),
+    )
+    def test_delete_private_group(self, mock_get: MagicMock, mock_delete: MagicMock):
         headers = self.get_token_headers()
-        response = self.client.delete(
-            f"{URL_API}/group/{self.group.id}", headers=headers
-        )
+
+        with set_fake_authentication(app=self.app, user=self.user, token=self.token):
+            response = self.client.delete(
+                f"{URL_API}/group/{self.group.id}", headers=headers
+            )
+
         self.assertEqual(response.status_code, 204)
 
-        response = self.client.get(f"{URL_API}/group/{self.group.id}", headers=headers)
-        self.assertEqual(response.status_code, 404)
+        mock_get.assert_called_once()
+        mock_delete.assert_called_once()
 
-    def test_delete_group(self):
+    @patch(
+        "src.users.hmi.flask.api.v1.group.UsersService.delete_group", return_value=True
+    )
+    @patch(
+        "src.users.hmi.flask.api.v1.group.UsersService.get_group",
+        return_value=Group(name="Test Group", is_private=False),
+    )
+    def test_delete_group(self, mock_get: MagicMock, mock_delete: MagicMock):
         headers = self.get_token_headers()
 
-        user_service = UsersService(self.app.dependencies)
-        group = user_service.create_new_group(
-            user_id=self.user.id, group_name=self.fake.word(), is_private=False
-        )
+        group_id = "group_123"
 
-        response = self.client.get(f"{URL_API}/group/{group.id}", headers=headers)
-        self.assertEqual(response.status_code, 200)
+        with set_fake_authentication(app=self.app, user=self.user, token=self.token):
+            response = self.client.delete(
+                f"{URL_API}/group/{group_id}", headers=headers
+            )
 
-        response = self.client.delete(f"{URL_API}/group/{group.id}", headers=headers)
         self.assertEqual(response.status_code, 204)
 
-        response = self.client.get(f"{URL_API}/group/{group.id}", headers=headers)
-        self.assertEqual(response.status_code, 404)
+        mock_get.assert_called_once()
+        mock_delete.assert_called_once()

@@ -1,45 +1,51 @@
-from src.users.models import RequestChange, RequestType
-from src.users.persistence import RequestChangeDBPort, UserDBPort
-from src.users.settings import APP_NAME
-from tests.base_test import BaseTestCase
+from unittest.mock import MagicMock, patch
+
+from tests.base_test import DummyBaseTestCase
 
 URL_API = "/api/v1"
 
 
-class TestUserV1ForgottenPassword(BaseTestCase):
+class TestUserV1ForgottenPassword(DummyBaseTestCase):
     def setUp(self) -> None:
         super().setUp()
-        self.request_change_db: RequestChangeDBPort = (
-            self.app.dependencies.persistence.get_repository(APP_NAME, "RequestChange")
-        )
         self.headers = self.get_json_headers()
 
-    def test_forgotten_password(self):
+    @patch(
+        "src.users.hmi.flask.api.v1.change_password.UsersService.request_password_change"
+    )
+    @patch("src.users.hmi.flask.api.v1.change_password.UsersService.find_user_by_email")
+    def test_forgotten_password(self, mock_1: MagicMock, mock_2: MagicMock):
         self.create_user()
         user_data = {"email": self.user.email}
+
         response = self.client.post(
             f"{URL_API}/forgotten-password", json=user_data, headers=self.headers
         )
         self.assertEqual(response.status_code, 200)
-        with self.app.dependencies.persistence.get_session() as session:
-            request_change = self.request_change_db.find_request(
-                session, self.user.email, RequestType.PASSWORD
-            )
-            self.assertIsInstance(request_change, RequestChange)
-            self.assertEqual(request_change.request_type, RequestType.PASSWORD)
 
-    def test_forgotten_password_unknown_email(self):
+        mock_1.assert_called_once_with(email=self.user.email)
+        mock_2.assert_called_once()
+
+    @patch(
+        "src.users.hmi.flask.api.v1.change_password.UsersService.request_password_change"
+    )
+    @patch(
+        "src.users.hmi.flask.api.v1.change_password.UsersService.find_user_by_email",
+        return_value=None,
+    )
+    def test_forgotten_password_unknown_email(
+        self, mock_1: MagicMock, mock_2: MagicMock
+    ):
         self.create_user()
         user_data = {"email": self.generate_email()}
+
         response = self.client.post(
             f"{URL_API}/forgotten-password", json=user_data, headers=self.headers
         )
         self.assertEqual(response.status_code, 200)
-        with self.app.dependencies.persistence.get_session() as session:
-            request_change = self.request_change_db.find_request(
-                session, self.user.email, RequestType.PASSWORD
-            )
-            self.assertIsNone(request_change)
+
+        mock_1.assert_called_once_with(email=user_data.get("email"))
+        mock_2.assert_not_called()
 
     def test_no_get(self):
         response = self.client.get(
@@ -66,69 +72,74 @@ class TestUserV1ForgottenPassword(BaseTestCase):
         self.assertEqual(response.status_code, 405)
 
 
-class TestUserV1NewPassword(BaseTestCase):
+class TestUserV1NewPassword(DummyBaseTestCase):
     def setUp(self) -> None:
         super().setUp()
-        self.request_change_db: RequestChangeDBPort = (
-            self.app.dependencies.persistence.get_repository(APP_NAME, "RequestChange")
-        )
-        self.user_db: UserDBPort = self.app.dependencies.persistence.get_repository(
-            APP_NAME, "User"
-        )
         self.headers = self.get_json_headers()
         self.new_password = self.generate_password()
 
-    def _create_request_change_password(self) -> RequestChange:
-        self.create_user()
-        user_data = {"email": self.user.email}
-        self.client.post(
-            f"{URL_API}/forgotten-password", json=user_data, headers=self.headers
-        )
-        with self.app.dependencies.persistence.get_session() as session:
-            return self.request_change_db.find_request(
-                session, self.user.email, RequestType.PASSWORD
-            )
-
-    def test_set_new_password(self):
-        request_change = self._create_request_change_password()
-        self.assertIsNotNone(request_change)
-        self.assertFalse(self.user.check_password(self.new_password))
+    @patch("src.users.hmi.flask.api.v1.change_password.UsersService.set_new_password")
+    def test_set_new_password(self, mock: MagicMock):
+        email = "test@example.com"
         user_data = {
-            "email": self.user.email,
-            "hash": request_change.gen_hash(),
+            "email": email,
+            "hash": "hash_123",
             "new_password": self.new_password,
         }
+
         response = self.client.post(
             f"{URL_API}/new-password", json=user_data, headers=self.headers
         )
         self.assertEqual(response.status_code, 200)
-        with self.app.dependencies.persistence.get_session() as session:
-            user = self.user_db.find_user_by_email(session, self.user.email)
-            self.assertTrue(user.check_password(self.new_password))
 
-    def test_set_new_password_bad_hash(self):
-        self.create_user()
+        mock.assert_called_once_with(
+            email=email, hash="hash_123", password=self.new_password
+        )
+
+    @patch(
+        "src.users.hmi.flask.api.v1.change_password.UsersService.set_new_password",
+        return_value=False,
+    )
+    def test_set_new_password_bad_hash(self, mock: MagicMock):
+        email = "test@example.com"
+        bad_hash = self.fake.word()
         user_data = {
-            "email": self.user.email,
-            "hash": self.fake.word(),
+            "email": email,
+            "hash": bad_hash,
             "new_password": self.new_password,
         }
+
         response = self.client.post(
             f"{URL_API}/new-password", json=user_data, headers=self.headers
         )
-        self.assertEqual(response.status_code, 400)
 
-    def test_set_new_password_bad_email(self):
-        request_change = self._create_request_change_password()
+        self.assertEqual(response.status_code, 401)
+
+        mock.assert_called_once_with(
+            email=email, hash=bad_hash, password=self.new_password
+        )
+
+    @patch(
+        "src.users.hmi.flask.api.v1.change_password.UsersService.set_new_password",
+        return_value=False,
+    )
+    def test_set_new_password_bad_email(self, mock: MagicMock):
+        email = self.generate_email()
         user_data = {
-            "email": self.generate_email(),
-            "hash": request_change.gen_hash(),
+            "email": email,
+            "hash": "hash_123",
             "new_password": self.new_password,
         }
+
         response = self.client.post(
             f"{URL_API}/new-password", json=user_data, headers=self.headers
         )
-        self.assertEqual(response.status_code, 400)
+
+        self.assertEqual(response.status_code, 401)
+
+        mock.assert_called_once_with(
+            email=email, hash="hash_123", password=self.new_password
+        )
 
     def test_no_get(self):
         response = self.client.get(f"{URL_API}/new-password", headers=self.headers)

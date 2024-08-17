@@ -43,8 +43,8 @@ def logout():
     Return a 204
     """
 
-    auth_service = UsersService(services=current_app.dependencies)
-    if auth_service.logout(g.token):
+    users_service = UsersService(services=current_app.dependencies)
+    if users_service.logout(sha_token=g.token):
         data = {}
         return ResponseAPI.get_response(data, 204)
     else:

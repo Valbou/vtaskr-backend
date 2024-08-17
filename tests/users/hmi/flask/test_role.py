@@ -1,164 +1,174 @@
-from src.users.managers import RoleManager, RoleTypeManager
+from unittest.mock import MagicMock, patch
+
 from src.users.models import Role
-from tests.base_test import BaseTestCase
+from tests.base_test import DummyBaseTestCase, set_fake_authentication
 
 URL_API = "/api/v1"
 
+USER_ROLE = Role(user_id="user_123", group_id="group_123", roletype_id="roletype_123")
 
-class TestRoleAPI(BaseTestCase):
+
+class TestRoleAPI(DummyBaseTestCase):
     def setUp(self) -> None:
         super().setUp()
         self.headers = self.get_json_headers()
 
-    def get_a_test_user_role(self) -> Role:
-        self.role_service = RoleManager(self.app.dependencies)
-        roles = self.role_service.get_all_roles(self.user.id)
-        return roles[0]
-
-    def get_a_colleague_role(self) -> Role:
-        self.user_0, self.group_0 = self.user, self.group
-        self.create_user()
-
-        role_manager = RoleManager(self.app.dependencies)
-        roletype_manager = RoleTypeManager(self.app.dependencies)
-
-        roletype, _created = roletype_manager.get_default_admin()
-
-        role = Role(self.user.id, self.group_0.id, roletype_id=roletype.id)
-        created_role = role_manager.create_role(
-            user_id=self.user_0.id,
-            role=role,
-        )
-
-        return created_role
-
     def test_get_role_no_login(self):
         self.create_user()
-        role = self.get_a_test_user_role()
 
-        response = self.client.get(f"{URL_API}/role/{role.id}", headers=self.headers)
+        response = self.client.get(
+            f"{URL_API}/role/{USER_ROLE.id}", headers=self.headers
+        )
+
         self.assertEqual(response.status_code, 401)
 
-    def test_get_my_role(self):
+    @patch(
+        "src.users.hmi.flask.api.v1.role.UsersService.get_user_role",
+        return_value=USER_ROLE,
+    )
+    def test_get_my_role(self, mock_role: MagicMock):
         headers = self.get_token_headers()
-        role = self.get_a_test_user_role()
 
-        response = self.client.get(f"{URL_API}/role/{role.id}", headers=headers)
+        with set_fake_authentication(app=self.app, user=self.user, token=self.token):
+            response = self.client.get(
+                f"{URL_API}/role/{USER_ROLE.id}", headers=headers
+            )
+
         self.assertEqual(response.status_code, 200)
 
-    def test_get_all_my_roles(self):
+        mock_role.assert_called_once()
+
+    @patch(
+        "src.users.hmi.flask.api.v1.role.UsersService.get_all_user_roles",
+        return_value=[USER_ROLE, USER_ROLE],
+    )
+    def test_get_all_my_roles(self, mock_roles: MagicMock):
         headers = self.get_token_headers()
-        response = self.client.get(f"{URL_API}/roles", headers=headers)
+
+        with set_fake_authentication(app=self.app, user=self.user, token=self.token):
+            response = self.client.get(f"{URL_API}/roles", headers=headers)
 
         self.assertEqual(response.status_code, 200)
         self.assertIsInstance(response.json, list)
-        self.assertEqual(len(response.json), 1)
+        self.assertEqual(len(response.json), 2)
 
-    def test_create_a_new_role(self):
+        mock_roles.assert_called_once()
+
+    @patch(
+        "src.users.hmi.flask.api.v1.role.UsersService.create_new_role",
+        return_value=USER_ROLE,
+    )
+    def test_create_a_new_role(self, mock_role: MagicMock):
         headers = self.get_token_headers()
-        self.user_0, self.group_0 = self.user, self.group
-        self.create_user()
-
-        roletype_manager = RoleTypeManager(self.app.dependencies)
-        roletype, _created = roletype_manager.get_default_admin()
 
         data = {
-            "user_id": self.user.id,
-            "group_id": self.group_0.id,
-            "roletype_id": roletype.id,
+            "user_id": "user_123",
+            "group_id": "group_123",
+            "roletype_id": "roletype_123",
         }
-        response = self.client.post(f"{URL_API}/roles", json=data, headers=headers)
+
+        with set_fake_authentication(app=self.app, user=self.user, token=self.token):
+            response = self.client.post(f"{URL_API}/roles", json=data, headers=headers)
 
         self.assertEqual(response.status_code, 201)
-        self.assertEqual(response.json.get("roletype_id"), roletype.id)
+        self.assertEqual(response.json.get("roletype_id"), "roletype_123")
 
-    def test_get_colleague_role(self):
+        mock_role.assert_called_once()
+
+    @patch(
+        "src.users.hmi.flask.api.v1.role.UsersService.get_user_role",
+        return_value=USER_ROLE,
+    )
+    @patch(
+        "src.users.hmi.flask.api.v1.role.UsersService.update_user_role",
+        return_value=True,
+    )
+    def test_update_role_put(self, mock_update: MagicMock, mock_role: MagicMock):
         headers = self.get_token_headers()
-
-        role = self.get_a_colleague_role()
-
-        response = self.client.get(f"{URL_API}/role/{role.id}", headers=headers)
-        self.assertEqual(response.status_code, 200)
-
-    def test_update_colleague_role_put(self):
-        headers = self.get_token_headers()
-
-        role = self.get_a_colleague_role()
-
-        # Downgrade to Observer role
-        self.roletype_service = RoleTypeManager(self.app.dependencies)
-        roletype, _created = self.roletype_service.get_default_observer()
 
         data = {
-            "group_id": role.group_id,
-            "user_id": role.user_id,
-            "roletype_id": roletype.id,
+            "user_id": "user_123",
+            "group_id": "group_123",
+            "roletype_id": "roletype_123",
         }
-        response = self.client.put(
-            f"{URL_API}/role/{role.id}", json=data, headers=headers
-        )
+
+        with set_fake_authentication(app=self.app, user=self.user, token=self.token):
+            response = self.client.put(
+                f"{URL_API}/role/{USER_ROLE.id}", json=data, headers=headers
+            )
 
         self.assertEqual(response.status_code, 200)
-        self.assertNotEqual(role.roletype_id, roletype.id)
-        self.assertEqual(response.json.get("roletype_id"), roletype.id)
+        self.assertEqual(response.json.get("roletype_id"), "roletype_123")
 
-    def test_update_my_role_put(self):
+        mock_role.assert_called_once()
+        mock_update.assert_called_once()
+
+    @patch(
+        "src.users.hmi.flask.api.v1.role.UsersService.get_user_role",
+        return_value=USER_ROLE,
+    )
+    @patch(
+        "src.users.hmi.flask.api.v1.role.UsersService.update_user_role",
+        return_value=True,
+    )
+    def test_update_role_patch(self, mock_update: MagicMock, mock_role: MagicMock):
         headers = self.get_token_headers()
 
-        role = self.get_a_test_user_role()
-
-        # Downgrade to Observer role
-        self.roletype_service = RoleTypeManager(self.app.dependencies)
-        roletype, _created = self.roletype_service.get_default_observer()
-
         data = {
-            "group_id": role.group_id,
-            "user_id": role.user_id,
-            "roletype_id": roletype.id,
+            "user_id": "user_123",
+            "group_id": "group_123",
+            "roletype_id": "roletype_123",
         }
-        response = self.client.put(
-            f"{URL_API}/role/{role.id}", json=data, headers=headers
-        )
 
-        self.assertEqual(response.status_code, 403)
-
-    def test_update_colleague_role_patch(self):
-        headers = self.get_token_headers()
-
-        role = self.get_a_colleague_role()
-
-        # Downgrade to Observer role
-        self.roletype_service = RoleTypeManager(self.app.dependencies)
-        roletype, _created = self.roletype_service.get_default_observer()
-
-        data = {
-            "group_id": role.group_id,
-            "user_id": role.user_id,
-            "roletype_id": roletype.id,
-        }
-        response = self.client.patch(
-            f"{URL_API}/role/{role.id}", json=data, headers=headers
-        )
+        with set_fake_authentication(app=self.app, user=self.user, token=self.token):
+            response = self.client.patch(
+                f"{URL_API}/role/{USER_ROLE.id}", json=data, headers=headers
+            )
 
         self.assertEqual(response.status_code, 200)
-        self.assertNotEqual(role.roletype_id, roletype.id)
-        self.assertEqual(response.json.get("roletype_id"), roletype.id)
+        self.assertEqual(response.json.get("roletype_id"), "roletype_123")
 
-    def test_delete_colleague_role(self):
+        mock_role.assert_called_once()
+        mock_update.assert_called_once()
+
+    @patch(
+        "src.users.hmi.flask.api.v1.role.UsersService.get_user_role",
+        return_value=USER_ROLE,
+    )
+    @patch(
+        "src.users.hmi.flask.api.v1.role.UsersService.delete_user_role",
+        return_value=True,
+    )
+    def test_delete_role(self, mock_delete: MagicMock, mock_role: MagicMock):
         headers = self.get_token_headers()
 
-        role = self.get_a_colleague_role()
+        with set_fake_authentication(app=self.app, user=self.user, token=self.token):
+            response = self.client.delete(
+                f"{URL_API}/role/{USER_ROLE.id}", headers=headers
+            )
 
-        response = self.client.delete(f"{URL_API}/role/{role.id}", headers=headers)
         self.assertEqual(response.status_code, 204)
 
-        response = self.client.get(f"{URL_API}/role/{role.id}", headers=headers)
-        self.assertEqual(response.status_code, 404)
+        mock_role.assert_called_once()
+        mock_delete.assert_called_once()
 
-    def test_delete_my_role(self):
+    @patch(
+        "src.users.hmi.flask.api.v1.role.UsersService.get_user_role",
+        return_value=USER_ROLE,
+    )
+    @patch(
+        "src.users.hmi.flask.api.v1.role.UsersService.delete_user_role",
+        return_value=False,
+    )
+    def test_delete_my_role(self, mock_delete: MagicMock, mock_role: MagicMock):
         headers = self.get_token_headers()
 
-        role = self.get_a_test_user_role()
+        with set_fake_authentication(app=self.app, user=self.user, token=self.token):
+            response = self.client.delete(
+                f"{URL_API}/role/{USER_ROLE.id}", headers=headers
+            )
 
-        response = self.client.delete(f"{URL_API}/role/{role.id}", headers=headers)
         self.assertEqual(response.status_code, 403)
+
+        mock_role.assert_called_once()
+        mock_delete.assert_called_once()

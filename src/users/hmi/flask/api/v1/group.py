@@ -7,7 +7,6 @@ from src.libs.hmi.querystring import QueryStringFilter
 from src.libs.redis import rate_limited
 from src.users.hmi.dto import GROUP_COMPONENT, GroupDTO, GroupMapperDTO, RoleMapperDTO
 from src.users.hmi.flask.decorators import login_required
-from src.users.managers import GroupManager, RoleManager
 from src.users.services import UsersService
 
 from .. import API_ERROR_COMPONENT, V1, logger, openapi, users_bp
@@ -72,8 +71,10 @@ def groups():
             query_string=request.query_string.decode(), dto=GroupDTO
         )
 
-        group_manager = GroupManager(current_app.dependencies)
-        groups = group_manager.get_all_groups(g.user.id, qsf.get_filters())
+        users_service = UsersService(current_app.dependencies)
+        groups = users_service.get_all_user_groups(
+            user_id=g.user.id, qs_filters=qsf.get_filters()
+        )
 
         groups_dto = list_models_to_list_dto(GroupMapperDTO, groups)
         return ResponseAPI.get_response(list_dto_to_dict(groups_dto), 200)
@@ -81,8 +82,8 @@ def groups():
     if request.method == "POST":
         group_dto = GroupDTO(**request.get_json())
 
-        user_service = UsersService(current_app.dependencies)
-        group = user_service.create_new_group(
+        users_service = UsersService(current_app.dependencies)
+        group = users_service.create_new_group(
             user_id=g.user.id, group_name=group_dto.name, is_private=False
         )
 
@@ -206,8 +207,8 @@ openapi.register_path(f"{V1}/group/{{group_id}}", api_item)
 @login_required(logger)
 @rate_limited(logger=logger, hit=30, period=timedelta(seconds=60))
 def group(group_id: str):
-    group_service = GroupManager(current_app.dependencies)
-    group = group_service.get_group(g.user.id, group_id)
+    users_service = UsersService(current_app.dependencies)
+    group = users_service.get_group(user_id=g.user.id, group_id=group_id)
 
     if group:
         if request.method == "GET":
@@ -217,13 +218,13 @@ def group(group_id: str):
         if request.method in ["PUT", "PATCH"]:
             group_dto = GroupDTO(**request.get_json())
             group = GroupMapperDTO.dto_to_model(group_dto, group)
-            if group_service.update_group(g.user.id, group):
+            if users_service.update_group(user_id=g.user.id, group=group):
                 group_dto = GroupMapperDTO.model_to_dto(group)
                 return ResponseAPI.get_response(dto_to_dict(group_dto), 200)
             return ResponseAPI.get_403_response()
 
         if request.method == "DELETE":
-            if group_service.delete_group(g.user.id, group):
+            if users_service.delete_group(user_id=g.user.id, group=group):
                 return ResponseAPI.get_response("", 204)
             return ResponseAPI.get_403_response()
 
@@ -263,8 +264,8 @@ openapi.register_path(f"{V1}/group/{{group_id}}/members", api_item)
 @login_required(logger)
 @rate_limited(logger=logger, hit=30, period=timedelta(seconds=60))
 def group_members(group_id: str):
-    role_manager = RoleManager(current_app.dependencies)
-    roles = role_manager.get_members(g.user.id, group_id)
+    users_service = UsersService(current_app.dependencies)
+    roles = users_service.get_group_members(user_id=g.user.id, group_id=group_id)
 
     if roles:
         roles_dto = list_models_to_list_dto(RoleMapperDTO, roles)

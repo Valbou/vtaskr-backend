@@ -7,7 +7,7 @@ from src.libs.hmi.querystring import QueryStringFilter
 from src.libs.redis import rate_limited
 from src.users.hmi.dto import ROLETYPE_COMPONENT, RoleTypeDTO, RoleTypeMapperDTO
 from src.users.hmi.flask.decorators import login_required
-from src.users.managers import RoleTypeManager
+from src.users.services import UsersService
 
 from .. import API_ERROR_COMPONENT, V1, logger, openapi, users_bp
 
@@ -70,21 +70,22 @@ def roletypes():
     Return a list of all role types the user can have or use
     """
 
-    roletype_manager = RoleTypeManager(current_app.dependencies)
+    users_service = UsersService(services=current_app.dependencies)
 
     if request.method == "GET":
         qsf = QueryStringFilter(
             query_string=request.query_string.decode(), dto=RoleTypeDTO
         )
 
-        roletypes = roletype_manager.get_all_roletypes(g.user.id, qsf.get_filters())
+        roletypes = users_service.get_all_user_roletypes(g.user.id, qsf.get_filters())
+
         roletypes_dto = list_models_to_list_dto(RoleTypeMapperDTO, roletypes)
         return ResponseAPI.get_response(list_dto_to_dict(roletypes_dto), 200)
 
     if request.method == "POST":
         roletype_dto = RoleTypeDTO(**request.get_json())
 
-        roletype, _created = roletype_manager.create_custom_roletype(
+        roletype, _created = users_service.create_new_roletype(
             name=roletype_dto.name,
             group_id=roletype_dto.group_id,
         )
@@ -215,8 +216,10 @@ openapi.register_path(f"{V1}/roletype/{{roletype_id}}", api_item)
 @login_required(logger)
 @rate_limited(logger=logger, hit=10, period=timedelta(seconds=60))
 def roletype(roletype_id: str):
-    roletype_service = RoleTypeManager(current_app.dependencies)
-    roletype = roletype_service.get_roletype(g.user.id, roletype_id)
+    users_service = UsersService(services=current_app.dependencies)
+    roletype = users_service.get_user_roletype(
+        user_id=g.user.id, roletype_id=roletype_id
+    )
 
     if roletype:
         if request.method == "GET":
@@ -225,20 +228,23 @@ def roletype(roletype_id: str):
 
         if request.method in ["PUT", "PATCH"]:
             roletype_dto = RoleTypeDTO(**request.get_json())
+
             if roletype_dto.group_id and roletype_dto.group_id != roletype.group_id:
                 return ResponseAPI.get_403_response(
                     message="You cannot reassign a role type to another group"
                 )
 
             roletype = RoleTypeMapperDTO.dto_to_model(roletype_dto, roletype)
-            if roletype_service.update_roletype(g.user.id, roletype):
+            if users_service.update_user_roletype(g.user.id, roletype):
                 roletype_dto = RoleTypeMapperDTO.model_to_dto(roletype)
                 return ResponseAPI.get_response(dto_to_dict(roletype_dto), 200)
+
             return ResponseAPI.get_403_response()
 
         if request.method == "DELETE":
-            if roletype_service.delete_roletype(g.user.id, roletype):
+            if users_service.delete_user_roletype(g.user.id, roletype):
                 return ResponseAPI.get_response("", 204)
+
             return ResponseAPI.get_403_response()
 
         else:

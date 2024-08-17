@@ -22,10 +22,11 @@ class TestRightManager(DummyBaseTestCase):
         return RoleType(id="roletype_123", name="My Role", group_id="group_123")
 
     def test_create_observer_rights(self):
-        roletype = self._get_roletype()
         self.right_m.right_db.save = MagicMock()
 
-        num_results = self.right_m.create_observer_rights(roletype=roletype)
+        num_results = self.right_m.create_observer_rights(
+            session=None, roletype_id="roletype_123"
+        )
 
         self.right_m.right_db.save.assert_called()
 

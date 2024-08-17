@@ -121,8 +121,8 @@ def update_me():
     user_dto = UserDTO(**request.get_json())
     g.user = UserMapperDTO.dto_to_model(user_dto, g.user)
 
-    user_service = UsersService(services=current_app.dependencies)
-    user_service.update_user(g.user)
+    users_service = UsersService(services=current_app.dependencies)
+    users_service.update_user(g.user)
     user_dto = UserMapperDTO.model_to_dto(g.user)
 
     return ResponseAPI.get_response(dto_to_dict(user_dto), 200)
@@ -160,8 +160,8 @@ def delete_me():
     Return a jsonify user deleted
     """
 
-    user_service = UsersService(services=current_app.dependencies)
-    if user_service.delete_user(g.user):
+    users_service = UsersService(services=current_app.dependencies)
+    if users_service.delete_user(g.user):
         user_dto = UserMapperDTO.model_to_dto(g.user)
 
         return ResponseAPI.get_response(dto_to_dict(user_dto), 204)

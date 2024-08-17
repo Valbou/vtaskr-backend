@@ -28,6 +28,7 @@ def create_flask_app(dependencies: DependencyInjector) -> Flask:
     domains: list[str] = []
     repositories: list[tuple] = []
     permissions_resources: list[str] = []
+
     for module in INSTALLED_APPS:
         logger.info(f"loading app {module}")
 

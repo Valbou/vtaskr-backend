@@ -25,7 +25,7 @@ class TestRoleTypeManager(DummyBaseTestCase):
             return_value=(base_roletype, True)
         )
 
-        roletype, created = self.roletype_m.get_default_observer()
+        roletype, created = self.roletype_m.get_default_observer(session=None)
 
         self.roletype_m.roletype_db.get_or_create.assert_called_once()
 
@@ -40,7 +40,7 @@ class TestRoleTypeManager(DummyBaseTestCase):
             return_value=(roletype, False)
         )
 
-        roletype, created = self.roletype_m.get_default_observer()
+        roletype, created = self.roletype_m.get_default_observer(session=None)
 
         self.roletype_m.roletype_db.get_or_create.assert_called_once()
 
@@ -55,7 +55,7 @@ class TestRoleTypeManager(DummyBaseTestCase):
             return_value=(base_roletype, True)
         )
 
-        roletype, created = self.roletype_m.get_default_admin()
+        roletype, created = self.roletype_m.get_default_admin(session=None)
 
         self.roletype_m.roletype_db.get_or_create.assert_called_once()
 
@@ -70,7 +70,7 @@ class TestRoleTypeManager(DummyBaseTestCase):
             return_value=(roletype, False)
         )
 
-        roletype, created = self.roletype_m.get_default_admin()
+        roletype, created = self.roletype_m.get_default_admin(session=None)
 
         self.roletype_m.roletype_db.get_or_create.assert_called_once()
 

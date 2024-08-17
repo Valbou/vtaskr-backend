@@ -1,177 +1,309 @@
+from unittest.mock import MagicMock, patch
+
 from src.libs.iam.constants import Permissions
-from src.users.managers import RightManager, RoleTypeManager
-from src.users.models import Right
-from tests.base_test import BaseTestCase
+from src.users.models import Right, RoleType
+from tests.base_test import DummyBaseTestCase, set_fake_authentication
 
 URL_API = "/api/v1"
 
+USER_RIGHT = Right(
+    roletype_id="roletype_123",
+    resource="RESOURCE",
+    permissions=Permissions.EXECUTE,
+)
+USER_ROLETYPE = RoleType(
+    name="Test",
+    group_id="group_123",
+)
 
-class TestRightAPI(BaseTestCase):
+
+class TestRightAPI(DummyBaseTestCase):
     def setUp(self) -> None:
         super().setUp()
         self.headers = self.get_json_headers()
 
     def get_a_user_right(self) -> Right:
-        right_service = RightManager(self.app.dependencies)
-        rights = right_service.get_all_rights(self.user.id)
-        return rights[0]
+        return USER_RIGHT
 
     def test_get_right_no_login(self):
         self.create_user()
-        right = self.get_a_user_right()
 
-        response = self.client.get(f"{URL_API}/right/{right.id}", headers=self.headers)
+        response = self.client.get(
+            f"{URL_API}/right/{USER_RIGHT.id}", headers=self.headers
+        )
+
         self.assertEqual(response.status_code, 401)
 
-    def test_get_my_right(self):
+    @patch(
+        "src.users.hmi.flask.api.v1.right.UsersService.get_user_roletype",
+        return_value=USER_ROLETYPE,
+    )
+    @patch(
+        "src.users.hmi.flask.api.v1.right.UsersService.get_user_right",
+        return_value=USER_RIGHT,
+    )
+    def test_get_my_right(self, mock_right: MagicMock, mock_roletype: MagicMock):
         headers = self.get_token_headers()
-        right = self.get_a_user_right()
 
-        response = self.client.get(f"{URL_API}/right/{right.id}", headers=headers)
+        with set_fake_authentication(app=self.app, user=self.user, token=self.token):
+            response = self.client.get(
+                f"{URL_API}/right/{USER_RIGHT.id}", headers=headers
+            )
+
         self.assertEqual(response.status_code, 200)
 
-    def test_get_all_my_rights(self):
+        mock_right.assert_called_once_with(user_id=self.user.id, right_id=USER_RIGHT.id)
+        mock_roletype.assert_called_once_with(
+            user_id=self.user.id, roletype_id="roletype_123"
+        )
+
+    @patch(
+        "src.users.hmi.flask.api.v1.right.UsersService.get_all_user_rights",
+        return_value=[USER_RIGHT, USER_RIGHT],
+    )
+    def test_get_all_my_rights(self, mock_rights: MagicMock):
         headers = self.get_token_headers()
-        response = self.client.get(f"{URL_API}/rights", headers=headers)
+
+        with set_fake_authentication(app=self.app, user=self.user, token=self.token):
+            response = self.client.get(f"{URL_API}/rights", headers=headers)
 
         self.assertEqual(response.status_code, 200)
         self.assertIsInstance(response.json, list)
-        self.assertEqual(
-            len(response.json), len(self.app.dependencies.identity.get_resources())
-        )
+        self.assertEqual(len(response.json), 2)
 
-    def test_create_a_new_right(self):
+        mock_rights.assert_called_once()
+
+    @patch(
+        "src.users.hmi.flask.api.v1.right.UsersService.create_new_right",
+        return_value=USER_RIGHT,
+    )
+    def test_create_a_new_right(self, mock_right: MagicMock):
         headers = self.get_token_headers()
-
-        roletype_service = RoleTypeManager(self.app.dependencies)
-        roletype, _created = roletype_service.create_custom_roletype(
-            self.fake.word(), self.group.id
-        )
 
         data = {
             "resource": "Group",
             "permissions": sum([Permissions.READ, Permissions.EXECUTE]),
-            "roletype_id": roletype.id,
+            "roletype_id": USER_ROLETYPE.id,
         }
-        response = self.client.post(f"{URL_API}/rights", json=data, headers=headers)
+
+        with set_fake_authentication(app=self.app, user=self.user, token=self.token):
+            response = self.client.post(f"{URL_API}/rights", json=data, headers=headers)
 
         self.assertEqual(response.status_code, 201)
-        self.assertEqual(response.json.get("roletype_id"), roletype.id)
+        self.assertEqual(response.json.get("roletype_id"), USER_RIGHT.roletype_id)
 
-    def test_update_associated_right_put(self):
+        mock_right.assert_called_once()
+
+    @patch(
+        "src.users.hmi.flask.api.v1.right.UsersService.get_user_roletype",
+        return_value=USER_ROLETYPE,
+    )
+    @patch(
+        "src.users.hmi.flask.api.v1.right.UsersService.get_user_right",
+        return_value=USER_RIGHT,
+    )
+    @patch(
+        "src.users.hmi.flask.api.v1.right.UsersService.update_user_right",
+        return_value=True,
+    )
+    def test_update_associated_right_put(
+        self, mock_update: MagicMock, mock_right: MagicMock, mock_roletype: MagicMock
+    ):
         headers = self.get_token_headers()
 
-        roletype_service = RoleTypeManager(self.app.dependencies)
-        roletype, _created = roletype_service.create_custom_roletype(
-            self.fake.word(), self.group.id
-        )
-
-        right_service = RightManager(self.app.dependencies)
-        right = Right(
-            roletype_id=roletype.id,
-            resource="RoleType",
-            permissions=[Permissions.READ, Permissions.EXECUTE],
-        )
-        right = right_service.create_right(self.user.id, self.group.id, right)
-
         data = {
-            "resource": right.resource,
+            "resource": USER_RIGHT.resource,
             "permissions": sum([Permissions.CREATE]),
-            "roletype_id": right.roletype_id,
+            "roletype_id": USER_RIGHT.roletype_id,
         }
-        response = self.client.put(
-            f"{URL_API}/right/{right.id}", json=data, headers=headers
-        )
+
+        with set_fake_authentication(app=self.app, user=self.user, token=self.token):
+            response = self.client.put(
+                f"{URL_API}/right/{USER_RIGHT.id}", json=data, headers=headers
+            )
+
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json.get("permissions"), 4)
 
-    def test_update_stranger_right(self):
+        mock_right.assert_called_once()
+        mock_roletype.assert_called_once()
+        mock_update.assert_called_once()
+
+    @patch(
+        "src.users.hmi.flask.api.v1.right.UsersService.get_user_roletype",
+        return_value=USER_ROLETYPE,
+    )
+    @patch(
+        "src.users.hmi.flask.api.v1.right.UsersService.get_user_right",
+        return_value=USER_RIGHT,
+    )
+    @patch(
+        "src.users.hmi.flask.api.v1.right.UsersService.update_user_right",
+        return_value=True,
+    )
+    def test_update_associated_right_patch(
+        self, mock_update: MagicMock, mock_right: MagicMock, mock_roletype: MagicMock
+    ):
         headers = self.get_token_headers()
-        self.user_0, self.group_0 = self.user, self.group
-        self.create_user()
-
-        roletype_service = RoleTypeManager(self.app.dependencies)
-        roletype, _created = roletype_service.create_custom_roletype(
-            self.fake.word(), self.group.id
-        )
-
-        right_service = RightManager(self.app.dependencies)
-        right = Right(
-            roletype_id=roletype.id,
-            resource="RoleType",
-            permissions=[Permissions.READ, Permissions.EXECUTE],
-        )
-        right = right_service.create_right(self.user.id, self.group.id, right)
 
         data = {
-            "resource": right.resource,
+            "resource": USER_RIGHT.resource,
             "permissions": sum([Permissions.CREATE]),
-            "roletype_id": right.roletype_id,
+            "roletype_id": USER_RIGHT.roletype_id,
         }
-        response = self.client.patch(
-            f"{URL_API}/right/{right.id}", json=data, headers=headers
-        )
+
+        with set_fake_authentication(app=self.app, user=self.user, token=self.token):
+            response = self.client.patch(
+                f"{URL_API}/right/{USER_RIGHT.id}", json=data, headers=headers
+            )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json.get("permissions"), 4)
+
+        mock_right.assert_called_once()
+        mock_roletype.assert_called_once()
+        mock_update.assert_called_once()
+
+    @patch(
+        "src.users.hmi.flask.api.v1.right.UsersService.get_user_roletype",
+        return_value=None,
+    )
+    @patch(
+        "src.users.hmi.flask.api.v1.right.UsersService.get_user_right",
+        return_value=None,
+    )
+    def test_update_stranger_right(
+        self, mock_right: MagicMock, mock_roletype: MagicMock
+    ):
+        headers = self.get_token_headers()
+
+        data = {
+            "resource": USER_RIGHT.resource,
+            "permissions": sum([Permissions.CREATE]),
+            "roletype_id": USER_RIGHT.roletype_id,
+        }
+
+        with set_fake_authentication(app=self.app, user=self.user, token=self.token):
+            response = self.client.patch(
+                f"{URL_API}/right/{USER_RIGHT.id}", json=data, headers=headers
+            )
+
         self.assertEqual(response.status_code, 404)
 
-    def test_update_global_right(self):
-        headers = self.get_token_headers()
+        mock_right.assert_called_once()
+        mock_roletype.assert_not_called()
 
-        right = self.get_a_user_right()
+    @patch(
+        "src.users.hmi.flask.api.v1.right.UsersService.get_user_roletype",
+        return_value=USER_ROLETYPE,
+    )
+    @patch(
+        "src.users.hmi.flask.api.v1.right.UsersService.get_user_right",
+        return_value=USER_RIGHT,
+    )
+    @patch(
+        "src.users.hmi.flask.api.v1.right.UsersService.update_user_right",
+        return_value=False,
+    )
+    def test_update_global_right(
+        self, mock_update: MagicMock, mock_right: MagicMock, mock_roletype: MagicMock
+    ):
+        headers = self.get_token_headers()
 
         data = {
-            "resource": right.resource,
+            "resource": USER_RIGHT.resource,
             "permissions": sum([Permissions.READ]),
-            "roletype_id": right.roletype_id,
+            "roletype_id": USER_RIGHT.roletype_id,
         }
-        response = self.client.put(
-            f"{URL_API}/right/{right.id}", json=data, headers=headers
-        )
+
+        with set_fake_authentication(app=self.app, user=self.user, token=self.token):
+            response = self.client.put(
+                f"{URL_API}/right/{USER_RIGHT.id}", json=data, headers=headers
+            )
+
         self.assertEqual(response.status_code, 403)
 
-    def test_delete_associated_right(self):
+        mock_right.assert_called_once()
+        mock_roletype.assert_called_once()
+        mock_update.assert_called_once()
+
+    @patch(
+        "src.users.hmi.flask.api.v1.right.UsersService.get_user_roletype",
+        return_value=USER_ROLETYPE,
+    )
+    @patch(
+        "src.users.hmi.flask.api.v1.right.UsersService.get_user_right",
+        return_value=USER_RIGHT,
+    )
+    @patch(
+        "src.users.hmi.flask.api.v1.right.UsersService.delete_user_right",
+        return_value=True,
+    )
+    def test_delete_associated_right(
+        self, mock_delete: MagicMock, mock_right: MagicMock, mock_roletype: MagicMock
+    ):
         headers = self.get_token_headers()
 
-        roletype_service = RoleTypeManager(self.app.dependencies)
-        roletype, _created = roletype_service.create_custom_roletype(
-            self.fake.word(), self.group.id
-        )
+        with set_fake_authentication(app=self.app, user=self.user, token=self.token):
+            response = self.client.delete(
+                f"{URL_API}/right/{USER_RIGHT.id}", headers=headers
+            )
 
-        right_service = RightManager(self.app.dependencies)
-        right = Right(
-            roletype_id=roletype.id,
-            resource="RoleType",
-            permissions=[Permissions.READ, Permissions.EXECUTE],
-        )
-        right = right_service.create_right(self.user.id, self.group.id, right)
-
-        response = self.client.delete(f"{URL_API}/right/{right.id}", headers=headers)
         self.assertEqual(response.status_code, 204)
 
-    def test_delete_stranger_right(self):
+        mock_right.assert_called_once()
+        mock_roletype.assert_called_once()
+        mock_delete.assert_called_once()
+
+    @patch(
+        "src.users.hmi.flask.api.v1.right.UsersService.get_user_roletype",
+        return_value=None,
+    )
+    @patch(
+        "src.users.hmi.flask.api.v1.right.UsersService.get_user_right",
+        return_value=None,
+    )
+    def test_delete_stranger_right(
+        self, mock_right: MagicMock, mock_roletype: MagicMock
+    ):
         headers = self.get_token_headers()
-        self.user_0, self.group_0 = self.user, self.group
-        self.create_user()
 
-        roletype_service = RoleTypeManager(self.app.dependencies)
-        roletype, _created = roletype_service.create_custom_roletype(
-            self.fake.word(), self.group.id
-        )
+        with set_fake_authentication(app=self.app, user=self.user, token=self.token):
+            response = self.client.delete(
+                f"{URL_API}/right/{USER_RIGHT.id}", headers=headers
+            )
 
-        right_service = RightManager(self.app.dependencies)
-        right = Right(
-            roletype_id=roletype.id,
-            resource="RoleType",
-            permissions=[Permissions.READ, Permissions.EXECUTE],
-        )
-        right = right_service.create_right(self.user.id, self.group.id, right)
-
-        response = self.client.delete(f"{URL_API}/right/{right.id}", headers=headers)
         self.assertEqual(response.status_code, 404)
 
-    def test_delete_global_right(self):
+        mock_right.assert_called_once()
+        mock_roletype.assert_not_called()
+
+    @patch(
+        "src.users.hmi.flask.api.v1.right.UsersService.get_user_roletype",
+        return_value=USER_ROLETYPE,
+    )
+    @patch(
+        "src.users.hmi.flask.api.v1.right.UsersService.get_user_right",
+        return_value=USER_RIGHT,
+    )
+    @patch(
+        "src.users.hmi.flask.api.v1.right.UsersService.delete_user_right",
+        return_value=False,
+    )
+    def test_delete_global_right(
+        self, mock_delete: MagicMock, mock_right: MagicMock, mock_roletype: MagicMock
+    ):
         headers = self.get_token_headers()
 
         right = self.get_a_user_right()
 
-        response = self.client.delete(f"{URL_API}/right/{right.id}", headers=headers)
+        with set_fake_authentication(app=self.app, user=self.user, token=self.token):
+            response = self.client.delete(
+                f"{URL_API}/right/{right.id}", headers=headers
+            )
+
         self.assertEqual(response.status_code, 403)
+
+        mock_right.assert_called_once()
+        mock_roletype.assert_called_once()
+        mock_delete.assert_called_once()

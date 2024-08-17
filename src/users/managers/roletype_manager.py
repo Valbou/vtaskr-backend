@@ -13,26 +13,24 @@ class RoleTypeManager:
             APP_NAME, "RoleType"
         )
 
-    def get_default_observer(self) -> tuple[RoleType, bool]:
+    def get_default_observer(self, session) -> tuple[RoleType, bool]:
         """Looking for a default roletype named: Observer"""
 
-        with self.services.persistence.get_session() as session:
-            observer_roletype = RoleType(name="Observer", group_id=None)
-            roletype, created = self.roletype_db.get_or_create(
-                session=session, roletype=observer_roletype
-            )
+        observer_roletype = RoleType(name="Observer", group_id=None)
+        roletype, created = self.roletype_db.get_or_create(
+            session=session, roletype=observer_roletype
+        )
 
         return roletype, created
 
-    def get_default_admin(self) -> tuple[RoleType, bool]:
+    def get_default_admin(self, session) -> tuple[RoleType, bool]:
         """Looking for a default roletype named: Admin"""
 
         admin_roletype = RoleType(name="Admin", group_id=None)
 
-        with self.services.persistence.get_session() as session:
-            roletype, created = self.roletype_db.get_or_create(
-                session=session, roletype=admin_roletype
-            )
+        roletype, created = self.roletype_db.get_or_create(
+            session=session, roletype=admin_roletype
+        )
 
         return roletype, created
 

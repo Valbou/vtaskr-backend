@@ -1,103 +1,96 @@
-from src.users.managers import GroupManager, RoleTypeManager
-from src.users.models import Group, RoleType, User
-from src.users.services import UsersService
-from tests.base_test import BaseTestCase
+from unittest.mock import ANY, MagicMock, patch
+
+from src.users.models import Invitation, Role
+from tests.base_test import DummyBaseTestCase, set_fake_authentication
 
 URL_API = "/api/v1"
 
 
-class TestInvitationAPI(BaseTestCase):
-    def setUp(self) -> None:
-        super().setUp()
-        self.user_service = UsersService(self.app.dependencies)
-        self.group_manager = GroupManager(self.app.dependencies)
-        self.roletype_service = RoleTypeManager(self.app.dependencies)
-
-    def _create_group(self, user: User) -> Group:
-        self.shared_group = self.user_service.create_new_group(
-            user_id=user.id, group_name="My Shared Group", is_private=False
-        )
-
-    def get_a_user_roletype(self, user: User) -> RoleType:
-        roletypes = self.roletype_service.get_all_roletypes(user.id)
-        return roletypes[0]
-
-    def test_invite_a_new_user(self):
+class TestInvitationAPI(DummyBaseTestCase):
+    @patch(
+        "src.users.hmi.flask.api.v1.invitation.UsersService.invite_user_by_email",
+        return_value=Invitation(
+            from_user_id="user_123",
+            to_user_email="test@example.com",
+            with_roletype_id="roletype_123",
+            in_group_id="group_123",
+        ),
+    )
+    def test_invite_a_new_user(self, mock: MagicMock):
         headers = self.get_token_headers()
-        self.user_0, self.group_0 = self.user, self.group
-        self.create_user()
-
-        self._create_group(user=self.user_0)
-        roletype = self.get_a_user_roletype(user=self.user_0)
-
-        invitations = self.user_service.get_invitations(
-            user_id=self.user_0.id, group_id=self.shared_group.id
-        )
-        self.assertEqual(len(invitations), 0)
 
         data = {
-            "to_user_email": self.user.email,
-            "in_group_id": self.shared_group.id,
-            "with_roletype_id": roletype.id,
+            "to_user_email": "test@example.com",
+            "with_roletype_id": "roletype_123",
+            "in_group_id": "group_123",
         }
 
-        response = self.client.post(f"{URL_API}/invite", json=data, headers=headers)
+        with set_fake_authentication(app=self.app, user=self.user, token=self.token):
+            response = self.client.post(f"{URL_API}/invite", json=data, headers=headers)
+
         self.assertEqual(response.status_code, 201)
 
-        invitations = self.user_service.get_invitations(
-            user_id=self.user_0.id, group_id=self.shared_group.id
+        mock.assert_called_once_with(
+            user=ANY,
+            user_email="test@example.com",
+            group_id="group_123",
+            roletype_id="roletype_123",
         )
-        self.assertEqual(len(invitations), 1)
-        invitation = invitations[0]
 
-        # Accept invitation
+    @patch(
+        "src.users.hmi.flask.api.v1.invitation.UsersService.accept_invitation",
+        return_value=Role(
+            user_id="user_123",
+            roletype_id="roletype_123",
+            group_id="group_123",
+        ),
+    )
+    def test_accept_invitation(self, mock: MagicMock):
         headers_accept = self.get_token_headers()
-        data_accept = {"hash": invitation.hash}
+        data_accept = {"hash": "hash_123"}
 
-        response_accept = self.client.post(
-            f"{URL_API}/invite/accepted", json=data_accept, headers=headers_accept
-        )
+        with set_fake_authentication(app=self.app, user=self.user, token=self.token):
+            response_accept = self.client.post(
+                f"{URL_API}/invite/accepted", json=data_accept, headers=headers_accept
+            )
+
         self.assertEqual(response_accept.status_code, 200)
 
-        invitations = self.user_service.get_invitations(
-            user_id=self.user_0.id, group_id=self.shared_group.id
-        )
-        self.assertEqual(len(invitations), 0)
+        mock.assert_called_once()
 
-    def test_invite_and_cancel(self):
+    @patch(
+        "src.users.hmi.flask.api.v1.invitation.UsersService.get_invitations",
+        return_value=[
+            Invitation(
+                from_user_id="user_123",
+                to_user_email="test@example.com",
+                with_roletype_id="roletype_123",
+                in_group_id="group_123",
+            )
+        ],
+    )
+    def test_get_invitations(self, mock: MagicMock):
         headers = self.get_token_headers()
 
-        self._create_group(user=self.user)
-        roletype = self.get_a_user_roletype(user=self.user)
+        with set_fake_authentication(app=self.app, user=self.user, token=self.token):
+            response = self.client.get(
+                f"{URL_API}/group/{self.group.id}/invitations", headers=headers
+            )
 
-        invitations = self.user_service.get_invitations(
-            user_id=self.user.id, group_id=self.shared_group.id
-        )
-        self.assertEqual(len(invitations), 0)
+        self.assertEqual(response.status_code, 200)
 
-        data = {
-            "to_user_email": self.fake.email(domain="valbou.fr"),
-            "in_group_id": self.shared_group.id,
-            "with_roletype_id": roletype.id,
-        }
+        mock.assert_called_once_with(user_id=self.user.id, group_id=self.group.id)
 
-        response = self.client.post(f"{URL_API}/invite", json=data, headers=headers)
-        self.assertEqual(response.status_code, 201)
+    @patch("src.users.hmi.flask.api.v1.invitation.UsersService.delete_invitation")
+    def test_cancel_invitation(self, mock: MagicMock):
+        headers = self.get_token_headers()
+        invitation_id = "invitation_123"
 
-        invitations = self.user_service.get_invitations(
-            user_id=self.user.id, group_id=self.shared_group.id
-        )
-        self.assertEqual(len(invitations), 1)
-        invitation = invitations[0]
+        with set_fake_authentication(app=self.app, user=self.user, token=self.token):
+            response_accept = self.client.delete(
+                f"{URL_API}/invite/{invitation_id}", headers=headers
+            )
 
-        # Cancel invitation
-        response_accept = self.client.delete(
-            f"{URL_API}/invite/{invitation.id}", headers=headers
-        )
-        print(response.status_code)
         self.assertEqual(response_accept.status_code, 204)
 
-        invitations = self.user_service.get_invitations(
-            user_id=self.user.id, group_id=self.shared_group.id
-        )
-        self.assertEqual(len(invitations), 0)
+        mock.assert_called_once_with(user=ANY, invitation_id="invitation_123")

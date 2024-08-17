@@ -67,8 +67,8 @@ def change_email():
     try:
         new_email = payload.get("new_email", "")
         new_email = get_valid_email(new_email)
-        auth_service = UsersService(services=current_app.dependencies)
-        auth_service.request_email_change(g.user, new_email)
+        users_service = UsersService(services=current_app.dependencies)
+        users_service.request_email_change(g.user, new_email)
 
     except (EmailSyntaxError, EmailAlreadyUsedError) as e:
         return ResponseAPI.get_400_response(str(e))
@@ -161,14 +161,14 @@ def new_email():
         return ResponseAPI.get_400_response()
 
     try:
-        user_service = UsersService(services=current_app.dependencies)
+        users_service = UsersService(services=current_app.dependencies)
         try:
             if (
                 old_email
                 and new_email
                 and request_hash
                 and code
-                and user_service.set_new_email(
+                and users_service.set_new_email(
                     old_email=old_email,
                     new_email=new_email,
                     hash=request_hash,

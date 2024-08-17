@@ -1,48 +1,51 @@
-from src.users.models import RequestChange, RequestType, User
-from src.users.persistence import RequestChangeDBPort, UserDBPort
-from src.users.settings import APP_NAME
-from tests.base_test import BaseTestCase
+from unittest.mock import MagicMock, patch
+
+from tests.base_test import DummyBaseTestCase, set_fake_authentication
 
 URL_API = "/api/v1"
 
 
-class TestUserV1ChangeEmail(BaseTestCase):
+class TestUserV1ChangeEmail(DummyBaseTestCase):
     def setUp(self) -> None:
         super().setUp()
-        self.request_change_db: RequestChangeDBPort = (
-            self.app.dependencies.persistence.get_repository(APP_NAME, "RequestChange")
-        )
         self.new_email = self.generate_email()
         self.headers = self.get_json_headers()
 
-    def test_change_email(self):
+    @patch("src.users.hmi.flask.api.v1.change_email.UsersService.request_email_change")
+    def test_change_email(self, mock: MagicMock):
         headers = self.get_token_headers()
         user_data = {"new_email": self.new_email}
-        response = self.client.post(
-            f"{URL_API}/users/me/change-email", json=user_data, headers=headers
-        )
+
+        with set_fake_authentication(app=self.app, user=self.user, token=self.token):
+            response = self.client.post(
+                f"{URL_API}/users/me/change-email", json=user_data, headers=headers
+            )
+
         self.assertEqual(response.status_code, 200)
 
-        with self.app.dependencies.persistence.get_session() as session:
-            request_change = self.request_change_db.find_request(
-                session, self.user.email, RequestType.EMAIL
-            )
-            self.assertIsInstance(request_change, RequestChange)
-            self.assertEqual(request_change.request_type, RequestType.EMAIL)
+        mock.assert_called_once()
 
-    def test_change_invalid_email(self):
+    @patch("src.users.hmi.flask.api.v1.change_email.UsersService.request_email_change")
+    def test_change_invalid_email(self, mock: MagicMock):
         headers = self.get_token_headers()
         user_data = {"new_email": self.fake.word()}
-        response = self.client.post(
-            f"{URL_API}/users/me/change-email", json=user_data, headers=headers
-        )
+
+        with set_fake_authentication(app=self.app, user=self.user, token=self.token):
+            response = self.client.post(
+                f"{URL_API}/users/me/change-email", json=user_data, headers=headers
+            )
+
         self.assertEqual(response.status_code, 400)
+
+        mock.assert_not_called()
 
     def test_change_email_without_token(self):
         user_data = {"new_email": self.new_email}
+
         response = self.client.post(
             f"{URL_API}/users/me/change-email", json=user_data, headers=self.headers
         )
+
         self.assertEqual(response.status_code, 401)
 
     def test_no_get(self):
@@ -70,49 +73,36 @@ class TestUserV1ChangeEmail(BaseTestCase):
         self.assertEqual(response.status_code, 405)
 
 
-class TestUserV1NewEmail(BaseTestCase):
+class TestUserV1NewEmail(DummyBaseTestCase):
     def setUp(self) -> None:
         super().setUp()
         self.headers = self.get_json_headers()
-        self.request_change_db: RequestChangeDBPort = (
-            self.app.dependencies.persistence.get_repository(APP_NAME, "RequestChange")
-        )
-        self.user_db: UserDBPort = self.app.dependencies.persistence.get_repository(
-            APP_NAME, "User"
-        )
         self.new_email = self.generate_email()
 
-    def _create_request_change_email(self) -> RequestChange:
-        headers = self.get_token_headers()
-        self.old_email = self.user.email
-        user_data = {"new_email": self.new_email}
-        self.client.post(
-            f"{URL_API}/users/me/change-email", json=user_data, headers=headers
-        )
-        with self.app.dependencies.persistence.get_session() as session:
-            return self.request_change_db.find_request(
-                session, self.user.email, RequestType.EMAIL
-            )
-
-    def test_set_new_email(self):
-        request_change = self._create_request_change_email()
-        self.assertIsNotNone(request_change)
-        self.assertEqual(self.user.email, self.old_email)
+    @patch("src.users.hmi.flask.api.v1.change_email.UsersService.set_new_email")
+    def test_set_new_email(self, mock: MagicMock):
+        self.get_token_headers()
 
         user_data = {
-            "old_email": self.old_email,
+            "old_email": self.user.email,
             "new_email": self.new_email,
-            "hash": request_change.gen_hash(),
-            "code": request_change.code,
+            "hash": "hash_123",
+            "code": "code_123",
         }
-        response = self.client.post(
-            f"{URL_API}/new-email", json=user_data, headers=self.headers
-        )
+
+        with set_fake_authentication(app=self.app, user=self.user, token=self.token):
+            response = self.client.post(
+                f"{URL_API}/new-email", json=user_data, headers=self.headers
+            )
+
         self.assertEqual(response.status_code, 200)
-        with self.app.dependencies.persistence.get_session() as session:
-            user = self.user_db.find_user_by_email(session, self.new_email)
-            self.assertIsInstance(user, User)
-            self.assertEqual(user.email, self.new_email)
+
+        mock.assert_called_once_with(
+            old_email=self.user.email,
+            new_email=self.new_email,
+            hash="hash_123",
+            code="code_123",
+        )
 
     def test_no_get(self):
         response = self.client.get(f"{URL_API}/new-email", headers=self.headers)

@@ -74,8 +74,8 @@ def confirm_2fa():
         return ResponseAPI.get_400_response()
 
     try:
-        token_service = UsersService(current_app.dependencies)
-        token = token_service.get_temp_token(sha_token, code)
+        users_service = UsersService(current_app.dependencies)
+        token = users_service.get_temp_token(sha_token=sha_token, code=code)
 
         if token:
             data = {}

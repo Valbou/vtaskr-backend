@@ -41,8 +41,8 @@ openapi.register_path(f"{V1}/group/{{group_id}}/invitations", api_item)
 @login_required(logger)
 @rate_limited(logger=logger, hit=30, period=timedelta(seconds=60))
 def group_invitations(group_id: str):
-    user_service = UsersService(current_app.dependencies)
-    invitations = user_service.get_invitations(g.user.id, group_id)
+    users_service = UsersService(current_app.dependencies)
+    invitations = users_service.get_invitations(user_id=g.user.id, group_id=group_id)
 
     if invitations is not None:
         invitations_dto = list_models_to_list_dto(InvitationMapperDTO, invitations)
@@ -131,8 +131,8 @@ def invite():
         return ResponseAPI.get_400_response()
 
     try:
-        user_service = UsersService(services=current_app.dependencies)
-        invitation = user_service.invite_user_by_email(
+        users_service = UsersService(services=current_app.dependencies)
+        invitation = users_service.invite_user_by_email(
             user=g.user,
             user_email=to_user_email,
             group_id=in_group_id,
@@ -209,8 +209,8 @@ def invitation_accepted():
     invitation_hash = payload.get("hash", "")
 
     try:
-        user_service = UsersService(services=current_app.dependencies)
-        role = user_service.accept_invitation(user=g.user, hash=invitation_hash)
+        users_service = UsersService(services=current_app.dependencies)
+        role = users_service.accept_invitation(user=g.user, hash=invitation_hash)
 
         role_dto = RoleMapperDTO.model_to_dto(role)
         return ResponseAPI.get_response(dto_to_dict(role_dto), 200)
@@ -256,8 +256,8 @@ def invitation_cancel(invitation_id: str):
     """
 
     try:
-        user_service = UsersService(services=current_app.dependencies)
-        user_service.delete_invitation(user=g.user, invitation_id=invitation_id)
+        users_service = UsersService(services=current_app.dependencies)
+        users_service.delete_invitation(user=g.user, invitation_id=invitation_id)
 
         data = {}
         return ResponseAPI.get_response(data, 204)

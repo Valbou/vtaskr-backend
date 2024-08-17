@@ -72,10 +72,10 @@ def forgotten_password():
         return ResponseAPI.get_400_response()
 
     try:
-        user_service = UsersService(services=current_app.dependencies)
-        user = user_service.find_user_by_email(email)
+        users_service = UsersService(services=current_app.dependencies)
+        user = users_service.find_user_by_email(email=email)
         if user:
-            user_service.request_password_change(user)
+            users_service.request_password_change(user)
 
         return ResponseAPI.get_response(data, 200)
 
@@ -159,22 +159,25 @@ def new_password():
         return ResponseAPI.get_400_response()
 
     try:
-        user_service = UsersService(services=current_app.dependencies)
+        users_service = UsersService(services=current_app.dependencies)
         try:
             if (
                 email
                 and request_hash
                 and new_passwd
-                and user_service.set_new_password(
+                and users_service.set_new_password(
                     email=email, hash=request_hash, password=new_passwd
                 )
             ):
                 data = {}
                 return ResponseAPI.get_response(data, 200)
+            else:
+                return ResponseAPI.get_401_response()
+
         except PasswordComplexityError as e:
             logger.warning(f"400 Error: {e}")
             return ResponseAPI.get_400_response(str(e))
-        return ResponseAPI.get_400_response()
+
     except Exception as e:
         logger.error(f"500 Error: {e}")
         return ResponseAPI.get_500_response()

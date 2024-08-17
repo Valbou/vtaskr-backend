@@ -75,10 +75,10 @@ def register():
         password = payload.pop("password")
         user_dto = UserDTO(**payload)
 
-        auth_service = UsersService(services=current_app.dependencies)
-        auth_service.clean_unused_accounts()
+        users_service = UsersService(services=current_app.dependencies)
+        users_service.clean_unused_accounts()
 
-        user, _group = auth_service.register(user_dto, password)
+        user, _group = users_service.register(user_dto=user_dto, password=password)
 
         user_dto = UserMapperDTO.model_to_dto(user)
         return ResponseAPI.get_response(dto_to_dict(user_dto), 201)
