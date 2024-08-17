@@ -9,7 +9,7 @@ URL_API = "/api/v1"
 USER_RIGHT = Right(
     roletype_id="roletype_123",
     resource="RESOURCE",
-    permissions=Permissions.EXECUTE,
+    permissions=[Permissions.EXECUTE],
 )
 USER_ROLETYPE = RoleType(
     name="Test",
