@@ -22,10 +22,7 @@ class TestRoleAPI(DummyBaseTestCase):
 
         self.assertEqual(response.status_code, 401)
 
-    @patch(
-        "src.users.hmi.flask.api.v1.role.UsersService.get_user_role",
-        return_value=USER_ROLE,
-    )
+    @patch("src.users.services.UsersService.get_user_role", return_value=USER_ROLE)
     def test_get_my_role(self, mock_role: MagicMock):
         headers = self.get_token_headers()
 
@@ -39,7 +36,7 @@ class TestRoleAPI(DummyBaseTestCase):
         mock_role.assert_called_once()
 
     @patch(
-        "src.users.hmi.flask.api.v1.role.UsersService.get_all_user_roles",
+        "src.users.services.UsersService.get_all_user_roles",
         return_value=[USER_ROLE, USER_ROLE],
     )
     def test_get_all_my_roles(self, mock_roles: MagicMock):
@@ -54,10 +51,7 @@ class TestRoleAPI(DummyBaseTestCase):
 
         mock_roles.assert_called_once()
 
-    @patch(
-        "src.users.hmi.flask.api.v1.role.UsersService.create_new_role",
-        return_value=USER_ROLE,
-    )
+    @patch("src.users.services.UsersService.create_new_role", return_value=USER_ROLE)
     def test_create_a_new_role(self, mock_role: MagicMock):
         headers = self.get_token_headers()
 
@@ -75,14 +69,8 @@ class TestRoleAPI(DummyBaseTestCase):
 
         mock_role.assert_called_once()
 
-    @patch(
-        "src.users.hmi.flask.api.v1.role.UsersService.get_user_role",
-        return_value=USER_ROLE,
-    )
-    @patch(
-        "src.users.hmi.flask.api.v1.role.UsersService.update_user_role",
-        return_value=True,
-    )
+    @patch("src.users.services.UsersService.get_user_role", return_value=USER_ROLE)
+    @patch("src.users.services.UsersService.update_user_role", return_value=True)
     def test_update_role_put(self, mock_update: MagicMock, mock_role: MagicMock):
         headers = self.get_token_headers()
 
@@ -103,14 +91,8 @@ class TestRoleAPI(DummyBaseTestCase):
         mock_role.assert_called_once()
         mock_update.assert_called_once()
 
-    @patch(
-        "src.users.hmi.flask.api.v1.role.UsersService.get_user_role",
-        return_value=USER_ROLE,
-    )
-    @patch(
-        "src.users.hmi.flask.api.v1.role.UsersService.update_user_role",
-        return_value=True,
-    )
+    @patch("src.users.services.UsersService.get_user_role", return_value=USER_ROLE)
+    @patch("src.users.services.UsersService.update_user_role", return_value=True)
     def test_update_role_patch(self, mock_update: MagicMock, mock_role: MagicMock):
         headers = self.get_token_headers()
 
@@ -131,14 +113,8 @@ class TestRoleAPI(DummyBaseTestCase):
         mock_role.assert_called_once()
         mock_update.assert_called_once()
 
-    @patch(
-        "src.users.hmi.flask.api.v1.role.UsersService.get_user_role",
-        return_value=USER_ROLE,
-    )
-    @patch(
-        "src.users.hmi.flask.api.v1.role.UsersService.delete_user_role",
-        return_value=True,
-    )
+    @patch("src.users.services.UsersService.get_user_role", return_value=USER_ROLE)
+    @patch("src.users.services.UsersService.delete_user_role", return_value=True)
     def test_delete_role(self, mock_delete: MagicMock, mock_role: MagicMock):
         headers = self.get_token_headers()
 
@@ -152,14 +128,8 @@ class TestRoleAPI(DummyBaseTestCase):
         mock_role.assert_called_once()
         mock_delete.assert_called_once()
 
-    @patch(
-        "src.users.hmi.flask.api.v1.role.UsersService.get_user_role",
-        return_value=USER_ROLE,
-    )
-    @patch(
-        "src.users.hmi.flask.api.v1.role.UsersService.delete_user_role",
-        return_value=False,
-    )
+    @patch("src.users.services.UsersService.get_user_role", return_value=USER_ROLE)
+    @patch("src.users.services.UsersService.delete_user_role", return_value=False)
     def test_delete_my_role(self, mock_delete: MagicMock, mock_role: MagicMock):
         headers = self.get_token_headers()
 

@@ -32,7 +32,7 @@ class TestUserV1Me(DummyBaseTestCase):
             self.user.created_at.astimezone(ZoneInfo("UTC")).isoformat(),
         )
 
-    @patch("src.users.hmi.flask.api.v1.roletype.UsersService.update_user")
+    @patch("src.users.services.UsersService.update_user")
     def test_put_user(self, mock_user: MagicMock):
         headers = self.get_token_headers()
 
@@ -59,7 +59,7 @@ class TestUserV1Me(DummyBaseTestCase):
 
         mock_user.assert_called_once()
 
-    @patch("src.users.hmi.flask.api.v1.roletype.UsersService.update_user")
+    @patch("src.users.services.UsersService.update_user")
     def test_patch_user(self, mock_user: MagicMock):
         headers = self.get_token_headers()
 
@@ -98,7 +98,7 @@ class TestUserV1Me(DummyBaseTestCase):
         response = self.client.delete(f"{URL_API_USERS}/me", headers=self.headers)
         self.assertEqual(response.status_code, 401)
 
-    @patch("src.users.hmi.flask.api.v1.roletype.UsersService.delete_user")
+    @patch("src.users.services.UsersService.delete_user")
     def test_delete(self, mock_delete: MagicMock):
         headers = self.get_token_headers()
 

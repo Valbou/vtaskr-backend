@@ -10,10 +10,8 @@ class TestUserV1ForgottenPassword(DummyBaseTestCase):
         super().setUp()
         self.headers = self.get_json_headers()
 
-    @patch(
-        "src.users.hmi.flask.api.v1.change_password.UsersService.request_password_change"
-    )
-    @patch("src.users.hmi.flask.api.v1.change_password.UsersService.find_user_by_email")
+    @patch("src.users.services.UsersService.request_password_change")
+    @patch("src.users.services.UsersService.find_user_by_email")
     def test_forgotten_password(self, mock_1: MagicMock, mock_2: MagicMock):
         self.create_user()
         user_data = {"email": self.user.email}
@@ -26,11 +24,9 @@ class TestUserV1ForgottenPassword(DummyBaseTestCase):
         mock_1.assert_called_once_with(email=self.user.email)
         mock_2.assert_called_once()
 
+    @patch("src.users.services.UsersService.request_password_change")
     @patch(
-        "src.users.hmi.flask.api.v1.change_password.UsersService.request_password_change"
-    )
-    @patch(
-        "src.users.hmi.flask.api.v1.change_password.UsersService.find_user_by_email",
+        "src.users.services.UsersService.find_user_by_email",
         return_value=None,
     )
     def test_forgotten_password_unknown_email(
@@ -78,7 +74,7 @@ class TestUserV1NewPassword(DummyBaseTestCase):
         self.headers = self.get_json_headers()
         self.new_password = self.generate_password()
 
-    @patch("src.users.hmi.flask.api.v1.change_password.UsersService.set_new_password")
+    @patch("src.users.services.UsersService.set_new_password")
     def test_set_new_password(self, mock: MagicMock):
         email = "test@example.com"
         user_data = {
@@ -97,7 +93,7 @@ class TestUserV1NewPassword(DummyBaseTestCase):
         )
 
     @patch(
-        "src.users.hmi.flask.api.v1.change_password.UsersService.set_new_password",
+        "src.users.services.UsersService.set_new_password",
         return_value=False,
     )
     def test_set_new_password_bad_hash(self, mock: MagicMock):
@@ -120,7 +116,7 @@ class TestUserV1NewPassword(DummyBaseTestCase):
         )
 
     @patch(
-        "src.users.hmi.flask.api.v1.change_password.UsersService.set_new_password",
+        "src.users.services.UsersService.set_new_password",
         return_value=False,
     )
     def test_set_new_password_bad_email(self, mock: MagicMock):

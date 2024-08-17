@@ -8,7 +8,7 @@ URL_API = "/api/v1"
 
 class TestInvitationAPI(DummyBaseTestCase):
     @patch(
-        "src.users.hmi.flask.api.v1.invitation.UsersService.invite_user_by_email",
+        "src.users.services.UsersService.invite_user_by_email",
         return_value=Invitation(
             from_user_id="user_123",
             to_user_email="test@example.com",
@@ -38,7 +38,7 @@ class TestInvitationAPI(DummyBaseTestCase):
         )
 
     @patch(
-        "src.users.hmi.flask.api.v1.invitation.UsersService.accept_invitation",
+        "src.users.services.UsersService.accept_invitation",
         return_value=Role(
             user_id="user_123",
             roletype_id="roletype_123",
@@ -59,7 +59,7 @@ class TestInvitationAPI(DummyBaseTestCase):
         mock.assert_called_once()
 
     @patch(
-        "src.users.hmi.flask.api.v1.invitation.UsersService.get_invitations",
+        "src.users.services.UsersService.get_invitations",
         return_value=[
             Invitation(
                 from_user_id="user_123",
@@ -81,7 +81,7 @@ class TestInvitationAPI(DummyBaseTestCase):
 
         mock.assert_called_once_with(user_id=self.user.id, group_id=self.group.id)
 
-    @patch("src.users.hmi.flask.api.v1.invitation.UsersService.delete_invitation")
+    @patch("src.users.services.UsersService.delete_invitation")
     def test_cancel_invitation(self, mock: MagicMock):
         headers = self.get_token_headers()
         invitation_id = "invitation_123"

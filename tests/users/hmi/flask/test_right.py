@@ -35,13 +35,9 @@ class TestRightAPI(DummyBaseTestCase):
         self.assertEqual(response.status_code, 401)
 
     @patch(
-        "src.users.hmi.flask.api.v1.right.UsersService.get_user_roletype",
-        return_value=USER_ROLETYPE,
+        "src.users.services.UsersService.get_user_roletype", return_value=USER_ROLETYPE
     )
-    @patch(
-        "src.users.hmi.flask.api.v1.right.UsersService.get_user_right",
-        return_value=USER_RIGHT,
-    )
+    @patch("src.users.services.UsersService.get_user_right", return_value=USER_RIGHT)
     def test_get_my_right(self, mock_right: MagicMock, mock_roletype: MagicMock):
         headers = self.get_token_headers()
 
@@ -58,7 +54,7 @@ class TestRightAPI(DummyBaseTestCase):
         )
 
     @patch(
-        "src.users.hmi.flask.api.v1.right.UsersService.get_all_user_rights",
+        "src.users.services.UsersService.get_all_user_rights",
         return_value=[USER_RIGHT, USER_RIGHT],
     )
     def test_get_all_my_rights(self, mock_rights: MagicMock):
@@ -73,10 +69,7 @@ class TestRightAPI(DummyBaseTestCase):
 
         mock_rights.assert_called_once()
 
-    @patch(
-        "src.users.hmi.flask.api.v1.right.UsersService.create_new_right",
-        return_value=USER_RIGHT,
-    )
+    @patch("src.users.services.UsersService.create_new_right", return_value=USER_RIGHT)
     def test_create_a_new_right(self, mock_right: MagicMock):
         headers = self.get_token_headers()
 
@@ -95,17 +88,10 @@ class TestRightAPI(DummyBaseTestCase):
         mock_right.assert_called_once()
 
     @patch(
-        "src.users.hmi.flask.api.v1.right.UsersService.get_user_roletype",
-        return_value=USER_ROLETYPE,
+        "src.users.services.UsersService.get_user_roletype", return_value=USER_ROLETYPE
     )
-    @patch(
-        "src.users.hmi.flask.api.v1.right.UsersService.get_user_right",
-        return_value=USER_RIGHT,
-    )
-    @patch(
-        "src.users.hmi.flask.api.v1.right.UsersService.update_user_right",
-        return_value=True,
-    )
+    @patch("src.users.services.UsersService.get_user_right", return_value=USER_RIGHT)
+    @patch("src.users.services.UsersService.update_user_right", return_value=True)
     def test_update_associated_right_put(
         self, mock_update: MagicMock, mock_right: MagicMock, mock_roletype: MagicMock
     ):
@@ -130,17 +116,10 @@ class TestRightAPI(DummyBaseTestCase):
         mock_update.assert_called_once()
 
     @patch(
-        "src.users.hmi.flask.api.v1.right.UsersService.get_user_roletype",
-        return_value=USER_ROLETYPE,
+        "src.users.services.UsersService.get_user_roletype", return_value=USER_ROLETYPE
     )
-    @patch(
-        "src.users.hmi.flask.api.v1.right.UsersService.get_user_right",
-        return_value=USER_RIGHT,
-    )
-    @patch(
-        "src.users.hmi.flask.api.v1.right.UsersService.update_user_right",
-        return_value=True,
-    )
+    @patch("src.users.services.UsersService.get_user_right", return_value=USER_RIGHT)
+    @patch("src.users.services.UsersService.update_user_right", return_value=True)
     def test_update_associated_right_patch(
         self, mock_update: MagicMock, mock_right: MagicMock, mock_roletype: MagicMock
     ):
@@ -164,14 +143,8 @@ class TestRightAPI(DummyBaseTestCase):
         mock_roletype.assert_called_once()
         mock_update.assert_called_once()
 
-    @patch(
-        "src.users.hmi.flask.api.v1.right.UsersService.get_user_roletype",
-        return_value=None,
-    )
-    @patch(
-        "src.users.hmi.flask.api.v1.right.UsersService.get_user_right",
-        return_value=None,
-    )
+    @patch("src.users.services.UsersService.get_user_roletype", return_value=None)
+    @patch("src.users.services.UsersService.get_user_right", return_value=None)
     def test_update_stranger_right(
         self, mock_right: MagicMock, mock_roletype: MagicMock
     ):
@@ -194,17 +167,10 @@ class TestRightAPI(DummyBaseTestCase):
         mock_roletype.assert_not_called()
 
     @patch(
-        "src.users.hmi.flask.api.v1.right.UsersService.get_user_roletype",
-        return_value=USER_ROLETYPE,
+        "src.users.services.UsersService.get_user_roletype", return_value=USER_ROLETYPE
     )
-    @patch(
-        "src.users.hmi.flask.api.v1.right.UsersService.get_user_right",
-        return_value=USER_RIGHT,
-    )
-    @patch(
-        "src.users.hmi.flask.api.v1.right.UsersService.update_user_right",
-        return_value=False,
-    )
+    @patch("src.users.services.UsersService.get_user_right", return_value=USER_RIGHT)
+    @patch("src.users.services.UsersService.update_user_right", return_value=False)
     def test_update_global_right(
         self, mock_update: MagicMock, mock_right: MagicMock, mock_roletype: MagicMock
     ):
@@ -228,17 +194,10 @@ class TestRightAPI(DummyBaseTestCase):
         mock_update.assert_called_once()
 
     @patch(
-        "src.users.hmi.flask.api.v1.right.UsersService.get_user_roletype",
-        return_value=USER_ROLETYPE,
+        "src.users.services.UsersService.get_user_roletype", return_value=USER_ROLETYPE
     )
-    @patch(
-        "src.users.hmi.flask.api.v1.right.UsersService.get_user_right",
-        return_value=USER_RIGHT,
-    )
-    @patch(
-        "src.users.hmi.flask.api.v1.right.UsersService.delete_user_right",
-        return_value=True,
-    )
+    @patch("src.users.services.UsersService.get_user_right", return_value=USER_RIGHT)
+    @patch("src.users.services.UsersService.delete_user_right", return_value=True)
     def test_delete_associated_right(
         self, mock_delete: MagicMock, mock_right: MagicMock, mock_roletype: MagicMock
     ):
@@ -255,14 +214,8 @@ class TestRightAPI(DummyBaseTestCase):
         mock_roletype.assert_called_once()
         mock_delete.assert_called_once()
 
-    @patch(
-        "src.users.hmi.flask.api.v1.right.UsersService.get_user_roletype",
-        return_value=None,
-    )
-    @patch(
-        "src.users.hmi.flask.api.v1.right.UsersService.get_user_right",
-        return_value=None,
-    )
+    @patch("src.users.services.UsersService.get_user_roletype", return_value=None)
+    @patch("src.users.services.UsersService.get_user_right", return_value=None)
     def test_delete_stranger_right(
         self, mock_right: MagicMock, mock_roletype: MagicMock
     ):
@@ -279,17 +232,10 @@ class TestRightAPI(DummyBaseTestCase):
         mock_roletype.assert_not_called()
 
     @patch(
-        "src.users.hmi.flask.api.v1.right.UsersService.get_user_roletype",
-        return_value=USER_ROLETYPE,
+        "src.users.services.UsersService.get_user_roletype", return_value=USER_ROLETYPE
     )
-    @patch(
-        "src.users.hmi.flask.api.v1.right.UsersService.get_user_right",
-        return_value=USER_RIGHT,
-    )
-    @patch(
-        "src.users.hmi.flask.api.v1.right.UsersService.delete_user_right",
-        return_value=False,
-    )
+    @patch("src.users.services.UsersService.get_user_right", return_value=USER_RIGHT)
+    @patch("src.users.services.UsersService.delete_user_right", return_value=False)
     def test_delete_global_right(
         self, mock_delete: MagicMock, mock_right: MagicMock, mock_roletype: MagicMock
     ):

@@ -22,9 +22,9 @@ class TestUserV1Register(DummyBaseTestCase):
         super().setUp()
         self.headers = self.get_json_headers()
 
-    @patch("src.users.hmi.flask.api.v1.register.UsersService.clean_unused_accounts")
+    @patch("src.users.services.UsersService.clean_unused_accounts")
     @patch(
-        "src.users.hmi.flask.api.v1.register.UsersService.register",
+        "src.users.services.UsersService.register",
         return_value=(LOCAL_TEST_USER, None),
     )
     def test_post_register(self, mock_register: MagicMock, mock_clean: MagicMock):
@@ -49,7 +49,7 @@ class TestUserV1Register(DummyBaseTestCase):
         mock_clean.assert_called_once()
         mock_register.assert_called_once()
 
-    @patch("src.users.hmi.flask.api.v1.register.UsersService.clean_unused_accounts")
+    @patch("src.users.services.UsersService.clean_unused_accounts")
     def test_post_register_bad_email(self, mock_clean: MagicMock):
         user_data = {
             "first_name": self.fake.first_name(),
@@ -66,7 +66,7 @@ class TestUserV1Register(DummyBaseTestCase):
 
         mock_clean.assert_called_once()
 
-    @patch("src.users.hmi.flask.api.v1.register.UsersService.clean_unused_accounts")
+    @patch("src.users.services.UsersService.clean_unused_accounts")
     def test_post_register_no_password(self, mock_clean: MagicMock):
         user_data = {
             "first_name": self.fake.first_name(),

@@ -27,7 +27,7 @@ class TestRoleTypeAPI(DummyBaseTestCase):
         self.assertEqual(response.status_code, 401)
 
     @patch(
-        "src.users.hmi.flask.api.v1.roletype.UsersService.get_user_roletype",
+        "src.users.services.UsersService.get_user_roletype",
         return_value=USER_ROLETYPE,
     )
     def test_get_my_roletype(self, mock_roletype: MagicMock):
@@ -45,7 +45,7 @@ class TestRoleTypeAPI(DummyBaseTestCase):
         )
 
     @patch(
-        "src.users.hmi.flask.api.v1.roletype.UsersService.get_all_user_roletypes",
+        "src.users.services.UsersService.get_all_user_roletypes",
         return_value=[USER_ROLETYPE, USER_ROLETYPE],
     )
     def test_get_all_my_roletypes(self, mock_roletypes: MagicMock):
@@ -61,7 +61,7 @@ class TestRoleTypeAPI(DummyBaseTestCase):
         mock_roletypes.assert_called_once()
 
     @patch(
-        "src.users.hmi.flask.api.v1.roletype.UsersService.create_new_roletype",
+        "src.users.services.UsersService.create_new_roletype",
         return_value=[USER_ROLETYPE, True],
     )
     def test_create_a_new_roletype(self, mock_roletypes: MagicMock):
@@ -84,11 +84,11 @@ class TestRoleTypeAPI(DummyBaseTestCase):
         mock_roletypes.assert_called_once_with(name=name, group_id=self.group.id)
 
     @patch(
-        "src.users.hmi.flask.api.v1.roletype.UsersService.update_user_roletype",
+        "src.users.services.UsersService.update_user_roletype",
         return_value=USER_ROLETYPE,
     )
     @patch(
-        "src.users.hmi.flask.api.v1.roletype.UsersService.get_user_roletype",
+        "src.users.services.UsersService.get_user_roletype",
         return_value=USER_ROLETYPE,
     )
     def test_update_roletype_put(
@@ -114,11 +114,11 @@ class TestRoleTypeAPI(DummyBaseTestCase):
         mock_update.assert_called_once()
 
     @patch(
-        "src.users.hmi.flask.api.v1.roletype.UsersService.update_user_roletype",
+        "src.users.services.UsersService.update_user_roletype",
         return_value=USER_ROLETYPE,
     )
     @patch(
-        "src.users.hmi.flask.api.v1.roletype.UsersService.get_user_roletype",
+        "src.users.services.UsersService.get_user_roletype",
         return_value=USER_ROLETYPE,
     )
     def test_update_roletype_patch(
@@ -144,11 +144,11 @@ class TestRoleTypeAPI(DummyBaseTestCase):
         mock_update.assert_called_once()
 
     @patch(
-        "src.users.hmi.flask.api.v1.roletype.UsersService.delete_user_roletype",
+        "src.users.services.UsersService.delete_user_roletype",
         return_value=USER_ROLETYPE,
     )
     @patch(
-        "src.users.hmi.flask.api.v1.roletype.UsersService.get_user_roletype",
+        "src.users.services.UsersService.get_user_roletype",
         return_value=USER_ROLETYPE,
     )
     def test_delete_roletype(self, mock_roletype: MagicMock, mock_delete: MagicMock):

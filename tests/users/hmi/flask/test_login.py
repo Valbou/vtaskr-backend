@@ -13,7 +13,7 @@ class TestUserV1Login(BaseTestCase):
         self.headers = self.get_json_headers()
 
     @patch(
-        "src.users.hmi.flask.api.v1.login.UsersService.authenticate",
+        "src.users.services.UsersService.authenticate",
         return_value=Token(  # nosec
             user_id="user_123", temp_code="code_123", sha_token="sha_123"
         ),
@@ -38,9 +38,7 @@ class TestUserV1Login(BaseTestCase):
             email=payload.get("email"), password=payload.get("password")
         )
 
-    @patch(
-        "src.users.hmi.flask.api.v1.login.UsersService.authenticate", return_value=None
-    )
+    @patch("src.users.services.UsersService.authenticate", return_value=None)
     def test_post_login_bad_credentials(self, mock: MagicMock):
         payload = {
             "email": self.fake.email(domain="valbou.fr"),

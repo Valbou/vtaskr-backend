@@ -26,7 +26,7 @@ class TestUserV1Logout(DummyBaseTestCase):
         response = self.client.patch(f"{URL_API_USERS}/logout", headers=self.headers)
         self.assertEqual(response.status_code, 405)
 
-    @patch("src.users.hmi.flask.api.v1.logout.UsersService.logout", return_value=True)
+    @patch("src.users.services.UsersService.logout", return_value=True)
     def test_post_logout(self, mock_logout: MagicMock):
         headers = self.get_token_headers()
 
@@ -39,7 +39,7 @@ class TestUserV1Logout(DummyBaseTestCase):
 
         mock_logout.assert_called_once_with(sha_token=self.token)
 
-    @patch("src.users.hmi.flask.api.v1.logout.UsersService.logout", return_value=False)
+    @patch("src.users.services.UsersService.logout", return_value=False)
     def test_post_logout_fake_token(self, mock_logout: MagicMock):
         headers = self.get_token_headers()
 

@@ -12,7 +12,7 @@ class TestGroupAPI(DummyBaseTestCase):
         self.headers = self.get_json_headers()
 
     @patch(
-        "src.users.hmi.flask.api.v1.group.UsersService.get_group",
+        "src.users.services.UsersService.get_group",
         return_value=Group(name="Test Group", is_private=False),
     )
     def test_get_group_no_login(self, mock_group: MagicMock):
@@ -27,7 +27,7 @@ class TestGroupAPI(DummyBaseTestCase):
         self.assertEqual(response.status_code, 401)
 
     @patch(
-        "src.users.hmi.flask.api.v1.group.UsersService.get_group",
+        "src.users.services.UsersService.get_group",
         return_value=Group(name="Test Group", is_private=False),
     )
     def test_get_group(self, mock: MagicMock):
@@ -43,7 +43,7 @@ class TestGroupAPI(DummyBaseTestCase):
         mock.assert_called_once_with(user_id=self.user.id, group_id=self.group.id)
 
     @patch(
-        "src.users.hmi.flask.api.v1.group.UsersService.create_new_group",
+        "src.users.services.UsersService.create_new_group",
         return_value=Group(name="Test Group", is_private=False),
     )
     def test_create_group(self, mock: MagicMock):
@@ -61,7 +61,7 @@ class TestGroupAPI(DummyBaseTestCase):
         mock.assert_called_with(user_id=self.user.id, group_name=name, is_private=False)
 
     @patch(
-        "src.users.hmi.flask.api.v1.group.UsersService.get_all_user_groups",
+        "src.users.services.UsersService.get_all_user_groups",
         return_value=[Group(name="Test Group", is_private=False)],
     )
     def test_get_all_groups(self, mock: MagicMock):
@@ -75,11 +75,9 @@ class TestGroupAPI(DummyBaseTestCase):
 
         mock.assert_called_once()
 
+    @patch("src.users.services.UsersService.update_group", return_value=True)
     @patch(
-        "src.users.hmi.flask.api.v1.group.UsersService.update_group", return_value=True
-    )
-    @patch(
-        "src.users.hmi.flask.api.v1.group.UsersService.get_group",
+        "src.users.services.UsersService.get_group",
         return_value=Group(name="Private", is_private=True),
     )
     def test_update_group_put(self, mock_get: MagicMock, mock_update: MagicMock):
@@ -100,11 +98,9 @@ class TestGroupAPI(DummyBaseTestCase):
         mock_get.assert_called_once_with(user_id=self.user.id, group_id=self.group.id)
         mock_update.assert_called_once()
 
+    @patch("src.users.services.UsersService.update_group", return_value=True)
     @patch(
-        "src.users.hmi.flask.api.v1.group.UsersService.update_group", return_value=True
-    )
-    @patch(
-        "src.users.hmi.flask.api.v1.group.UsersService.get_group",
+        "src.users.services.UsersService.get_group",
         return_value=Group(name="Private", is_private=True),
     )
     def test_update_group_patch(self, mock_get: MagicMock, mock_update: MagicMock):
@@ -125,11 +121,9 @@ class TestGroupAPI(DummyBaseTestCase):
         mock_get.assert_called_once_with(user_id=self.user.id, group_id=self.group.id)
         mock_update.assert_called_once()
 
+    @patch("src.users.services.UsersService.delete_group", return_value=True)
     @patch(
-        "src.users.hmi.flask.api.v1.group.UsersService.delete_group", return_value=True
-    )
-    @patch(
-        "src.users.hmi.flask.api.v1.group.UsersService.get_group",
+        "src.users.services.UsersService.get_group",
         return_value=Group(name="Private", is_private=True),
     )
     def test_delete_private_group(self, mock_get: MagicMock, mock_delete: MagicMock):
@@ -145,11 +139,9 @@ class TestGroupAPI(DummyBaseTestCase):
         mock_get.assert_called_once()
         mock_delete.assert_called_once()
 
+    @patch("src.users.services.UsersService.delete_group", return_value=True)
     @patch(
-        "src.users.hmi.flask.api.v1.group.UsersService.delete_group", return_value=True
-    )
-    @patch(
-        "src.users.hmi.flask.api.v1.group.UsersService.get_group",
+        "src.users.services.UsersService.get_group",
         return_value=Group(name="Test Group", is_private=False),
     )
     def test_delete_group(self, mock_get: MagicMock, mock_delete: MagicMock):

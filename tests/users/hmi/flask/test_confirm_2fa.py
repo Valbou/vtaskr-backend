@@ -11,7 +11,7 @@ class TestUserV1Confirm2FA(BaseTestCase):
         self.headers = self.get_json_headers()
 
     @patch(
-        "src.users.hmi.flask.api.v1.confirm_2fa.UsersService.get_temp_token",
+        "src.users.services.UsersService.get_temp_token",
         return_value="token_123",
     )
     def test_post_confirm_2FA(self, mock: MagicMock):
@@ -32,7 +32,7 @@ class TestUserV1Confirm2FA(BaseTestCase):
         )
 
     @patch(
-        "src.users.hmi.flask.api.v1.confirm_2fa.UsersService.get_temp_token",
+        "src.users.services.UsersService.get_temp_token",
         return_value=None,
     )
     def test_post_bad_code_2FA(self, mock: MagicMock):

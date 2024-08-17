@@ -11,7 +11,7 @@ class TestUserV1ChangeEmail(DummyBaseTestCase):
         self.new_email = self.generate_email()
         self.headers = self.get_json_headers()
 
-    @patch("src.users.hmi.flask.api.v1.change_email.UsersService.request_email_change")
+    @patch("src.users.services.UsersService.request_email_change")
     def test_change_email(self, mock: MagicMock):
         headers = self.get_token_headers()
         user_data = {"new_email": self.new_email}
@@ -25,7 +25,7 @@ class TestUserV1ChangeEmail(DummyBaseTestCase):
 
         mock.assert_called_once()
 
-    @patch("src.users.hmi.flask.api.v1.change_email.UsersService.request_email_change")
+    @patch("src.users.services.UsersService.request_email_change")
     def test_change_invalid_email(self, mock: MagicMock):
         headers = self.get_token_headers()
         user_data = {"new_email": self.fake.word()}
@@ -79,7 +79,7 @@ class TestUserV1NewEmail(DummyBaseTestCase):
         self.headers = self.get_json_headers()
         self.new_email = self.generate_email()
 
-    @patch("src.users.hmi.flask.api.v1.change_email.UsersService.set_new_email")
+    @patch("src.users.services.UsersService.set_new_email")
     def test_set_new_email(self, mock: MagicMock):
         self.get_token_headers()
 
