@@ -1,7 +1,6 @@
-from tests.base_test import DummyBaseTestCase
-
 from src.users.managers import EmailManager
-from src.users.models import RequestChange, RequestType, Group, RoleType, Invitation
+from src.users.models import Group, Invitation, RequestChange, RequestType, RoleType
+from tests.base_test import DummyBaseTestCase
 
 
 class TestEmailManager(DummyBaseTestCase):
@@ -40,9 +39,13 @@ class TestEmailManager(DummyBaseTestCase):
 
     def test_get_email_change_old_context(self):
         self.create_user()
-        request = RequestChange(request_type=RequestType.EMAIL, email="test@example.com")
+        request = RequestChange(
+            request_type=RequestType.EMAIL, email="test@example.com"
+        )
 
-        context = self.email_manager.get_email_change_old_context(user=self.user, request_change=request)
+        context = self.email_manager.get_email_change_old_context(
+            user=self.user, request_change=request
+        )
 
         self._common_test(context=context, template="emails/change_email")
 
@@ -52,7 +55,9 @@ class TestEmailManager(DummyBaseTestCase):
 
     def test_get_email_change_new_context(self):
         self.create_user()
-        request = RequestChange(request_type=RequestType.EMAIL, email="test@example.com")
+        request = RequestChange(
+            request_type=RequestType.EMAIL, email="test@example.com"
+        )
         sec_hash = request.gen_hash()
 
         context = self.email_manager.get_email_change_new_context(
@@ -63,11 +68,15 @@ class TestEmailManager(DummyBaseTestCase):
 
         self.assertEqual(context["email"], self.user.email)
         self.assertIn("Change your Email", context["subject"])
-        self.assertIn(f"hash={sec_hash}&email={request.email}", context["call_to_action_link"])
+        self.assertIn(
+            f"hash={sec_hash}&email={request.email}", context["call_to_action_link"]
+        )
 
     def test_get_password_change_context(self):
         self.create_user()
-        request = RequestChange(request_type=RequestType.PASSWORD, email="test@example.com")
+        request = RequestChange(
+            request_type=RequestType.PASSWORD, email="test@example.com"
+        )
         sec_hash = request.gen_hash()
 
         context = self.email_manager.get_password_change_context(
@@ -78,7 +87,9 @@ class TestEmailManager(DummyBaseTestCase):
 
         self.assertEqual(context["email"], self.user.email)
         self.assertIn("Password Change", context["subject"])
-        self.assertIn(f"hash={sec_hash}&email={self.user.email}", context["call_to_action_link"])
+        self.assertIn(
+            f"hash={sec_hash}&email={self.user.email}", context["call_to_action_link"]
+        )
 
     def test_get_delete_context(self):
         self.create_user()
@@ -99,7 +110,7 @@ class TestEmailManager(DummyBaseTestCase):
             from_user_id=self.user.id,
             to_user_email="test@example.com",
             with_roletype_id=roletype.id,
-            in_group_id=group.id
+            in_group_id=group.id,
         )
 
         context = self.email_manager.get_invitation_context(
@@ -137,7 +148,7 @@ class TestEmailManager(DummyBaseTestCase):
             from_user_id=self.user.id,
             to_user_email="test@example.com",
             with_roletype_id=roletype.id,
-            in_group_id=group.id
+            in_group_id=group.id,
         )
 
         context = self.email_manager.get_cancelled_invitation_context(
