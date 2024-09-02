@@ -1,3 +1,16 @@
+"""
+A task is a basic item to register a thing to do in the futur.
+
+A quick task that take no time to do and/or not need to be scheduled (like: call mom)
+It's for a basic to do list without strong priority, it's just a reminder.
+
+A long task may need to be scheduled, timed and may have dependencies.
+It's more a project management.
+
+Real life mix quick and long tasks, a relatively long task like write a new code feature,
+may come with some quick tasks: check code quality, check tests are ok, check variable names etc...
+"""
+
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 from enum import Enum
@@ -7,6 +20,16 @@ from zoneinfo import ZoneInfo
 from src.libs.security.utils import get_id
 
 from .tag import Tag
+
+# TODO: Add some features like:
+# - A parent blocking task (M2M)
+# - An assignement to a user (FK)
+# - A deadline
+# - A progress
+# - A project (FK)
+# - A frequency (FK)
+# - A reminder (FK)
+# - A trigger (M2M)
 
 
 class EisenhowerFlag(Enum):

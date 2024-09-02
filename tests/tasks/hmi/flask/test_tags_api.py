@@ -1,64 +1,69 @@
+from unittest.mock import MagicMock, patch
+
 from src.tasks.models import Tag
-from src.tasks.persistence import TagDBPort
-from src.tasks.settings import APP_NAME
-from tests.base_test import BaseTestCase
+from tests.base_test import DummyBaseTestCase, set_fake_authentication
 
 URL_API = "/api/v1"
 
+USER_TAG = Tag(tenant_id="tenant_123", title="Test Tag")
 
-class TestTagsAPI(BaseTestCase):
+
+class TestTagsAPI(DummyBaseTestCase):
     def setUp(self) -> None:
         super().setUp()
         self.headers = self.get_json_headers()
-        self.tag_db: TagDBPort = self.app.dependencies.persistence.get_repository(
-            APP_NAME, "Tag"
-        )
 
     def test_create_tag_no_login(self):
-        title = self.fake.text(max_nb_chars=50)
         tag_data = {
-            "title": title,
-            "tenant_id": "fake_id",
+            "title": USER_TAG.title,
+            "tenant_id": USER_TAG.tenant_id,
         }
+
         response = self.client.post(
             f"{URL_API}/tags", json=tag_data, headers=self.headers
         )
+
         self.assertEqual(response.status_code, 401)
-
-        with self.app.dependencies.persistence.get_session() as session:
-            self.assertFalse(self.tag_db.exists(session, response.json.get("id")))
-
-    def test_create_tag(self):
-        headers = self.get_token_headers()
-        title = self.fake.text(max_nb_chars=50)
-        tag_data = {
-            "title": title,
-            "tenant_id": self.group.id,
-        }
-        response = self.client.post(f"{URL_API}/tags", json=tag_data, headers=headers)
-        self.assertEqual(response.status_code, 201)
-        self.assertEqual(response.json.get("title"), title)
-        self.assertIsInstance(response.json.get("id"), str)
-        with self.app.dependencies.persistence.get_session() as session:
-            self.assertTrue(self.tag_db.exists(session, response.json.get("id")))
 
     def test_get_tags_no_login(self):
         response = self.client.get(f"{URL_API}/tags", headers=self.headers)
+
         self.assertEqual(response.status_code, 401)
 
-    def test_get_tags(self):
+    @patch("src.tasks.services.TasksService.create_new_tag", return_value=True)
+    def test_create_tag(self, mock_create: MagicMock):
         headers = self.get_token_headers()
-        tag = Tag(tenant_id=self.group.id, title=self.fake.text(max_nb_chars=50))
-        with self.app.dependencies.persistence.get_session() as session:
-            self.tag_db.save(session, tag)
-            session.commit()
 
-        response = self.client.get(f"{URL_API}/tags", headers=headers)
+        tag_data = {
+            "title": USER_TAG.title,
+            "tenant_id": USER_TAG.tenant_id,
+        }
+
+        with set_fake_authentication(app=self.app, user=self.user, token=self.token):
+            response = self.client.post(
+                f"{URL_API}/tags", json=tag_data, headers=headers
+            )
+
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.json.get("title"), USER_TAG.title)
+        self.assertIsInstance(response.json.get("id"), str)
+
+        mock_create.assert_called_once()
+
+    @patch("src.tasks.services.TasksService.get_user_all_tags", return_value=[USER_TAG])
+    def test_get_tags(self, mock_tags: MagicMock):
+        headers = self.get_token_headers()
+
+        with set_fake_authentication(app=self.app, user=self.user, token=self.token):
+            response = self.client.get(f"{URL_API}/tags", headers=headers)
+
         self.assertEqual(response.status_code, 200)
         result = response.json
         self.assertIsInstance(result, list)
         self.assertEqual(len(result), 1)
-        self.assertEqual(result[0].get("id"), tag.id)
+        self.assertEqual(result[0].get("title"), USER_TAG.title)
+
+        mock_tags.assert_called_once()
 
     def test_no_put(self):
         response = self.client.put(f"{URL_API}/tags", headers=self.headers)

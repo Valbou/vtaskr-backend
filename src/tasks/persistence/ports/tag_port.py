@@ -16,6 +16,19 @@ class TagDBPort(AbstractDBPort, ABC):
         raise NotImplementedError()
 
     @abstractmethod
+    def all_exists(self, session, tenant_ids: list[str], tag_ids: list[str]) -> bool:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def tags_from_ids(
+        self,
+        session,
+        tenant_ids: list[str],
+        tag_ids: list[str],
+    ) -> list[Tag]:
+        raise NotImplementedError()
+
+    @abstractmethod
     def task_tags(
         self,
         session,

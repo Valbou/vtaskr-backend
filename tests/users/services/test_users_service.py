@@ -22,16 +22,7 @@ class TestUsersService(DummyBaseTestCase):
     def setUp(self) -> None:
         super().setUp()
 
-        self.us = UsersService(services=self.app.dependencies)
         self.users_service = UsersService(services=self.app.dependencies)
-
-        self.us.group_manager = MagicMock()
-        self.us.right_manager = MagicMock()
-        self.us.roletype_manager = MagicMock()
-        self.us.role_manager = MagicMock()
-
-        self.us.services.notification.notify_all_calls.clear()
-        self.us.services.notification.messages.clear()
 
     def _get_user(self) -> User:
         user = User(

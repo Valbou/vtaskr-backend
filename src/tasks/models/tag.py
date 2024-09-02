@@ -6,6 +6,9 @@ from zoneinfo import ZoneInfo
 from src.colors.models.color import Color
 from src.libs.security.utils import get_id
 
+# TODO: Add some features like:
+# - A special user tag (like @SomeOne)
+
 
 @dataclass
 class Tag:

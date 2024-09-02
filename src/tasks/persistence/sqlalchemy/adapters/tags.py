@@ -24,6 +24,25 @@ class TagDB(TagDBPort, DefaultDB):
 
         return session.execute(self.qs.statement).scalars().all()
 
+    def all_exists(self, session, tenant_ids: list[str], tag_ids: list[str]) -> bool:
+        """Check if all tags exists for tenants"""
+
+        self.qs.select().where(Tag.id.in_(tag_ids)).tenants(tenant_ids)
+
+        return session.execute(self.qs.statement.exists()).scalars()
+
+    def tags_from_ids(
+        self,
+        session: Session,
+        tenant_ids: list[str],
+        tag_ids: list[str],
+    ) -> list[Tag]:
+        """Retrieve all tenant's tags in tag_ids"""
+
+        self.qs.select().where(Tag.id.in_(tag_ids)).tenants(tenant_ids)
+
+        return session.execute(self.qs.statement).scalars().all()
+
     def task_tags(
         self,
         session: Session,

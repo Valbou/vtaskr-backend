@@ -7,7 +7,7 @@ from src.libs.hmi.querystring import QueryStringFilter
 from src.libs.iam.flask.config import login_required
 from src.libs.redis import rate_limited
 from src.tasks.hmi.dto import TagMapperDTO, TaskDTO, TaskMapperDTO
-from src.tasks.services import TagService, TaskService
+from src.tasks.services import TasksService
 
 from .. import V1, logger, openapi, tasks_bp
 
@@ -66,14 +66,16 @@ openapi.register_path(f"{V1}/tasks", api_item)
 
 @tasks_bp.route(f"{V1}/tasks", methods=["GET", "POST"])
 @login_required(logger)
-@rate_limited(logger=logger, hit=1, period=timedelta(seconds=1))
+@rate_limited(logger=logger, hit=10, period=timedelta(seconds=1))
 def tasks():
     """URL to current tenant tasks - Token required"""
+
+    tasks_service = TasksService(current_app.dependencies)
+
     if request.method == "GET":
         qsf = QueryStringFilter(query_string=request.query_string.decode(), dto=TaskDTO)
 
-        task_service = TaskService(current_app.dependencies)
-        tasks = task_service.get_tasks(g.user.id, qsf.get_filters())
+        tasks = tasks_service.get_user_all_tasks(g.user.id, qsf.get_filters())
         if tasks:
             tasks_dto = list_models_to_list_dto(TaskMapperDTO, tasks)
             return ResponseAPI.get_response(list_dto_to_dict(tasks_dto), 200)
@@ -85,10 +87,13 @@ def tasks():
             task_dto = TaskDTO(**request.get_json())
             task = TaskMapperDTO.dto_to_model(task_dto)
 
-            task_service = TaskService(current_app.dependencies)
-            task_service.save_task(user_id=g.user.id, task=task)
-            task_dto = TaskMapperDTO.model_to_dto(task)
-            return ResponseAPI.get_response(dto_to_dict(task_dto), 201)
+            result = tasks_service.create_new_task(user_id=g.user.id, task=task)
+            if result:
+                task_dto = TaskMapperDTO.model_to_dto(task)
+                return ResponseAPI.get_response(dto_to_dict(task_dto), 201)
+            else:
+                return ResponseAPI.get_403_response()
+
         except Exception:
             return ResponseAPI.get_400_response()
 
@@ -214,8 +219,10 @@ openapi.register_path(f"{V1}/task/{{task_id}}", api_item)
 @rate_limited(logger=logger, hit=5, period=timedelta(seconds=1))
 def task(task_id: str):
     """URL to current tenant task - Token required"""
-    task_service = TaskService(current_app.dependencies)
-    task = task_service.get_task(g.user.id, task_id)
+
+    tasks_service = TasksService(services=current_app.dependencies)
+
+    task = tasks_service.get_user_task(user_id=g.user.id, task_id=task_id)
     if task:
         if request.method == "GET":
             task_dto = TaskMapperDTO.model_to_dto(task)
@@ -224,14 +231,19 @@ def task(task_id: str):
         elif request.method in ("PUT", "PATCH"):
             task_dto = TaskDTO(**request.get_json())
             task = TaskMapperDTO.dto_to_model(task_dto, task)
-            task_service.update_task(g.user.id, task)
 
-            task_dto = TaskMapperDTO.model_to_dto(task)
-            return ResponseAPI.get_response(dto_to_dict(task_dto), 200)
+            if tasks_service.update_task(user_id=g.user.id, task=task):
+                task_dto = TaskMapperDTO.model_to_dto(task)
+                return ResponseAPI.get_response(dto_to_dict(task_dto), 200)
+
+            else:
+                return ResponseAPI.get_403_response()
 
         elif request.method == "DELETE":
-            task_service.delete_task(g.user.id, task)
-            return ResponseAPI.get_response("", 204)
+            if tasks_service.delete_task(g.user.id, task):
+                return ResponseAPI.get_response("", 204)
+            else:
+                return ResponseAPI.get_403_response()
 
         else:
             return ResponseAPI.get_405_response()
@@ -267,37 +279,7 @@ api_item = {
                 "schema": {"type": "string"},
             },
         ],
-    }
-}
-openapi.register_path(f"{V1}/task/{{task_id}}/tags", api_item)
-
-
-@tasks_bp.route(f"{V1}/task/<string:task_id>/tags", methods=["GET"])
-@login_required(logger)
-@rate_limited(logger=logger, hit=5, period=timedelta(seconds=1))
-def task_tags(task_id: str):
-    """Get all associated tags to a specific task"""
-
-    if request.method == "GET":
-        task_service = TaskService(current_app.dependencies)
-        task = task_service.get_task(g.user.id, task_id)
-        if task:
-            tag_service = TagService(current_app.dependencies)
-            tags_dto = list_models_to_list_dto(
-                TagMapperDTO,
-                tag_service.get_task_tags(g.user.id, task.id, task.tenant_id),
-            )
-
-            if tags_dto:
-                return ResponseAPI.get_response(list_dto_to_dict(tags_dto), 200)
-            return ResponseAPI.get_response([], 200)
-        else:
-            return ResponseAPI.get_404_response("Task not found")
-    else:
-        return ResponseAPI.get_405_response()
-
-
-api_item = {
+    },
     "put": {
         "description": "Set tags associated to this task",
         "summary": "Set tags to this task",
@@ -309,13 +291,13 @@ api_item = {
             },
         },
         "requestBody": {
-            "description": "Tags id list",
+            "description": "Exhaustive tags id list",
             "content": {
                 "application/json": {
                     "schema": {
                         "type": "object",
                         "properties": {
-                            "tags": {
+                            "tag_ids": {
                                 "type": "array",
                                 "items": {
                                     "type": "string",
@@ -338,78 +320,59 @@ api_item = {
         ],
     },
 }
-openapi.register_path(f"{V1}/task/{{task_id}}/tags/set", api_item)
+openapi.register_path(f"{V1}/task/{{task_id}}/tags", api_item)
 
 
-@tasks_bp.route(f"{V1}/task/<string:task_id>/tags/set", methods=["PUT"])
+@tasks_bp.route(f"{V1}/task/<string:task_id>/tags", methods=["GET", "PUT"])
 @login_required(logger)
 @rate_limited(logger=logger, hit=5, period=timedelta(seconds=1))
-def task_tags_set(task_id: str):
-    """Set all associated tags ids to a specific task"""
+def task_tags(task_id: str):
+    """Get all associated tags to a specific task"""
 
-    data = request.get_json()
-    tag_ids = data.get("tags")
-    if not isinstance(tag_ids, list):
-        logger.warning("400 Error: Invalid parameters - not a list")
-        return ResponseAPI.get_400_response()
+    tasks_service = TasksService(services=current_app.dependencies)
 
-    for tag_id in tag_ids:
-        if not isinstance(tag_id, str):
-            logger.warning("400 Error: Invalid parameters - not a list of str")
-            return ResponseAPI.get_400_response()
+    if request.method == "GET":
+        task = tasks_service.get_user_task(g.user.id, task_id)
+        if task:
+            tags_dto = list_models_to_list_dto(
+                TagMapperDTO,
+                tasks_service.get_all_task_tags(user_id=g.user.id, task_id=task.id),
+            )
 
-    if request.method == "PUT":
-        task_service = TaskService(current_app.dependencies)
-        task = task_service.get_task(g.user.id, task_id)
+            if tags_dto:
+                return ResponseAPI.get_response(list_dto_to_dict(tags_dto), 200)
+            return ResponseAPI.get_response([], 200)
+        else:
+            return ResponseAPI.get_404_response("Task not found")
+
+    elif request.method == "PUT":
+        data = request.get_json()
+        tag_ids = data.get("tag_ids")
+
         try:
-            task_service.set_task_tags(g.user.id, task, tag_ids)
+            if not isinstance(tag_ids, list):
+                error = "400 Error: Invalid parameters - not a list"
+                logger.warning(error)
+                raise ValueError(error)
+
+            for tag_id in tag_ids:
+                if not isinstance(tag_id, str):
+                    error = "400 Error: Invalid parameters - not a list of str id"
+                    logger.warning(error)
+                    raise ValueError(error)
+
+            result = tasks_service.set_tags_to_task(
+                user_id=g.user.id, task_id=task_id, tag_ids=tag_ids
+            )
+
+            if result:
+                return ResponseAPI.get_response("", 200)
+            else:
+                return ResponseAPI.get_403_response()
+
         except Exception as e:
             logger.warning(f"400 Error: {e}")
             return ResponseAPI.get_400_response()
-        return ResponseAPI.get_response("Created", 201)
-
-    else:
-        return ResponseAPI.get_405_response()
-
-
-api_item = {
-    "delete": {
-        "description": "Clean associated tags to this task",
-        "summary": "Clean task's tags",
-        "operationId": "cleanTaskTags",
-        "responses": {
-            "204": {
-                "description": "Delete all associations",
-                "content": {},
-            },
-        },
-        "requestBody": {"description": "Delete all associations", "content": {}},
-        "parameters": [
-            {
-                "name": "task_id",
-                "in": "path",
-                "description": "Id of the task you are looking for",
-                "required": True,
-                "schema": {"type": "string"},
-            },
-        ],
-    },
-}
-openapi.register_path(f"{V1}/task/{{task_id}}/tags/clean", api_item)
-
-
-@tasks_bp.route(f"{V1}/task/<string:task_id>/tags/clean", methods=["DELETE"])
-@login_required(logger)
-@rate_limited(logger=logger, hit=1, period=timedelta(seconds=1))
-def task_tags_clean(task_id: str):
-    """Remove all associated tags to a specific task"""
-
-    if request.method == "DELETE":
-        task_service = TaskService(current_app.dependencies)
-        task = task_service.get_task(g.user.id, task_id)
-        task_service.clean_task_tags(g.user.id, task)
-
-        return ResponseAPI.get_response("", 204)
 
     else:
         return ResponseAPI.get_405_response()
