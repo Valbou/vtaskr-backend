@@ -1,12 +1,14 @@
 from unittest.mock import MagicMock, patch
 
-from tests.base_test import DummyBaseTestCase
-
 from src.notifications.models import (
-    BaseEmailContent, BaseTelegramContent, Template, MessageType
+    BaseEmailContent,
+    BaseTelegramContent,
+    MessageType,
+    Template,
 )
-from src.notifications.services.senders import EmailSender, TelegramSender
 from src.notifications.services import SMTPEmail
+from src.notifications.services.senders import EmailSender, TelegramSender
+from tests.base_test import DummyBaseTestCase
 
 
 class BaseSenderTest(DummyBaseTestCase):
@@ -24,7 +26,9 @@ class BaseSenderTest(DummyBaseTestCase):
         )
         self.template.interpolate_html = MagicMock(return_value="Interpolated html")
         self.template.interpolate_text = MagicMock(return_value="Interpolated text")
-        self.template.interpolate_subject = MagicMock(return_value="Interpolated subject")
+        self.template.interpolate_subject = MagicMock(
+            return_value="Interpolated subject"
+        )
 
 
 class TestEmailSender(BaseSenderTest):
