@@ -5,6 +5,10 @@ Here you can find features we need to add to change version number.
 As vTaskr is an non profit project without fulltime dev, no release date can be fournished.
 
 ## Go to v0.1.0
+
+The first goal is to permit a basic use of a to do list.
+An heavy base is needed in term of rights/permissions.
+
 - [x] User can register
 - [x] User can change profile information
 - [x] User can change securely email and password
@@ -28,22 +32,32 @@ As vTaskr is an non profit project without fulltime dev, no release date can be 
 - [x] Add filters on list endpoints (filter groups according to role or filter rights according to a group etc...)
 - [x] User can't modify tasks without the required role
 - [x] User can invite another in a non private group
+- [x] User can invite another user in a group with a specific role
+- [ ] Telegram bot integration
+- [ ] Add a basic dev documentation
 
 ## Go to v0.2.0
+
+Start v0.2.0 dev when frontend is ok with v0.1.0
+
 - [ ] Code events developments
-- [ ] Add a dev documentation
-- [ ] Grouping tasks in ToDo lists
-- [ ] Transform a todolist into a template to reuse it.
+- [ ] Create tasks in to do lists template
+- [ ] Transform a template into a todolist
+- [ ] Use triggers to auto apply a template
 - [ ] Task reccurence
 - [ ] Weekly/Daily email with tasks of the period
-- [ ] Telegram bot integration
-- [ ] User can invite another user in a group with a specific role
 - [ ] Sub tasks
+- [ ] Project task organisation
 - [ ] Tasks status (blocking) that block parent task
 - [ ] Tasks association, link another task (nonblocking link)
 - [ ] Tasks assignation to a group member
 - [ ] Reminders/Alerts - Telegram/Email
 - [ ] Add .ics generator (iCalendar format)
+
+## Go to v0.3.0
+
+- [ ] Add tasks from telegram
+- [ ] Add tasks from .ics sent by email
 - [ ] Add Keycloak integration
 - [ ] Add hooks for external integration
 
