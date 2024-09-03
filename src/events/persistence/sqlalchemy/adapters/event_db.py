@@ -11,10 +11,6 @@ class EventDB(EventDBPort, DefaultDB):
         super().__init__()
         self.qs = EventQueryset()
 
-    def get_all(self, session: Session) -> list[Event]:
-        self.qs.select().order_by(created_at="DESC").limit(100)
-        return session.scalars(self.qs.statement).all()
-
     def get_all_from_tenant(self, session: Session, tenant_id: str) -> list[Event]:
         self.qs.select().where(Event.tenant_id == tenant_id).order_by(
             created_at="DESC"

@@ -1,31 +1,32 @@
+from unittest.mock import MagicMock
+
 from src.events.models import Event
-from src.events.services import EventService
+from src.events.services import EventsService
 from tests.base_test import DummyBaseTestCase
 
 
-class TestUsersService(DummyBaseTestCase):
+class TestEventsService(DummyBaseTestCase):
     def setUp(self) -> None:
         super().setUp()
-        self.es = EventService(services=self.app.dependencies)
-
-        self.es.event_db.reset_mock()
-
-    def test_get_all(self):
-        self.es.get_all()
-
-        self.es.event_db.get_all.assert_called_once()
+        self.event_service = EventsService(services=self.app.dependencies)
 
     def test_get_all_from_tenant_id(self):
-        self.es.get_all_from_tenant_id("abc123")
+        self.event_service.event_manager.get_all_user_events = MagicMock()
 
-        self.es.event_db.get_all_from_tenant.assert_called_once()
+        self.event_service.get_all_user_events(user_id="user_123", tenant_id="abc123")
+
+        self.event_service.event_manager.get_all_user_events.assert_called_once()
 
     def test_add(self):
-        self.es.add("123abc", event_name="test:service:data", data={})
+        self.event_service.event_manager.add = MagicMock()
 
-        self.es.event_db.save.assert_called_once()
+        self.event_service.add_event("123abc", event_name="test:service:data", data={})
+
+        self.event_service.event_manager.add.assert_called_once()
 
     def test_bulk_add(self):
+        self.event_service.event_manager.bulk_add = MagicMock()
+
         events = [
             Event(
                 tenant_id="123abc",
@@ -33,6 +34,6 @@ class TestUsersService(DummyBaseTestCase):
                 data={"foo": "bar"},
             )
         ]
-        self.es.bulk_add(events)
+        self.event_service.bulk_add_events(events)
 
-        self.es.event_db.bulk_save.assert_called_once()
+        self.event_service.event_manager.bulk_add.assert_called_once()

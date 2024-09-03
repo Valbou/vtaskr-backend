@@ -4,7 +4,7 @@ from typing import Callable
 from src.events.models import Event
 from src.ports import EventBusPort, ObserverPort
 
-from .event_service import EventService
+from .event_service import EventsService
 
 
 class EventBusService(EventBusPort):
@@ -17,7 +17,7 @@ class EventBusService(EventBusPort):
 
     def set_context(self, **ctx) -> None:
         self.app = ctx.pop("app")
-        self.event_service = EventService(services=self.app.dependencies)
+        self.event_service = EventsService(services=self.app.dependencies)
 
         # Auto Subscribe for Observer classes
         observers = ObserverPort.__subclasses__()
@@ -53,7 +53,7 @@ class EventBusService(EventBusPort):
         self.events.clear()
 
         for event_name, events in local_events.items():
-            self.event_service.bulk_add(events)
+            self.event_service.bulk_add_events(events)
 
             for event in events:
                 observers = self.index.get(event_name, [])

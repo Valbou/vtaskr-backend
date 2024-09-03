@@ -1,43 +1,31 @@
+from src.events.managers import EventManager
 from src.events.models import Event
-from src.events.persistence import EventDBPort
-from src.events.settings import APP_NAME
 from src.libs.dependencies import DependencyInjector
 
 
-class EventService:
+class EventsService:
     def __init__(self, services: DependencyInjector) -> None:
         self.services = services
-        self.event_db: EventDBPort = self.services.persistence.get_repository(
-            APP_NAME, "Event"
-        )
 
-    def get_all(self) -> list[Event]:
-        with self.services.persistence.get_session() as session:
-            return self.event_db.get_all(session=session)
+        self._define_managers()
 
-    def get_all_from_tenant_id(self, tenant_id: str) -> list[Event]:
+    def _define_managers(self):
+        """Define managers from domain (no DI here)"""
+
+        self.event_manager = EventManager(services=self.services)
+
+    def get_all_user_events(self, user_id: str, tenant_id: str) -> list[Event]:
         with self.services.persistence.get_session() as session:
-            return self.event_db.get_all_from_tenant(
-                session=session, tenant_id=tenant_id
+            return self.event_manager.get_all_user_events(
+                session=session, user_id=user_id, tenant_id=tenant_id
             )
 
-    def add(
-        self,
-        tenant_id: str,
-        event_name: str,
-        data: dict,
-    ) -> Event:
-        event = Event(
-            tenant_id=tenant_id,
-            name=event_name,
-            data=data,
-        )
-
+    def add_event(self, tenant_id: str, event_name: str, data: dict) -> Event:
         with self.services.persistence.get_session() as session:
-            self.event_db.save(session, obj=event)
+            return self.event_manager.add(
+                session=session, tenant_id=tenant_id, event_name=event_name, data=data
+            )
 
-        return event
-
-    def bulk_add(self, events: list[Event]) -> None:
+    def bulk_add_events(self, events: list[Event]) -> list[Event]:
         with self.services.persistence.get_session() as session:
-            self.event_db.bulk_save(session, objs=events)
+            return self.event_manager.bulk_add(session, events=events)

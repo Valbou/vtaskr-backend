@@ -46,6 +46,8 @@ class DefaultDB(AbstractDBPort):
                     session.add_all(objs[start:end])
                 session.flush()
 
+        return objs
+
     def delete(self, session: Session, obj: object) -> None:
         """Delete an object from database"""
 

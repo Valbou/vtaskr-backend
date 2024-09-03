@@ -16,6 +16,10 @@ class AbstractDBPort(ABC):
         raise NotImplementedError()
 
     @abstractmethod
+    def bulk_save(self, session, objs) -> list[object]:
+        raise NotImplementedError()
+
+    @abstractmethod
     def delete(self, session, obj) -> bool:
         raise NotImplementedError()
 

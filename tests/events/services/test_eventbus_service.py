@@ -1,5 +1,3 @@
-from src.events.persistence import EventDBPort
-from src.events.settings import APP_NAME
 from src.ports import ObserverPort
 from tests.base_test import BaseTestCase
 
@@ -60,10 +58,3 @@ class TestEventBus(BaseTestCase):
                 )
 
             self.assertEqual(str(e.exception), ("{'foo': 'bar'}"))
-
-        event_db: EventDBPort = self.app.dependencies.persistence.get_repository(
-            APP_NAME, "Event"
-        )
-        with self.app.dependencies.persistence.get_session() as session:
-            events = event_db.get_all(session)
-            self.assertEqual(len(events), 1)
