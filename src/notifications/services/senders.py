@@ -38,6 +38,6 @@ class TelegramSender(AbstractSender):
 
             for to in message.to.split(","):
                 data = {"chat_id": to, "text": message.text}
-                requests.post(url, data)
+                requests.post(url, data, timeout=10)
 
         self.messages.clear()

@@ -1,7 +1,8 @@
 from dataclasses import dataclass
-from datetime import datetime, timedelta
+from datetime import datetime, time, timedelta
 
 from src.libs.openapi.base import openapi
+from src.libs.utils import time_to_seconds, timedelta_to_time
 from src.tasks.models import Task
 
 task_component = {
@@ -32,13 +33,17 @@ class TaskDTO:
     emergency: bool = False
     important: bool = False
     scheduled_at: str | None = None
-    duration: int | None = None
+    duration: time | None = None
     done: datetime | None = None
 
 
 class TaskMapperDTO:
     @classmethod
     def model_to_dto(cls, task: Task) -> TaskDTO:
+        duration = task.duration if task.duration else None
+        if duration:
+            duration = timedelta_to_time(to_convert=duration)
+
         return TaskDTO(
             id=task.id,
             created_at=task.created_at.isoformat(),
@@ -47,7 +52,7 @@ class TaskMapperDTO:
             emergency=task.emergency,
             important=task.important,
             scheduled_at=task.scheduled_at.isoformat() if task.scheduled_at else None,
-            duration=task.duration.total_seconds() if task.duration else None,
+            duration=duration,
             done=task.done.isoformat() if task.done else None,
         )
 
@@ -67,7 +72,9 @@ class TaskMapperDTO:
             task.scheduled_at = None
 
         if task_dto.duration:
-            task.duration = timedelta(seconds=task_dto.duration)
+            task.duration = timedelta(
+                seconds=time_to_seconds(to_convert=task_dto.duration)
+            )
         else:
             task.duration = None
 

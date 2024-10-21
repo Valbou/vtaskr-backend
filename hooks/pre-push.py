@@ -58,6 +58,8 @@ def bandit_commands(interpreter: str, folder: Path) -> list:
         interpreter,
         "-m",
         "bandit",
+        "-c",
+        "pyproject.toml",
         "-r",
         folder,
     ]

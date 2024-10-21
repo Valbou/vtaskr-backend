@@ -51,6 +51,9 @@ profile = "black"
 [tool.coverage.run]
 omit = ["*/tests/*"]
 
+[tool.bandit]
+exclude_dirs = ["build", "hooks", "tests"]
+
 [tool.coverage.report]
 fail_under = 90
 skip_covered = true

@@ -1,0 +1,2 @@
+class DateUtilConvertionError(Exception):
+    pass
