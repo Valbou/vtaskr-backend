@@ -94,8 +94,8 @@ def tasks():
             else:
                 return ResponseAPI.get_403_response()
 
-        except Exception:
-            return ResponseAPI.get_400_response()
+        except Exception as e:
+            return ResponseAPI.get_400_response(str(e))
 
     else:
         return ResponseAPI.get_405_response()
@@ -357,7 +357,7 @@ def task_tags(task_id: str):
 
             for tag_id in tag_ids:
                 if not isinstance(tag_id, str):
-                    error = "400 Error: Invalid parameters - not a list of str id"
+                    error = "400 Error: Invalid parameters - not a list of str (id)"
                     logger.warning(error)
                     raise ValueError(error)
 

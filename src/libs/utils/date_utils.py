@@ -16,6 +16,8 @@ def time_to_seconds(to_convert: time | str) -> int:
     if isinstance(to_convert, time):
         to_convert = str(to_convert)
 
+    to_convert = to_convert.split(".")[0]
+
     return sum(
         [
             j * (60**i)
@@ -24,7 +26,7 @@ def time_to_seconds(to_convert: time | str) -> int:
     )
 
 
-def timedelta_to_time(to_convert: timedelta | int) -> time:
+def seconds_to_time(to_convert: int) -> time:
     """
     Time delta to duration conversion.
     Convert a small timedelta (< 86 400 seconds) to a time object.
@@ -35,11 +37,11 @@ def timedelta_to_time(to_convert: timedelta | int) -> time:
 
     if to_convert >= 86_400:
         raise DateUtilConvertionError(
-            f"timedelta_to_time cannot convert values over 24h: {to_convert}s given"
+            f"seconds_to_time cannot convert values over 24h: {to_convert}s given"
         )
     elif to_convert < 0:
         raise DateUtilConvertionError(
-            "timedelta_to_time cannot convert values under 0s"
+            "seconds_to_time cannot convert values under 0s"
             f"(negative values not admitted): {to_convert}s given"
         )
 
