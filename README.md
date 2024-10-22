@@ -9,7 +9,7 @@ You can follow the [Roadmap](https://github.com/Valbou/vtaskr-backend/blob/maste
 
 ![License LGPLv3](https://img.shields.io/badge/license-LGPLv3-blue "License LGPLv3")
 ![Python v3.10](https://img.shields.io/badge/python-v3.10-blue "Python v3.10")
-![Tests 468 passed](https://img.shields.io/badge/tests-468%20passed-green "Tests 468 passed")
+![Tests 483 passed](https://img.shields.io/badge/tests-483%20passed-green "Tests 483 passed")
 ![Coverage 90%](https://img.shields.io/badge/coverage-90%25-green "Coverage 90%")
 [![CodeFactor](https://www.codefactor.io/repository/github/valbou/vtaskr-backend/badge)](https://www.codefactor.io/repository/github/valbou/vtaskr-backend)
 ![API](https://img.shields.io/website?url=https%3A%2F%2Fapi.vtaskr.com)
@@ -21,85 +21,13 @@ Translations were made automatically by [Deepl](https://www.deepl.com) and [PoEd
 
 ## Technical informations
 
-### Install project
-
-```bash
-apt install postgresql lsb-release redis
-apt install git python3-venv python3-pip
-
-python3 -m venv vtaskr-project
-cd vtaskr-project
-git clone git@github.com:Valbou/vtaskr-backend.git
-cd vtaskr-backend
-```
-
-Config your own .env file (based on template.env file in project folder)
-Please change the default SECRET_KEY if you are using sessions.
-
-### Install dependencies
-
-```bash
-pip install .
-```
-or to contribute
-```
-pip install -e .
-```
-
-### Install translations
-
-```bash
-chmod +x trad_*
-./trad_compile_mo.sh users
-```
-
-### Run migrations
-
-```bash
-alembic upgrade head
-```
-
-### To run flask
-```bash
-# With Werkzeug (dev :5000)
-flask --app src.flask run
-
-# With Gunicorn (prod :8000)
-gunicorn src.flask:app
-```
-
-## Technical informations for developpers
-
-Follow previous steps, an continue with steps below.
-
-### Install dev dependencies
-
-```bash
-pip install .[dev]
-```
-
-### Add migrations
-
-If you change models
-
-```bash
-alembic revision --autogenerate
-```
-
-### To run tests
-```bash
-python -m coverage run -m unittest -vv
-```
-
-### To see coverage
-```bash
-python -m coverage report
-```
+You can read the [devoloper documentation](https://github.com/Valbou/vtaskr-backend/blob/master/site/index.html)
 
 ### To contribute
 
 To contribute:
-- clone this git repository first.
+- read the doc first.
+- clone this git repository.
 - Create a branch nammed like this: "feat-good-feature-#42".
 - Use commit namming convention: "feat: my commit message".
 - Run tests and check your code coverage (coverage is not just a high %)

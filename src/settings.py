@@ -14,7 +14,7 @@ PASSWORD_MIN_LENGTH = 10
 UNUSED_ACCOUNT_DELAY = 7  # 7 days
 
 # Auth token validity
-TOKEN_VALIDITY = 60 * 60 * 0.5  # 30 minutes
+TOKEN_VALIDITY = 60 * 60 * 8  # 8 heures !
 TOKEN_TEMP_VALIDITY = 60 * 3  # 3 minutes
 
 # Validity of a request change (email or password)

@@ -1,9 +1,9 @@
 __init__
 base
 colors
+events
 flask
 libs
-logtrail
 notifications
 ports
 settings
