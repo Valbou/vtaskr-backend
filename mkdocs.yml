@@ -1,4 +1,9 @@
 site_name: vTaskr Backend
+site_description: vTaskr Backend Developer Documentation
+site_url: https://valbou.github.io/vtaskr-backend/
+remote_branch: gh-pages
+repo_url: https://github.com/Valbou/vtaskr-frontend
+repo_name: GitHub
 nav:
   - Home: index.md
   - About: about.md
