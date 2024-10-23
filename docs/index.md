@@ -20,7 +20,7 @@ To See more details about dependencies, you can read pyproject.toml file.
 
 ## New to vTaskr
 
-To install vTaskr on promise: [Getting Started](./getting-started.md).
+To install vTaskr on premise: [Getting Started](./getting-started.md).
 
 ## The project
 
