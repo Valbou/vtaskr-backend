@@ -21,7 +21,7 @@ Translations were made automatically by [Deepl](https://www.deepl.com) and [PoEd
 
 ## Technical informations
 
-You can read the [devoloper documentation](https://github.com/Valbou/vtaskr-backend/blob/master/site/index.html)
+You can read the [devoloper documentation](https://valbou.github.io/vtaskr-backend/)
 
 ### To contribute
 
