@@ -116,27 +116,27 @@ To continue to develop vTaskr with pleasure, we need to keep base code clear, an
 <p>To contribute, please, keep this elements in mind. </p>
 <h3 id="repository-structure">Repository structure</h3>
 <p>At first level you can find:
-- <strong>alembic</strong>: used to version database and track migrations.
-- <strong>docs</strong>: used to provide this documentation with Mkdocs.
-- <strong>hooks</strong>: some tools to help to be a good developer, and limit commits with bad PEP8 practicises before any CI. Need to be installed manually using shell command provided inside.
-- <strong>src</strong>: vTaskr source code.
-- <strong>tests</strong>: vTaskr tests (unit tests and integration tests).
-- <strong>LICENSE</strong>: just to precise it's a GNU GPL v3 project.
-- <strong>pyproject.toml</strong>: manage project dependencies and configs.
-- <strong>README.md</strong>: to help users to find the doc :).
-- <strong>run.sh</strong>: just a helper to run a dev HTTP server locally (if you need it).
-- <strong>template.env</strong>: a .env template to keep up to date !
-- <strong>trad_*.hs</strong>: some helpers files to manage translation.</p>
+* <strong>alembic</strong>: used to version database and track migrations.
+* <strong>docs</strong>: used to provide this documentation with Mkdocs.
+* <strong>hooks</strong>: some tools to help to be a good developer, and limit commits with bad PEP8 practicises before any CI. Need to be installed manually using shell command provided inside.
+* <strong>src</strong>: vTaskr source code.
+* <strong>tests</strong>: vTaskr tests (unit tests and integration tests).
+* <strong>LICENSE</strong>: just to precise it's a GNU GPL v3 project.
+* <strong>pyproject.toml</strong>: manage project dependencies and configs.
+* <strong>README.md</strong>: to help users to find the doc :).
+* <strong>run.sh</strong>: just a helper to run a dev HTTP server locally (if you need it).
+* <strong>template.env</strong>: a .env template to keep up to date !
+* <strong>trad_*.hs</strong>: some helpers files to manage translation.</p>
 <p>Actually, the project is splitted in "apps" in the "src" sub directory:
-- <strong>base</strong>: provide project global utilitaries (like a backend <a href="api.vtaskr.com">home page</a>)
-- <strong>colors</strong>: provide elements to manage colors (but may disapear in a near futur to limit dependecies. Initially separated to limit duplicate code...)
-- <strong>events</strong>: provide a basic internal event service to pass data cross apps.
-- <strong>libs</strong>: provide external lib specific adapters.
-- <strong>notifications</strong>: provide features to send informations to a user.
-- <strong>ports</strong>: provide all bases classes to inherit from, for your adapters.
-- <strong>static</strong>: provide some assets to insert in backend features like email or backend <a href="api.vtaskr.com">home page</a>.
-- <strong>tasks</strong>: provide elements to manage "to do lists", project management.
-- <strong>users</strong>: provide elements to manage users authentication and authorizations. This app may be replaced by any Identity and Access Manager (IAM) like Keycloak.</p>
+* <strong>base</strong>: provide project global utilitaries (like a backend <a href="https://api.vtaskr.com">home page</a>)
+* <strong>colors</strong>: provide elements to manage colors (but may disapear in a near futur to limit dependecies. Initially separated to limit duplicate code...)
+* <strong>events</strong>: provide a basic internal event service to pass data cross apps.
+* <strong>libs</strong>: provide external lib specific adapters.
+* <strong>notifications</strong>: provide features to send informations to a user.
+* <strong>ports</strong>: provide all bases classes to inherit from, for your adapters.
+* <strong>static</strong>: provide some assets to insert in backend features like email or backend <a href="https://api.vtaskr.com">home page</a>.
+* <strong>tasks</strong>: provide elements to manage "to do lists", project management.
+* <strong>users</strong>: provide elements to manage users authentication and authorizations. This app may be replaced by any Identity and Access Manager (IAM) like Keycloak.</p>
 <p>Excepting "libs", "ports", "static", all apps can be seen as a microservice, and could be separated in many dockers instances for scalability.</p></div>
             </div>
         </div>
@@ -219,5 +219,5 @@ To continue to develop vTaskr with pleasure, we need to keep base code clear, an
 
 <!--
 MkDocs version : 1.6.1
-Build Date UTC : 2024-10-23 05:36:15.548719+00:00
+Build Date UTC : 2024-10-23 05:38:35.731916+00:00
 -->
