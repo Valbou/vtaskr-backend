@@ -46,13 +46,13 @@ At first level you can find:
 - **trad_*.hs**: some helpers files to manage translation.
 
 Actually, the project is splitted in "apps" in the "src" sub directory:
-- **base**: provide project global utilitaries (like a backend [home page](api.vtaskr.com))
+- **base**: provide project global utilitaries (like a backend [home page](https://api.vtaskr.com))
 - **colors**: provide elements to manage colors (but may disapear in a near futur to limit dependecies. Initially separated to limit duplicate code...)
 - **events**: provide a basic internal event service to pass data cross apps.
 - **libs**: provide external lib specific adapters.
 - **notifications**: provide features to send informations to a user.
 - **ports**: provide all bases classes to inherit from, for your adapters.
-- **static**: provide some assets to insert in backend features like email or backend [home page](api.vtaskr.com).
+- **static**: provide some assets to insert in backend features like email or backend [home page](https://api.vtaskr.com).
 - **tasks**: provide elements to manage "to do lists", project management.
 - **users**: provide elements to manage users authentication and authorizations. This app may be replaced by any Identity and Access Manager (IAM) like Keycloak.
 
