@@ -2,6 +2,12 @@
 
 ## Install vTaskr
 
+No specific skill needed, but we need first to:
+- Install Postgres 15 or higher
+- Install Redis 6 or higher
+- Install Python 3.10 or higher
+- Create a python virtual environment (venv).
+
 ```bash
 apt install postgresql lsb-release redis
 apt install git python3-venv python3-pip
@@ -11,6 +17,8 @@ cd vtaskr-project
 git clone git@github.com:Valbou/vtaskr-backend.git
 cd vtaskr-backend
 ```
+
+You may need to create a postgres user and a database.  
 
 Config your own .env file (based on template.env file in project folder).
 Please change the default SECRET_KEY if you are using sessions.
@@ -47,6 +55,9 @@ flask --app src.flask run
 gunicorn src.flask:app
 ```
 
+vTaskr is now usable via CLI or API !  
+If you need help, create a Github issue.
+
 ### Install dev dependencies
 
 ```bash
@@ -70,7 +81,7 @@ To build a local documentation
 python -m mkdocs build
 ```
 
-To build and deploy a github page documentation
+To build and deploy github page documentation
 ```bash
 python -m mkdocs gh-deploy --theme mkdocs
 ```
