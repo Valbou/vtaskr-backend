@@ -14,11 +14,11 @@ The only maintainer at this stage is me: Valentin BOUVAREL alias Valbou.
 The project is developed (too slowly) during my personal time.  
 
 If you want to contribute, you can help me in some ways:  
-- giving feedback  
-- creating code  
-- writing tests  
-- writing translations  
-- filling out documentation  
-- etc...  
+ - giving feedback  
+ - creating code  
+ - writing tests  
+ - writing translations  
+ - filling out documentation  
+ - etc...  
   
 Contact me at [contact@valbou.fr](mailto:contact@valbou.fr) (EN, ES or FR).  

@@ -21,7 +21,7 @@ Translations were made automatically by [Deepl](https://www.deepl.com) and [PoEd
 
 ## Technical informations
 
-You can read the [devoloper documentation](https://valbou.github.io/vtaskr-backend/)
+You can read the [devoloper documentation](https://valbou.github.io/vtaskr-backend/).
 
 ### To contribute
 
@@ -39,6 +39,6 @@ To contribute:
 - Give us feedback in issues: what you need, what doesn't work for you...
 - If you are a dev, you can submit pull request linked to issues
 - If you are a polyglot, you can translate using .po files
-- If you are an user, you can write an end user documentation
+- If you are an user, you can write an end user documentation in the associated frontend repository.
 
 All with kindness, we are just humans ;)
