@@ -64,8 +64,15 @@ python -m coverage report
 ```
 
 ### To build the documentation
+
+To build a local documentation
 ```bash
 python -m mkdocs build
+```
+
+To build and deploy a github page documentation
+```bash
+python -m mkdocs gh-deploy --theme mkdocs
 ```
 
 # To use your own frontend

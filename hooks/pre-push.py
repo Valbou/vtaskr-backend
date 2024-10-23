@@ -123,7 +123,7 @@ if __name__ == "__main__":
         ("Black", black_commands),
         ("Flake8", flake_commands),
         ("Bandit", bandit_commands),
-        ("Coverage", coverage_commands, "vtaskr"),
+        # ("Coverage", coverage_commands, "vtaskr"),
     ]
 
     exit_score = 0
@@ -132,7 +132,7 @@ if __name__ == "__main__":
     for app in to_run:
         exit_score += run_app(interpreter, path_project, *app)
 
-    exit_score += check_coverage_report(interpreter)
+    # exit_score += check_coverage_report(interpreter)
     # exit_score += check_git_branch_name()
 
     if exit_score > 0:

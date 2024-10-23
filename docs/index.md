@@ -19,4 +19,4 @@ To See more details about dependencies, you can read pyproject.toml file.
 [![CodeFactor](https://www.codefactor.io/repository/github/valbou/vtaskr-backend/badge)](https://www.codefactor.io/repository/github/valbou/vtaskr-backend)
 ![API](https://img.shields.io/website?url=https%3A%2F%2Fapi.vtaskr.com)
 
-[Getting Started](./getting-started.md) [About](./about.md)
+[Getting Started](./getting-started.md)
