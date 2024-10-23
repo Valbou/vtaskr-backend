@@ -6,9 +6,9 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         
         
-        <link rel="canonical" href="https://valbou.github.io/vtaskr-backend/about/">
+        <link rel="canonical" href="https://valbou.github.io/vtaskr-backend/roadmap/">
         <link rel="shortcut icon" href="../img/favicon.ico">
-        <title>About - vTaskr Backend</title>
+        <title>vTaskr Backend - ROADMAP - vTaskr Backend</title>
         <link href="../css/bootstrap.min.css" rel="stylesheet">
         <link href="../css/fontawesome.min.css" rel="stylesheet">
         <link href="../css/brands.min.css" rel="stylesheet">
@@ -38,7 +38,7 @@
                                 <a href=".." class="nav-link">Home</a>
                             </li>
                             <li class="nav-item">
-                                <a href="./" class="nav-link active" aria-current="page">About</a>
+                                <a href="../about/" class="nav-link">About</a>
                             </li>
                         </ul>
 
@@ -49,17 +49,7 @@
                             </a>
                         </li>
                             <li class="nav-item">
-                                <a rel="prev" href=".." class="nav-link">
-                                    <i class="fa fa-arrow-left"></i> Previous
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a rel="next" class="nav-link disabled">
-                                    Next <i class="fa fa-arrow-right"></i>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="https://github.com/Valbou/vtaskr-frontend/edit/master/docs/about.md" class="nav-link"><i class="fa-brands fa-github"></i> Edit on GitHub</a>
+                                <a href="https://github.com/Valbou/vtaskr-frontend/edit/master/docs/roadmap.md" class="nav-link"><i class="fa-brands fa-github"></i> Edit on GitHub</a>
                             </li>
                     </ul>
                 </div>
@@ -79,9 +69,17 @@
     <div id="toc-collapse" class="navbar-collapse collapse card bg-body-tertiary">
         <ul class="nav flex-column">
             
-            <li class="nav-item" data-bs-level="1"><a href="#about-vtaskr" class="nav-link">About vTaskr</a>
+            <li class="nav-item" data-bs-level="1"><a href="#vtaskr-backend-roadmap" class="nav-link">vTaskr Backend - ROADMAP</a>
               <ul class="nav flex-column">
-            <li class="nav-item" data-bs-level="2"><a href="#maintainers" class="nav-link">Maintainers</a>
+            <li class="nav-item" data-bs-level="2"><a href="#go-to-v010" class="nav-link">Go to v0.1.0</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#go-to-v020" class="nav-link">Go to v0.2.0</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#go-to-v030" class="nav-link">Go to v0.3.0</a>
               <ul class="nav flex-column">
               </ul>
             </li>
@@ -92,23 +90,69 @@
 </div></div>
                     <div class="col-md-9" role="main">
 
-<h1 id="about-vtaskr">About vTaskr</h1>
-<p>vTaskr is initially a simple personal python project to replace a 15 years old PHP private project manager.  </p>
-<p>It's a good opportunity to use best development practices like: Hexagonal Architecture, modularity, clean code, test coverage etc...<br />
-And it's a good opportunity to make it open source.  </p>
-<p>I aim to keep this project stable and reactive to stay efficient in use.<br />
-The backend part is not just a REST API, it's the core providing services. It can be used via API, CLI, Email, Telegram etc...  </p>
-<h2 id="maintainers">Maintainers</h2>
-<p>The only maintainer at this stage is me: Valentin BOUVAREL alias Valbou.<br />
-The project is developed (too slowly) during my personal time.  </p>
-<p>If you want to contribute, you can help me in some ways:<br />
- - giving feedback<br />
- - creating code<br />
- - writing tests<br />
- - writing translations<br />
- - filling out documentation<br />
- - etc...  </p>
-<p>Contact me at <a href="mailto:contact@valbou.fr">contact@valbou.fr</a> (EN, ES or FR).  </p></div>
+<h1 id="vtaskr-backend-roadmap">vTaskr Backend - ROADMAP</h1>
+<p>Welcome to the vTaskr Roadmap.
+Here you can find features we need to add to upgrade version number.
+As vTaskr is an non profit project without fulltime dev, no release date can be fournished.</p>
+<h2 id="go-to-v010">Go to v0.1.0</h2>
+<p>The first goal is to permit a basic use of a to do list.
+An heavy base is needed in term of rights/permissions.</p>
+<ul>
+<li>[x] User can register</li>
+<li>[x] User can change profile information</li>
+<li>[x] User can change securely email and password</li>
+<li>[x] User can login securely</li>
+<li>[x] User can manage tasks (create, read, update, delete)</li>
+<li>[x] User can manage tags (create, read, update, delete)</li>
+<li>[x] User can't access to tasks or tags not owned</li>
+<li>[x] User can filter tasks with some basics filters</li>
+<li>[x] Add an OpenApiv3 documentation</li>
+<li>[x] User can associate Task and Tags together</li>
+<li>[x] Add alembic migrations</li>
+<li>[x] Check code organisation</li>
+<li>[x] Add gunicorn</li>
+<li>[x] Start a frontend developpement in an other git repository</li>
+<li>[x] User can manage groups (create, read, update, delete and achieve)</li>
+<li>[x] User can manage roles (create, read, update, delete and achieve)</li>
+<li>[x] User can manage role types (create, read, update, delete and achieve)</li>
+<li>[x] User can manage rights (create, read, update, delete and achieve)</li>
+<li>[x] User can't access to tasks not owned by at least one of his groups</li>
+<li>[x] User can delete his account efficiently (cannot delete a user if user has admin role on 2 groups or more !)</li>
+<li>[x] Add filters on list endpoints (filter groups according to role or filter rights according to a group etc...)</li>
+<li>[ ] When paginated result is asked, provide some helpers like page max number or the number of items available.</li>
+<li>[x] User can't modify tasks without the required role</li>
+<li>[x] User can invite another in a non private group</li>
+<li>[x] User can invite another user in a group with a specific role</li>
+<li>[ ] Telegram bot integration</li>
+<li>[ ] Add a basic dev documentation</li>
+</ul>
+<h2 id="go-to-v020">Go to v0.2.0</h2>
+<p>Start v0.2.0 dev when frontend is ok with v0.1.0</p>
+<ul>
+<li>[ ] Code events developments</li>
+<li>[ ] Create tasks in to do lists template</li>
+<li>[ ] Transform a template into a todolist</li>
+<li>[ ] Use triggers to auto apply a template</li>
+<li>[ ] Task reccurence</li>
+<li>[ ] Weekly/Daily email with tasks of the period</li>
+<li>[ ] Sub tasks</li>
+<li>[ ] Project task organisation</li>
+<li>[ ] Tasks status (blocking) that block parent task</li>
+<li>[ ] Tasks association, link another task (nonblocking link)</li>
+<li>[ ] Tasks assignation to a group member</li>
+<li>[ ] Reminders/Alerts - Telegram/Email</li>
+<li>[ ] Add .ics generator (iCalendar format)</li>
+</ul>
+<h2 id="go-to-v030">Go to v0.3.0</h2>
+<p>Start v0.3.0 dev when frontend is ok with v0.2.0</p>
+<ul>
+<li>[ ] Add tasks from telegram</li>
+<li>[ ] Add tasks from .ics sent by email</li>
+<li>[ ] Add tasks from github/gitlab/forgejo</li>
+<li>[ ] Add Keycloak integration</li>
+<li>[ ] Add hooks for external integration</li>
+</ul>
+<p>More in the futur...</p></div>
             </div>
         </div>
 
