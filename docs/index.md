@@ -4,7 +4,7 @@ vTaskr is a to do list application for personnal use.
 The project is under active developpement, but not ready for production. Some breaking changes may appear without warning.
 
 You are visiting the **backend developer documentation**.  
-Code repository available here: [vTaskr Backend](https://github.com/Valbou/vtaskr-frontend).  
+Code repository available here: [vTaskr Backend](https://github.com/Valbou/vtaskr-backend).  
 If you are looking for frontend go to [vTaskr Frontend](https://github.com/Valbou/vtaskr-frontend).  
 
 vTaskr Backend use CPython 3.10+, Flask and Gunicorn. Databases needed: Postgres 15+, Redis 6+.
