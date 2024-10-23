@@ -6,7 +6,7 @@ It's a good opportunity to use best development practices like: Hexagonal Archit
 And it's a good opportunity to make it open source.  
 
 I aim to keep this project stable and reactive to stay efficient in use.  
-The backend part is not just a REST API, it's the core. It can be used via API, CLI, Email etc...  
+The backend part is not just a REST API, it's the core providing services. It can be used via API, CLI, Email, Telegram etc...  
 
 ## Maintainers
 

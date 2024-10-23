@@ -1,4 +1,6 @@
-# vTaskr Backend Documentation
+# vTaskr Backend Documentation (Dev Doc)
+
+[TOC]
 
 vTaskr is a to do list application for personnal use.
 The project is under active developpement, but not ready for production. Some breaking changes may appear without warning.
@@ -17,4 +19,4 @@ To See more details about dependencies, you can read pyproject.toml file.
 [![CodeFactor](https://www.codefactor.io/repository/github/valbou/vtaskr-backend/badge)](https://www.codefactor.io/repository/github/valbou/vtaskr-backend)
 ![API](https://img.shields.io/website?url=https%3A%2F%2Fapi.vtaskr.com)
 
-[Getting Started](./getting-started.md)
+[Getting Started](./getting-started.md) [About](./about.md)
