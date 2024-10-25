@@ -81,5 +81,7 @@ class TaskMapperDTO:
 
         if task_dto.done:
             task.done = datetime.fromisoformat(task_dto.done)
+        else:
+            task.done = None
 
         return task
