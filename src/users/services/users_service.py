@@ -82,14 +82,14 @@ class UsersService:
             admin_roletype, admin_created = self.roletype_manager.get_default_admin(
                 session=session
             )
-            session.commit()
+
+            if admin_created:
+                session.commit()
+                self.right_manager.create_admin_rights(session, admin_roletype.id)
 
             group = self.group_manager.create_group(
                 session, group_name=group_name, is_private=is_private
             )
-
-            if admin_created:
-                self.right_manager.create_admin_rights(session, admin_roletype.id)
 
             self.role_manager.add_role(
                 session,
@@ -102,6 +102,16 @@ class UsersService:
                 self._prepare_observer_roletype(session=session)
 
         return group
+
+    def refresh_admin_rights(self):
+        with self.services.persistence.get_session() as session:
+            admin_roletype, _ = self.roletype_manager.get_default_admin(session=session)
+
+            self.right_manager.clean_all_rights(session, admin_roletype.id)
+            session.commit()
+
+            self.right_manager.create_admin_rights(session, admin_roletype.id)
+            session.commit()
 
     def get_group(self, user_id: str, group_id: str) -> Group:
         """Return a user's group"""

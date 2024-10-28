@@ -34,6 +34,11 @@ class RightManager:
 
         return num_rights
 
+    def clean_all_rights(self, session, roletype_id: str) -> None:
+        """Remove all rights to a roletype"""
+
+        self.right_db.delete_roletype_rights(session=session, roletype_id=roletype_id)
+
     def create_admin_rights(self, session, roletype_id: str) -> int:
         """Give all rights on all resources for the given roletype (Admin)"""
 

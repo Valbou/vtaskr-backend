@@ -1,9 +1,7 @@
 from re import fullmatch
-from typing import TypeVar
+from typing import Self
 
 from src.colors.exceptions.color import ColorFormatError
-
-TColor = TypeVar("TColor", bound="Color")
 
 
 class Color:
@@ -21,7 +19,7 @@ class Color:
         return f"{self.background}|{self.text}"
 
     @classmethod
-    def from_string(cls, colors: str) -> TColor | None:
+    def from_string(cls, colors: str) -> Self | None:
         return Color(*colors.split("|"))
 
     @classmethod

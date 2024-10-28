@@ -33,7 +33,7 @@ class InvitationManager:
             permission=Permissions.READ,
             user_id=user_id,
             group_id_resource=group_id,
-            resource="Invitation",
+            resource="Group",
         ):
             return self.invitation_db.get_from_group(session=session, group_id=group_id)
 
@@ -48,7 +48,7 @@ class InvitationManager:
                 Permissions.UPDATE,
                 user_id,
                 invitation.in_group_id,
-                resource="Invitation",
+                resource="Group",
             ):
                 self.invitation_db.save(session=session, obj=invitation)
 
@@ -65,7 +65,7 @@ class InvitationManager:
                 Permissions.UPDATE,
                 user_id,
                 invitation.in_group_id,
-                resource="Invitation",
+                resource="Group",
             ):
                 self.invitation_db.delete(session=session, obj=invitation)
 
@@ -84,7 +84,7 @@ class InvitationManager:
                 Permissions.UPDATE,
                 user_id,
                 group_id,
-                resource="Invitation",
+                resource="Group",
             ):
                 self.invitation_db.delete_by_id(session=session, id=invitation_id)
 

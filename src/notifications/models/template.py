@@ -1,11 +1,9 @@
 from dataclasses import dataclass
-from typing import TypeVar
+from typing import Self
 
 from flask import render_template
 from src.libs.sqlalchemy.base_model import BaseModelUpdate
 from src.ports import MessageType
-
-TTemplate = TypeVar("TTemplate", bound="Template")
 
 
 @dataclass
@@ -30,7 +28,7 @@ class Template(BaseModelUpdate):
         return render_template(self.text, **context)
 
     @classmethod
-    def temp_template_from_context(cls, context: dict) -> TTemplate:
+    def temp_template_from_context(cls, context: dict) -> Self:
         template_name = context.pop("template")
         return Template(
             event_type=context.get("message_type"),

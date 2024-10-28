@@ -1,12 +1,10 @@
 from dataclasses import dataclass
-from typing import TypeVar
+from typing import Self
 
 from src.libs.sqlalchemy.base_model import BaseModelUpdate
 from src.ports import MessageType
 
 from .contact import Contact
-
-TSubscription = TypeVar("TSubscription", bound="Subscription")
 
 
 @dataclass
@@ -19,7 +17,7 @@ class Subscription(BaseModelUpdate):
     contact: Contact
 
     @classmethod
-    def temp_subscription_from_context(cls, context: dict) -> TSubscription:
+    def temp_subscription_from_context(cls, context: dict) -> Self:
         return Subscription(
             event_type=context.get("message_type"),
             event_name="None",

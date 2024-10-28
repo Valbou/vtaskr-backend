@@ -32,3 +32,8 @@ class RightDB(RightDBPort, DefaultDB):
         )
 
         return session.scalars(self.qs.statement).one_or_none()
+
+    def delete_roletype_rights(self, session: Session, roletype_id: str) -> None:
+        self.qs.delete().all_roletype_rights(roletype_id)
+
+        session.execute(self.qs.statement)

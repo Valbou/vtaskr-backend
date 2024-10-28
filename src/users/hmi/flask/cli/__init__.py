@@ -11,3 +11,4 @@ users_cli_bp = Blueprint(
 
 
 from .create_super_user import *
+from .refresh_admin_rights import *

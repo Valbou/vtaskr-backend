@@ -80,7 +80,7 @@ class RoleManager:
 
         with self.services.persistence.get_session() as session:
             group_ids = self.services.identity.all_tenants_with_access(
-                session, Permissions.CREATE, user_id=user_id, resource="Role"
+                session, Permissions.READ, user_id=user_id, resource="Role"
             )
             roles = self.role_db.get_all_user_roles(
                 session, user_id, group_ids=group_ids, filters=qs_filters

@@ -1,7 +1,7 @@
 from jinja2 import FileSystemLoader
 
 from flask import Flask
-from src.users.hmi.flask import users_bp
+from src.users.hmi.flask import users_bp, users_cli_bp
 from src.users.persistence.sqlalchemy import (
     GroupDB,
     InvitationDB,
@@ -18,6 +18,7 @@ from .settings import APP_NAME
 
 def setup_flask(app: Flask, project_dir: str) -> dict:
     app.register_blueprint(users_bp)
+    app.register_blueprint(users_cli_bp, cli_group=APP_NAME.lower())
 
     return {
         "domains": [APP_NAME.lower()],
@@ -36,5 +37,5 @@ def setup_flask(app: Flask, project_dir: str) -> dict:
             (APP_NAME, "Token", TokenDB()),
             (APP_NAME, "Invitation", InvitationDB()),
         ],
-        "permissions_resources": ["Group", "Role", "RoleType", "Invitation"],
+        "permissions_resources": ["Group", "Role", "RoleType"],
     }

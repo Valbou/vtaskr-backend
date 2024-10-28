@@ -20,3 +20,7 @@ class RightDBPort(AbstractDBPort, ABC):
         self, session, user_id: str, right_id: str, group_ids: list[str]
     ) -> Right | None:
         raise NotImplementedError()
+
+    @abstractmethod
+    def delete_roletype_rights(self, session, roletype_id: str) -> None:
+        raise NotImplementedError()

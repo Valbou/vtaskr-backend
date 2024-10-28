@@ -14,7 +14,6 @@ may come with some quick tasks: check code quality, check tests are ok, check va
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 from enum import Enum
-from typing import TypeVar
 from zoneinfo import ZoneInfo
 
 from src.libs.security.utils import get_id
@@ -37,9 +36,6 @@ class EisenhowerFlag(Enum):
     SCHEDULE = "toschedule"
     DELEGATE = "todelegate"
     DELETE = "todelete"
-
-
-T = TypeVar("T", bound="Task")
 
 
 @dataclass
