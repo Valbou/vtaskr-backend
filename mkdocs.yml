@@ -7,3 +7,6 @@ repo_name: GitHub
 nav:
   - Home: index.md
   - About: about.md
+plugins:
+  - search
+  - mermaid2

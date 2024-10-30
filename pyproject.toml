@@ -41,6 +41,7 @@ optional-dependencies.dev = [
     "flake8",
     "mccabe",
     "mkdocs",
+    "mkdocs-mermaid2-plugin",
 ]
 
 [tool.setuptools_scm]
