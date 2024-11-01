@@ -6,9 +6,9 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         
         
-        <link rel="canonical" href="https://valbou.github.io/vtaskr-backend/roadmap/">
+        <link rel="canonical" href="https://valbou.github.io/vtaskr-backend/global/">
         <link rel="shortcut icon" href="../img/favicon.ico">
-        <title>vTaskr Backend - ROADMAP - vTaskr Backend</title>
+        <title>The project vTaskr - vTaskr Backend</title>
         <link href="../css/bootstrap.min.css" rel="stylesheet">
         <link href="../css/fontawesome.min.css" rel="stylesheet">
         <link href="../css/brands.min.css" rel="stylesheet">
@@ -52,7 +52,7 @@
                             </a>
                         </li>
                             <li class="nav-item">
-                                <a href="https://github.com/Valbou/vtaskr-frontend/edit/master/docs/roadmap.md" class="nav-link"><i class="fa-brands fa-github"></i> Edit on GitHub</a>
+                                <a href="https://github.com/Valbou/vtaskr-frontend/edit/master/docs/global/index.md" class="nav-link"><i class="fa-brands fa-github"></i> Edit on GitHub</a>
                             </li>
                     </ul>
                 </div>
@@ -72,17 +72,17 @@
     <div id="toc-collapse" class="navbar-collapse collapse card bg-body-tertiary">
         <ul class="nav flex-column">
             
-            <li class="nav-item" data-bs-level="1"><a href="#vtaskr-backend-roadmap" class="nav-link">vTaskr Backend - ROADMAP</a>
+            <li class="nav-item" data-bs-level="1"><a href="#the-project-vtaskr" class="nav-link">The project vTaskr</a>
               <ul class="nav flex-column">
-            <li class="nav-item" data-bs-level="2"><a href="#go-to-v010" class="nav-link">Go to v0.1.0</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-            <li class="nav-item" data-bs-level="2"><a href="#go-to-v020" class="nav-link">Go to v0.2.0</a>
+            <li class="nav-item" data-bs-level="2"><a href="#git-strategy" class="nav-link">Git Strategy</a>
               <ul class="nav flex-column">
               </ul>
             </li>
-            <li class="nav-item" data-bs-level="2"><a href="#go-to-v030" class="nav-link">Go to v0.3.0</a>
+            <li class="nav-item" data-bs-level="2"><a href="#repository-structure" class="nav-link">Repository structure</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#apps-structure" class="nav-link">Apps structure</a>
               <ul class="nav flex-column">
               </ul>
             </li>
@@ -93,69 +93,69 @@
 </div></div>
                     <div class="col-md-9" role="main">
 
-<h1 id="vtaskr-backend-roadmap">vTaskr Backend - ROADMAP</h1>
-<p>Welcome to the vTaskr Roadmap.
-Here you can find features we need to add to upgrade version number.
-As vTaskr is an non profit project without fulltime dev, no release date can be fournished.</p>
-<h2 id="go-to-v010">Go to v0.1.0</h2>
-<p>The first goal is to permit a basic use of a to do list.
-An heavy base is needed in term of rights/permissions.</p>
+<h1 id="the-project-vtaskr">The project vTaskr</h1>
+<p>vTaskr is a project to provide features to manage time and free your mind. This is possible if it's easy to use it.<br />
+So productivity and efficiency are mandatory to keep using it. It's the primary focus !<br />
+To continue to develop vTaskr with pleasure, we need to keep base code clear, and clearly separate concerns.  </p>
+<p>To contribute, please, keep this elements in mind.  </p>
+<div class="toc">
 <ul>
-<li>[x] User can register</li>
-<li>[x] User can change profile information</li>
-<li>[x] User can change securely email and password</li>
-<li>[x] User can login securely</li>
-<li>[x] User can manage tasks (create, read, update, delete)</li>
-<li>[x] User can manage tags (create, read, update, delete)</li>
-<li>[x] User can't access to tasks or tags not owned</li>
-<li>[x] User can filter tasks with some basics filters</li>
-<li>[x] Add an OpenApiv3 documentation</li>
-<li>[x] User can associate Task and Tags together</li>
-<li>[x] Add alembic migrations</li>
-<li>[x] Check code organisation</li>
-<li>[x] Add gunicorn</li>
-<li>[x] Start a frontend developpement in an other git repository</li>
-<li>[x] User can manage groups (create, read, update, delete and achieve)</li>
-<li>[x] User can manage roles (create, read, update, delete and achieve)</li>
-<li>[x] User can manage role types (create, read, update, delete and achieve)</li>
-<li>[x] User can manage rights (create, read, update, delete and achieve)</li>
-<li>[x] User can't access to tasks not owned by at least one of his groups</li>
-<li>[x] User can delete his account efficiently (cannot delete a user if user has admin role on 2 groups or more !)</li>
-<li>[x] Add filters on list endpoints (filter groups according to role or filter rights according to a group etc...)</li>
-<li>[ ] When paginated result is asked, provide some helpers like page max number or the number of items available.</li>
-<li>[x] User can't modify tasks without the required role</li>
-<li>[x] User can invite another in a non private group</li>
-<li>[x] User can invite another user in a group with a specific role</li>
-<li>[ ] Telegram bot integration</li>
-<li>[ ] Add a basic dev documentation</li>
+<li><a href="#the-project-vtaskr">The project vTaskr</a><ul>
+<li><a href="#git-strategy">Git Strategy</a></li>
+<li><a href="#repository-structure">Repository structure</a></li>
+<li><a href="#apps-structure">Apps structure</a></li>
 </ul>
-<h2 id="go-to-v020">Go to v0.2.0</h2>
-<p>Start v0.2.0 dev when frontend is ok with v0.1.0</p>
+</li>
+</ul>
+</div>
+<h2 id="git-strategy">Git Strategy</h2>
+<p>Master branch is not really clean (my fault), but I aim to tend to a cleaner history. One feature, one branch with squashed commits.<br />
+After merge, branch is deleted.  </p>
+<p>We are using a <a href="https://www.conventionalcommits.org/en/v1.0.0/">"conventional commit"</a> like, to help to keep clear commits.  </p>
+<p>A <strong>release is done after</strong>: all required features are done, documentation is up to date, translations are up to date, all unit tests passed, some manual end user tests are made, ideally at least a review is done.  </p>
+<h2 id="repository-structure">Repository structure</h2>
+<p>At first level you can find:  </p>
 <ul>
-<li>[ ] Code events developments</li>
-<li>[ ] Create tasks in to do lists template</li>
-<li>[ ] Transform a template into a todolist</li>
-<li>[ ] Use triggers to auto apply a template</li>
-<li>[ ] Task reccurence</li>
-<li>[ ] Weekly/Daily email with tasks of the period</li>
-<li>[ ] Sub tasks</li>
-<li>[ ] Project task organisation</li>
-<li>[ ] Tasks status (blocking) that block parent task</li>
-<li>[ ] Tasks association, link another task (nonblocking link)</li>
-<li>[ ] Tasks assignation to a group member</li>
-<li>[ ] Reminders/Alerts - Telegram/Email</li>
-<li>[ ] Add .ics generator (iCalendar format)</li>
+<li><strong>alembic</strong>: used to version database and track migrations.  </li>
+<li><strong>docs</strong>: used to provide this documentation with Mkdocs.  </li>
+<li><strong>hooks</strong>: some tools to help to be a good developer, and limit commits with bad PEP8 practicises before any CI. Need to be installed manually using shell command provided inside.  </li>
+<li><strong>src</strong>: vTaskr source code.  </li>
+<li><strong>tests</strong>: vTaskr tests (unit tests and integration tests).  </li>
+<li><strong>LICENSE</strong>: just to precise it's a GNU GPL v3 project.  </li>
+<li><strong>pyproject.toml</strong>: manage project dependencies and configs.  </li>
+<li><strong>README.md</strong>: to help users to find the doc 😇.  </li>
+<li><strong>run.sh</strong>: just a helper to run a dev HTTP server locally (if you need it).  </li>
+<li><strong>template.env</strong>: a .env template to keep up to date !  </li>
+<li><strong>trad_*.hs</strong>: some helpers files to manage translation.  </li>
 </ul>
-<h2 id="go-to-v030">Go to v0.3.0</h2>
-<p>Start v0.3.0 dev when frontend is ok with v0.2.0</p>
+<p>Actually, the project is splitted in "apps" in the "src" sub directory:</p>
 <ul>
-<li>[ ] Add tasks from telegram</li>
-<li>[ ] Add tasks from .ics sent by email</li>
-<li>[ ] Add tasks from github/gitlab/forgejo</li>
-<li>[ ] Add Keycloak integration</li>
-<li>[ ] Add hooks for external integration</li>
+<li><strong>base</strong>: provide project global utilitaries (like a backend <a href="https://api.vtaskr.com">home page</a>).</li>
+<li><strong>colors</strong>: provide elements to manage colors (but may disapear in a near futur to limit dependecies. Initially separated to limit duplicate code...).  </li>
+<li><strong>events</strong>: provide a basic internal event service to pass data cross apps.  </li>
+<li><strong>libs</strong>: provide external lib specific adapters.  </li>
+<li><strong>notifications</strong>: provide features to send informations to a user.  </li>
+<li><strong>ports</strong>: provide all bases classes to inherit from, for your adapters.  </li>
+<li><strong>static</strong>: provide some assets to insert in backend features like email or backend <a href="https://api.vtaskr.com">home page</a>.  </li>
+<li><strong>tasks</strong>: provide elements to manage "to do lists", project management.  </li>
+<li><strong>users</strong>: provide elements to manage users authentication and authorizations. This app may be replaced by any Identity and Access Manager (IAM) like Keycloak.  </li>
 </ul>
-<p>More in the futur...</p></div>
+<p>Excepting "libs", "ports", "static", all apps can be seen as a microservice, and could be separated in many dockers instances for scalability.  </p>
+<h2 id="apps-structure">Apps structure</h2>
+<p>To help developers to find the right file in the good folder, we use an app structure like follow:</p>
+<ul>
+<li><strong>events</strong>: this folder store observers and app events registry (to send and receive events from/to an other app).</li>
+<li><strong>hmi</strong>: store files relative to Human Machine Interfaces, like HTML pages, API, CLI etc... and helpers like DTO etc... This views files may use dedicaded libs like Flask or FastAPI etc... and need a specific folder for each dependendy.</li>
+<li><strong>managers</strong>: store files to manage models (use dependency injection to transparently store and retrieve data).</li>
+<li><strong>models</strong>: core models for the app. No external lib dependency here (only python batteries included code).</li>
+<li><strong>persistence</strong>: contain ports and adapters to access data storage (ORM, SQL/NoSQL, file system etc...). With a sub folder for each lib used (SQLAlchemy, Pewee, Pony...).</li>
+<li><strong>services</strong>: store all services usable by a view.</li>
+<li><strong>translations</strong>: to store... translations (.pot, .po and .mo files).</li>
+<li><strong>flask_config.py</strong>: to setup some dedicaded config to flask. Feel free to create another file for another view lib respecting this pattern: mylib_config.py.</li>
+<li><strong>settings.py</strong>: specific settings for the app, need at least a APP_NAME value.</li>
+</ul>
+<p>This code structure permit to move easily to a new lib with a limited rewrite scoped in the lib folder. We can imagine concurrent use of some libs in the same repo. Why not a Flask implementation and a FastAPI side by side, then you just need to run.sh --flask or run.sh --fastapi to swith !</p>
+<p><strong>Feel free to discuss about this code organisation if you have found a better way to do it !</strong></p></div>
             </div>
         </div>
 
