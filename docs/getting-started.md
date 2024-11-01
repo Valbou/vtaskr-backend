@@ -86,6 +86,12 @@ To build and deploy github page documentation
 python -m mkdocs gh-deploy --theme mkdocs
 ```
 
+You can also use helpers respectively:
+```bash
+./build_doc.sh
+./build_doc.sh deploy
+```
+
 # To use your own frontend
 
 If you want to use your own frontend, you can see the [OpenAPI documentation](https://api.vtaskr.com/documentation). ([Public Postman](https://www.postman.com/valbou/workspace/vtaskr/overview))
