@@ -1,5 +1,7 @@
 # Get Started
 
+[TOC]
+
 ## Install vTaskr
 
 No specific skill needed, but we need first to:
