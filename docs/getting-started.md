@@ -92,6 +92,10 @@ You can also use helpers respectively:
 ./build_doc.sh deploy
 ```
 
+# Project global informations
+
+The project respect some [basic rules](./global/index.md), please read them before submitting a merge request.
+
 # To use your own frontend
 
 If you want to use your own frontend, you can see the [OpenAPI documentation](https://api.vtaskr.com/documentation). ([Public Postman](https://www.postman.com/valbou/workspace/vtaskr/overview))

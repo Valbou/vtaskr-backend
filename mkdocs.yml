@@ -6,6 +6,7 @@ repo_url: https://github.com/Valbou/vtaskr-frontend
 repo_name: GitHub
 nav:
   - Home: index.md
+  - Getting Started: getting-started.md
   - About: about.md
 plugins:
   - search
