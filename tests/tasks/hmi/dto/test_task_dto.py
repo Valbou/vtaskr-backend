@@ -14,6 +14,7 @@ class TaskMapperTest(TestCase):
             important=True,
             scheduled_at=datetime.now(),
             duration=timedelta(seconds=12_345),
+            assigned_to="user_123",
         )
 
         task_dto = TaskMapperDTO.model_to_dto(task=task)
@@ -29,6 +30,7 @@ class TaskMapperTest(TestCase):
             important=False,
             scheduled_at="2024-10-22T11:02:42Z",
             duration="2:00",
+            assigned_to="user_123",
         )
 
         task = TaskMapperDTO.dto_to_model(task_dto=task_dto)
