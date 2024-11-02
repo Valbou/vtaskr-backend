@@ -16,6 +16,7 @@ task_component = {
         "important": {"type": "boolean"},
         "scheduled_at": {"type": "string", "format": "date-time"},
         "duration": {"type": "integer", "format": "int32"},
+        "assigned_to": {"type": "string"},
         "created_at": {"type": "string", "format": "date-time"},
     },
     "required": ["tenant_id", "title"],
@@ -35,6 +36,7 @@ class TaskDTO:
     scheduled_at: str | None = None
     duration: str | None = None
     done: str | None = None
+    assigned_to: str = ""
 
 
 class TaskMapperDTO:
@@ -55,6 +57,7 @@ class TaskMapperDTO:
             scheduled_at=task.scheduled_at.isoformat() if task.scheduled_at else None,
             duration=duration,
             done=task.done.isoformat() if task.done else None,
+            assigned_to=task.assigned_to,
         )
 
     @classmethod
@@ -66,6 +69,7 @@ class TaskMapperDTO:
         task.description = task_dto.description
         task.emergency = task_dto.emergency
         task.important = task_dto.important
+        task.assigned_to = task_dto.assigned_to
 
         if task_dto.scheduled_at:
             task.scheduled_at = datetime.fromisoformat(task_dto.scheduled_at)

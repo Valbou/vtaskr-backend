@@ -75,6 +75,7 @@ tasks_table = Table(
     Column("scheduled_at", DateTime(timezone=True), nullable=True, default=None),
     Column("duration", Interval, nullable=True, default=None),
     Column("done", DateTime(timezone=True), nullable=True, default=None),
+    Column("assigned_to", String, nullable=False),
 )
 
 

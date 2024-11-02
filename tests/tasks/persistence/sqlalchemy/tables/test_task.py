@@ -16,6 +16,7 @@ class TestTaskTable(BaseTestCase):
             "scheduled_at",
             "duration",
             "done",
+            "assigned_to",
         ]
 
     def test_table_exists(self):

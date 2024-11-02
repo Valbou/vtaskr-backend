@@ -27,6 +27,7 @@ class TestTask(TestCase):
         self.assertEqual(Task.__annotations__.get("created_at"), datetime | None)
         self.assertEqual(Task.__annotations__.get("scheduled_at"), datetime | None)
         self.assertEqual(Task.__annotations__.get("duration"), timedelta | None)
+        self.assertEqual(Task.__annotations__.get("assigned_to"), str)
         self.assertEqual(Task.__annotations__.get("done"), datetime | None)
 
     def test_is_done(self):

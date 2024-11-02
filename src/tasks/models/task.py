@@ -22,7 +22,6 @@ from .tag import Tag
 
 # TODO: Add some features like:
 # - A parent blocking task (M2M)
-# - An assignement to a user (FK)
 # - A deadline
 # - A progress
 # - A project (FK)
@@ -48,6 +47,7 @@ class Task:
     scheduled_at: datetime | None = None
     duration: timedelta | None = None
     done: datetime | None = None
+    assigned_to: str = ""
     tags: list[Tag] = field(default_factory=list)
     id: str | None = None
     created_at: datetime | None = None
