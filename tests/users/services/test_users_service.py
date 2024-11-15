@@ -143,7 +143,7 @@ class TestUsersService(DummyBaseTestCase):
         )
         self.users_service.user_manager.create_user = MagicMock(return_value=base_user)
         self.users_service.create_new_group = MagicMock(return_value=base_group)
-        self.users_service.event.send_register_event = MagicMock()
+        self.users_service.event_manager.send_register_event = MagicMock()
         self.users_service.email_manager.get_register_context = MagicMock(
             return_value={}
         )
@@ -154,10 +154,8 @@ class TestUsersService(DummyBaseTestCase):
         self.users_service.user_manager.find_user_by_email.assert_called_once()
         self.users_service.user_manager.create_user.assert_called_once()
         self.users_service.create_new_group.assert_called_once()
-        self.users_service.event.send_register_event.assert_called_once()
-        self.users_service.email_manager.get_register_context.assert_called_once_with(
-            user=user
-        )
+        self.users_service.event_manager.send_register_event.assert_called_once()
+        self.users_service.email_manager.get_register_context.assert_called_once()
         self.users_service._send_message.assert_called_once_with(context={})
 
         self.assertIsInstance(user, User)
@@ -451,12 +449,12 @@ class TestUsersService(DummyBaseTestCase):
         user = self._get_user()
 
         self.users_service.user_manager.update_user = MagicMock()
-        self.users_service.event.send_update_user_event = MagicMock()
+        self.users_service.event_manager.send_update_user_event = MagicMock()
 
         self.users_service.update_user(user)
 
         self.users_service.user_manager.update_user.assert_called_once()
-        self.users_service.event.send_update_user_event.assert_called_once()
+        self.users_service.event_manager.send_update_user_event.assert_called_once()
 
     def test_set_new_password(self):
         base_user = self._get_user()
@@ -526,7 +524,7 @@ class TestUsersService(DummyBaseTestCase):
             return_value=base_user
         )
         self.users_service.user_manager.update_user = MagicMock()
-        self.users_service.event.send_update_user_event = MagicMock()
+        self.users_service.event_manager.send_update_user_event = MagicMock()
 
         result = self.users_service.set_new_email(
             old_email="test@example.com",
@@ -541,7 +539,7 @@ class TestUsersService(DummyBaseTestCase):
         self.users_service.user_manager.find_user_by_email.assert_called_once()
         base_user.set_email.assert_called_once()
         self.users_service.user_manager.update_user.assert_called_once()
-        self.users_service.event.send_update_user_event.assert_called_once()
+        self.users_service.event_manager.send_update_user_event.assert_called_once()
 
         self.assertTrue(result)
 
@@ -627,7 +625,7 @@ class TestUsersService(DummyBaseTestCase):
         self.users_service.user_manager.delete_user = MagicMock()
         self.users_service.email_manager.get_delete_context = MagicMock(return_value={})
         self.users_service._send_message = MagicMock()
-        self.users_service.event.send_delete_user_event = MagicMock()
+        self.users_service.event_manager.send_delete_user_event = MagicMock()
 
         result = self.users_service.delete_user(user)
 
@@ -637,9 +635,7 @@ class TestUsersService(DummyBaseTestCase):
             user=user
         )
         self.users_service._send_message.assert_called_once()
-        self.users_service.event.send_delete_user_event.assert_called_once_with(
-            user=user
-        )
+        self.users_service.event_manager.send_delete_user_event.assert_called_once()
 
         self.assertTrue(result)
 

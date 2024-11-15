@@ -34,6 +34,7 @@ class UsersUpdateUserObserver(ObserverPort):
             contact_db: ContactDBPort = app_ctx.dependencies.persistence.get_repository(
                 APP_NAME, "Contact"
             )
+
             with app_ctx.dependencies.persistence.get_session() as session:
                 contact: Contact | None = contact_db.load(session, id=contact_id)
 
@@ -51,6 +52,7 @@ class UsersUpdateUserObserver(ObserverPort):
                         telegram=event_data.get("telegram", ""),
                         phone_number=event_data.get("phone_number", ""),
                     )
+
                     contact_db.save(session, obj=contact)
 
 

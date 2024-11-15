@@ -36,6 +36,7 @@ An heavy base is needed in term of rights/permissions.
 - [x] User can invite another user in a group with a specific role
 - [ ] Telegram bot integration
 - [ ] Add a basic dev documentation
+- [ ] Cron job to send today and tomorrow tasks
 
 ## Go to v0.2.0
 

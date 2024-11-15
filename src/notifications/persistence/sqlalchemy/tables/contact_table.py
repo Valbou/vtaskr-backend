@@ -23,9 +23,9 @@ contact_table = Table(
         default=datetime.now(tz=ZoneInfo("UTC")),
         nullable=False,
     ),
-    Column("email", String(250), unique=True, nullable=False),
-    Column("telegram", String(90), unique=True, nullable=False),
-    Column("phone_number", String(20), unique=True, nullable=False),
+    Column("email", String(250), nullable=False),
+    Column("telegram", String(90), nullable=False),
+    Column("phone_number", String(20), nullable=False),
 )
 
 

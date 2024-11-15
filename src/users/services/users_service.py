@@ -1,7 +1,7 @@
 from src.libs.dependencies import DependencyInjector
 from src.libs.hmi.querystring import Filter
 from src.libs.iam.constants import Permissions
-from src.users.events import UsersEventService
+from src.users.events import UsersEventManager
 from src.users.hmi.dto import UserDTO
 from src.users.managers import (
     EmailManager,
@@ -33,7 +33,6 @@ class EmailAlreadyUsedError(Exception):
 class UsersService:
     def __init__(self, services: DependencyInjector) -> None:
         self.services = services
-        self.event = UsersEventService(self.services.eventbus)
         self._define_managers()
 
     def _send_message(self, context: dict):
@@ -46,6 +45,7 @@ class UsersService:
     def _define_managers(self):
         """Define managers from domain (no DI here)"""
 
+        self.event_manager = UsersEventManager()
         self.roletype_manager = RoleTypeManager(services=self.services)
         self.group_manager = GroupManager(services=self.services)
         self.right_manager = RightManager(services=self.services)
@@ -168,7 +168,10 @@ class UsersService:
             user_id=user.id, group_name="Private", is_private=True
         )
 
-        self.event.send_register_event(user=user, group=group)
+        with self.services.eventbus as event_session:
+            self.event_manager.send_register_event(
+                session=event_session, user=user, group=group
+            )
 
         context = self.email_manager.get_register_context(user=user)
         self._send_message(context=context)
@@ -299,8 +302,9 @@ class UsersService:
 
         with self.services.persistence.get_session() as session:
             self.user_manager.update_user(session, user)
-            session.commit()
-            self.event.send_update_user_event(user=user)
+
+        with self.services.eventbus as event_session:
+            self.event_manager.send_update_user_event(session=event_session, user=user)
 
     def set_new_password(self, email: str, hash: str, password: str) -> bool:
         """Set the new password to user if request is ok"""
@@ -340,7 +344,10 @@ class UsersService:
                 self.user_manager.update_user(session, user)
                 session.commit()
 
-                self.event.send_update_user_event(user=user)
+                with self.services.eventbus as event_session:
+                    self.event_manager.send_update_user_event(
+                        session=event_session, user=user
+                    )
 
                 return True
 
@@ -363,7 +370,10 @@ class UsersService:
                 context = self.email_manager.get_delete_context(user=user)
                 self._send_message(context=context)
 
-                self.event.send_delete_user_event(user=user)
+                with self.services.eventbus as event_session:
+                    self.event_manager.send_delete_user_event(
+                        session=event_session, user=user
+                    )
 
                 return True
 

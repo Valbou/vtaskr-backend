@@ -27,6 +27,7 @@ def create_flask_app(dependencies: DependencyInjector) -> Flask:
     loaders = []
     domains: list[str] = []
     repositories: list[tuple] = []
+    observers: list = []
     permissions_resources: list[str] = []
 
     for module in INSTALLED_APPS:
@@ -40,6 +41,7 @@ def create_flask_app(dependencies: DependencyInjector) -> Flask:
         loaders.extend(result.get("loaders", []))
         domains.extend(result.get("domains", []))
         repositories.extend(result.get("repositories", []))
+        observers.extend(result.get("observers", []))
         permissions_resources.extend(result.get("permissions_resources", []))
 
         logger.info(f"app {module} ready.")
@@ -56,6 +58,7 @@ def create_flask_app(dependencies: DependencyInjector) -> Flask:
         domains=domains,
         languages=list(AVAILABLE_LANGUAGES.keys()),
         repositories=repositories,
+        observers=observers,
         permissions_resources=permissions_resources,
     )
 

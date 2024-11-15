@@ -1,9 +1,7 @@
 from abc import ABC, abstractmethod
-from typing import Callable, TypeVar
+from typing import Callable
 
 from .base_port import InjectablePort
-
-TObserverPort = TypeVar("TObserverPort", bound="ObserverPort")
 
 
 class EventBusPort(InjectablePort, ABC):
@@ -13,6 +11,10 @@ class EventBusPort(InjectablePort, ABC):
 
     @abstractmethod
     def subscribe(self, event_type: str, function: Callable):
+        raise NotImplementedError
+
+    @abstractmethod
+    def execute(self):
         raise NotImplementedError
 
     @abstractmethod

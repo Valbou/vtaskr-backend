@@ -2,12 +2,11 @@ from src.ports import EventBusPort
 from src.users.models import Group, User
 
 
-class UsersEventService:
-    def __init__(self, eventbus: EventBusPort):
-        self.eventbus = eventbus
-
-    def send_register_event(self, user: User, group: Group) -> dict:
-        self.eventbus.emit(
+class UsersEventManager:
+    def send_register_event(
+        self, session: EventBusPort, user: User, group: Group
+    ) -> dict:
+        session.emit(
             tenant_id=user.id,
             event_name="users:register",
             event_data={
@@ -24,8 +23,8 @@ class UsersEventService:
             },
         )
 
-    def send_update_user_event(self, user: User) -> dict:
-        self.eventbus.emit(
+    def send_update_user_event(self, session: EventBusPort, user: User) -> dict:
+        session.emit(
             tenant_id=user.id,
             event_name="users:update:user",
             event_data={
@@ -40,8 +39,8 @@ class UsersEventService:
             },
         )
 
-    def send_delete_user_event(self, user: User) -> dict:
-        self.eventbus.emit(
+    def send_delete_user_event(self, session: EventBusPort, user: User) -> dict:
+        session.emit(
             tenant_id=user.id,
             event_name="users:delete:user",
             event_data={

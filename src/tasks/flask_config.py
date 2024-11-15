@@ -17,6 +17,7 @@ def setup_flask(app: Flask, project_dir: str) -> dict:
                 f"{project_dir}/src/{APP_NAME.lower()}/hmi/flask/templates"
             )
         ],
+        "observers": [],
         "repositories": [
             (APP_NAME, "Tag", TagDB()),
             (APP_NAME, "Task", TaskDB()),
