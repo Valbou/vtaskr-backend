@@ -21,7 +21,9 @@ class UsersRegisterUserObserver(ObserverPort):
         )
 
         with app_ctx.dependencies.persistence.get_session() as session:
-            contact_db.save(session, obj=contact)
+            contact = contact_db.load(session, id=contact.id)
+            if contact is None:
+                contact_db.save(session, obj=contact)
 
 
 class UsersUpdateUserObserver(ObserverPort):

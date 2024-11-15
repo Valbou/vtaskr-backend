@@ -29,7 +29,7 @@ class TestObservers(DummyBaseTestCase):
             self.app, event_name="users:register", event_data=event_data
         )
 
-        self.repository_mock.save.assert_called_once()
+        self.repository_mock.load.assert_called_once()
 
     def test_1_update_existing_user_observer(self):
         contact = Contact(
