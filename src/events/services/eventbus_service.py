@@ -17,7 +17,6 @@ class EventBusService(EventBusPort):
 
     def set_context(self, **ctx) -> None:
         self.app = ctx.pop("app")
-        self.event_service = EventsService(services=self.app.dependencies)
 
         # Auto Subscribe for Observer classes
         observers = ObserverPort.__subclasses__()
@@ -49,6 +48,8 @@ class EventBusService(EventBusPort):
         self.index[event_name].append(function)
 
     def execute(self):
+        self.event_service = EventsService(services=self.app.dependencies)
+
         local_events = copy(self.events)
         self.events.clear()
 
