@@ -32,9 +32,7 @@ class TestTaskAPI(DummyBaseTestCase):
         headers = self.get_token_headers()
 
         with set_fake_authentication(app=self.app, user=self.user, token=self.token):
-            response = self.client.get(
-                f"{URL_API}/task/{USER_TASK.id}", headers=headers
-            )
+            response = self.client.get(f"{URL_API}/task/{USER_TASK.id}", headers=headers)
 
         self.assertEqual(response.status_code, 200)
 

@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from src.notifications.models import MessageType, Subscription
+from src.notifications.models import Subscription
 from src.ports import AbstractDBPort
 
 
@@ -11,6 +11,6 @@ class SubscriptionDBPort(AbstractDBPort, ABC):
 
     @abstractmethod
     def get_subscriptions_for_event(
-        self, session, event_name: str, event_type: MessageType
+        self, session, name: str, targets: list[str]
     ) -> list[Subscription]:
         raise NotImplementedError()

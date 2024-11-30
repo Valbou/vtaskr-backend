@@ -244,9 +244,7 @@ class TestRightAPI(DummyBaseTestCase):
         right = self.get_a_user_right()
 
         with set_fake_authentication(app=self.app, user=self.user, token=self.token):
-            response = self.client.delete(
-                f"{URL_API}/right/{right.id}", headers=headers
-            )
+            response = self.client.delete(f"{URL_API}/right/{right.id}", headers=headers)
 
         self.assertEqual(response.status_code, 403)
 

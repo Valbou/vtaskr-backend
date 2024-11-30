@@ -1,4 +1,4 @@
 [flake8]
-exclude = .git,__pycache__,__init__.py,hooks,database.py,build
+exclude = .git,__pycache__,__init__.py,hooks,database.py,build,tests
 max-complexity = 15
-max-line-length = 99
+max-line-length = 89

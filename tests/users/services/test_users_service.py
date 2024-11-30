@@ -1,4 +1,4 @@
-from unittest.mock import MagicMock, call
+from unittest.mock import MagicMock
 
 from src.libs.iam.constants import Permissions
 from src.settings import LOCALE, TIMEZONE
@@ -144,10 +144,6 @@ class TestUsersService(DummyBaseTestCase):
         self.users_service.user_manager.create_user = MagicMock(return_value=base_user)
         self.users_service.create_new_group = MagicMock(return_value=base_group)
         self.users_service.event_manager.send_register_event = MagicMock()
-        self.users_service.email_manager.get_register_context = MagicMock(
-            return_value={}
-        )
-        self.users_service._send_message = MagicMock()
 
         user, group = self.users_service.register(user_dto, password=password)
 
@@ -155,8 +151,6 @@ class TestUsersService(DummyBaseTestCase):
         self.users_service.user_manager.create_user.assert_called_once()
         self.users_service.create_new_group.assert_called_once()
         self.users_service.event_manager.send_register_event.assert_called_once()
-        self.users_service.email_manager.get_register_context.assert_called_once()
-        self.users_service._send_message.assert_called_once_with(context={})
 
         self.assertIsInstance(user, User)
         self.assertIsInstance(group, Group)
@@ -193,8 +187,9 @@ class TestUsersService(DummyBaseTestCase):
         self.users_service.token_manager.create_token = MagicMock(
             return_value=base_token
         )
-        self.users_service.email_manager.get_login_context = MagicMock(return_value={})
-        self.users_service._send_message = MagicMock()
+        self.users_service.event_manager.send_login_2fa_event = MagicMock(
+            return_value={}
+        )
 
         token = self.users_service.authenticate(email=email, password=password)
 
@@ -203,10 +198,7 @@ class TestUsersService(DummyBaseTestCase):
         base_user.check_password.assert_called_once()
         base_user.update_last_login.assert_called_once()
         self.users_service.token_manager.create_token.assert_called_once()
-        self.users_service.email_manager.get_login_context.assert_called_once_with(
-            user=base_user, code=base_token.temp_code
-        )
-        self.users_service._send_message.assert_called_once_with(context={})
+        self.users_service.event_manager.send_login_2fa_event.assert_called_once()
 
         self.assertIsInstance(token, Token)
         self.assertEqual(base_token.id, token.id)
@@ -224,8 +216,7 @@ class TestUsersService(DummyBaseTestCase):
             return_value=base_user
         )
         self.users_service.token_manager.create_token = MagicMock()
-        self.users_service.email_manager.get_login_context = MagicMock()
-        self.users_service._send_message = MagicMock()
+        self.users_service.event_manager.send_login_2fa_event = MagicMock()
 
         token = self.users_service.authenticate(email=email, password=password)
 
@@ -235,8 +226,7 @@ class TestUsersService(DummyBaseTestCase):
 
         base_user.update_last_login.assert_not_called()
         self.users_service.token_manager.create_token.assert_not_called()
-        self.users_service.email_manager.get_login_context.assert_not_called()
-        self.users_service._send_message.assert_not_called()
+        self.users_service.event_manager.send_login_2fa_event.assert_not_called()
 
         self.assertIsNone(token)
 
@@ -374,21 +364,17 @@ class TestUsersService(DummyBaseTestCase):
         base_request_change = RequestChange(
             request_type=RequestType.PASSWORD, email="test@example.com"
         )
-        base_request_change.gen_hash = MagicMock(return_value="hash_123")
         self.users_service.request_change_manager.create_request_change = MagicMock(
             return_value=base_request_change
         )
-        self.users_service.email_manager.get_password_change_context = MagicMock(
+        self.users_service.event_manager.send_password_change_event = MagicMock(
             return_value={}
         )
-        self.users_service._send_message = MagicMock()
 
         self.users_service.request_password_change(user=base_user)
 
         self.users_service.request_change_manager.create_request_change.assert_called_once()
-        base_request_change.gen_hash.assert_called_once()
-        self.users_service.email_manager.get_password_change_context.assert_called_once()
-        self.users_service._send_message.assert_called_once_with(context={})
+        self.users_service.event_manager.send_password_change_event.assert_called_once()
 
     def test_request_email_change(self):
         user = self._get_user()
@@ -400,30 +386,14 @@ class TestUsersService(DummyBaseTestCase):
         self.users_service.request_change_manager.create_request_change = MagicMock(
             return_value=base_request_change
         )
-        self.users_service.user_manager.find_user_by_email = MagicMock(
-            return_value=None
-        )
-        self.users_service.email_manager.get_email_change_old_context = MagicMock(
-            return_value={"old": True}
-        )
-        self.users_service.email_manager.get_email_change_new_context = MagicMock(
-            return_value={"new": True}
-        )
-        self.users_service.services.notification.build_message = MagicMock()
-        self.users_service.services.notification.add_message = MagicMock()
-        self.users_service.services.notification.notify_all = MagicMock()
+        self.users_service.user_manager.find_user_by_email = MagicMock(return_value=None)
+        self.users_service.event_manager.send_email_change_event = MagicMock()
 
         self.users_service.request_email_change(user=user, new_email=new_email)
 
         self.users_service.user_manager.find_user_by_email.assert_called_once()
         self.users_service.request_change_manager.create_request_change.assert_called_once()
-        self.users_service.email_manager.get_email_change_old_context.assert_called_once()
-        self.users_service.email_manager.get_email_change_new_context.assert_called_once()
-        self.users_service.services.notification.build_message.assert_has_calls(
-            [call({"old": True}), call({"new": True})]
-        )
-        self.users_service.services.notification.add_message.assert_called()
-        self.users_service.services.notification.notify_all.assert_called_once()
+        self.users_service.event_manager.send_email_change_event.assert_called_once()
 
     def test_request_existing_email_change(self):
         user = self._get_user()
@@ -432,9 +402,7 @@ class TestUsersService(DummyBaseTestCase):
             request_type=RequestType.EMAIL, email="test@example.com"
         )
 
-        self.users_service.user_manager.find_user_by_email = MagicMock(
-            return_value=True
-        )
+        self.users_service.user_manager.find_user_by_email = MagicMock(return_value=True)
         self.users_service.request_change_manager.create_request_change = MagicMock(
             return_value=base_request_change
         )
@@ -623,26 +591,21 @@ class TestUsersService(DummyBaseTestCase):
             return_value=["123"]
         )
         self.users_service.user_manager.delete_user = MagicMock()
-        self.users_service.email_manager.get_delete_context = MagicMock(return_value={})
-        self.users_service._send_message = MagicMock()
+        self.users_service.event_manager.send_delete_user_event = MagicMock(
+            return_value={}
+        )
         self.users_service.event_manager.send_delete_user_event = MagicMock()
 
         result = self.users_service.delete_user(user)
 
         self.users_service.services.identity.all_tenants_with_access.assert_called_once()
         self.users_service.user_manager.delete_user.assert_called_once()
-        self.users_service.email_manager.get_delete_context.assert_called_once_with(
-            user=user
-        )
-        self.users_service._send_message.assert_called_once()
         self.users_service.event_manager.send_delete_user_event.assert_called_once()
 
         self.assertTrue(result)
 
     def test_get_invitations(self):
-        self.users_service.invitation_manager.get_from_group = MagicMock(
-            return_value=[]
-        )
+        self.users_service.invitation_manager.get_from_group = MagicMock(return_value=[])
 
         invitations = self.users_service.get_invitations(
             user_id="user_123", group_id="group_123"
@@ -663,10 +626,7 @@ class TestUsersService(DummyBaseTestCase):
             return_value=base_roletype
         )
         self.users_service.invitation_manager.update_invitation = MagicMock()
-        self.users_service.email_manager.get_invitation_context = MagicMock(
-            return_value={}
-        )
-        self.users_service._send_message = MagicMock()
+        self.users_service.event_manager.send_invitation_event = MagicMock()
 
         invitation = self.users_service.invite_user_by_email(
             user=user,
@@ -678,8 +638,7 @@ class TestUsersService(DummyBaseTestCase):
         self.users_service.group_manager.get_group.assert_called_once()
         self.users_service.roletype_manager.get_roletype.assert_called_once()
         self.users_service.invitation_manager.update_invitation.assert_called_once()
-        self.users_service.email_manager.get_invitation_context.assert_called_once()
-        self.users_service._send_message.assert_called_once_with(context={})
+        self.users_service.event_manager.send_invitation_event.assert_called_once()
 
         self.assertIsInstance(invitation, Invitation)
         self.assertEqual(invitation.from_user_id, user.id)
@@ -713,10 +672,7 @@ class TestUsersService(DummyBaseTestCase):
         self.users_service.roletype_manager.get_roletype = MagicMock(
             return_value=base_roletype
         )
-        self.users_service.email_manager.get_accepted_invitation_context = MagicMock(
-            return_value={}
-        )
-        self.users_service._send_message = MagicMock()
+        self.users_service.event_manager.send_accepted_invitation_event = MagicMock()
         self.users_service.invitation_manager.delete_invitation = MagicMock()
 
         role = self.users_service.accept_invitation(user=invited_user, hash="hash_123")
@@ -726,8 +682,7 @@ class TestUsersService(DummyBaseTestCase):
         self.users_service.user_manager.get_user.assert_called_once()
         self.users_service.group_manager.get_group.assert_called_once()
         self.users_service.roletype_manager.get_roletype.assert_called_once()
-        self.users_service.email_manager.get_accepted_invitation_context.assert_called_once()
-        self.users_service._send_message.assert_called_once_with(context={})
+        self.users_service.event_manager.send_accepted_invitation_event.assert_called_once()
         self.users_service.invitation_manager.delete_invitation.assert_called_once()
 
         self.assertIsInstance(role, Role)
@@ -753,16 +708,14 @@ class TestUsersService(DummyBaseTestCase):
         self.users_service.invitation_manager.delete_invitation_by_id = MagicMock(
             return_value=True
         )
-        self.users_service.email_manager.get_cancelled_invitation_context = MagicMock()
-        self.users_service._send_message = MagicMock()
+        self.users_service.event_manager.send_cancelled_invitation_event = MagicMock()
 
         self.users_service.delete_invitation(user=user, invitation_id="invitation_123")
 
         self.users_service.invitation_manager.get_invitation.assert_called_once()
         self.users_service.group_manager.get_group.assert_called_once()
         self.users_service.invitation_manager.delete_invitation_by_id.assert_called_once()
-        self.users_service.email_manager.get_cancelled_invitation_context.assert_called_once()
-        self.users_service._send_message.assert_called_once()
+        self.users_service.event_manager.send_cancelled_invitation_event.assert_called_once()
 
     def test_cannot_delete_invitation(self):
         user = self._get_user()
@@ -781,10 +734,7 @@ class TestUsersService(DummyBaseTestCase):
         self.users_service.invitation_manager.delete_invitation_by_id = MagicMock(
             return_value=False
         )
-        self.users_service.email_manager.get_cancelled_invitation_context = MagicMock(
-            context={}
-        )
-        self.users_service._send_message = MagicMock()
+        self.users_service.event_manager.send_cancelled_invitation_event = MagicMock()
 
         with self.assertRaises(PermissionError):
             self.users_service.delete_invitation(
@@ -794,8 +744,7 @@ class TestUsersService(DummyBaseTestCase):
         self.users_service.invitation_manager.get_invitation.assert_called_once()
         self.users_service.group_manager.get_group.assert_called_once()
         self.users_service.invitation_manager.delete_invitation_by_id.assert_called_once()
-        self.users_service.email_manager.get_cancelled_invitation_context.assert_not_called()
-        self.users_service._send_message.assert_not_called()
+        self.users_service.event_manager.send_cancelled_invitation_event.assert_not_called()
 
     def test_create_new_right(self):
         base_right = Right(
@@ -883,9 +832,7 @@ class TestUsersService(DummyBaseTestCase):
     def test_get_user_role(self):
         self.users_service.role_manager.get_role = MagicMock(return_value=None)
 
-        result = self.users_service.get_user_role(
-            user_id="user_123", role_id="role_123"
-        )
+        result = self.users_service.get_user_role(user_id="user_123", role_id="role_123")
 
         self.assertIsNone(result)
 
@@ -904,9 +851,7 @@ class TestUsersService(DummyBaseTestCase):
     def test_update_user_role(self):
         self.users_service.role_manager.update_role = MagicMock(return_value=True)
 
-        result = self.users_service.update_user_role(
-            user_id="user_id", role=MagicMock()
-        )
+        result = self.users_service.update_user_role(user_id="user_id", role=MagicMock())
 
         self.assertTrue(result)
 

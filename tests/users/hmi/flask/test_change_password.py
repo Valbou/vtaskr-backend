@@ -44,15 +44,11 @@ class TestUserV1ForgottenPassword(DummyBaseTestCase):
         mock_2.assert_not_called()
 
     def test_no_get(self):
-        response = self.client.get(
-            f"{URL_API}/forgotten-password", headers=self.headers
-        )
+        response = self.client.get(f"{URL_API}/forgotten-password", headers=self.headers)
         self.assertEqual(response.status_code, 405)
 
     def test_no_put(self):
-        response = self.client.put(
-            f"{URL_API}/forgotten-password", headers=self.headers
-        )
+        response = self.client.put(f"{URL_API}/forgotten-password", headers=self.headers)
         self.assertEqual(response.status_code, 405)
 
     def test_no_patch(self):

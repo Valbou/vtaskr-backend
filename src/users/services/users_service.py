@@ -4,7 +4,6 @@ from src.libs.iam.constants import Permissions
 from src.users.events import UsersEventManager
 from src.users.hmi.dto import UserDTO
 from src.users.managers import (
-    EmailManager,
     GroupManager,
     InvitationManager,
     RequestChangeManager,
@@ -35,13 +34,6 @@ class UsersService:
         self.services = services
         self._define_managers()
 
-    def _send_message(self, context: dict):
-        """Helper to send notification message"""
-
-        message = self.services.notification.build_message(context)
-        self.services.notification.add_message(message=message)
-        self.services.notification.notify_all()
-
     def _define_managers(self):
         """Define managers from domain (no DI here)"""
 
@@ -54,7 +46,6 @@ class UsersService:
         self.user_manager = UserManager(services=self.services)
         self.token_manager = TokenManager(services=self.services)
         self.invitation_manager = InvitationManager(services=self.services)
-        self.email_manager = EmailManager(services=self.services)
 
     def _prepare_observer_roletype(self, session):
         """Prepare observer role to add people with minimum rights"""
@@ -173,9 +164,6 @@ class UsersService:
                 session=event_session, user=user, group=group
             )
 
-        context = self.email_manager.get_register_context(user=user)
-        self._send_message(context=context)
-
         return (user, group)
 
     def clean_unused_accounts(self):
@@ -195,15 +183,13 @@ class UsersService:
                 # Many tokens can be active for a unique user (it's assumed)
                 user.update_last_login()
 
-                token = self.token_manager.create_token(
-                    session=session, user_id=user.id
-                )
+                token = self.token_manager.create_token(session=session, user_id=user.id)
                 session.commit()
 
-                context = self.email_manager.get_login_context(
-                    user=user, code=token.temp_code
-                )
-                self._send_message(context=context)
+                with self.services.eventbus as event_session:
+                    self.event_manager.send_login_2fa_event(
+                        session=event_session, user=user, token=token
+                    )
 
                 return token
 
@@ -262,12 +248,11 @@ class UsersService:
         request_change = self.request_change_manager.create_request_change(
             user.email, RequestType.PASSWORD
         )
-        request_hash = request_change.gen_hash()
 
-        context = self.email_manager.get_password_change_context(
-            user=user, sec_hash=request_hash
-        )
-        self._send_message(context=context)
+        with self.services.eventbus as event_session:
+            self.event_manager.send_password_change_event(
+                session=event_session, user=user, request_change=request_change
+            )
 
     def request_email_change(self, user: User, new_email: str) -> None:
         """Generate process to change email"""
@@ -282,20 +267,13 @@ class UsersService:
             user.email, RequestType.EMAIL
         )
 
-        context_old_email = self.email_manager.get_email_change_old_context(
-            user=user,
-            request_change=request_change,
-        )
-        message_old_email = self.services.notification.build_message(context_old_email)
-        self.services.notification.add_message(message=message_old_email)
-
-        context_new_email = self.email_manager.get_email_change_new_context(
-            user=user, new_email=new_email, sec_hash=request_change.gen_hash()
-        )
-        message_new_email = self.services.notification.build_message(context_new_email)
-        self.services.notification.add_message(message=message_new_email)
-
-        self.services.notification.notify_all()
+        with self.services.eventbus as event_session:
+            self.event_manager.send_email_change_event(
+                session=event_session,
+                user=user,
+                new_email=new_email,
+                request_change=request_change,
+            )
 
     def update_user(self, user: User) -> None:
         """Update user"""
@@ -367,9 +345,6 @@ class UsersService:
                 self.user_manager.delete_user(session, user)
                 session.commit()
 
-                context = self.email_manager.get_delete_context(user=user)
-                self._send_message(context=context)
-
                 with self.services.eventbus as event_session:
                     self.event_manager.send_delete_user_event(
                         session=event_session, user=user
@@ -411,10 +386,15 @@ class UsersService:
                     session=session, user_id=user.id, invitation=invitation
                 )
 
-                context = self.email_manager.get_invitation_context(
-                    user=user, group=group, roletype=roletype, invitation=invitation
-                )
-                self._send_message(context=context)
+                with self.services.eventbus as event_session:
+                    self.event_manager.send_invitation_event(
+                        session=event_session,
+                        user=user,
+                        group=group,
+                        roletype=roletype,
+                        invitation=invitation,
+                    )
+
             else:
                 raise PermissionError()
 
@@ -436,7 +416,7 @@ class UsersService:
                     roletype_id=invitation.with_roletype_id,
                 )
 
-                host_user = self.user_manager.get_user(
+                from_user = self.user_manager.get_user(
                     session=session, id=invitation.from_user_id
                 )
                 group = self.group_manager.get_group(
@@ -447,10 +427,14 @@ class UsersService:
                     roletype_id=invitation.with_roletype_id,
                 )
 
-                context = self.email_manager.get_accepted_invitation_context(
-                    user=user, group=group, roletype=roletype, host_user=host_user
-                )
-                self._send_message(context=context)
+                with self.services.eventbus as event_session:
+                    self.event_manager.send_accepted_invitation_event(
+                        session=event_session,
+                        to_user=user,
+                        group=group,
+                        roletype=roletype,
+                        from_user=from_user,
+                    )
 
                 # Delete invitation with another user
                 # May lead to permission error if the user lost delete permission
@@ -489,10 +473,12 @@ class UsersService:
             if result is False:
                 raise PermissionError()
             else:
-                context = self.email_manager.get_cancelled_invitation_context(
-                    user=user, group=group, invitation=invitation
-                )
-                self._send_message(context=context)
+                with self.services.eventbus as event_session:
+                    self.event_manager.send_cancelled_invitation_event(
+                        session=event_session,
+                        from_user=user,
+                        group=group,
+                    )
 
     def create_new_right(
         self, user_id: str, group_id: str, right: Right
@@ -557,9 +543,7 @@ class UsersService:
     def create_new_roletype(self, name: str, group_id: str) -> RoleType | None:
         """Create a new roletype"""
 
-        return self.roletype_manager.create_custom_roletype(
-            name=name, group_id=group_id
-        )
+        return self.roletype_manager.create_custom_roletype(name=name, group_id=group_id)
 
     def get_user_roletype(self, user_id: str, roletype_id: str) -> RoleType | None:
         """Return a specific user's roletype"""

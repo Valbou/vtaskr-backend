@@ -15,7 +15,7 @@ from sqlalchemy.orm import relationship
 
 from src.libs.sqlalchemy.base import mapper_registry
 from src.notifications.models import Subscription
-from src.ports import MessageType
+from src.notifications.settings import MessageType
 
 subscription_table = Table(
     "subscriptions",
@@ -36,20 +36,16 @@ subscription_table = Table(
     Column(
         "contact_id",
         String,
-        ForeignKey(
-            "contacts.id", ondelete="CASCADE", name="fk_subscription_contact_id"
-        ),
+        ForeignKey("contacts.id", ondelete="CASCADE", name="fk_subscription_contact_id"),
         nullable=False,
     ),
-    Column("event_name", String(150), nullable=False),
-    Column("event_type", Enum(MessageType), nullable=False),
-    UniqueConstraint(
-        "event_name", "event_type", "contact_id", name="subscriptions_events_contact_id"
-    ),
+    Column("name", String(150), nullable=False),
+    Column("type", Enum(MessageType), nullable=False),
+    UniqueConstraint("name", "type", "contact_id", name="subscriptions_contact_id"),
     Index(
-        "subscriptions_events_contact_index",
-        "event_name",
-        "event_type",
+        "subscriptions_contact_index",
+        "name",
+        "type",
         "contact_id",
         unique=True,
     ),

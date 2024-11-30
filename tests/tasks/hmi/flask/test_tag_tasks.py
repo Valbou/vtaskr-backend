@@ -14,9 +14,7 @@ class TestTagTasksAPI(DummyBaseTestCase):
         super().setUp()
         self.headers = self.get_json_headers()
 
-    @patch(
-        "src.tasks.services.TasksService.get_all_tag_tasks", return_value=[USER_TASK]
-    )
+    @patch("src.tasks.services.TasksService.get_all_tag_tasks", return_value=[USER_TASK])
     @patch("src.tasks.services.TasksService.check_user_tag_exists", return_value=True)
     def test_tag_tasks(self, mock_tag: MagicMock, mock_tasks: MagicMock):
         headers = self.get_token_headers()

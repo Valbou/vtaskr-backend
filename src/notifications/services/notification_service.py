@@ -1,44 +1,99 @@
 from src.libs.dependencies import DependencyInjector
-from src.notifications.models import MessageFabric, Subscription, Template
-from src.notifications.persistence import SubscriptionDBPort, TemplateDBPort
-from src.notifications.settings import APP_NAME
-from src.ports import AbstractMessage, AbstractSender, MessageType, NotificationPort
+from src.notifications.managers import (
+    AbstractSender,
+    ContactManager,
+    SubscriptionManager,
+)
+from src.notifications.models import (
+    AbstractMessage,
+    Contact,
+    MessageFabric,
+    MessageType,
+    TemplateFabric,
+)
+from src.notifications.settings import (
+    APP_NAME,
+    BASE_NOTIFICATION_EVENTS,
+    DEFAULT_SMTP_SENDER,
+)
+from src.settings import APP_NAME as GLOBAL_APP_NAME
+from src.settings import EMAIL_LOGO
 
 
-class NotificationService(NotificationPort):
-    messages: list[AbstractMessage] = []
+class NotificationService:
+    _messages: list[AbstractMessage] = []
 
-    def __init__(self, **kwargs) -> None:
-        self.messages = []
+    def __init__(self, services: DependencyInjector) -> None:
+        self.services = services
+        self._define_managers()
 
-    def set_context(self, **ctx) -> None:
-        self.app = ctx.pop("app")
-        self.services: DependencyInjector = self.app.dependencies
+    def _define_managers(self):
+        """Define managers from domain (no DI here)"""
 
-        self.subscription_db: SubscriptionDBPort = (
-            self.services.persistence.get_repository(APP_NAME, "Subscription")
-        )
-        self.template_db: TemplateDBPort = self.services.persistence.get_repository(
-            APP_NAME, "Subscription"
-        )
-        self.contact_db: TemplateDBPort = self.services.persistence.get_repository(
-            APP_NAME, "Contact"
-        )
+        self.subscription_manager = SubscriptionManager(services=self.services)
+        self.contact_manager = ContactManager(services=self.services)
 
-    def build_message(self, context: dict) -> AbstractMessage:
-        message_type = context.pop("message_type")
-        template = Template.temp_template_from_context(context=context)
-        subscription = Subscription.temp_subscription_from_context(context=context)
+    def _extend_context(self, context: dict) -> dict:
+        return {
+            "APP_NAME": GLOBAL_APP_NAME,
+            "DEFAULT_SMTP_SENDER": DEFAULT_SMTP_SENDER,
+            "EMAIL_LOGO": EMAIL_LOGO,
+            **context,
+        }
 
-        with self.app.app_context():
-            message_class = MessageFabric.get_message_class(event_type=message_type)
-            message = message_class(
-                subscriptions=[subscription], template=template, context=context
+    def add_new_contact(self, contact: Contact) -> None:
+        """Add a new contact and subscribe to all basics notifications"""
+
+        with self.services.persistence.get_session() as session:
+            contact = self.contact_manager.create(session=session, contact=contact)
+
+            for name in BASE_NOTIFICATION_EVENTS:
+                self.subscription_manager.subscribe(
+                    session=session, name=name, type=MessageType.EMAIL, contact=contact
+                )
+
+    def build_messages(self, name: str, context: dict) -> list[AbstractMessage]:
+        """Load messages, translate and interpolate them"""
+
+        with self.services.persistence.get_session() as session:
+            subscriptions = self.subscription_manager.get_subscriptions_for_event(
+                session=session, name=name, targets=context.get("targets", [])
             )
-            return message
 
-    def add_message(self, message: AbstractMessage):
-        self.messages.append(message)
+            indexed_subscriptions = (
+                self.subscription_manager.get_subscriptions_indexed_by_message_type(
+                    subscriptions=subscriptions
+                )
+            )
+
+            context = self._extend_context(context=context)
+
+            messages = []
+            fab = TemplateFabric()
+            for sub_type_name, subs in indexed_subscriptions.items():
+                sub_type = [m for m in MessageType if m.name == sub_type_name][0]
+                template = fab.get_template(template_type=sub_type, name=name)
+
+                for sub in subs:
+                    with self.services.translation.get_translation_session(
+                        domain=APP_NAME, locale=sub.contact.locale
+                    ) as trans_session:
+                        message_class = MessageFabric.get_message_class(
+                            message_type=sub_type
+                        )
+                        messages.append(
+                            message_class(
+                                session=trans_session,
+                                subscriptions=subs,
+                                template=template,
+                                context=context,
+                            )
+                        )
+
+            return messages
+
+    def add_messages(self, messages: list[AbstractMessage]):
+        self._messages.extend(messages)
 
     def notify_all(self):
         # Prepare all senders
@@ -46,7 +101,7 @@ class NotificationService(NotificationPort):
             sender = sender_class()
 
             # Dispatch messages
-            for message in self.messages:
+            for message in self._messages:
                 if sender.can_handle(message):
                     sender.add_message(message)
 
@@ -54,61 +109,9 @@ class NotificationService(NotificationPort):
             sender.send()
 
         # Flush all messages
-        self.messages.clear()
+        self._messages.clear()
 
-    def notify_event(self, event_name: str, context: dict):
-        with self.app.dependencies.persistence.get_session() as session:
-            for event_type in MessageType:
-                subscriptions = self.subscription_db.get_subscriptions_for_event(
-                    session=session, event_name=event_name, event_type=event_type
-                )
-
-                if subscriptions:
-                    template = self.template_db.get_template_for_event(
-                        session=session, event_name=event_name, event_type=event_type
-                    )
-
-                    if template:
-                        with self.app.app_context():
-                            message_class = MessageFabric.get_message_class(
-                                event_type=event_type
-                            )
-                            message = message_class(
-                                subscriptions=subscriptions,
-                                template=template,
-                                context=context,
-                            )
-
-                            self.add_message(message)
-
-            self.notify_all()
-
-    def subscribe(
-        self, event_name: str, event_type: MessageType, tenant_id: str
-    ) -> Subscription:
-        with self.app.dependencies.persistence.get_session() as session:
-            contact = self.contact_db.load(session, id=tenant_id)
-
-            subscription = Subscription(
-                event_type=event_type,
-                event_name=event_name,
-                contact_id=tenant_id,
-                contact=contact,
-            )
-
-            self.subscription_db.save(session, subscription)
-
-        return subscription
-
-
-class TestNotificationService(NotificationService):
-    notify_all_calls = []
-    notify_event_calls = []
-
-    def notify_all(self):
-        """No send in test environnement"""
-        self.notify_all_calls.append(None)
-
-    def notify_event(self, event_name: str, context: dict):
-        """No send in test environnement"""
-        self.notify_event_calls.append({"event_name": event_name, "context": context})
+    def notify(self, event_name: str, event_data: dict):
+        messages = self.build_messages(name=event_name, event_data=event_data)
+        self.add_messages(messages=messages)
+        self.notify_all()

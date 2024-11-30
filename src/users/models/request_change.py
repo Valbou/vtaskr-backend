@@ -58,10 +58,14 @@ class RequestChange:
 
     def is_valid(self) -> bool:
         """
-        A RequestChange is valid only if it's creation date is less older than REQUEST_VALIDITY
+        A RequestChange is valid only if it's creation date
+        is less older than REQUEST_VALIDITY
         """
         delta: timedelta = datetime.now(tz=ZoneInfo("UTC")) - self.created_at
         return not self.done and 0 <= delta.seconds < REQUEST_VALIDITY
+
+    def get_validity_limit(self) -> datetime:
+        return self.created_at + timedelta(seconds=REQUEST_VALIDITY)
 
     @classmethod
     def history_expired_before(cls) -> datetime:

@@ -39,10 +39,14 @@ class Invitation:
 
     def is_valid(self) -> bool:
         """
-        An invitation is valid only if it's creation date is less older than INVITE_VALIDITY
+        An invitation is valid only if it's creation date
+        is less older than INVITE_VALIDITY
         """
         delta: timedelta = datetime.now(tz=ZoneInfo("UTC")) - self.created_at
         return 0 <= delta.seconds < INVITE_VALIDITY
+
+    def get_validity_limit(self) -> datetime:
+        return self.created_at + timedelta(seconds=INVITE_VALIDITY)
 
     @classmethod
     def expired_before(cls) -> datetime:

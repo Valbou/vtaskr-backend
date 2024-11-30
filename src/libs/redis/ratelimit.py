@@ -33,7 +33,10 @@ class RateLimit:
 
     @property
     def key(self) -> str:
-        return f"{self.user}_{self.resource_name}_{self.period.total_seconds()}_{self.limit}"
+        return (
+            f"{self.user}_{self.resource_name}_"
+            f"{self.period.total_seconds()}_{self.limit}"
+        )
 
     def _increment(self):
         self.value = self.redis.get(self.key)

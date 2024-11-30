@@ -1,4 +1,4 @@
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
 from src.notifications.events import (
     UsersDeleteUserObserver,
@@ -12,28 +12,45 @@ from tests.base_test import DummyBaseTestCase
 class TestObservers(DummyBaseTestCase):
     def setUp(self) -> None:
         super().setUp()
+
         self.repository_mock = MagicMock()
         self.app.dependencies.persistence.get_repository = MagicMock(
             return_value=self.repository_mock
         )
 
-    def test_0_register_observer(self):
+    def test_users_register_user(self):
         event_data = {
             "tenant_id": "abc123",
+            "first_name": "first",
+            "last_name": "last",
             "email": self.generate_email(),
             "telegram": "",
             "phone_number": "",
         }
 
-        UsersRegisterUserObserver.run(
-            self.app, event_name="users:register", event_data=event_data
-        )
+        with patch(
+            "src.notifications.events.users.users_observers.NotificationService"
+        ) as MockClass:
+            service = MockClass.return_value
+            service.add_new_contact.return_value = MagicMock()
+            service.add_messages.return_value = MagicMock()
+            service.build_messages.return_value = MagicMock()
+            service.notify_all.return_value = MagicMock()
 
-        self.repository_mock.load.assert_called_once()
+            UsersRegisterUserObserver.run(
+                self.app, event_name="users:register:user", event_data=event_data
+            )
+
+            service.add_new_contact.assert_called_once()
+            service.build_messages.assert_called_once()
+            service.add_messages.assert_called_once()
+            service.notify_all.assert_called_once()
 
     def test_1_update_existing_user_observer(self):
         contact = Contact(
             id="abc123",
+            first_name="first",
+            last_name="last",
             email=self.generate_email(),
             telegram="",
             phone_number="",
@@ -41,6 +58,8 @@ class TestObservers(DummyBaseTestCase):
 
         event_data = {
             "tenant_id": "abc123",
+            "first_name": "first",
+            "last_name": "last",
             "email": self.generate_email(),
             "telegram": "123456",
             "phone_number": "654321",
@@ -61,6 +80,8 @@ class TestObservers(DummyBaseTestCase):
     def test_1_update_missing_user_observer(self):
         event_data = {
             "tenant_id": "abc123",
+            "first_name": "first",
+            "last_name": "last",
             "email": self.generate_email(),
             "telegram": "123456",
             "phone_number": "654321",
@@ -78,6 +99,8 @@ class TestObservers(DummyBaseTestCase):
     def test_2_delete_user_observer(self):
         event_data = {
             "tenant_id": "abc123",
+            "first_name": "first",
+            "last_name": "last",
             "email": self.generate_email(),
             "telegram": "123456",
             "phone_number": "654321",

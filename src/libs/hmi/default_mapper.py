@@ -1,6 +1,11 @@
 from dataclasses import asdict
 
 
+def filter_fields(dto_cls, data: dict) -> dict:
+    fields = [str(f) for f in dto_cls.__dataclass_fields__]
+    return {k: v for k, v in data.items() if k in fields}
+
+
 def list_models_to_list_dto(dto_cls, objs: list | None) -> list:
     """
     Give a mapper DTO class and the corresponding list objects

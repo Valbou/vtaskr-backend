@@ -1,4 +1,3 @@
-from .emails_manager import *
 from .group_manager import *
 from .invitation_manager import *
 from .request_change_manager import *

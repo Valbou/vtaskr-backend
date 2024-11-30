@@ -1,59 +1,99 @@
 from unittest.mock import MagicMock
 
-from src.notifications.models import BaseEmailContent, Contact
+from src.notifications.models import AbstractMessage, Contact, Subscription
 from src.notifications.services import NotificationService
-from src.ports import MessageType
+from src.notifications.settings import BASE_NOTIFICATION_EVENTS, MessageType
 from tests.base_test import BaseTestCase
 
 
 class TestNotificationsService(BaseTestCase):
     def setUp(self) -> None:
         super().setUp()
-        self.notification_service = NotificationService()
-        self.notification_service.set_context(app=self.app)
+        self.notification_service = NotificationService(services=self.app.dependencies)
 
-    def test_build_message(self):
-        context = {
-            "message_type": MessageType.EMAIL,
-            "sender": "Test Sender <sender@example.com>",
-            "template": "emails/login",
-            "to": "receiver@example.com",
-            "subject": "Subject Test {paragraph_1}",
-            "tenant_id": "",
-            "title": "Title Test",
-            "content_title": "Content Title Test",
-            "paragraph_1": "p1",
-            "paragraph_2": "p2",
-            "code": "code",
-            "paragraph_3": "p3",
-            "call_to_action": None,
-        }
-        message: BaseEmailContent = self.notification_service.build_message(context)
-        self.notification_service.add_message(message=message)
-
-        self.assertIsInstance(message, BaseEmailContent)
-        self.assertEqual(len(self.notification_service.messages), 1)
-        self.assertEqual(message.subject, "Subject Test p1")
-
-    def test_subscribe(self):
-        telegram_chat_id = "a1b2c3d4"
-        tenant_id = "abc132"
+    def test_add_new_contact(self):
         contact = Contact(
-            id=tenant_id,
-            telegram=telegram_chat_id,
-        )
-        self.notification_service.contact_db.load = MagicMock(return_value=contact)
-        self.notification_service.subscription_db = MagicMock()
-
-        subscription = self.notification_service.subscribe(
-            event_name="test:subscribe",
-            event_type=MessageType.TELEGRAM,
-            tenant_id=tenant_id,
+            first_name="first",
+            last_name="last",
+            email="test@example.com",
         )
 
-        self.notification_service.contact_db.load.assert_called_once()
-        self.notification_service.subscription_db.save.assert_called_once()
-        self.assertEqual(subscription.contact_id, tenant_id)
-        self.assertEqual(subscription.contact.telegram, telegram_chat_id)
-        self.assertEqual(subscription.event_type, MessageType.TELEGRAM)
-        self.assertEqual(subscription.event_name, "test:subscribe")
+        self.notification_service.contact_manager.create = MagicMock(
+            return_value=contact
+        )
+        self.notification_service.subscription_manager.subscribe = MagicMock()
+
+        self.notification_service.add_new_contact(contact=contact)
+
+        self.notification_service.contact_manager.create.assert_called_once()
+        call_count = self.notification_service.subscription_manager.subscribe.call_count
+        self.assertEqual(call_count, len(BASE_NOTIFICATION_EVENTS))
+
+    def test_build_messages(self):
+        event = "users:register:user"
+        context = {
+            "first_name": "first",
+            "email": "test@example.com",
+            "LINK_TO_LOGIN": "htttp://www.vtaskr.com",
+            "targets": ["test@example.com"],
+        }
+        self.notification_service._messages.clear()
+
+        self.notification_service.subscription_manager.get_subscriptions_for_event = (
+            MagicMock()
+        )
+        self.notification_service.subscription_manager.get_subscriptions_indexed_by_message_type = MagicMock(
+            return_value={
+                MessageType.EMAIL.name: [
+                    Subscription(
+                        type=MessageType.EMAIL,
+                        contact_id="abc123",
+                        contact=Contact(
+                            first_name="first",
+                            last_name="last",
+                            email="test@example.com",
+                            id="abc132",
+                            locale="en_GB",
+                        ),
+                        name="users:register:user",
+                    )
+                ],
+            }
+        )
+
+        with self.app.app_context():
+            messages = self.notification_service.build_messages(
+                name=event, context=context
+            )
+
+        self.notification_service.subscription_manager.get_subscriptions_for_event.assert_called_once()
+        self.notification_service.subscription_manager.get_subscriptions_indexed_by_message_type.assert_called_once()
+
+        self.assertIsInstance(messages, list)
+        self.assertEqual(len(messages), 1)
+        self.assertIsInstance(messages[0], AbstractMessage)
+
+        self.assertEqual(len(self.notification_service._messages), 0)
+
+    def test_add_messages(self):
+        initial = len(self.notification_service._messages)
+        messages = ["a", "b", "c"]
+
+        self.notification_service.add_messages(messages)
+
+        final = len(self.notification_service._messages)
+        self.assertEqual(final, initial + len(messages))
+
+    def test_notify(self):
+        event = "users:register:user"
+        context = {}
+
+        self.notification_service.build_messages = MagicMock()
+        self.notification_service.add_messages = MagicMock()
+        self.notification_service.notify_all = MagicMock()
+
+        self.notification_service.notify(event_name=event, event_data=context)
+
+        self.notification_service.build_messages.assert_called_once()
+        self.notification_service.add_messages.assert_called_once()
+        self.notification_service.notify_all.assert_called_once()

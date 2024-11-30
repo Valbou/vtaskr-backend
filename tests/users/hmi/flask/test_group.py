@@ -150,9 +150,7 @@ class TestGroupAPI(DummyBaseTestCase):
         group_id = "group_123"
 
         with set_fake_authentication(app=self.app, user=self.user, token=self.token):
-            response = self.client.delete(
-                f"{URL_API}/group/{group_id}", headers=headers
-            )
+            response = self.client.delete(f"{URL_API}/group/{group_id}", headers=headers)
 
         self.assertEqual(response.status_code, 204)
 

@@ -45,9 +45,7 @@ class PasswordChecker:
     def _check_length(self, password: str) -> bool:
         if len(password) >= PASSWORD_MIN_LENGTH:
             return True
-        self.errors.append(
-            _(f"At least {PASSWORD_MIN_LENGTH} characters are required.")
-        )
+        self.errors.append(_(f"At least {PASSWORD_MIN_LENGTH} characters are required."))
         return False
 
     def _search_lowercase_letter(self, password: str) -> bool:

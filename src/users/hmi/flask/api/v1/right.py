@@ -68,9 +68,7 @@ def rights():
     users_service = UsersService(services=current_app.dependencies)
 
     if request.method == "GET":
-        qsf = QueryStringFilter(
-            query_string=request.query_string.decode(), dto=RightDTO
-        )
+        qsf = QueryStringFilter(query_string=request.query_string.decode(), dto=RightDTO)
 
         rights = users_service.get_all_user_rights(g.user.id, qsf.get_filters())
         rights_dto = list_models_to_list_dto(RightMapperDTO, rights)

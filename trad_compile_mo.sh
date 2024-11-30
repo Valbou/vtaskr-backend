@@ -3,8 +3,7 @@
 # Third script to run to generate a compiled .mo file 
 
 # To use it pass the folder app to trad
-# ./trad_compile_mo users
-# ./trad_compile_mo tasks
+# ./trad_compile_mo notifications
 
 source ../bin/activate
 

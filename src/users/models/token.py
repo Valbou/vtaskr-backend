@@ -31,6 +31,7 @@ class Token:
         """
         A Token is temp valid only if is temp and less older than TOKEN_TEMP_VALIDITY
         """
+
         delta: timedelta = datetime.now(tz=ZoneInfo("UTC")) - self.created_at
         return self.temp and 0 <= delta.total_seconds() < TOKEN_TEMP_VALIDITY
 
@@ -41,6 +42,9 @@ class Token:
         """
         delta: timedelta = datetime.now(tz=ZoneInfo("UTC")) - self.last_activity_at
         return not self.temp and 0 <= delta.total_seconds() < TOKEN_VALIDITY
+
+    def get_validity_limit(self) -> datetime:
+        return self.created_at + timedelta(seconds=TOKEN_TEMP_VALIDITY)
 
     def validate_token(self, code) -> bool:
         """Method to convert a temp token to a valid token"""

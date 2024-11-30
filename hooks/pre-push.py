@@ -93,9 +93,7 @@ def check_coverage_report(interpreter: str) -> int:
 
 
 def check_git_branch_name() -> int:
-    process = run(
-        ["/bin/git", "rev-parse", "--abbrev-ref", "HEAD"], capture_output=True
-    )
+    process = run(["/bin/git", "rev-parse", "--abbrev-ref", "HEAD"], capture_output=True)
     branch_name = process.stdout
     if re.match(
         r"(^(feat|fix|doc|test|perf|refacto)([-\w]+)-#([\d]+)$)|(^master$)|(^dev$)",

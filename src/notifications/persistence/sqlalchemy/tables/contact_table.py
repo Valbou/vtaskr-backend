@@ -4,6 +4,7 @@ from zoneinfo import ZoneInfo
 from sqlalchemy import Column, DateTime, String, Table
 from sqlalchemy.orm import relationship
 
+from src.libs.babel.sqlalchemy_utils import LocaleField
 from src.libs.sqlalchemy.base import mapper_registry
 from src.notifications.models import Contact
 
@@ -23,6 +24,10 @@ contact_table = Table(
         default=datetime.now(tz=ZoneInfo("UTC")),
         nullable=False,
     ),
+    Column("first_name", String(25), nullable=False),
+    Column("last_name", String(25), nullable=False),
+    Column("locale", LocaleField),
+    Column("timezone", String(35)),
     Column("email", String(250), nullable=False),
     Column("telegram", String(90), nullable=False),
     Column("phone_number", String(20), nullable=False),

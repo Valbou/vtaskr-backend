@@ -11,9 +11,7 @@ class TestRoleManager(DummyBaseTestCase):
         self.role_m = RoleManager(services=self.app.dependencies)
 
     def _get_role(self) -> Role:
-        return Role(
-            user_id="user_123", group_id="group_123", roletype_id="roletype_123"
-        )
+        return Role(user_id="user_123", group_id="group_123", roletype_id="roletype_123")
 
     def test_create_role(self):
         role = self._get_role()

@@ -92,7 +92,8 @@ class QueryStringFilter:
         ):
             filter.value = None
 
-        # Attempt to infer Optional and Union recursively or pipe notation (not a _GenericAlias)
+        # Attempt to infer Optional and Union recursively 
+        # or pipe notation (not a _GenericAlias)
         elif isinstance(field_type, _GenericAlias) or isinstance(
             field_type, types.UnionType
         ):

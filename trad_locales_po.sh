@@ -3,8 +3,7 @@
 # Second script to run to generate a local .po file 
 
 # To use it pass the folder app to trad
-# ./trad_locales_po users
-# ./trad_locales_po tasks
+# ./trad_locales_po notifications
 
 source ../bin/activate
 

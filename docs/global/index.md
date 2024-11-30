@@ -65,3 +65,10 @@ To help developers to find the right file in the good folder, we use an app stru
 This code structure permit to move easily to a new lib with a limited rewrite scoped in the lib folder. We can imagine concurrent use of some libs in the same repo. Why not a Flask implementation and a FastAPI side by side, then you just need to run.sh --flask or run.sh --fastapi to swith !
 
 **Feel free to discuss about this code organisation if you have found a better way to do it !**
+
+## Deep dive into apps:
+
+- [Users](./users/index.md)
+- [Tasks](./tasks/index.md)
+- [Notifications](./notifications/index.md)
+- [Events](./events/index.md)

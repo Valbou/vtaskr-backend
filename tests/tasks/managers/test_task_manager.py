@@ -31,9 +31,7 @@ class TestTaskManager(DummyBaseTestCase):
         self.task_m.task_db.load = MagicMock(return_value=base_task)
         self.task_m.services.identity.can = MagicMock(return_value=True)
 
-        task = self.task_m.get_task(
-            session=None, user_id="user_123", task_id="task_123"
-        )
+        task = self.task_m.get_task(session=None, user_id="user_123", task_id="task_123")
 
         self.task_m.task_db.load.assert_called_once()
         self.task_m.services.identity.can.assert_called_once()

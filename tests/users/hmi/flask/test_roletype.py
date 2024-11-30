@@ -91,9 +91,7 @@ class TestRoleTypeAPI(DummyBaseTestCase):
         "src.users.services.UsersService.get_user_roletype",
         return_value=USER_ROLETYPE,
     )
-    def test_update_roletype_put(
-        self, mock_roletype: MagicMock, mock_update: MagicMock
-    ):
+    def test_update_roletype_put(self, mock_roletype: MagicMock, mock_update: MagicMock):
         headers = self.get_token_headers()
 
         new_name = self.fake.word()

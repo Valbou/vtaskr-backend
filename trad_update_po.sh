@@ -3,8 +3,7 @@
 # Fourth script to run to generate an updated local .po file 
 
 # To use it pass the folder app to trad
-# ./trad_update_po users
-# ./trad_update_po tasks
+# ./trad_update_po notifications
 
 source ../bin/activate
 

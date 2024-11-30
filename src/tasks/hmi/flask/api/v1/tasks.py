@@ -38,9 +38,7 @@ api_item = {
             "201": {
                 "description": "Created task",
                 "content": {
-                    "application/json": {
-                        "schema": {"$ref": "#/components/schemas/Task"}
-                    }
+                    "application/json": {"schema": {"$ref": "#/components/schemas/Task"}}
                 },
             },
             "400": {
@@ -119,9 +117,7 @@ api_item = {
             "200": {
                 "description": "Created task",
                 "content": {
-                    "application/json": {
-                        "schema": {"$ref": "#/components/schemas/Task"}
-                    }
+                    "application/json": {"schema": {"$ref": "#/components/schemas/Task"}}
                 },
             },
         },
@@ -143,9 +139,7 @@ api_item = {
             "200": {
                 "description": "Updated task",
                 "content": {
-                    "application/json": {
-                        "schema": {"$ref": "#/components/schemas/Task"}
-                    }
+                    "application/json": {"schema": {"$ref": "#/components/schemas/Task"}}
                 },
             },
         },
@@ -174,9 +168,7 @@ api_item = {
             "200": {
                 "description": "Updated task",
                 "content": {
-                    "application/json": {
-                        "schema": {"$ref": "#/components/schemas/Task"}
-                    }
+                    "application/json": {"schema": {"$ref": "#/components/schemas/Task"}}
                 },
             },
         },
@@ -212,9 +204,7 @@ api_item = {
 openapi.register_path(f"{V1}/task/{{task_id}}", api_item)
 
 
-@tasks_bp.route(
-    f"{V1}/task/<string:task_id>", methods=["GET", "PUT", "PATCH", "DELETE"]
-)
+@tasks_bp.route(f"{V1}/task/<string:task_id>", methods=["GET", "PUT", "PATCH", "DELETE"])
 @login_required(logger)
 @rate_limited(logger=logger, hit=5, period=timedelta(seconds=1))
 def task(task_id: str):

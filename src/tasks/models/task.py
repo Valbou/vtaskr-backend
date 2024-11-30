@@ -7,8 +7,9 @@ It's for a basic to do list without strong priority, it's just a reminder.
 A long task may need to be scheduled, timed and may have dependencies.
 It's more a project management.
 
-Real life mix quick and long tasks, a relatively long task like write a new code feature,
-may come with some quick tasks: check code quality, check tests are ok, check variable names etc...
+Real life mix quick and long tasks, a relatively long task like
+write a new code feature, may come with some quick tasks:
+check code quality, check tests are ok, check variable names etc...
 """
 
 from dataclasses import dataclass, field

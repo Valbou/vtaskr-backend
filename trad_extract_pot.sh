@@ -4,8 +4,7 @@
 # uses in python files and jinja templates
 
 # To use it pass the folder app to trad
-# ./trad_extract_pot users
-# ./trad_extract_pot tasks
+# ./trad_extract_pot notifications
 
 source ../bin/activate
 

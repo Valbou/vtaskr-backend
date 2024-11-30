@@ -5,9 +5,9 @@
 ## Install vTaskr
 
 No specific skill needed, but we need first to:
-- Install Postgres 15 or higher
+- Install Postgres 16 or higher
 - Install Redis 6 or higher
-- Install Python 3.10 or higher
+- Install Python 3.12 or higher
 - Create a python virtual environment (venv).
 
 ```bash

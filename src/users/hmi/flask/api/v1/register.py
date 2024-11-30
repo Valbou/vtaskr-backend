@@ -19,9 +19,7 @@ api_item = {
             "201": {
                 "description": "no response content",
                 "content": {
-                    "application/json": {
-                        "schema": {"$ref": "#/components/schemas/User"}
-                    }
+                    "application/json": {"schema": {"$ref": "#/components/schemas/User"}}
                 },
             },
             "400": {

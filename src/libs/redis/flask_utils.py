@@ -8,9 +8,7 @@ from src.libs.flask.utils import ResponseAPI, get_ip
 from src.libs.redis.ratelimit import LimitExceededError, RateLimit
 
 
-def rate_limited(
-    logger: Logger, hit: int = 1, period: timedelta = timedelta(seconds=1)
-):
+def rate_limited(logger: Logger, hit: int = 1, period: timedelta = timedelta(seconds=1)):
     def decorator(func: Callable):
         @wraps(func)
         def wrapper(*args, **kwargs):

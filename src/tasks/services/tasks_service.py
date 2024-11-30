@@ -72,9 +72,7 @@ class TasksService:
         """Create a new tag for a user"""
 
         with self.services.persistence.get_session() as session:
-            return self.tag_manager.create_tag(
-                session=session, user_id=user_id, tag=tag
-            )
+            return self.tag_manager.create_tag(session=session, user_id=user_id, tag=tag)
 
     def get_user_tag(self, user_id: str, tag_id: str) -> Tag | None:
         """Return a user's tag"""
@@ -120,17 +118,13 @@ class TasksService:
         """Update a tag"""
 
         with self.services.persistence.get_session() as session:
-            return self.tag_manager.update_tag(
-                session=session, user_id=user_id, tag=tag
-            )
+            return self.tag_manager.update_tag(session=session, user_id=user_id, tag=tag)
 
     def delete_tag(self, user_id: str, tag: Tag) -> bool:
         """Delete a tag"""
 
         with self.services.persistence.get_session() as session:
-            return self.tag_manager.delete_tag(
-                session=session, user_id=user_id, tag=tag
-            )
+            return self.tag_manager.delete_tag(session=session, user_id=user_id, tag=tag)
 
     def set_tags_to_task(self, user_id: str, task_id: str, tag_ids: list[str]) -> bool:
         """Set tags to a task"""

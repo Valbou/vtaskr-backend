@@ -5,7 +5,6 @@ from src.ports import (
     EventBusPort,
     IdentityAccessManagementPort,
     InjectablePort,
-    NotificationPort,
     PersistencePort,
     TranslationPort,
 )
@@ -15,7 +14,6 @@ class DependencyType(Enum):
     CACHE = "cache"
     EVENTBUS = "eventbus"
     IDENTITY = "identity"
-    NOTIFICATION = "notification"
     PERSISTENCE = "persistence"
     TRANSLATION = "translation"
 
@@ -24,7 +22,6 @@ class DependencyInjector:
     cache: CachePort
     eventbus: EventBusPort
     identity: IdentityAccessManagementPort
-    notification: NotificationPort
     persistence: PersistencePort
     translation: TranslationPort
 

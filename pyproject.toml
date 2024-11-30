@@ -9,11 +9,11 @@ authors = [
 ]
 description = "An open-source to do list application"
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.12"
 license = {text = "GNU General Public License v3.0"}
 classifiers = [
     "Framework :: Flask",
-    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.12",
 ]
 
 dependencies = [
@@ -45,6 +45,9 @@ optional-dependencies.dev = [
 ]
 
 [tool.setuptools_scm]
+
+[tool.black]
+line-length = 89
 
 [tool.isort]
 profile = "black"

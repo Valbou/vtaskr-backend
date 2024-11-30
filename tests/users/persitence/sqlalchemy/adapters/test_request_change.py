@@ -32,9 +32,7 @@ class TestRequestChangeAdapter(BaseTestCase):
             self.request_change_db.update(session, self.request_change)
             session.commit()
 
-            request_change = self.request_change_db.load(
-                session, self.request_change.id
-            )
+            request_change = self.request_change_db.load(session, self.request_change.id)
             self.assertNotEqual(old_code, request_change.code)
             self.assertEqual(request_change.id, self.request_change.id)
             self.request_change_db.delete(session, self.request_change)

@@ -13,9 +13,7 @@ def setup_flask(app: Flask, project_dir: str) -> dict:
     return {
         "domains": [APP_NAME],
         "loaders": [
-            FileSystemLoader(
-                f"{project_dir}/src/{APP_NAME.lower()}/hmi/flask/templates"
-            )
+            FileSystemLoader(f"{project_dir}/src/{APP_NAME.lower()}/hmi/flask/templates")
         ],
         "observers": [],
         "repositories": [

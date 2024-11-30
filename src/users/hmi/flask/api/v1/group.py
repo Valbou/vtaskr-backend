@@ -67,9 +67,7 @@ def groups():
     """
 
     if request.method == "GET":
-        qsf = QueryStringFilter(
-            query_string=request.query_string.decode(), dto=GroupDTO
-        )
+        qsf = QueryStringFilter(query_string=request.query_string.decode(), dto=GroupDTO)
 
         users_service = UsersService(current_app.dependencies)
         groups = users_service.get_all_user_groups(

@@ -4,7 +4,7 @@ from typing import Callable
 from src.events.models import Event
 from src.ports import EventBusPort, ObserverPort
 
-from .event_service import EventsService
+from .events_service import EventsService
 
 
 class EventBusService(EventBusPort):
@@ -63,3 +63,8 @@ class EventBusService(EventBusPort):
 
         if len(self.events):
             self.execute()
+
+
+class TestEventBusService(EventBusService):
+    def execute(self):
+        self.events.clear()

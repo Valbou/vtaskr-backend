@@ -27,6 +27,7 @@ class TranslationSession:
             languages=[
                 self.lang,
             ],
+            fallback=True,
         )
 
     def __exit__(self, exc_type, exc_value, traceback):
@@ -45,9 +46,7 @@ class TranslationService(TranslationPort):
 
     def _check_valid_domain(self, domain: str):
         if domain not in self.domains:
-            raise TranslationsInvalidDomainError(
-                f"The domain {domain} is not installed"
-            )
+            raise TranslationsInvalidDomainError(f"The domain {domain} is not installed")
 
     def _check_valid_language(self, lang: str):
         if lang not in self.languages:

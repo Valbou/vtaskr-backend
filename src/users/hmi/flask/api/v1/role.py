@@ -198,9 +198,7 @@ api_item = {
 openapi.register_path(f"{V1}/role/{{role_id}}", api_item)
 
 
-@users_bp.route(
-    f"{V1}/role/<string:role_id>", methods=["GET", "PUT", "PATCH", "DELETE"]
-)
+@users_bp.route(f"{V1}/role/<string:role_id>", methods=["GET", "PUT", "PATCH", "DELETE"])
 @login_required(logger)
 @rate_limited(logger=logger, hit=5, period=timedelta(seconds=60))
 def role(role_id: str):
