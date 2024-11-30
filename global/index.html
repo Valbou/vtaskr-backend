@@ -86,6 +86,10 @@
               <ul class="nav flex-column">
               </ul>
             </li>
+            <li class="nav-item" data-bs-level="2"><a href="#deep-dive-into-apps" class="nav-link">Deep dive into apps:</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
               </ul>
             </li>
         </ul>
@@ -104,6 +108,7 @@ To continue to develop vTaskr with pleasure, we need to keep base code clear, an
 <li><a href="#git-strategy">Git Strategy</a></li>
 <li><a href="#repository-structure">Repository structure</a></li>
 <li><a href="#apps-structure">Apps structure</a></li>
+<li><a href="#deep-dive-into-apps">Deep dive into apps:</a></li>
 </ul>
 </li>
 </ul>
@@ -155,7 +160,14 @@ After merge, branch is deleted.  </p>
 <li><strong>settings.py</strong>: specific settings for the app, need at least a APP_NAME value.</li>
 </ul>
 <p>This code structure permit to move easily to a new lib with a limited rewrite scoped in the lib folder. We can imagine concurrent use of some libs in the same repo. Why not a Flask implementation and a FastAPI side by side, then you just need to run.sh --flask or run.sh --fastapi to swith !</p>
-<p><strong>Feel free to discuss about this code organisation if you have found a better way to do it !</strong></p></div>
+<p><strong>Feel free to discuss about this code organisation if you have found a better way to do it !</strong></p>
+<h2 id="deep-dive-into-apps">Deep dive into apps:</h2>
+<ul>
+<li><a href="users/">Users</a></li>
+<li><a href="tasks/">Tasks</a></li>
+<li><a href="notifications/">Notifications</a></li>
+<li><a href="events/">Events</a></li>
+</ul></div>
             </div>
         </div>
 

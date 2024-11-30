@@ -2,22 +2,38 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://valbou.github.io/vtaskr-backend/</loc>
-         <lastmod>2024-11-01</lastmod>
+         <lastmod>2024-11-30</lastmod>
     </url>
     <url>
          <loc>https://valbou.github.io/vtaskr-backend/about/</loc>
-         <lastmod>2024-11-01</lastmod>
+         <lastmod>2024-11-30</lastmod>
     </url>
     <url>
          <loc>https://valbou.github.io/vtaskr-backend/getting-started/</loc>
-         <lastmod>2024-11-01</lastmod>
+         <lastmod>2024-11-30</lastmod>
     </url>
     <url>
          <loc>https://valbou.github.io/vtaskr-backend/roadmap/</loc>
-         <lastmod>2024-11-01</lastmod>
+         <lastmod>2024-11-30</lastmod>
     </url>
     <url>
          <loc>https://valbou.github.io/vtaskr-backend/global/</loc>
-         <lastmod>2024-11-01</lastmod>
+         <lastmod>2024-11-30</lastmod>
+    </url>
+    <url>
+         <loc>https://valbou.github.io/vtaskr-backend/global/events/</loc>
+         <lastmod>2024-11-30</lastmod>
+    </url>
+    <url>
+         <loc>https://valbou.github.io/vtaskr-backend/global/notifications/</loc>
+         <lastmod>2024-11-30</lastmod>
+    </url>
+    <url>
+         <loc>https://valbou.github.io/vtaskr-backend/global/tasks/</loc>
+         <lastmod>2024-11-30</lastmod>
+    </url>
+    <url>
+         <loc>https://valbou.github.io/vtaskr-backend/global/users/</loc>
+         <lastmod>2024-11-30</lastmod>
     </url>
 </urlset>
