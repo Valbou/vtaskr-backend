@@ -20,7 +20,9 @@ def get_events(tenant_id: str):
     event_service = EventsService(current_app.dependencies)
 
     if request.method == "GET":
-        events = event_service.get_all_tenant_events(user_id=g.user.id, tenant_id=tenant_id)
+        events = event_service.get_all_tenant_events(
+            user_id=g.user.id, tenant_id=tenant_id
+        )
         events_dto = list_models_to_list_dto(EventDTOMapperDTO, events)
 
         return ResponseAPI.get_response(list_dto_to_dict(events_dto), 200)

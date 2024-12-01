@@ -28,14 +28,22 @@ class EventsService:
 
     def get_all_events_of_name(self, name: str) -> list[Event]:
         with self.services.persistence.get_session() as session:
-            return self.event_manager.get_all_events_of_name(
-                session=session, name=name
-            )
+            return self.event_manager.get_all_events_of_name(session=session, name=name)
 
-    def add_event(self, tenant_id: str, event_name: str, data: dict, created_at: datetime | None = None) -> Event:
+    def add_event(
+        self,
+        tenant_id: str,
+        event_name: str,
+        data: dict,
+        created_at: datetime | None = None,
+    ) -> Event:
         with self.services.persistence.get_session() as session:
             return self.event_manager.add(
-                session=session, tenant_id=tenant_id, event_name=event_name, data=data, created_at=created_at
+                session=session,
+                tenant_id=tenant_id,
+                event_name=event_name,
+                data=data,
+                created_at=created_at,
             )
 
     def bulk_add_events(self, events: list[Event]) -> list[Event]:
