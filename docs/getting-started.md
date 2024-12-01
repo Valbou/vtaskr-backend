@@ -96,6 +96,7 @@ You can also use helpers respectively:
 
 # Project global informations
 
+The global project organisation is available in [repository and apps structure](./global/index.md#repository-structure)
 The project respect some [basic rules](./global/index.md), please read them before submitting a merge request.
 
 # To use your own frontend

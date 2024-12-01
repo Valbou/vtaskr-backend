@@ -8,8 +8,6 @@ from src.libs.security.utils import get_id
 
 @dataclass
 class Right:
-    """EAV like model"""
-
     roletype_id: str
     resource: str
     permissions: list[Permissions] | None = None

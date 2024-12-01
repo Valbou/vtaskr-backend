@@ -25,15 +25,19 @@ This others models are indirectly created by users via some actions:
 
 ```mermaid
 ---
-title: Model Relationship
+title: Model Relationship (RBAC)
 ---
 erDiagram
-    Right }|--|| RoleType: as rights
+    Right }|--|| RoleType: has
     User }|--|{ Role: associated
     Group }|--|{ Role: associated
     RoleType }|--|{ Role: associated
+    User }o--o{ Token: has
+```
+
+```mermaid
+erDiagram
     User }|--o{ Invitation: invite
     Group }|--o{ Invitation: invite
     RoleType }|--o{ Invitation: invite
-    User }o--o{ Token: has
 ```
