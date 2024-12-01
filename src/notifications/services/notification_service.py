@@ -59,7 +59,7 @@ class NotificationService:
 
         with self.services.persistence.get_session() as session:
             return self.contact_manager.update(session=session, contact=contact)
- 
+
     def delete_contact(self, contact: Contact) -> None:
         """Delete an existing contact"""
 

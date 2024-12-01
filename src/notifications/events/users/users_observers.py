@@ -21,7 +21,7 @@ class UsersRegisterUserObserver(ObserverPort):
 
 
 class UsersUpdateUserObserver(ObserverPort):
-    subscribe_to: list[str]  = ["users:update:user"]
+    subscribe_to: list[str] = ["users:update:user"]
 
     @classmethod
     def run(cls, app_ctx, event_name: str, event_data: dict):
@@ -34,7 +34,7 @@ class UsersUpdateUserObserver(ObserverPort):
 
 
 class UsersDeleteUserObserver(ObserverPort):
-    subscribe_to: list[str]  = ["users:delete:user"]
+    subscribe_to: list[str] = ["users:delete:user"]
 
     @classmethod
     def run(cls, app_ctx, event_name: str, event_data: dict):

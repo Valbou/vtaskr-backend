@@ -22,9 +22,8 @@ class EventBusService(EventBusPort):
         observers = ObserverPort.__subclasses__()
         for obs in observers:
             [
-                self.subscribe(
-                    event_name=name, function=func
-                ) for name, func in obs.self_subscribe()
+                self.subscribe(event_name=name, function=func)
+                for name, func in obs.self_subscribe()
             ]
 
     def __enter__(self):
