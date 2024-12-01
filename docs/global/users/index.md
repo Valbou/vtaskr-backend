@@ -29,15 +29,15 @@ title: Model Relationship (RBAC)
 ---
 erDiagram
     Right }|--|| RoleType: has
-    User }|--|{ Role: associated
-    Group }|--|{ Role: associated
-    RoleType }|--|{ Role: associated
+    User }|--|{ Role: has
+    Group }|--|{ Role: in
+    RoleType }|--|{ Role: with
     User }o--o{ Token: has
 ```
 
 ```mermaid
 erDiagram
-    User }|--o{ Invitation: invite
-    Group }|--o{ Invitation: invite
-    RoleType }|--o{ Invitation: invite
+    User }|--o{ Invitation: from
+    Group }|--o{ Invitation: join
+    RoleType }|--o{ Invitation: with
 ```
