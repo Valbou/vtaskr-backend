@@ -19,3 +19,10 @@ title: Model Relationship
 erDiagram
     Event
 ```
+
+## Model Behavior
+
+When an app emit an event using eventbus, an event object is created and stored in memory.  
+When the eventbus context end, automatically all events are saved in database an events are sent to all subscribers.  
+You can exclude an event from save, by adding a *_save* parameter in event data, with the value "False".  
+This *_save* option, limits the impact of events in the database. Some events are not critical or are just a consequence of another event.

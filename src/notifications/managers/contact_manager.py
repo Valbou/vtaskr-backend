@@ -16,3 +16,9 @@ class ContactManager:
 
     def create(self, session, contact: Contact) -> Contact:
         return self.contact_db.save(session=session, obj=contact)
+
+    def update(self, session, contact: Contact) -> Contact:
+        return self.contact_db.update(session=session, obj=contact)
+
+    def delete(self, session, contact: Contact) -> None:
+        return self.contact_db.delete(session=session, obj=contact)

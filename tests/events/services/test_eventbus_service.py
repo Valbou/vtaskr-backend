@@ -21,7 +21,7 @@ class TestEventBus(BaseTestCase):
 
         self.bus.subscribe.assert_called()
         total = self.bus.subscribe.call_count
-        self.assertEqual(total, 4)
+        self.assertEqual(total, 7)
 
     def test_emit(self):
         before = len(self.bus.events)

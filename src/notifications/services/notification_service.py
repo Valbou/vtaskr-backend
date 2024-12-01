@@ -41,7 +41,7 @@ class NotificationService:
             **context,
         }
 
-    def add_new_contact(self, contact: Contact) -> None:
+    def add_new_contact(self, contact: Contact) -> Contact:
         """Add a new contact and subscribe to all basics notifications"""
 
         with self.services.persistence.get_session() as session:
@@ -51,6 +51,20 @@ class NotificationService:
                 self.subscription_manager.subscribe(
                     session=session, name=name, type=MessageType.EMAIL, contact=contact
                 )
+
+        return contact
+
+    def update_contact(self, contact: Contact) -> Contact:
+        """Update informations of an existing contact"""
+
+        with self.services.persistence.get_session() as session:
+            return self.contact_manager.update(session=session, contact=contact)
+ 
+    def delete_contact(self, contact: Contact) -> None:
+        """Delete an existing contact"""
+
+        with self.services.persistence.get_session() as session:
+            self.contact_manager.delete(session=session, contact=contact)
 
     def build_messages(self, name: str, context: dict) -> list[AbstractMessage]:
         """Load messages, translate and interpolate them"""

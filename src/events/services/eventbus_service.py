@@ -21,7 +21,11 @@ class EventBusService(EventBusPort):
         # Auto Subscribe for Observer classes
         observers = ObserverPort.__subclasses__()
         for obs in observers:
-            self.subscribe(*obs.self_subscribe())
+            [
+                self.subscribe(
+                    event_name=name, function=func
+                ) for name, func in obs.self_subscribe()
+            ]
 
     def __enter__(self):
         return self

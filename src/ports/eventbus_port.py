@@ -27,12 +27,12 @@ class EventBusPort(InjectablePort, ABC):
 
 
 class ObserverPort:
-    event_name: str
+    subscribe_to: list[str]
 
     @classmethod
     def run(cls, app_ctx, event_name: str, event_data: dict):
         raise NotImplementedError
 
     @classmethod
-    def self_subscribe(cls) -> tuple[str, Callable]:
-        return (cls.event_name, cls.run)
+    def self_subscribe(cls) -> list[tuple[str, Callable]]:
+        return [(event_name, cls.run) for event_name in cls.subscribe_to]

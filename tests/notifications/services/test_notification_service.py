@@ -29,6 +29,30 @@ class TestNotificationsService(BaseTestCase):
         call_count = self.notification_service.subscription_manager.subscribe.call_count
         self.assertEqual(call_count, len(BASE_NOTIFICATION_EVENTS))
 
+    def test_update_contact(self):
+        contact = Contact(
+            first_name="first",
+            last_name="last",
+            email="test@example.com",
+        )
+        self.notification_service.contact_manager.update = MagicMock()
+
+        self.notification_service.update_contact(contact=contact)
+
+        self.notification_service.contact_manager.update.assert_called_once()
+
+    def test_delete_contact(self):
+        contact = Contact(
+            first_name="first",
+            last_name="last",
+            email="test@example.com",
+        )
+        self.notification_service.contact_manager.delete = MagicMock()
+
+        self.notification_service.delete_contact(contact=contact)
+
+        self.notification_service.contact_manager.delete.assert_called_once()
+
     def test_build_messages(self):
         event = "users:register:user"
         context = {

@@ -5,7 +5,6 @@ from src.notifications.events import (
     UsersRegisterUserObserver,
     UsersUpdateUserObserver,
 )
-from src.notifications.models import Contact
 from tests.base_test import DummyBaseTestCase
 
 
@@ -20,7 +19,7 @@ class TestObservers(DummyBaseTestCase):
 
     def test_users_register_user(self):
         event_data = {
-            "tenant_id": "abc123",
+            "user_id": "abc123",
             "first_name": "first",
             "last_name": "last",
             "email": self.generate_email(),
@@ -46,18 +45,9 @@ class TestObservers(DummyBaseTestCase):
             service.add_messages.assert_called_once()
             service.notify_all.assert_called_once()
 
-    def test_1_update_existing_user_observer(self):
-        contact = Contact(
-            id="abc123",
-            first_name="first",
-            last_name="last",
-            email=self.generate_email(),
-            telegram="",
-            phone_number="",
-        )
-
+    def test_update_existing_user_observer(self):
         event_data = {
-            "tenant_id": "abc123",
+            "user_id": "abc123",
             "first_name": "first",
             "last_name": "last",
             "email": self.generate_email(),
@@ -65,21 +55,21 @@ class TestObservers(DummyBaseTestCase):
             "phone_number": "654321",
         }
 
-        self.repository_mock.load.return_value = contact
+        with patch(
+            "src.notifications.events.users.users_observers.NotificationService"
+        ) as MockClass:
+            service = MockClass.return_value
+            service.update_contact = MagicMock()
 
-        UsersUpdateUserObserver.run(
-            self.app, event_name="users:update:user", event_data=event_data
-        )
+            UsersUpdateUserObserver.run(
+                self.app, event_name="users:update:user", event_data=event_data
+            )
 
-        self.repository_mock.update.assert_called_once()
-        self.repository_mock.save.assert_not_called()
-        self.assertEqual(contact.email, event_data.get("email"))
-        self.assertEqual(contact.telegram, event_data.get("telegram"))
-        self.assertEqual(contact.phone_number, event_data.get("phone_number"))
+            service.update_contact.assert_called_once()
 
-    def test_1_update_missing_user_observer(self):
+    def test_delete_user_observer(self):
         event_data = {
-            "tenant_id": "abc123",
+            "user_id": "abc123",
             "first_name": "first",
             "last_name": "last",
             "email": self.generate_email(),
@@ -87,27 +77,14 @@ class TestObservers(DummyBaseTestCase):
             "phone_number": "654321",
         }
 
-        self.repository_mock.load.return_value = None
+        with patch(
+            "src.notifications.events.users.users_observers.NotificationService"
+        ) as MockClass:
+            service = MockClass.return_value
+            service.delete_contact = MagicMock()
 
-        UsersUpdateUserObserver.run(
-            self.app, event_name="users:update:user", event_data=event_data
-        )
+            UsersDeleteUserObserver.run(
+                self.app, event_name="users:delete:user", event_data=event_data
+            )
 
-        self.repository_mock.save.assert_called_once()
-        self.repository_mock.update.assert_not_called()
-
-    def test_2_delete_user_observer(self):
-        event_data = {
-            "tenant_id": "abc123",
-            "first_name": "first",
-            "last_name": "last",
-            "email": self.generate_email(),
-            "telegram": "123456",
-            "phone_number": "654321",
-        }
-
-        UsersDeleteUserObserver.run(
-            self.app, event_name="users:delete:user", event_data=event_data
-        )
-
-        self.repository_mock.delete_by_id.assert_called_once()
+            service.delete_contact.assert_called_once()

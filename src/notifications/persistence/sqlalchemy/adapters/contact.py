@@ -17,6 +17,10 @@ class ContactDB(ContactDBPort, DefaultDB):
     def update(self, session: Session, contact: Contact) -> bool:
         self.qs.update().id(contact.id).values(
             email=contact.email,
+            first_name=contact.first_name,
+            last_name=contact.last_name,
+            timezone=contact.timezone,
+            locale=contact.locale,
             telegram=contact.telegram,
             phone_number=contact.phone_number,
             updated_at=datetime.now(tz=ZoneInfo("UTC")),
