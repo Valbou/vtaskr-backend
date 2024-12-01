@@ -1,7 +1,6 @@
+from dataclasses import dataclass, field
 from datetime import datetime
 from zoneinfo import ZoneInfo
-
-from dataclasses import dataclass, field
 
 from src.libs.security.utils import get_id
 
