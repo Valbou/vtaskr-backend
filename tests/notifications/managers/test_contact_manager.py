@@ -1,9 +1,8 @@
 from unittest.mock import MagicMock
 
-from tests.base_test import DummyBaseTestCase
-
-from src.notifications.models import Contact
 from src.notifications.managers import ContactManager
+from src.notifications.models import Contact
+from tests.base_test import DummyBaseTestCase
 
 
 class TestContactManager(DummyBaseTestCase):

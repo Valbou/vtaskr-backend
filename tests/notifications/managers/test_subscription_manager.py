@@ -1,10 +1,9 @@
 from unittest.mock import MagicMock
 
-from tests.base_test import DummyBaseTestCase
-
-from src.notifications.settings import MessageType
-from src.notifications.models import Contact, Subscription
 from src.notifications.managers import SubscriptionManager
+from src.notifications.models import Contact, Subscription
+from src.notifications.settings import MessageType
+from tests.base_test import DummyBaseTestCase
 
 
 class TestSubscriptionManager(DummyBaseTestCase):
@@ -26,15 +25,18 @@ class TestSubscriptionManager(DummyBaseTestCase):
                 type=MessageType.EMAIL,
                 name=self.fake.word(),
                 contact_id=contact.id,
-                contact=contact
-            ) for _ in range(number)
+                contact=contact,
+            )
+            for _ in range(number)
         ]
 
     def test_subscribe(self):
         contact = self.get_contact()
         self.manager.subscription_db.save = MagicMock()
 
-        self.manager.subscribe(session=None, name="test", type=MessageType.EMAIL, contact=contact)
+        self.manager.subscribe(
+            session=None, name="test", type=MessageType.EMAIL, contact=contact
+        )
 
         self.manager.subscription_db.save.assert_called_once()
 
@@ -62,8 +64,12 @@ class TestSubscriptionManager(DummyBaseTestCase):
         number = 3
         subscriptions = self.get_subscriptions(contact=contact, number=number)
 
-        self.manager.subscription_db.get_subscriptions_for_event = MagicMock(return_value=subscriptions)
+        self.manager.subscription_db.get_subscriptions_for_event = MagicMock(
+            return_value=subscriptions
+        )
 
-        self.manager.get_subscriptions_for_event(session=None, name="test", targets=["foo", "bar"])
+        self.manager.get_subscriptions_for_event(
+            session=None, name="test", targets=["foo", "bar"]
+        )
 
         self.manager.subscription_db.get_subscriptions_for_event.assert_called_once()
