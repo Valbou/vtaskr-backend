@@ -97,17 +97,19 @@ This app use an RBAC approach (Role Based Access Control).</p>
 </ul>
 <h3 id="entities-relationship-diagram">Entities Relationship Diagram</h3>
 <div class="mermaid">---
-title: Model Relationship
+title: Model Relationship (RBAC)
 ---
 erDiagram
-    Right }|--|| RoleType: as rights
+    Right }|--|| RoleType: has
     User }|--|{ Role: associated
     Group }|--|{ Role: associated
     RoleType }|--|{ Role: associated
+    User }o--o{ Token: has
+</div>
+<div class="mermaid">erDiagram
     User }|--o{ Invitation: invite
     Group }|--o{ Invitation: invite
     RoleType }|--o{ Invitation: invite
-    User }o--o{ Token: has
 </div></div>
 </div>
 </div>
