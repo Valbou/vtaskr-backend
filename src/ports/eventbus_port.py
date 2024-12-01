@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Callable
+from typing import Callable, Self
 
 from .base_port import InjectablePort
 
@@ -18,7 +18,7 @@ class EventBusPort(InjectablePort, ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def __enter__(self):
+    def __enter__(self) -> Self:
         raise NotImplementedError
 
     @abstractmethod

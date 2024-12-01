@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from src.events.managers import EventManager
 from src.events.models import Event
 from src.libs.dependencies import DependencyInjector
@@ -14,18 +16,29 @@ class EventsService:
 
         self.event_manager = EventManager(services=self.services)
 
-    def get_all_user_events(self, user_id: str, tenant_id: str) -> list[Event]:
+    def get_all_events(self) -> list[Event]:
         with self.services.persistence.get_session() as session:
-            return self.event_manager.get_all_user_events(
+            return self.event_manager.get_all_events(session=session)
+
+    def get_all_tenant_events(self, user_id: str, tenant_id: str) -> list[Event]:
+        with self.services.persistence.get_session() as session:
+            return self.event_manager.get_all_tenant_events(
                 session=session, user_id=user_id, tenant_id=tenant_id
             )
 
-    def add_event(self, tenant_id: str, event_name: str, data: dict) -> Event:
+    def get_all_events_of_name(self, name: str) -> list[Event]:
+        with self.services.persistence.get_session() as session:
+            return self.event_manager.get_all_events_of_name(
+                session=session, name=name
+            )
+
+    def add_event(self, tenant_id: str, event_name: str, data: dict, created_at: datetime | None = None) -> Event:
         with self.services.persistence.get_session() as session:
             return self.event_manager.add(
-                session=session, tenant_id=tenant_id, event_name=event_name, data=data
+                session=session, tenant_id=tenant_id, event_name=event_name, data=data, created_at=created_at
             )
 
     def bulk_add_events(self, events: list[Event]) -> list[Event]:
         with self.services.persistence.get_session() as session:
-            return self.event_manager.bulk_add(session, events=events)
+            events_to_save = [e for e in events if e.data.pop("_save", True)]
+            self.event_manager.bulk_add(session=session, events=events_to_save)

@@ -1,5 +1,5 @@
 from copy import copy
-from typing import Callable
+from typing import Callable, Self
 
 from src.events.models import Event
 from src.ports import EventBusPort, ObserverPort
@@ -16,7 +16,7 @@ class EventBusService(EventBusPort):
         self.index = {}
 
     def set_context(self, **ctx) -> None:
-        self.app = ctx.pop("app")
+        self.app = ctx.get("app")
 
         # Auto Subscribe for Observer classes
         observers = ObserverPort.__subclasses__()
@@ -26,7 +26,7 @@ class EventBusService(EventBusPort):
                 for name, func in obs.self_subscribe()
             ]
 
-    def __enter__(self):
+    def __enter__(self) -> Self:
         return self
 
     def __exit__(self, exc_type, exc_value, traceback):

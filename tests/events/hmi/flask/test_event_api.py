@@ -22,7 +22,7 @@ class TestEventAPI(DummyBaseTestCase):
         self.assertEqual(response.status_code, 401)
 
     @patch(
-        "src.events.services.EventsService.get_all_user_events",
+        "src.events.services.EventsService.get_all_tenant_events",
         return_value=[USER_EVENT],
     )
     def test_get_tenant_events(self, mock_events: MagicMock):

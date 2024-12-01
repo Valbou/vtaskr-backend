@@ -11,11 +11,11 @@ class TestEventsService(DummyBaseTestCase):
         self.event_service = EventsService(services=self.app.dependencies)
 
     def test_get_all_from_tenant_id(self):
-        self.event_service.event_manager.get_all_user_events = MagicMock()
+        self.event_service.event_manager.get_all_tenant_events = MagicMock()
 
-        self.event_service.get_all_user_events(user_id="user_123", tenant_id="abc123")
+        self.event_service.get_all_tenant_events(user_id="user_123", tenant_id="abc123")
 
-        self.event_service.event_manager.get_all_user_events.assert_called_once()
+        self.event_service.event_manager.get_all_tenant_events.assert_called_once()
 
     def test_add(self):
         self.event_service.event_manager.add = MagicMock()

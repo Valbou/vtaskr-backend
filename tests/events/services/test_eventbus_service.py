@@ -3,8 +3,6 @@ from unittest.mock import MagicMock, patch
 from src.events.services import EventBusService
 from tests.base_test import BaseTestCase
 
-EVENT_NAME_TEST = "tests:send:event"
-
 
 class TestEventBus(BaseTestCase):
     def setUp(self):

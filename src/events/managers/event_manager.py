@@ -12,7 +12,7 @@ class EventManager:
             APP_NAME, "Event"
         )
 
-    def get_all_user_events(self, session, user_id: str, tenant_id: str) -> list[Event]:
+    def get_all_tenant_events(self, session, user_id: str, tenant_id: str) -> list[Event]:
         tenant_ids = self.services.identity.all_tenants_with_access(
             session,
             permission=Permissions.READ,
