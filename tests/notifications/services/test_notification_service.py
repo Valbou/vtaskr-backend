@@ -59,7 +59,7 @@ class TestNotificationsService(BaseTestCase):
             "first_name": "first",
             "email": "test@example.com",
             "LINK_TO_LOGIN": "htttp://www.vtaskr.com",
-            "targets": ["test@example.com"],
+            "targets": ["abc123"],
         }
         self.notification_service._messages.clear()
 

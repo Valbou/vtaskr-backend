@@ -20,5 +20,8 @@ class ContactManager:
     def update(self, session, contact: Contact) -> Contact:
         return self.contact_db.update(session=session, obj=contact)
 
+    def delete_by_id(self, session, contact_id: str) -> None:
+        self.contact_db.delete_by_id(session=session, id=contact_id)
+
     def delete(self, session, contact: Contact) -> None:
-        return self.contact_db.delete(session=session, obj=contact)
+        self.contact_db.delete(session=session, obj=contact)

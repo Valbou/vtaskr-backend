@@ -5,6 +5,7 @@ from zoneinfo import ZoneInfo
 from babel import Locale
 
 from src.libs.security.utils import get_id
+from src.settings import LOCALE, TIMEZONE
 
 
 @dataclass
@@ -19,8 +20,8 @@ class Contact:
 
     first_name: str
     last_name: str
-    timezone: str | None = None
-    locale: Locale | None = None
+    timezone: str | None = TIMEZONE
+    locale: Locale | None = LOCALE
     email: str = ""
     telegram: str = ""
     phone_number: str = ""
@@ -31,6 +32,9 @@ class Contact:
     def __post_init__(self):
         self.id = self.id or get_id()
         self.created_at = self.created_at or datetime.now(tz=ZoneInfo("UTC"))
+
+        if self.locale is None:
+            self.locale = Locale.parse(LOCALE)
 
         if isinstance(self.locale, str):
             self.locale = Locale.parse(self.locale)

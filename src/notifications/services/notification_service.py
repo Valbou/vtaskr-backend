@@ -1,3 +1,5 @@
+from logging import getLogger
+
 from src.libs.dependencies import DependencyInjector
 from src.notifications.managers import (
     AbstractSender,
@@ -15,9 +17,15 @@ from src.notifications.settings import (
     APP_NAME,
     BASE_NOTIFICATION_EVENTS,
     DEFAULT_SMTP_SENDER,
+    LINK_TO_CHANGE_EMAIL,
+    LINK_TO_CHANGE_PASSWORD,
+    LINK_TO_JOIN_GROUP,
+    LINK_TO_LOGIN,
 )
 from src.settings import APP_NAME as GLOBAL_APP_NAME
 from src.settings import EMAIL_LOGO
+
+logger = getLogger(__name__)
 
 
 class NotificationService:
@@ -38,6 +46,10 @@ class NotificationService:
             "APP_NAME": GLOBAL_APP_NAME,
             "DEFAULT_SMTP_SENDER": DEFAULT_SMTP_SENDER,
             "EMAIL_LOGO": EMAIL_LOGO,
+            "LINK_TO_CHANGE_EMAIL": LINK_TO_CHANGE_EMAIL,
+            "LINK_TO_CHANGE_PASSWORD": LINK_TO_CHANGE_PASSWORD,
+            "LINK_TO_JOIN_GROUP": LINK_TO_JOIN_GROUP,
+            "LINK_TO_LOGIN": LINK_TO_LOGIN,
             **context,
         }
 
@@ -54,17 +66,40 @@ class NotificationService:
 
         return contact
 
+    def subscribe(
+        self, contact: Contact, event_name: str, event_type: MessageType
+    ) -> Contact:
+        """Subscribe to an event notification"""
+
+        with self.services.persistence.get_session() as session:
+            self.subscription_manager.subscribe(
+                session=session, name=event_name, type=event_type, contact=contact
+            )
+
+    def unsubscribe(
+        self, contact: Contact, event_name: str, event_type: MessageType
+    ) -> Contact:
+        """Unsubscribe to an event notification"""
+
+        with self.services.persistence.get_session() as session:
+            self.subscription_manager.unsubscribe(
+                session=session, name=event_name, type=event_type, contact=contact
+            )
+
     def update_contact(self, contact: Contact) -> Contact:
         """Update informations of an existing contact"""
 
         with self.services.persistence.get_session() as session:
             return self.contact_manager.update(session=session, contact=contact)
 
-    def delete_contact(self, contact: Contact) -> None:
+    def delete_contact(self, contact_id: str) -> None:
         """Delete an existing contact"""
 
         with self.services.persistence.get_session() as session:
-            self.contact_manager.delete(session=session, contact=contact)
+            self.subscription_manager.delete_all_subscriptions_with_contact(
+                session=session, contact_id=contact_id
+            )
+            self.contact_manager.delete_by_id(session=session, contact_id=contact_id)
 
     def build_messages(self, name: str, context: dict) -> list[AbstractMessage]:
         """Load messages, translate and interpolate them"""
@@ -73,6 +108,10 @@ class NotificationService:
             subscriptions = self.subscription_manager.get_subscriptions_for_event(
                 session=session, name=name, targets=context.get("targets", [])
             )
+
+            if len(subscriptions) == 0:
+                logger.error(f"No subscription found for event {name}")
+                return []
 
             indexed_subscriptions = (
                 self.subscription_manager.get_subscriptions_indexed_by_message_type(

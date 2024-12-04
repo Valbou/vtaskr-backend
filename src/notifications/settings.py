@@ -9,10 +9,14 @@ DEFAULT_SMTP_USER = os.getenv("DEFAULT_SMTP_USER")
 DEFAULT_SMTP_PASS = os.getenv("DEFAULT_SMTP_PASS")
 DEFAULT_SMTP_SENDER = os.getenv("DEFAULT_SMTP_SENDER")
 
+LINK_TO_LOGIN = os.getenv("NOTIFICATIONS_LINK_TO_LOGIN")
+LINK_TO_CHANGE_EMAIL = os.getenv("NOTIFICATIONS_LINK_TO_CHANGE_EMAIL")
+LINK_TO_CHANGE_PASSWORD = os.getenv("NOTIFICATIONS_LINK_TO_CHANGE_PASSWORD")
+LINK_TO_JOIN_GROUP = os.getenv("NOTIFICATIONS_LINK_TO_JOIN_GROUP")
+
 BASE_NOTIFICATION_EVENTS = [
     "users:register:user",
     "users:login_2fa:user",
-    "users:login:user",
     "users:delete:user",
     "users:change_email:user",
     "users:change_password:user",

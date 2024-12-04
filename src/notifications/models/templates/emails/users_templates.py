@@ -17,7 +17,6 @@ class UsersRegisterTemplate(BaseEmailTemplate):
     }
 
     context = {
-        "email": "{email}",
         "logo": "{EMAIL_LOGO}",
         "title": _("Registration Success {first_name}"),
         "content_title": _("Welcome {first_name} !"),
@@ -40,7 +39,6 @@ class UsersLogin2FATemplate(BaseEmailTemplate):
     }
 
     context = {
-        "email": "{email}",
         "logo": "{EMAIL_LOGO}",
         "title": _("New login with your account"),
         "content_title": _("Hi {first_name} !"),
@@ -70,7 +68,6 @@ class UsersEmailChangeTemplate(BaseEmailTemplate):
     }
 
     context = {
-        "email": "{email}",
         "logo": "{EMAIL_LOGO}",
         "title": _("Change your Email"),
         "content_title": _("Hi {first_name} !"),
@@ -98,7 +95,6 @@ class UsersEmailChangeNewTemplate(BaseEmailTemplate):
     }
 
     context = {
-        "email": "{email}",
         "logo": "{EMAIL_LOGO}",
         "paragraph_1": _("You request to change your email account."),
         "paragraph_2": _(
@@ -127,7 +123,6 @@ class UsersPasswordChangeTemplate(BaseEmailTemplate):
     }
 
     context = {
-        "email": "{email}",
         "logo": "{EMAIL_LOGO}",
         "title": _("Password Change Request"),
         "content_title": _("Hi {first_name} !"),
@@ -151,7 +146,6 @@ class UsersDeleteAccountTemplate(BaseEmailTemplate):
     }
 
     context = {
-        "email": "{email}",
         "logo": "{EMAIL_LOGO}",
         "title": _("Account deleted"),
         "content_title": _("Hi {first_name} !"),
@@ -175,7 +169,6 @@ class UsersInvitationTemplate(BaseEmailTemplate):
     }
 
     context = {
-        "email": "{email}",
         "logo": "{EMAIL_LOGO}",
         "title": _("Invitation to group {group_name}"),
         "content_title": _("Hi !"),
@@ -207,7 +200,6 @@ class UsersAcceptedInvitationTemplate(BaseEmailTemplate):
     }
 
     context = {
-        "email": "{email}",
         "logo": "{EMAIL_LOGO}",
         "title": _("Accepted invitation to group {group_name}"),
         "content_title": _("Hi {from_first_name} !"),
@@ -230,7 +222,6 @@ class UsersCancelledInvitationTemplate(BaseEmailTemplate):
     }
 
     context = {
-        "email": "{email}",
         "logo": "{EMAIL_LOGO}",
         "title": _("Invitation to group {group_name} cancelled"),
         "content_title": _("Hi !"),
