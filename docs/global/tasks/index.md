@@ -17,5 +17,5 @@ Tasks ownership is depending on the tenant. We are using a tenant_id to refer to
 title: Model Relationship
 ---
 erDiagram
-    Task }|--|{ Tags: is
+    Task }|--|{ Tags: has
 ```
