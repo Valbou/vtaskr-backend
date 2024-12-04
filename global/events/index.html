@@ -70,6 +70,10 @@
 <ul class="nav flex-column">
 </ul>
 </li>
+<li class="nav-item" data-bs-level="2"><a class="nav-link" href="#model-behavior">Model Behavior</a>
+<ul class="nav flex-column">
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -91,7 +95,12 @@ title: Model Relationship
 ---
 erDiagram
     Event
-</div></div>
+</div>
+<h2 id="model-behavior">Model Behavior</h2>
+<p>When an app emit an event using eventbus, an event object is created and stored in memory.<br/>
+When the eventbus context end, automatically all events are saved in database an events are sent to all subscribers.<br/>
+You can exclude an event from save, by adding a <em>_save</em> parameter in event data, with the value "False".<br/>
+This <em>_save</em> option, limits the impact of events in the database. Some events are not critical or are just a consequence of another event.</p></div>
 </div>
 </div>
 <footer class="col-md-12">
