@@ -174,7 +174,7 @@ class UsersInvitationTemplate(BaseEmailTemplate):
         "content_title": _("Hi !"),
         "paragraph_1": _(
             "You are invited to contribute to the group {group_name} as {role_name}, "
-            "by user {from_first_name}."
+            "by user {from_name}."
         ),
         "paragraph_2": _("Click on the link below to join the group."),
         "paragraph_3": _(
@@ -192,7 +192,7 @@ class UsersAcceptedInvitationTemplate(BaseEmailTemplate):
     name: str = "User Accepted Invitation"
     event_name: str = "users:accepted:invitation"
     subject: str = (
-        "{APP_NAME} - {to_first_name} has joined group {group_name} as {role_name}"
+        "{APP_NAME} - {to_name} has joined group {group_name} as {role_name}"
     )
     files_path: dict[str:str] = {
         "html": "emails/users/invitation.html",
@@ -202,9 +202,9 @@ class UsersAcceptedInvitationTemplate(BaseEmailTemplate):
     context = {
         "logo": "{EMAIL_LOGO}",
         "title": _("Accepted invitation to group {group_name}"),
-        "content_title": _("Hi {from_first_name} !"),
+        "content_title": _("Hi {from_name} !"),
         "paragraph_1": _(
-            "{to_first_name} accept to contribute"
+            "{to_name} accept to contribute"
             " to the group {group_name} as {role_name}"
         ),
     }
@@ -226,6 +226,6 @@ class UsersCancelledInvitationTemplate(BaseEmailTemplate):
         "title": _("Invitation to group {group_name} cancelled"),
         "content_title": _("Hi !"),
         "paragraph_1": _(
-            "Invitation to group {group_name} was cancelled by {from_first_name}"
+            "Invitation to group {group_name} was cancelled by {from_name}"
         ),
     }
