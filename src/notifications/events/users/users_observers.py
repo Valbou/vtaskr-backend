@@ -58,7 +58,9 @@ class UsersChangeEmailObserver(ObserverPort):
             "code": event_data["code"],
             "valid_until": event_data["valid_until"],
         }
-        messages += service.build_messages(name="users:change_email_old:user", context=old_data)
+        messages += service.build_messages(
+            name="users:change_email_old:user", context=old_data
+        )
 
         # New email message with hash
         contact = ContactMapperDTO.dto_to_model(
@@ -77,7 +79,9 @@ class UsersChangeEmailObserver(ObserverPort):
             "new_email": event_data["new_email"],
             "valid_until": event_data["valid_until"],
         }
-        messages += service.build_messages(name="users:change_email_new:user", context=new_data)
+        messages += service.build_messages(
+            name="users:change_email_new:user", context=new_data
+        )
 
         # Send both messages and clean new temp contact
         service.add_messages(messages=messages)
@@ -103,9 +107,7 @@ class UsersNotificationsObserver(ObserverPort):
 
 
 class UsersInviteUserObserver(ObserverPort):
-    subscribe_to = [
-        "users:invite:user", "users:cancelled:invitation"
-    ]
+    subscribe_to = ["users:invite:user", "users:cancelled:invitation"]
 
     @classmethod
     def run(cls, app_ctx, event_name: str, event_data: dict):

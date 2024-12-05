@@ -191,9 +191,7 @@ class UsersAcceptedInvitationTemplate(BaseEmailTemplate):
 
     name: str = "User Accepted Invitation"
     event_name: str = "users:accepted:invitation"
-    subject: str = (
-        "{APP_NAME} - {to_name} has joined group {group_name} as {role_name}"
-    )
+    subject: str = "{APP_NAME} - {to_name} has joined group {group_name} as {role_name}"
     files_path: dict[str:str] = {
         "html": "emails/users/invitation.html",
         "txt": "emails/users/invitation.txt",
@@ -204,8 +202,7 @@ class UsersAcceptedInvitationTemplate(BaseEmailTemplate):
         "title": _("Accepted invitation to group {group_name}"),
         "content_title": _("Hi {from_name} !"),
         "paragraph_1": _(
-            "{to_name} accept to contribute"
-            " to the group {group_name} as {role_name}"
+            "{to_name} accept to contribute" " to the group {group_name} as {role_name}"
         ),
     }
 
