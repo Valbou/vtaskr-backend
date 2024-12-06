@@ -51,6 +51,7 @@ class UsersEventManager:
             event_name="users:change_email:user",
             event_data={
                 "targets": [user.id],
+                "user_id": user.id,
                 "email": user.email,
                 "new_email": new_email,
                 "first_name": user.first_name,

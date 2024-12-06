@@ -88,3 +88,6 @@ class TestObservers(DummyBaseTestCase):
             )
 
             service.delete_contact.assert_called_once()
+
+
+# TODO: complete users observer coverage !

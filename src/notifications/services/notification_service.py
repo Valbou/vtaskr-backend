@@ -53,8 +53,11 @@ class NotificationService:
             **context,
         }
 
-    def add_new_contact(self, contact: Contact) -> Contact:
+    def add_new_contact(self, contact: Contact, contact_id: str | None) -> Contact:
         """Add a new contact and subscribe to all basics notifications"""
+
+        if contact_id is not None:
+            contact.id = contact_id
 
         with self.services.persistence.get_session() as session:
             contact = self.contact_manager.create(session=session, contact=contact)
@@ -104,44 +107,45 @@ class NotificationService:
     def build_messages(self, name: str, context: dict) -> list[AbstractMessage]:
         """Load messages, translate and interpolate them"""
 
+        targets = context["targets"]
         with self.services.persistence.get_session() as session:
             subscriptions = self.subscription_manager.get_subscriptions_for_event(
-                session=session, name=name, targets=context.get("targets", [])
+                session=session, name=name, targets=targets
             )
 
-            if len(subscriptions) == 0:
-                logger.error(f"No subscription found for event {name}")
-                return []
+        if len(subscriptions) == 0:
+            logger.error(f"No subscription found for event {name} and targets {targets}")
+            return []
 
-            indexed_subscriptions = (
-                self.subscription_manager.get_subscriptions_indexed_by_message_type(
-                    subscriptions=subscriptions
-                )
+        indexed_subscriptions = (
+            self.subscription_manager.get_subscriptions_indexed_by_message_type(
+                subscriptions=subscriptions
             )
+        )
 
-            context = self._extend_context(context=context)
+        context = self._extend_context(context=context)
 
-            messages = []
-            fab = TemplateFabric()
-            for sub_type_name, subs in indexed_subscriptions.items():
-                sub_type = [m for m in MessageType if m.name == sub_type_name][0]
-                template = fab.get_template(template_type=sub_type, name=name)
+        messages = []
+        fab = TemplateFabric()
+        for sub_type_name, subs in indexed_subscriptions.items():
+            sub_type = [m for m in MessageType if m.name == sub_type_name][0]
+            template = fab.get_template(template_type=sub_type, name=name)
 
-                for sub in subs:
-                    with self.services.translation.get_translation_session(
-                        domain=APP_NAME, locale=sub.contact.locale
-                    ) as trans_session:
-                        message_class = MessageFabric.get_message_class(
-                            message_type=sub_type
+            for sub in subs:
+                with self.services.translation.get_translation_session(
+                    domain=APP_NAME, locale=sub.contact.locale
+                ) as trans_session:
+                    message_class = MessageFabric.get_message_class(
+                        message_type=sub_type
+                    )
+                    messages.append(
+                        message_class(
+                            session=trans_session,
+                            subscriptions=subs,
+                            template=template,
+                            context=context,
                         )
-                        messages.append(
-                            message_class(
-                                session=trans_session,
-                                subscriptions=subs,
-                                template=template,
-                                context=context,
-                            )
-                        )
+                    )
 
             return messages
 

@@ -11,9 +11,10 @@ class UsersRegisterUserObserver(ObserverPort):
     def run(cls, app_ctx, event_name: str, event_data: dict):
         service = NotificationService(services=app_ctx.dependencies)
 
+        user_id = event_data["user_id"]
         filtered_data = filter_fields(ContactDTO, event_data)
         contact = ContactMapperDTO.dto_to_model(ContactDTO(**filtered_data))
-        service.add_new_contact(contact=contact)
+        service.add_new_contact(contact=contact, contact_id=user_id)
 
         messages = service.build_messages(name=event_name, context=event_data)
         service.add_messages(messages=messages)
@@ -63,6 +64,7 @@ class UsersChangeEmailObserver(ObserverPort):
         )
 
         # New email message with hash
+        user_id = event_data["user_id"]
         contact = ContactMapperDTO.dto_to_model(
             ContactDTO(
                 first_name=event_data["first_name"],
@@ -70,7 +72,7 @@ class UsersChangeEmailObserver(ObserverPort):
                 email=event_data["new_email"],
             )
         )
-        service.add_new_contact(contact=contact)
+        service.add_new_contact(contact=contact, contact_id=user_id)
         new_data = {
             "targets": [contact.id],
             "first_name": event_data["first_name"],
@@ -122,7 +124,7 @@ class UsersInviteUserObserver(ObserverPort):
                 locale=event_data["locale"],
             )
         )
-        service.add_new_contact(contact=contact)
+        service.add_new_contact(contact=contact, contact_id=None)
 
         new_data = {
             "targets": [contact.id],
