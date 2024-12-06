@@ -52,7 +52,6 @@ class UsersLogin2FATemplate(BaseEmailTemplate):
             "This code stay valid only three minutes, after, "
             "you need to make a new login attempt."
         ),
-        "call_to_action": "",
     }
 
 

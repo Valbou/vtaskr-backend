@@ -1,7 +1,11 @@
+from logging import getLogger
+
 from src.libs.hmi.default_mapper import filter_fields
 from src.notifications.hmi.dto import ContactDTO, ContactMapperDTO
 from src.notifications.services import NotificationService
 from src.ports import ObserverPort
+
+logger = getLogger(__name__)
 
 
 class UsersRegisterUserObserver(ObserverPort):
@@ -16,9 +20,12 @@ class UsersRegisterUserObserver(ObserverPort):
         contact = ContactMapperDTO.dto_to_model(ContactDTO(**filtered_data))
         service.add_new_contact(contact=contact, contact_id=user_id)
 
-        messages = service.build_messages(name=event_name, context=event_data)
-        service.add_messages(messages=messages)
-        service.notify_all()
+        try:
+            messages = service.build_messages(name=event_name, context=event_data)
+            service.add_messages(messages=messages)
+            service.notify_all()
+        except Exception as e:
+            logger.error(f"{e}")
 
 
 class UsersUpdateUserObserver(ObserverPort):
@@ -85,9 +92,12 @@ class UsersChangeEmailObserver(ObserverPort):
             name="users:change_email_new:user", context=new_data
         )
 
-        # Send both messages and clean new temp contact
-        service.add_messages(messages=messages)
-        service.notify_all()
+        try:
+            # Send both messages and clean new temp contact
+            service.add_messages(messages=messages)
+            service.notify_all()
+        except Exception as e:
+            logger.error(f"{e}")
 
         service.delete_contact(contact_id=contact.id)
 
@@ -103,9 +113,12 @@ class UsersNotificationsObserver(ObserverPort):
     def run(cls, app_ctx, event_name: str, event_data: dict):
         service = NotificationService(services=app_ctx.dependencies)
 
-        messages = service.build_messages(name=event_name, context=event_data)
-        service.add_messages(messages=messages)
-        service.notify_all()
+        try:
+            messages = service.build_messages(name=event_name, context=event_data)
+            service.add_messages(messages=messages)
+            service.notify_all()
+        except Exception as e:
+            logger.error(f"{e}")
 
 
 class UsersInviteUserObserver(ObserverPort):
@@ -135,8 +148,11 @@ class UsersInviteUserObserver(ObserverPort):
             "valid_until": event_data.get("valid_until"),
         }
 
-        messages = service.build_messages(name=event_name, context=new_data)
-        service.add_messages(messages=messages)
-        service.notify_all()
+        try:
+            messages = service.build_messages(name=event_name, context=new_data)
+            service.add_messages(messages=messages)
+            service.notify_all()
+        except Exception as e:
+            logger.error(f"{e}")
 
         service.delete_contact(contact_id=contact.id)
