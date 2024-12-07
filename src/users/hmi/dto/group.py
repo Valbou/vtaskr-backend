@@ -10,6 +10,7 @@ group_component = {
     "properties": {
         "id": {"type": "string"},
         "name": {"type": "string"},
+        "is_private": {"type": "boolean"},
         "created_at": {"type": "string", "format": "date-time"},
     },
     "required": ["name"],
@@ -21,6 +22,7 @@ openapi.register_schemas_components("Group", group_component)
 class GroupDTO:
     id: str = ""
     name: str = ""
+    is_private: bool = True
     description: str = ""
     created_at: str = ""
 
@@ -32,6 +34,7 @@ class GroupMapperDTO:
             id=group.id,
             name=group.name,
             description=group.description,
+            is_private=group.is_private,
             created_at=group.created_at.isoformat(),
         )
 
@@ -41,9 +44,11 @@ class GroupMapperDTO:
             group = Group(
                 name=group_dto.name,
                 description=group_dto.description,
+                is_private=group_dto.is_private,
             )
         else:
             group.name = group_dto.name
             group.description = group.description
+            group.is_private = group.is_private
 
         return group
