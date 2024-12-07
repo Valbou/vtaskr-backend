@@ -23,7 +23,7 @@ class TestNotificationsService(BaseTestCase):
         )
         self.notification_service.subscription_manager.subscribe = MagicMock()
 
-        self.notification_service.add_new_contact(contact=contact)
+        self.notification_service.add_new_contact(contact=contact, contact_id=None)
 
         self.notification_service.contact_manager.create.assert_called_once()
         call_count = self.notification_service.subscription_manager.subscribe.call_count
@@ -47,11 +47,15 @@ class TestNotificationsService(BaseTestCase):
             last_name="last",
             email="test@example.com",
         )
-        self.notification_service.contact_manager.delete = MagicMock()
+        self.notification_service.subscription_manager.delete_all_subscriptions_with_contact = (
+            MagicMock()
+        )
+        self.notification_service.contact_manager.delete_by_id = MagicMock()
 
-        self.notification_service.delete_contact(contact=contact)
+        self.notification_service.delete_contact(contact_id=contact.id)
 
-        self.notification_service.contact_manager.delete.assert_called_once()
+        self.notification_service.subscription_manager.delete_all_subscriptions_with_contact.assert_called_once()
+        self.notification_service.contact_manager.delete_by_id.assert_called_once()
 
     def test_build_messages(self):
         event = "users:register:user"
@@ -64,7 +68,22 @@ class TestNotificationsService(BaseTestCase):
         self.notification_service._messages.clear()
 
         self.notification_service.subscription_manager.get_subscriptions_for_event = (
-            MagicMock()
+            MagicMock(
+                return_value=[
+                    Subscription(
+                        type=MessageType.EMAIL,
+                        contact_id="abc123",
+                        contact=Contact(
+                            first_name="first",
+                            last_name="last",
+                            email="test@example.com",
+                            id="abc132",
+                            locale="en_GB",
+                        ),
+                        name="users:register:user",
+                    )
+                ]
+            )
         )
         self.notification_service.subscription_manager.get_subscriptions_indexed_by_message_type = MagicMock(
             return_value={
