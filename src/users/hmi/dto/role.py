@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 
 from src.libs.openapi.base import openapi
+from src.users.hmi.dto import GROUP_COMPONENT, ROLETYPE_COMPONENT, USER_COMPONENT
 from src.users.models import Group, Role, RoleType, User
 
 ROLE_COMPONENT = "#/components/schemas/Role"
@@ -10,8 +11,11 @@ role_component = {
     "properties": {
         "id": {"type": "string"},
         "user_id": {"type": "string"},
+        "user": {"$ref": USER_COMPONENT},
         "group_id": {"type": "string"},
+        "group": {"$ref": GROUP_COMPONENT},
         "roletype_id": {"type": "string"},
+        "roletype": {"$ref": ROLETYPE_COMPONENT},
         "created_at": {"type": "string", "format": "date-time"},
     },
     "required": ["user_id", "group_id", "roletype_id"],
