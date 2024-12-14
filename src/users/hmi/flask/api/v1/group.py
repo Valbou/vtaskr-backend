@@ -6,7 +6,11 @@ from src.libs.hmi import dto_to_dict, list_dto_to_dict, list_models_to_list_dto
 from src.libs.hmi.querystring import QueryStringFilter
 from src.libs.redis import rate_limited
 from src.users.hmi.dto import (
-    GROUP_COMPONENT, ROLE_COMPONENT, GroupDTO, GroupMapperDTO, RoleMapperDTO
+    GROUP_COMPONENT,
+    ROLE_COMPONENT,
+    GroupDTO,
+    GroupMapperDTO,
+    RoleMapperDTO,
 )
 from src.users.hmi.flask.decorators import login_required
 from src.users.services import UsersService
