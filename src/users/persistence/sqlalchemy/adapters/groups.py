@@ -36,6 +36,20 @@ class GroupDB(GroupDBPort, DefaultDB):
 
         return [r[0] for r in session.execute(self.qs.statement)]
 
+    def get_initial_user_group(
+        self,
+        session: Session,
+        user_id: str,
+    ) -> Group | None:
+        self.qs.select().join(Group.roles).join(Role.roletype).where(
+            Role.user_id == user_id,
+            RoleType.name == "Admin",
+            Group.is_private == True,  # noqa: E712
+        ).order_by(created_at="ASC").limit(1)
+
+        group = session.scalars(self.qs.statement).one_or_none()
+        return group
+
     def get_all_user_groups(
         self,
         session: Session,

@@ -22,6 +22,10 @@ class GroupDBPort(AbstractDBPort, ABC):
         raise NotImplementedError()
 
     @abstractmethod
+    def get_initial_user_group(self, session, user_id: str) -> Group | None:
+        raise NotImplementedError()
+
+    @abstractmethod
     def get_all_user_groups(
         self,
         session,

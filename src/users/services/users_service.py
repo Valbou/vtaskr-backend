@@ -109,6 +109,11 @@ class UsersService:
 
         return self.group_manager.get_group(user_id=user_id, group_id=group_id)
 
+    def get_default_private_group(self, user_id: str) -> Group | None:
+        """Return user's initial group created by default - Private"""
+
+        return self.group_manager.get_initial_group(user_id=user_id)
+
     def update_group(self, user_id: str, group: Group) -> bool:
         """Update a user's group"""
 

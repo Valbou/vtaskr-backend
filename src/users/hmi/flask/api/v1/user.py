@@ -4,7 +4,13 @@ from flask import current_app, g, request
 from src.libs.flask.utils import ResponseAPI
 from src.libs.hmi import dto_to_dict
 from src.libs.redis import rate_limited
-from src.users.hmi.dto import USER_COMPONENT, UserDTO, UserMapperDTO
+from src.users.hmi.dto import (
+    GROUP_COMPONENT,
+    USER_COMPONENT,
+    GroupMapperDTO,
+    UserDTO,
+    UserMapperDTO,
+)
 from src.users.hmi.flask.decorators import login_required
 from src.users.services import UsersService
 
@@ -18,7 +24,15 @@ api_item = {
         "responses": {
             "200": {
                 "description": "no response content",
-                "content": {"application/json": {"schema": {"$ref": USER_COMPONENT}}},
+                "content": {
+                    "application/json": {
+                        "schema": {"type": "object"},
+                        "properties": {
+                            "user": {"$ref": USER_COMPONENT},
+                            "default_group": {"$ref": GROUP_COMPONENT},
+                        },
+                    }
+                },
             },
             "403": {
                 "description": "Unauthorized",
@@ -43,7 +57,14 @@ def me():
     Return a jsonify user
     """
     user_dto = UserMapperDTO.model_to_dto(g.user)
-    return ResponseAPI.get_response(dto_to_dict(user_dto), 200)
+    users_service = UsersService(services=current_app.dependencies)
+    default_group = users_service.get_default_private_group(user_id=g.user.id)
+    group_dto = GroupMapperDTO.model_to_dto(group=default_group)
+    resp = {
+        "user": dto_to_dict(user_dto),
+        "default_group": dto_to_dict(group_dto),
+    }
+    return ResponseAPI.get_response(resp, 200)
 
 
 api_item = {

@@ -39,6 +39,12 @@ class GroupManager:
 
         return None
 
+    def get_initial_group(self, user_id: str) -> Group | None:
+        """Find initial group of a user, normally named Private"""
+
+        with self.services.persistence.get_session() as session:
+            return self.group_db.get_initial_user_group(session=session, user_id=user_id)
+
     def update_group(self, user_id: str, group: Group) -> bool:
         """Update a group if update permission was given"""
 
