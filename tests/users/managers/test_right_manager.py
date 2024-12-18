@@ -52,6 +52,7 @@ class TestRightManager(DummyBaseTestCase):
         self.right_m.right_db.save = MagicMock()
 
         new_right = self.right_m.add_right(
+            session=None,
             roletype_id="roletype_123",
             resource="GROUP",
             permissions=Permissions.SUSCRIBE,
@@ -69,7 +70,7 @@ class TestRightManager(DummyBaseTestCase):
         self.right_m.right_db.save = MagicMock()
 
         right = self.right_m.create_right(
-            user_id="user_123", group_id="group_123", right=new_right
+            session=None, user_id="user_123", group_id="group_123", right=new_right
         )
 
         self.right_m.services.identity.can.assert_called_once()
@@ -85,7 +86,7 @@ class TestRightManager(DummyBaseTestCase):
         self.right_m.right_db.save = MagicMock()
 
         right = self.right_m.create_right(
-            user_id="user_123", group_id="group_123", right=new_right
+            session=None, user_id="user_123", group_id="group_123", right=new_right
         )
 
         self.right_m.services.identity.can.assert_called_once()
@@ -101,7 +102,9 @@ class TestRightManager(DummyBaseTestCase):
         )
         self.right_m.right_db.get_a_user_right = MagicMock(return_value=right)
 
-        user_right = self.right_m.get_right(user_id="user_123", right_id=right.id)
+        user_right = self.right_m.get_right(
+            session=None, user_id="user_123", right_id=right.id
+        )
 
         self.right_m.services.identity.all_tenants_with_access.assert_called_once()
         self.right_m.right_db.get_a_user_right.assert_called_once()
@@ -116,7 +119,9 @@ class TestRightManager(DummyBaseTestCase):
         )
         self.right_m.right_db.get_a_user_right = MagicMock(return_value=None)
 
-        user_right = self.right_m.get_right(user_id="user_123", right_id=right.id)
+        user_right = self.right_m.get_right(
+            session=None, user_id="user_123", right_id=right.id
+        )
 
         self.right_m.services.identity.all_tenants_with_access.assert_called_once()
         self.right_m.right_db.get_a_user_right.assert_called_once()
@@ -131,7 +136,7 @@ class TestRightManager(DummyBaseTestCase):
         )
         self.right_m.right_db.get_all_user_rights = MagicMock(return_value=[right])
 
-        user_rights = self.right_m.get_all_rights(user_id="user_132")
+        user_rights = self.right_m.get_all_rights(session=None, user_id="user_132")
 
         self.right_m.services.identity.all_tenants_with_access.assert_called_once()
         self.right_m.right_db.get_all_user_rights.assert_called_once()
@@ -149,7 +154,7 @@ class TestRightManager(DummyBaseTestCase):
         self.right_m.services.identity.can = MagicMock(return_value=True)
 
         udpated = self.right_m.update_right(
-            user_id="user_123", right=base_right, roletype=base_roletype
+            session=None, user_id="user_123", right=base_right, roletype=base_roletype
         )
 
         self.right_m.services.identity.can.assert_called_once()
@@ -164,7 +169,7 @@ class TestRightManager(DummyBaseTestCase):
         self.right_m.services.identity.can = MagicMock(return_value=False)
 
         udpated = self.right_m.update_right(
-            user_id="user_123", right=base_right, roletype=base_roletype
+            session=None, user_id="user_123", right=base_right, roletype=base_roletype
         )
 
         self.right_m.services.identity.can.assert_called_once()
@@ -179,7 +184,7 @@ class TestRightManager(DummyBaseTestCase):
         self.right_m.services.identity.can = MagicMock(return_value=True)
 
         deleted = self.right_m.delete_right(
-            user_id="user_123", right=base_right, roletype=base_roletype
+            session=None, user_id="user_123", right=base_right, roletype=base_roletype
         )
 
         self.right_m.services.identity.can.assert_called_once()
@@ -194,7 +199,7 @@ class TestRightManager(DummyBaseTestCase):
         self.right_m.services.identity.can = MagicMock(return_value=False)
 
         deleted = self.right_m.delete_right(
-            user_id="user_123", right=base_right, roletype=base_roletype
+            session=None, user_id="user_123", right=base_right, roletype=base_roletype
         )
 
         self.right_m.services.identity.can.assert_called_once()

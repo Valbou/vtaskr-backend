@@ -27,7 +27,9 @@ class TestGroupManager(DummyBaseTestCase):
         self.group_m.services.identity.can = MagicMock(return_value=True)
         self.group_m.group_db.load = MagicMock(return_value=group)
 
-        user_group = self.group_m.get_group(user_id="user_123", group_id=group.id)
+        user_group = self.group_m.get_group(
+            session=None, user_id="user_123", group_id=group.id
+        )
 
         self.group_m.services.identity.can.assert_called_once()
         self.group_m.group_db.load.assert_called_once()
@@ -40,7 +42,9 @@ class TestGroupManager(DummyBaseTestCase):
         self.group_m.services.identity.can = MagicMock(return_value=False)
         self.group_m.group_db.load = MagicMock(return_value=group)
 
-        user_group = self.group_m.get_group(user_id="user_123", group_id=group.id)
+        user_group = self.group_m.get_group(
+            session=None, user_id="user_123", group_id=group.id
+        )
 
         self.group_m.services.identity.can.assert_called_once()
         self.group_m.group_db.load.assert_not_called()
@@ -53,7 +57,9 @@ class TestGroupManager(DummyBaseTestCase):
         self.group_m.services.identity.can = MagicMock(return_value=True)
         self.group_m.group_db.save = MagicMock()
 
-        updated = self.group_m.update_group(user_id="user_123", group=group)
+        updated = self.group_m.update_group(
+            session=None, user_id="user_123", group=group
+        )
 
         self.group_m.services.identity.can.assert_called_once()
         self.group_m.group_db.save.assert_called_once()
@@ -66,7 +72,9 @@ class TestGroupManager(DummyBaseTestCase):
         self.group_m.services.identity.can = MagicMock(return_value=False)
         self.group_m.group_db.save = MagicMock()
 
-        updated = self.group_m.update_group(user_id="user_123", group=group)
+        updated = self.group_m.update_group(
+            session=None, user_id="user_123", group=group
+        )
 
         self.group_m.services.identity.can.assert_called_once()
         self.group_m.group_db.save.assert_not_called()
@@ -79,7 +87,9 @@ class TestGroupManager(DummyBaseTestCase):
         self.group_m.services.identity.can = MagicMock(return_value=True)
         self.group_m.group_db.delete = MagicMock()
 
-        deleted = self.group_m.delete_group(user_id="user_123", group=group)
+        deleted = self.group_m.delete_group(
+            session=None, user_id="user_123", group=group
+        )
 
         self.group_m.services.identity.can.assert_called_once()
         self.group_m.group_db.delete.assert_called_once()
@@ -92,7 +102,9 @@ class TestGroupManager(DummyBaseTestCase):
         self.group_m.services.identity.can = MagicMock(return_value=False)
         self.group_m.group_db.delete = MagicMock()
 
-        deleted = self.group_m.delete_group(user_id="user_123", group=group)
+        deleted = self.group_m.delete_group(
+            session=None, user_id="user_123", group=group
+        )
 
         self.group_m.services.identity.can.assert_called_once()
         self.group_m.group_db.delete.assert_not_called()
@@ -102,7 +114,7 @@ class TestGroupManager(DummyBaseTestCase):
     def test_get_all_groups(self):
         self.group_m.group_db.get_all_user_groups = MagicMock(return_value=[])
 
-        user_groups = self.group_m.get_all_groups(user_id="user_123")
+        user_groups = self.group_m.get_all_groups(session=None, user_id="user_123")
 
         self.group_m.group_db.get_all_user_groups.assert_called_once()
         self.assertIsInstance(user_groups, list)

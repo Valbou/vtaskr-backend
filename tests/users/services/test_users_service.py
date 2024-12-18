@@ -1,4 +1,4 @@
-from unittest.mock import MagicMock
+from unittest.mock import ANY, MagicMock
 
 from src.libs.iam.constants import Permissions
 from src.settings import LOCALE, TIMEZONE
@@ -75,7 +75,7 @@ class TestUsersService(DummyBaseTestCase):
         self.users_service.get_group(user_id="user_123", group_id="group_123")
 
         self.users_service.group_manager.get_group.assert_called_once_with(
-            user_id="user_123", group_id="group_123"
+            session=ANY, user_id="user_123", group_id="group_123"
         )
 
     def test_get_update_group(self):
@@ -92,7 +92,7 @@ class TestUsersService(DummyBaseTestCase):
         self.users_service.get_all_user_groups(user_id="user_123")
 
         self.users_service.group_manager.get_all_groups.assert_called_once_with(
-            user_id="user_123", qs_filters=[]
+            session=ANY, user_id="user_123", qs_filters=[]
         )
 
     def test_get_delete_group(self):
@@ -109,7 +109,7 @@ class TestUsersService(DummyBaseTestCase):
         self.users_service.get_group_members(user_id="user_123", group_id="group_123")
 
         self.users_service.role_manager.get_members.assert_called_once_with(
-            user_id="user_123", group_id="group_123"
+            session=ANY, user_id="user_123", group_id="group_123"
         )
 
     def test_find_user_by_email(self):
@@ -802,7 +802,7 @@ class TestUsersService(DummyBaseTestCase):
     def test_delete_user_right(self):
         self.users_service.right_manager.delete_right = MagicMock(return_value=True)
 
-        result = self.users_service.right_manager.delete_right(
+        result = self.users_service.delete_user_right(
             user_id="user_123", right=MagicMock(), roletype=MagicMock()
         )
 
@@ -860,7 +860,7 @@ class TestUsersService(DummyBaseTestCase):
     def test_delete_user_role(self):
         self.users_service.role_manager.delete_role = MagicMock(return_value=True)
 
-        result = self.users_service.role_manager.delete_role(
+        result = self.users_service.delete_user_role(
             user_id="user_123", role=MagicMock()
         )
 
@@ -929,7 +929,7 @@ class TestUsersService(DummyBaseTestCase):
             return_value=True
         )
 
-        result = self.users_service.roletype_manager.delete_roletype(
+        result = self.users_service.delete_user_roletype(
             user_id="user_123", roletype=MagicMock()
         )
 

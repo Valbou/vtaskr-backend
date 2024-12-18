@@ -107,34 +107,65 @@ class UsersService:
     def get_group(self, user_id: str, group_id: str) -> Group:
         """Return a user's group"""
 
-        return self.group_manager.get_group(user_id=user_id, group_id=group_id)
+        with self.services.persistence.get_session() as session:
+            return self.group_manager.get_group(
+                session=session, user_id=user_id, group_id=group_id
+            )
 
     def get_default_private_group(self, user_id: str) -> Group | None:
         """Return user's initial group created by default - Private"""
 
-        return self.group_manager.get_initial_group(user_id=user_id)
+        with self.services.persistence.get_session() as session:
+            return self.group_manager.get_initial_group(session=session, user_id=user_id)
 
     def update_group(self, user_id: str, group: Group) -> bool:
         """Update a user's group"""
 
-        return self.group_manager.update_group(user_id=user_id, group=group)
+        with self.services.persistence.get_session() as session:
+            return self.group_manager.update_group(
+                session=session, user_id=user_id, group=group
+            )
 
     def get_all_user_groups(
         self, user_id: str, qs_filters: list[Filter] = []
     ) -> list[Group]:
         """Return a filtered list of user's groups"""
 
-        return self.group_manager.get_all_groups(user_id=user_id, qs_filters=qs_filters)
+        with self.services.persistence.get_session() as session:
+            return self.group_manager.get_all_groups(
+                session=session, user_id=user_id, qs_filters=qs_filters
+            )
 
     def delete_group(self, user_id: str, group: Group) -> bool:
         """Delete a user's group"""
 
-        return self.group_manager.delete_group(user_id=user_id, group=group)
+        with self.services.persistence.get_session() as session:
+            result = self.group_manager.delete_group(
+                session=session, user_id=user_id, group=group
+            )
+
+            user = self.user_manager.get_user(session=session, user_id=user_id)
+            members = [
+                role.user
+                for role in self.role_manager.get_members(
+                    session=session, user_id=user_id, group_id=group.id
+                )
+            ]
+
+        with self.services.eventbus as event_session:
+            self.event_manager.send_delete_tenant(
+                session=event_session, user=user, members=members, group=group
+            )
+
+        return result
 
     def get_group_members(self, user_id: str, group_id: str) -> list[Role]:
         """Return all group's members"""
 
-        return self.role_manager.get_members(user_id=user_id, group_id=group_id)
+        with self.services.persistence.get_session() as session:
+            return self.role_manager.get_members(
+                session=session, user_id=user_id, group_id=group_id
+            )
 
     def find_user_by_email(self, email: str) -> User | None:
         """Find a user from an email"""
@@ -250,9 +281,10 @@ class UsersService:
     def request_password_change(self, user: User) -> None:
         """Create a request to change the user password"""
 
-        request_change = self.request_change_manager.create_request_change(
-            user.email, RequestType.PASSWORD
-        )
+        with self.services.persistence.get_session() as session:
+            request_change = self.request_change_manager.create_request_change(
+                session=session, email=user.email, request_type=RequestType.PASSWORD
+            )
 
         with self.services.eventbus as event_session:
             self.event_manager.send_password_change_event(
@@ -265,12 +297,12 @@ class UsersService:
         with self.services.persistence.get_session() as session:
             user_found = self.user_manager.find_user_by_email(session, new_email)
 
-        if user_found:
-            raise EmailAlreadyUsedError()
+            if user_found:
+                raise EmailAlreadyUsedError()
 
-        request_change = self.request_change_manager.create_request_change(
-            user.email, RequestType.EMAIL
-        )
+            request_change = self.request_change_manager.create_request_change(
+                user.email, RequestType.EMAIL
+            )
 
         with self.services.eventbus as event_session:
             self.event_manager.send_email_change_event(
@@ -375,9 +407,11 @@ class UsersService:
         """Invite an user to join a group using his/her email"""
 
         with self.services.persistence.get_session() as session:
-            group = self.group_manager.get_group(user_id=user.id, group_id=group_id)
+            group = self.group_manager.get_group(
+                session=session, user_id=user.id, group_id=group_id
+            )
             roletype = self.roletype_manager.get_roletype(
-                user_id=user.id, roletype_id=roletype_id
+                session=session, user_id=user.id, roletype_id=roletype_id
             )
 
             if group and roletype and not group.is_private:
@@ -425,9 +459,10 @@ class UsersService:
                     session=session, id=invitation.from_user_id
                 )
                 group = self.group_manager.get_group(
-                    user_id=user.id, group_id=invitation.in_group_id
+                    session=session, user_id=user.id, group_id=invitation.in_group_id
                 )
                 roletype = self.roletype_manager.get_roletype(
+                    session=session,
                     user_id=invitation.from_user_id,
                     roletype_id=invitation.with_roletype_id,
                 )
@@ -465,7 +500,9 @@ class UsersService:
                 session=session, invitation_id=invitation_id
             )
             group = self.group_manager.get_group(
-                user_id=invitation.from_user_id, group_id=invitation.in_group_id
+                session=session,
+                user_id=invitation.from_user_id,
+                group_id=invitation.in_group_id,
             )
 
             result = self.invitation_manager.delete_invitation_by_id(
@@ -490,88 +527,126 @@ class UsersService:
     ) -> Right | None:
         """Create a new right"""
 
-        return self.right_manager.create_right(
-            user_id=user_id, group_id=group_id, right=right
-        )
+        with self.services.persistence.get_session() as session:
+            return self.right_manager.create_right(
+                session=session, user_id=user_id, group_id=group_id, right=right
+            )
 
     def get_user_right(self, user_id: str, right_id: str) -> Right | None:
         """Return a specific user's right"""
 
-        return self.right_manager.get_right(user_id=user_id, right_id=right_id)
+        with self.services.persistence.get_session() as session:
+            return self.right_manager.get_right(
+                session=session, user_id=user_id, right_id=right_id
+            )
 
     def get_all_user_rights(
         self, user_id: str, qs_filter: list[Filter] | None = None
     ) -> list[Right]:
         """Return all rights of one user"""
 
-        return self.right_manager.get_all_rights(user_id=user_id, qs_filters=qs_filter)
+        with self.services.persistence.get_session() as session:
+            return self.right_manager.get_all_rights(
+                session=session, user_id=user_id, qs_filters=qs_filter
+            )
 
     def update_user_right(self, user_id: str, right: Right, roletype: RoleType) -> bool:
         """Update right associated to user"""
 
-        return self.right_manager.update_right(
-            user_id=user_id, right=right, roletype=roletype
-        )
+        with self.services.persistence.get_session() as session:
+            return self.right_manager.update_right(
+                session=session, user_id=user_id, right=right, roletype=roletype
+            )
 
     def delete_user_right(self, user_id: str, right: Right, roletype: RoleType) -> bool:
         """Delete a user right"""
 
-        self.right_manager.delete_right(user_id=user_id, right=right, roletype=roletype)
+        with self.services.persistence.get_session() as session:
+            return self.right_manager.delete_right(
+                session=session, user_id=user_id, right=right, roletype=roletype
+            )
 
     def create_new_role(self, user_id: str, role: Role) -> Role | None:
         """Create a new role"""
 
-        return self.role_manager.create_role(user_id=user_id, right=role)
+        with self.services.persistence.get_session() as session:
+            return self.role_manager.create_role(
+                session=session, user_id=user_id, right=role
+            )
 
     def get_user_role(self, user_id: str, role_id: str) -> Role | None:
         """Return a specific user's role"""
 
-        return self.role_manager.get_role(user_id=user_id, role_id=role_id)
+        with self.services.persistence.get_session() as session:
+            return self.role_manager.get_role(
+                session=session, user_id=user_id, role_id=role_id
+            )
 
     def get_all_user_roles(
         self, user_id: str, qs_filter: list[Filter] | None = None
     ) -> list[Role]:
         """Return all roles of one user"""
 
-        return self.role_manager.get_all_roles(user_id=user_id, qs_filters=qs_filter)
+        with self.services.persistence.get_session() as session:
+            return self.role_manager.get_all_roles(
+                session=session, user_id=user_id, qs_filters=qs_filter
+            )
 
     def update_user_role(self, user_id: str, role: Role) -> bool:
         """Update role associated to user"""
 
-        return self.role_manager.update_role(user_id=user_id, role=role)
+        with self.services.persistence.get_session() as session:
+            return self.role_manager.update_role(
+                session=session, user_id=user_id, role=role
+            )
 
     def delete_user_role(self, user_id: str, role: Role) -> bool:
         """Delete a user role"""
 
-        self.role_manager.delete_role(user_id=user_id, role=role)
+        # FIXME: send notification to role.user
+        with self.services.persistence.get_session() as session:
+            return self.role_manager.delete_role(
+                session=session, user_id=user_id, role=role
+            )
 
     def create_new_roletype(self, name: str, group_id: str) -> RoleType | None:
         """Create a new roletype"""
 
-        return self.roletype_manager.create_custom_roletype(name=name, group_id=group_id)
+        with self.services.persistence.get_session() as session:
+            return self.roletype_manager.create_custom_roletype(
+                session=session, name=name, group_id=group_id
+            )
 
     def get_user_roletype(self, user_id: str, roletype_id: str) -> RoleType | None:
         """Return a specific user's roletype"""
 
-        return self.roletype_manager.get_roletype(
-            user_id=user_id, roletype_id=roletype_id
-        )
+        with self.services.persistence.get_session() as session:
+            return self.roletype_manager.get_roletype(
+                session=session, user_id=user_id, roletype_id=roletype_id
+            )
 
     def get_all_user_roletypes(
         self, user_id: str, qs_filter: list[Filter] | None = None
     ) -> list[RoleType]:
         """Return all roletypes of one user"""
 
-        return self.roletype_manager.get_all_roletypes(
-            user_id=user_id, qs_filters=qs_filter
-        )
+        with self.services.persistence.get_session() as session:
+            return self.roletype_manager.get_all_roletypes(
+                session=session, user_id=user_id, qs_filters=qs_filter
+            )
 
     def update_user_roletype(self, user_id: str, roletype: RoleType) -> bool:
         """Update roletype associated to user"""
 
-        return self.roletype_manager.update_roletype(user_id=user_id, roletype=roletype)
+        with self.services.persistence.get_session() as session:
+            return self.roletype_manager.update_roletype(
+                session=session, user_id=user_id, roletype=roletype
+            )
 
     def delete_user_roletype(self, user_id: str, roletype: RoleType) -> bool:
         """Delete a user roletype"""
 
-        self.roletype_manager.delete_roletype(user_id=user_id, roletype=roletype)
+        with self.services.persistence.get_session() as session:
+            return self.roletype_manager.delete_roletype(
+                session=session, user_id=user_id, roletype=roletype
+            )

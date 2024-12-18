@@ -42,34 +42,32 @@ class InvitationManager:
     def update_invitation(self, session, user_id: str, invitation: Invitation) -> bool:
         """Create or update an invitation"""
 
-        with self.services.persistence.get_session() as session:
-            if user_id and self.services.identity.can(
-                session,
-                Permissions.UPDATE,
-                user_id,
-                invitation.in_group_id,
-                resource="Group",
-            ):
-                self.invitation_db.save(session=session, obj=invitation)
+        if user_id and self.services.identity.can(
+            session,
+            Permissions.UPDATE,
+            user_id,
+            invitation.in_group_id,
+            resource="Group",
+        ):
+            self.invitation_db.save(session=session, obj=invitation)
 
-                return True
+            return True
 
         return False
 
     def delete_invitation(self, session, user_id: str, invitation: Invitation) -> bool:
         """Delete an invitation"""
 
-        with self.services.persistence.get_session() as session:
-            if self.services.identity.can(
-                session,
-                Permissions.UPDATE,
-                user_id,
-                invitation.in_group_id,
-                resource="Group",
-            ):
-                self.invitation_db.delete(session=session, obj=invitation)
+        if self.services.identity.can(
+            session,
+            Permissions.UPDATE,
+            user_id,
+            invitation.in_group_id,
+            resource="Group",
+        ):
+            self.invitation_db.delete(session=session, obj=invitation)
 
-                return True
+            return True
 
         return False
 
@@ -78,16 +76,15 @@ class InvitationManager:
     ) -> bool:
         """Delete an invitation from an id"""
 
-        with self.services.persistence.get_session() as session:
-            if self.services.identity.can(
-                session,
-                Permissions.UPDATE,
-                user_id,
-                group_id,
-                resource="Group",
-            ):
-                self.invitation_db.delete_by_id(session=session, id=invitation_id)
+        if self.services.identity.can(
+            session,
+            Permissions.UPDATE,
+            user_id,
+            group_id,
+            resource="Group",
+        ):
+            self.invitation_db.delete_by_id(session=session, id=invitation_id)
 
-                return True
+            return True
 
         return False

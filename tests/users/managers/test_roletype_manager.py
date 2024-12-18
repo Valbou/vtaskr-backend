@@ -86,7 +86,7 @@ class TestRoleTypeManager(DummyBaseTestCase):
         )
 
         roletype, created = self.roletype_m.create_custom_roletype(
-            name=base_roletype.name, group_id=base_roletype.group_id
+            session=None, name=base_roletype.name, group_id=base_roletype.group_id
         )
 
         self.roletype_m.roletype_db.get_or_create.assert_called_once()
@@ -107,7 +107,7 @@ class TestRoleTypeManager(DummyBaseTestCase):
         )
 
         roletype = self.roletype_m.get_roletype(
-            user_id="user_123", roletype_id="roletype_123"
+            session=None, user_id="user_123", roletype_id="roletype_123"
         )
 
         self.roletype_m.roletype_db.get_a_user_roletype.assert_called_once()
@@ -127,7 +127,9 @@ class TestRoleTypeManager(DummyBaseTestCase):
             return_value=[]
         )
 
-        roletypes_list = self.roletype_m.get_all_roletypes(user_id="user_123")
+        roletypes_list = self.roletype_m.get_all_roletypes(
+            session=None, user_id="user_123"
+        )
 
         self.roletype_m.roletype_db.get_all_user_roletypes.assert_called_once()
         self.roletype_m.services.identity.all_tenants_with_access.assert_called_once()
@@ -146,7 +148,7 @@ class TestRoleTypeManager(DummyBaseTestCase):
         self.roletype_m.services.identity.can = MagicMock(return_value=True)
 
         updated = self.roletype_m.update_roletype(
-            user_id="user_123", roletype=base_roletype
+            session=None, user_id="user_123", roletype=base_roletype
         )
 
         self.roletype_m.services.identity.can.assert_called_once()
@@ -160,7 +162,7 @@ class TestRoleTypeManager(DummyBaseTestCase):
         self.roletype_m.services.identity.can = MagicMock(return_value=False)
 
         updated = self.roletype_m.update_roletype(
-            user_id="user_123", roletype=base_roletype
+            session=None, user_id="user_123", roletype=base_roletype
         )
 
         self.roletype_m.services.identity.can.assert_called_once()
@@ -174,7 +176,7 @@ class TestRoleTypeManager(DummyBaseTestCase):
         self.roletype_m.services.identity.can = MagicMock(return_value=True)
 
         deleted = self.roletype_m.delete_roletype(
-            user_id="user_123", roletype=base_roletype
+            session=None, user_id="user_123", roletype=base_roletype
         )
 
         self.roletype_m.services.identity.can.assert_called_once()
@@ -188,7 +190,7 @@ class TestRoleTypeManager(DummyBaseTestCase):
         self.roletype_m.services.identity.can = MagicMock(return_value=False)
 
         deleted = self.roletype_m.delete_roletype(
-            user_id="user_123", roletype=base_roletype
+            session=None, user_id="user_123", roletype=base_roletype
         )
 
         self.roletype_m.services.identity.can.assert_called_once()

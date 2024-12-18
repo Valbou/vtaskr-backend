@@ -114,12 +114,16 @@ class TestPermissionControlOnOthersGroups(BaseTestCase, CheckCanMixin):
             user_id=first_user.id, group_name="My Shared Group", is_private=False
         )
 
-        roletype_service = RoleTypeManager(self.app.dependencies)
-        roletype, _created = roletype_service.create_custom_roletype(
-            name="Read and Create on RoleType only", group_id=self.shared_group.id
-        )
+        roletype_manager = RoleTypeManager(self.app.dependencies)
 
         with self.app.dependencies.persistence.get_session() as session:
+            roletype, _created = roletype_manager.create_custom_roletype(
+                session=session,
+                name="Read and Create on RoleType only",
+                group_id=self.shared_group.id,
+            )
+            session.commit()
+
             role_manager = RoleManager(self.app.dependencies)
             role_manager.add_role(
                 session=session,
@@ -128,12 +132,13 @@ class TestPermissionControlOnOthersGroups(BaseTestCase, CheckCanMixin):
                 roletype_id=roletype.id,
             )
 
-        right_service = RightManager(self.app.dependencies)
-        right_service.add_right(
-            roletype_id=roletype.id,
-            resource="RoleType",
-            permissions=[Permissions.READ, Permissions.EXECUTE],
-        )
+            right_manager = RightManager(self.app.dependencies)
+            right_manager.add_right(
+                session=session,
+                roletype_id=roletype.id,
+                resource="RoleType",
+                permissions=[Permissions.READ, Permissions.EXECUTE],
+            )
 
     # On a group with a custom role (partial access)
     def test_user_can_read_and_achieve_only_on_this_shared_group(self):

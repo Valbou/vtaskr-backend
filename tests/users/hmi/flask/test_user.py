@@ -15,22 +15,30 @@ class TestUserV1Me(DummyBaseTestCase):
         response = self.client.post(f"{URL_API_USERS}/me", headers=self.headers)
         self.assertEqual(response.status_code, 405)
 
-    def test_get_me(self):
+    @patch("src.users.services.UsersService.get_default_private_group")
+    def test_get_me(self, mock_group: MagicMock):
         headers = self.get_token_headers()
+        mock_group.return_value = self.group
 
         with set_fake_authentication(app=self.app, user=self.user, token=self.token):
             response = self.client.get(f"{URL_API_USERS}/me", headers=headers)
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.content_type, "application/json")
-        self.assertEqual(response.json.get("id"), self.user.id)
-        self.assertEqual(response.json.get("first_name"), self.user.first_name)
-        self.assertEqual(response.json.get("last_name"), self.user.last_name)
-        self.assertEqual(response.json.get("email"), self.user.email)
+        user = response.json.get("user")
+        group = response.json.get("default_group")
+
+        self.assertEqual(user.get("id"), self.user.id)
+        self.assertEqual(user.get("first_name"), self.user.first_name)
+        self.assertEqual(user.get("last_name"), self.user.last_name)
+        self.assertEqual(user.get("email"), self.user.email)
         self.assertEqual(
-            response.json.get("created_at"),
+            user.get("created_at"),
             self.user.created_at.astimezone(ZoneInfo("UTC")).isoformat(),
         )
+
+        self.assertEqual(group.get("id"), self.group.id)
+        self.assertEqual(group.get("name"), self.group.name)
 
     @patch("src.users.services.UsersService.update_user")
     def test_put_user(self, mock_user: MagicMock):

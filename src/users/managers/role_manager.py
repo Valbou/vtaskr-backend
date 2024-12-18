@@ -22,22 +22,20 @@ class RoleManager:
             APP_NAME, "Role"
         )
 
-    def create_role(self, user_id: str, role: Role) -> Role | None:
+    def create_role(self, session, user_id: str, role: Role) -> Role | None:
         """Add a role with permission controls"""
 
-        with self.services.persistence.get_session() as session:
-            if self.services.identity.can(
-                session,
-                Permissions.CREATE,
-                user_id=user_id,
-                group_id_resource=role.group_id,
-                resource="Group",
-                exception=True,
-            ):
-                self.role_db.save(session, role)
-                session.commit()
+        if self.services.identity.can(
+            session,
+            Permissions.CREATE,
+            user_id=user_id,
+            group_id_resource=role.group_id,
+            resource="Group",
+            exception=True,
+        ):
+            self.role_db.save(session, role)
 
-                return role
+            return role
 
         return None
 
@@ -59,82 +57,73 @@ class RoleManager:
 
         return role
 
-    def get_role(self, user_id, role_id) -> Role | None:
+    def get_role(self, session, user_id, role_id) -> Role | None:
         """Return the role expected if user has read permission"""
 
-        with self.services.persistence.get_session() as session:
-            group_ids = self.services.identity.all_tenants_with_access(
-                session, Permissions.CREATE, user_id=user_id, resource="Role"
-            )
+        group_ids = self.services.identity.all_tenants_with_access(
+            session, Permissions.CREATE, user_id=user_id, resource="Role"
+        )
 
-            role = self.role_db.get_a_user_role(
-                session, user_id, role_id, group_ids=group_ids
-            )
+        role = self.role_db.get_a_user_role(
+            session, user_id, role_id, group_ids=group_ids
+        )
 
         return role
 
     def get_all_roles(
-        self, user_id: str, qs_filters: list[Filter] | None = None
+        self, session, user_id: str, qs_filters: list[Filter] | None = None
     ) -> list[Role]:
         """Return a list of all user's roles"""
 
-        with self.services.persistence.get_session() as session:
-            group_ids = self.services.identity.all_tenants_with_access(
-                session, Permissions.READ, user_id=user_id, resource="Role"
-            )
-            roles = self.role_db.get_all_user_roles(
-                session, user_id, group_ids=group_ids, filters=qs_filters
-            )
+        group_ids = self.services.identity.all_tenants_with_access(
+            session, Permissions.READ, user_id=user_id, resource="Role"
+        )
+        roles = self.role_db.get_all_user_roles(
+            session, user_id, group_ids=group_ids, filters=qs_filters
+        )
 
         return roles
 
-    def get_members(self, user_id: str, group_id: str) -> list[Role]:
-        with self.services.persistence.get_session() as session:
-            if self.services.identity.can(
-                session, Permissions.READ, user_id, group_id, resource="Role"
-            ):
-                roles = self.role_db.get_group_roles(session, group_id=group_id)
+    def get_members(self, session, user_id: str, group_id: str) -> list[Role]:
+        if self.services.identity.can(
+            session, Permissions.READ, user_id, group_id, resource="Role"
+        ):
+            roles = self.role_db.get_group_roles(session, group_id=group_id)
 
-                return roles
+            return roles
 
         return []
 
-    def update_role(self, user_id: str, role: Role) -> bool:
+    def update_role(self, session, user_id: str, role: Role) -> bool:
         """Update a role if update permission was given"""
 
-        with self.services.persistence.get_session() as session:
-            # A user can't change his roles
-            if role.user_id != user_id and self.services.identity.can(
-                session,
-                Permissions.UPDATE,
-                user_id,
-                role.group_id,
-                resource="Role",
-            ):
-                self.role_db.save(session, role)
-                session.commit()
+        # A user can't change his roles
+        if role.user_id != user_id and self.services.identity.can(
+            session,
+            Permissions.UPDATE,
+            user_id,
+            role.group_id,
+            resource="Role",
+        ):
+            self.role_db.save(session, role)
 
-                return True
+            return True
 
         return False
 
-    def delete_role(self, user_id: str, role: Role) -> bool:
+    def delete_role(self, session, user_id: str, role: Role) -> bool:
         """Delete a role if delete permission was given"""
 
-        # FIXME: send notification to role.user
+        # A user can't change his roles
+        if role.user_id != user_id and self.services.identity.can(
+            session,
+            Permissions.DELETE,
+            user_id,
+            role.group_id,
+            resource="Role",
+        ):
+            self.role_db.delete(session, role)
 
-        with self.services.persistence.get_session() as session:
-            # A user can't change his roles
-            if role.user_id != user_id and self.services.identity.can(
-                session,
-                Permissions.DELETE,
-                user_id,
-                role.group_id,
-                resource="Role",
-            ):
-                self.role_db.delete(session, role)
-                session.commit()
+            return True
 
-                return True
-
-            return False
+        return False

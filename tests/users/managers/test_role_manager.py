@@ -18,7 +18,7 @@ class TestRoleManager(DummyBaseTestCase):
         self.role_m.services.identity.can = MagicMock(return_value=True)
         self.role_m.role_db.save = MagicMock()
 
-        new_role = self.role_m.create_role(user_id="user_123", role=role)
+        new_role = self.role_m.create_role(session=None, user_id="user_123", role=role)
 
         self.role_m.services.identity.can.assert_called_once()
         self.role_m.role_db.save.assert_called_once()
@@ -32,7 +32,7 @@ class TestRoleManager(DummyBaseTestCase):
         self.role_m.services.identity.can = MagicMock(return_value=False)
         self.role_m.role_db.save = MagicMock()
 
-        new_role = self.role_m.create_role(user_id="user_123", role=role)
+        new_role = self.role_m.create_role(session=None, user_id="user_123", role=role)
 
         self.role_m.services.identity.can.assert_called_once()
         self.role_m.role_db.save.assert_not_called()
@@ -58,7 +58,7 @@ class TestRoleManager(DummyBaseTestCase):
         )
         self.role_m.role_db.get_a_user_role = MagicMock(return_value=base_role)
 
-        role = self.role_m.get_role(user_id="user_123", role_id="role_123")
+        role = self.role_m.get_role(session=None, user_id="user_123", role_id="role_123")
 
         self.role_m.services.identity.all_tenants_with_access.assert_called_once()
         self.role_m.role_db.get_a_user_role.assert_called_once()
@@ -71,7 +71,7 @@ class TestRoleManager(DummyBaseTestCase):
         )
         self.role_m.role_db.get_all_user_roles = MagicMock(return_value=[base_role])
 
-        roles = self.role_m.get_all_roles(user_id="user_123")
+        roles = self.role_m.get_all_roles(session=None, user_id="user_123")
 
         self.role_m.services.identity.all_tenants_with_access.assert_called_once()
         self.role_m.role_db.get_all_user_roles.assert_called_once()
@@ -85,7 +85,7 @@ class TestRoleManager(DummyBaseTestCase):
         )
         self.role_m.role_db.get_all_user_roles = MagicMock(return_value=[])
 
-        roles = self.role_m.get_all_roles(user_id="user_123")
+        roles = self.role_m.get_all_roles(session=None, user_id="user_123")
 
         self.role_m.services.identity.all_tenants_with_access.assert_called_once()
         self.role_m.role_db.get_all_user_roles.assert_called_once()
@@ -96,7 +96,9 @@ class TestRoleManager(DummyBaseTestCase):
         self.role_m.services.identity.can = MagicMock(return_value=True)
         self.role_m.role_db.get_group_roles = MagicMock(return_value=[])
 
-        roles = self.role_m.get_members(user_id="user_123", group_id="group_123")
+        roles = self.role_m.get_members(
+            session=None, user_id="user_123", group_id="group_123"
+        )
 
         self.role_m.services.identity.can.assert_called_once()
         self.role_m.role_db.get_group_roles.assert_called_once()
@@ -109,7 +111,9 @@ class TestRoleManager(DummyBaseTestCase):
         self.role_m.role_db.save = MagicMock()
         self.role_m.services.identity.can = MagicMock(return_value=True)
 
-        udpated = self.role_m.update_role(user_id="user_987", role=base_role)
+        udpated = self.role_m.update_role(
+            session=None, user_id="user_987", role=base_role
+        )
 
         self.role_m.services.identity.can.assert_called_once()
         self.role_m.role_db.save.assert_called_once()
@@ -121,7 +125,9 @@ class TestRoleManager(DummyBaseTestCase):
         self.role_m.role_db.save = MagicMock()
         self.role_m.services.identity.can = MagicMock(return_value=False)
 
-        udpated = self.role_m.update_role(user_id="user_987", role=base_role)
+        udpated = self.role_m.update_role(
+            session=None, user_id="user_987", role=base_role
+        )
 
         self.role_m.services.identity.can.assert_called_once()
         self.role_m.role_db.save.assert_not_called()
@@ -133,7 +139,9 @@ class TestRoleManager(DummyBaseTestCase):
         self.role_m.role_db.save = MagicMock()
         self.role_m.services.identity.can = MagicMock(return_value=False)
 
-        udpated = self.role_m.update_role(user_id="user_123", role=base_role)
+        udpated = self.role_m.update_role(
+            session=None, user_id="user_123", role=base_role
+        )
 
         self.role_m.services.identity.can.assert_not_called()
         self.role_m.role_db.save.assert_not_called()
@@ -145,7 +153,9 @@ class TestRoleManager(DummyBaseTestCase):
         self.role_m.role_db.delete = MagicMock()
         self.role_m.services.identity.can = MagicMock(return_value=True)
 
-        deleted = self.role_m.delete_role(user_id="user_987", role=base_role)
+        deleted = self.role_m.delete_role(
+            session=None, user_id="user_987", role=base_role
+        )
 
         self.role_m.services.identity.can.assert_called_once()
         self.role_m.role_db.delete.assert_called_once()
@@ -157,7 +167,9 @@ class TestRoleManager(DummyBaseTestCase):
         self.role_m.role_db.delete = MagicMock()
         self.role_m.services.identity.can = MagicMock(return_value=False)
 
-        deleted = self.role_m.delete_role(user_id="user_987", role=base_role)
+        deleted = self.role_m.delete_role(
+            session=None, user_id="user_987", role=base_role
+        )
 
         self.role_m.services.identity.can.assert_called_once()
         self.role_m.role_db.delete.assert_not_called()
@@ -169,7 +181,9 @@ class TestRoleManager(DummyBaseTestCase):
         self.role_m.role_db.delete = MagicMock()
         self.role_m.services.identity.can = MagicMock(return_value=False)
 
-        deleted = self.role_m.delete_role(user_id="user_123", role=base_role)
+        deleted = self.role_m.delete_role(
+            session=None, user_id="user_123", role=base_role
+        )
 
         self.role_m.services.identity.can.assert_not_called()
         self.role_m.role_db.delete.assert_not_called()

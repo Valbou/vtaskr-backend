@@ -15,7 +15,7 @@ class TestRequestChangeManager(DummyBaseTestCase):
         self.request_change_m.request_change_db.save = MagicMock()
 
         request_change = self.request_change_m.create_request_change(
-            email="test@example.com", request_type=RequestType.EMAIL
+            session=None, email="test@example.com", request_type=RequestType.EMAIL
         )
 
         self.request_change_m.request_change_db.clean_history.assert_called_once()

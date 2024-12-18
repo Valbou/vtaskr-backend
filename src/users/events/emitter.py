@@ -177,3 +177,22 @@ class UsersEventManager:
                 "group_name": group.name,
             },
         )
+
+    def send_delete_tenant(
+        self,
+        session: EventBusPort,
+        user: User,
+        members: list[User],
+        group: Group,
+    ) -> dict:
+        session.emit(
+            tenant_id=user.id,
+            event_name="users:delete:tenant",
+            event_data={
+                "targets": [u.id for u in members],
+                "from_name": f"{user.first_name} {user.last_name}",
+                "tenant_id": group.id,
+                "group_id": group.id,
+                "group_name": group.name,
+            },
+        )
