@@ -1,17 +1,17 @@
 from unittest import TestCase
 from unittest.mock import MagicMock
 
-from src.notifications.settings import MessageType
 from src.notifications.models import (
     BaseEmailContent,
     BaseEmailTemplate,
     BaseTelegramContent,
     BaseTelegramTemplate,
+    Contact,
     MessageFabric,
     MessageType,
     Subscription,
-    Contact,
 )
+from src.notifications.settings import MessageType
 
 
 class TestMessageFabric(TestCase):
@@ -25,7 +25,7 @@ class TestMessageFabric(TestCase):
                 last_name="last",
                 email="test@example.com",
                 telegram="1234",
-            )
+            ),
         )
 
     def test_get_message_class_email(self):

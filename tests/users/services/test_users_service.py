@@ -670,9 +670,7 @@ class TestUsersService(DummyBaseTestCase):
         user = self._get_user()
 
         self.users_service.group_manager.get_group = MagicMock(return_value=None)
-        self.users_service.roletype_manager.get_roletype = MagicMock(
-            return_value=None
-        )
+        self.users_service.roletype_manager.get_roletype = MagicMock(return_value=None)
         self.users_service.invitation_manager.update_invitation = MagicMock()
         self.users_service.event_manager.send_invitation_event = MagicMock()
 

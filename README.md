@@ -8,7 +8,7 @@ You can follow the [Roadmap](https://github.com/Valbou/vtaskr-backend/blob/maste
 [vTaskr Frontend](https://github.com/Valbou/vtaskr-frontend)
 
 ![License LGPLv3](https://img.shields.io/badge/license-LGPLv3-blue "License LGPLv3")
-![Tests 482 passed](https://img.shields.io/badge/tests-482%20passed-green "Tests 482 passed")
+![Tests 497 passed](https://img.shields.io/badge/tests-497%20passed-green "Tests 497 passed")
 ![Coverage 90%](https://img.shields.io/badge/coverage-90%25-green "Coverage 90%")
 [![CodeFactor](https://www.codefactor.io/repository/github/valbou/vtaskr-backend/badge)](https://www.codefactor.io/repository/github/valbou/vtaskr-backend)
 ![API](https://img.shields.io/website?url=https%3A%2F%2Fapi.vtaskr.com)

@@ -1,7 +1,7 @@
 from unittest import TestCase
 from unittest.mock import patch
 
-from src.notifications.managers import MultiSMTPEmail, SMTPEmail, NoEmailContentError
+from src.notifications.managers import MultiSMTPEmail, NoEmailContentError, SMTPEmail
 from src.notifications.settings import DEFAULT_SMTP_SENDER
 
 
