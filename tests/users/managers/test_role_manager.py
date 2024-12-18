@@ -105,6 +105,20 @@ class TestRoleManager(DummyBaseTestCase):
 
         self.assertIsInstance(roles, list)
 
+    def test_get_members_no_rights(self):
+        self.role_m.services.identity.can = MagicMock(return_value=False)
+        self.role_m.role_db.get_group_roles = MagicMock(return_value=[])
+
+        roles = self.role_m.get_members(
+            session=None, user_id="user_123", group_id="group_123"
+        )
+
+        self.role_m.services.identity.can.assert_called_once()
+        self.role_m.role_db.get_group_roles.assert_not_called()
+
+        self.assertIsInstance(roles, list)
+        self.assertListEqual(roles, [])
+
     def test_update_role(self):
         base_role = self._get_role()
 

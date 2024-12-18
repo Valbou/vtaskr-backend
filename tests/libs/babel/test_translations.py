@@ -1,5 +1,6 @@
 from gettext import GNUTranslations, NullTranslations
 from unittest import TestCase
+from unittest.mock import MagicMock
 
 from src.libs.babel.translations import (
     TranslationService,
@@ -57,6 +58,14 @@ class TestTranslationService(TestCase):
             self.translation.get_translation_session("notifications", "fr"),
             TranslationSession,
         )
+
+    def test_jinja_install_translation(self):
+        jinja_env = MagicMock()
+        jinja_env.install_gettext_translations = MagicMock()
+
+        self.translation.jinja_install_translation(jinja_env=jinja_env, translation=None)
+
+        jinja_env.install_gettext_translations.assert_called_once()
 
 
 class TestTranslationSession(TestCase):

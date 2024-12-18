@@ -36,6 +36,15 @@ class TestUser(TestCase):
             f"{self.user.first_name} {self.user.last_name}", self.user.full_name
         )
 
+    def test_auto_set_password(self):
+        password = "aB#1234aB#1234"  # nosec
+        user = User(
+            first_name="first",
+            last_name="last",
+            email="test@example.com",
+        )
+        self.assertFalse(user.check_password(password))
+
     def test_user_set_password(self):
         password = "aB#1234aB#1234"  # nosec
         self.user.set_password(password)
@@ -45,6 +54,11 @@ class TestUser(TestCase):
         password = "aB#1234aB#1234"  # nosec
         self.user.set_password(password)
         self.assertTrue(self.user.check_password(password))
+
+    def test_user_check_bad_password(self):
+        password = "aB#1234aB#1234"  # nosec
+        self.user.set_password(password)
+        self.assertFalse(self.user.check_password("abc_123"))  # nosec
 
     def test_user_to_string(self):
         self.assertEqual(str(self.user), self.user.full_name)

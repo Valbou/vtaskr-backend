@@ -176,6 +176,15 @@ class TestRightManager(DummyBaseTestCase):
         self.right_m.right_db.save.assert_not_called()
         self.assertFalse(udpated)
 
+    def test_clean_all_rights(self):
+        self.right_m.right_db.delete_roletype_rights = MagicMock()
+
+        self.right_m.clean_all_rights(session=None, roletype_id="roletype_123")
+
+        self.right_m.right_db.delete_roletype_rights.assert_called_once_with(
+            session=None, roletype_id="roletype_123"
+        )
+
     def test_delete_right(self):
         base_right = self._get_right()
         base_roletype = self._get_roletype()

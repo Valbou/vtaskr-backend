@@ -69,6 +69,19 @@ class TestUsersService(DummyBaseTestCase):
         self.assertEqual(group.id, new_group.id)
         self.assertEqual(group.name, new_group.name)
 
+    def test_refresh_admin_rights(self):
+        self.users_service.roletype_manager.get_default_admin = MagicMock(
+            return_value=(RoleType(name="roletype_123"), False)
+        )
+        self.users_service.right_manager.clean_all_rights = MagicMock()
+        self.users_service.right_manager.create_admin_rights = MagicMock()
+
+        self.users_service.refresh_admin_rights()
+
+        self.users_service.roletype_manager.get_default_admin.assert_called_once()
+        self.users_service.right_manager.clean_all_rights.assert_called_once()
+        self.users_service.right_manager.create_admin_rights.assert_called_once()
+
     def test_get_group(self):
         self.users_service.group_manager.get_group = MagicMock()
 
@@ -77,6 +90,13 @@ class TestUsersService(DummyBaseTestCase):
         self.users_service.group_manager.get_group.assert_called_once_with(
             session=ANY, user_id="user_123", group_id="group_123"
         )
+
+    def test_get_default_private_group(self):
+        self.users_service.group_manager.get_initial_group = MagicMock()
+
+        self.users_service.get_default_private_group(user_id="user_123")
+
+        self.users_service.group_manager.get_initial_group.assert_called_once()
 
     def test_get_update_group(self):
         group = Group(name="Test Group", is_private=False)
@@ -646,6 +666,29 @@ class TestUsersService(DummyBaseTestCase):
         self.assertEqual(invitation.with_roletype_id, base_roletype.id)
         self.assertEqual(invitation.in_group_id, base_group.id)
 
+    def test_invite_user_by_email_no_permission(self):
+        user = self._get_user()
+
+        self.users_service.group_manager.get_group = MagicMock(return_value=None)
+        self.users_service.roletype_manager.get_roletype = MagicMock(
+            return_value=None
+        )
+        self.users_service.invitation_manager.update_invitation = MagicMock()
+        self.users_service.event_manager.send_invitation_event = MagicMock()
+
+        with self.assertRaises(PermissionError):
+            invitation = self.users_service.invite_user_by_email(
+                user=user,
+                user_email="test@example.com",
+                group_id="group_132",
+                roletype_id="roletype_123",
+            )
+
+        self.users_service.group_manager.get_group.assert_called_once()
+        self.users_service.roletype_manager.get_roletype.assert_called_once()
+        self.users_service.invitation_manager.update_invitation.assert_not_called()
+        self.users_service.event_manager.send_invitation_event.assert_not_called()
+
     def test_accept_invitation(self):
         invited_user = self._get_user()
         base_user = self._get_user()
@@ -690,6 +733,60 @@ class TestUsersService(DummyBaseTestCase):
         self.assertEqual(base_role.user_id, role.user_id)
         self.assertEqual(base_role.group_id, role.group_id)
         self.assertEqual(base_role.roletype_id, role.roletype_id)
+
+    def test_accept_invitation_no_exists(self):
+        invited_user = self._get_user()
+
+        self.users_service.invitation_manager.get_from_hash = MagicMock(
+            return_value=None
+        )
+        self.users_service.role_manager.add_role = MagicMock()
+        self.users_service.user_manager.get_user = MagicMock()
+        self.users_service.group_manager.get_group = MagicMock()
+        self.users_service.roletype_manager.get_roletype = MagicMock()
+        self.users_service.event_manager.send_accepted_invitation_event = MagicMock()
+        self.users_service.invitation_manager.delete_invitation = MagicMock()
+
+        with self.assertRaises(ValueError):
+            self.users_service.accept_invitation(user=invited_user, hash="hash_123")
+
+        self.users_service.invitation_manager.get_from_hash.assert_called_once()
+        self.users_service.role_manager.add_role.assert_not_called()
+        self.users_service.user_manager.get_user.assert_not_called()
+        self.users_service.group_manager.get_group.assert_not_called()
+        self.users_service.roletype_manager.get_roletype.assert_not_called()
+        self.users_service.event_manager.send_accepted_invitation_event.assert_not_called()
+        self.users_service.invitation_manager.delete_invitation.assert_not_called()
+
+    def test_accept_invitation_not_invited_user(self):
+        invited_user = self._get_user()
+        base_invitation = Invitation(
+            from_user_id="user_123",
+            to_user_email="test@example.com",
+            with_roletype_id="roletype_123",
+            in_group_id="group_123",
+        )
+
+        self.users_service.invitation_manager.get_from_hash = MagicMock(
+            return_value=base_invitation
+        )
+        self.users_service.role_manager.add_role = MagicMock()
+        self.users_service.user_manager.get_user = MagicMock()
+        self.users_service.group_manager.get_group = MagicMock()
+        self.users_service.roletype_manager.get_roletype = MagicMock()
+        self.users_service.event_manager.send_accepted_invitation_event = MagicMock()
+        self.users_service.invitation_manager.delete_invitation = MagicMock()
+
+        with self.assertRaises(ValueError):
+            self.users_service.accept_invitation(user=invited_user, hash="hash_123")
+
+        self.users_service.invitation_manager.get_from_hash.assert_called_once()
+        self.users_service.role_manager.add_role.assert_not_called()
+        self.users_service.user_manager.get_user.assert_not_called()
+        self.users_service.group_manager.get_group.assert_not_called()
+        self.users_service.roletype_manager.get_roletype.assert_not_called()
+        self.users_service.event_manager.send_accepted_invitation_event.assert_not_called()
+        self.users_service.invitation_manager.delete_invitation.assert_not_called()
 
     def test_delete_invitation(self):
         user = self._get_user()

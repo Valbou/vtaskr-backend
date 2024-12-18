@@ -21,14 +21,12 @@ class User:
     created_at: datetime | None = None
     last_login_at: datetime | None = None
 
-    def __post_init__(self, password: str | None = None):
+    def __post_init__(self):
         self.id = self.id or get_id()
         self.created_at = self.created_at or datetime.now(tz=ZoneInfo("UTC"))
         self.locale = self.locale or Locale.parse(LOCALE)
         self.timezone = self.timezone or TIMEZONE
         self.set_email(self.email.lower())
-        if password:
-            self.set_password(password=password)
 
     @property
     def full_name(self) -> str:

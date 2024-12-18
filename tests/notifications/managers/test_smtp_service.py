@@ -1,7 +1,7 @@
 from unittest import TestCase
 from unittest.mock import patch
 
-from src.notifications.managers import MultiSMTPEmail, SMTPEmail
+from src.notifications.managers import MultiSMTPEmail, SMTPEmail, NoEmailContentError
 from src.notifications.settings import DEFAULT_SMTP_SENDER
 
 
@@ -23,6 +23,18 @@ class TestSMTPEmail(TestCase):
             cc_emails=[DEFAULT_SMTP_SENDER, DEFAULT_SMTP_SENDER],
             bcc_emails=[DEFAULT_SMTP_SENDER],
         )
+
+    def test_smtp_no_content(self):
+        with self.assertRaises(NoEmailContentError):
+            SMTPEmail(
+                from_email=DEFAULT_SMTP_SENDER,
+                to_emails=DEFAULT_SMTP_SENDER,
+                subject="Test SMTP Email",
+                text="",
+                html="",
+                cc_emails=[DEFAULT_SMTP_SENDER, DEFAULT_SMTP_SENDER],
+                bcc_emails=[DEFAULT_SMTP_SENDER],
+            )
 
     def test_email_struct(self):
         email = self._create_email()

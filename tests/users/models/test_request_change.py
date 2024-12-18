@@ -103,3 +103,12 @@ class TestRequestChange(TestCase):
         self.assertFalse(request_change.done)
         request_change.mark_as_done()
         self.assertTrue(request_change.done)
+
+    def test_get_validity_limit(self):
+        request_change = self.create_request_change()
+
+        result = request_change.get_validity_limit()
+        delta = (result - request_change.created_at).total_seconds()
+
+        self.assertIsInstance(result, datetime)
+        self.assertEqual(delta, REQUEST_VALIDITY)
