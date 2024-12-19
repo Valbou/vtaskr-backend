@@ -1,4 +1,4 @@
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, ANY
 
 from src.tasks.models import Tag, Task
 from src.tasks.services import TasksService
@@ -55,6 +55,17 @@ class TestTasksService(DummyBaseTestCase):
         self.assertIsInstance(tasks[0], Task)
         self.assertEqual(tasks[0].id, base_task.id)
 
+    def test_get_all_tag_tasks(self):
+        self.tasks_service.task_manager.get_tag_tasks = MagicMock(return_value=[])
+
+        result = self.tasks_service.get_all_tag_tasks(
+            user_id="user_123", tag_id="tag_123"
+        )
+
+        self.assertIsInstance(result, list)
+
+        self.tasks_service.task_manager.get_tag_tasks.assert_called_once()
+
     def test_update_task(self):
         base_task = self._get_task()
 
@@ -98,6 +109,40 @@ class TestTasksService(DummyBaseTestCase):
 
         self.assertIsInstance(tag, Tag)
         self.assertEqual(tag.id, base_tag.id)
+
+    def test_check_user_tag_exists(self):
+        self.tasks_service.tag_manager.tags_exists = MagicMock(return_value=True)
+
+        result = self.tasks_service.check_user_tag_exists(
+            user_id="user_123", tag_id="tag_123"
+        )
+
+        self.assertIsInstance(result, bool)
+        self.assertTrue(result)
+
+        self.tasks_service.tag_manager.tags_exists.assert_called_once()
+
+    def test_get_all_task_tags(self):
+        self.tasks_service.tag_manager.get_task_tags = MagicMock(return_value=[])
+
+        result = self.tasks_service.get_all_task_tags(
+            user_id="user_123", task_id="task_123"
+        )
+
+        self.assertIsInstance(result, list)
+
+        self.tasks_service.tag_manager.get_task_tags.assert_called_once()
+
+    def test_get_tags_from_id(self):
+        self.tasks_service.tag_manager.get_tags_from_ids = MagicMock(return_value=[])
+
+        result = self.tasks_service.get_tags_from_id(
+            user_id="user_123", tag_ids=["tag_123"]
+        )
+
+        self.assertIsInstance(result, list)
+
+        self.tasks_service.tag_manager.get_tags_from_ids.assert_called_once()
 
     def test_get_user_all_tags(self):
         base_tag = self._get_tag()
@@ -157,6 +202,45 @@ class TestTasksService(DummyBaseTestCase):
         self.tasks_service.get_tags_from_id.assert_called_once()
         self.tasks_service.task_manager.update_task.assert_called_once()
 
+    def test_set_tags_no_task(self):
+        base_tag = self._get_tag()
+
+        self.tasks_service.task_manager.get_task = MagicMock(return_value=None)
+        self.tasks_service.get_tags_from_id = MagicMock()
+        self.tasks_service.task_manager.update_task = MagicMock()
+
+        result = self.tasks_service.set_tags_to_task(
+            user_id="user_123", task_id="task_123", tag_ids=[base_tag.id]
+        )
+
+        self.assertFalse(result)
+
+        self.tasks_service.task_manager.get_task.assert_called_once_with(
+            user_id="user_123", task_id="task_123"
+        )
+        self.tasks_service.get_tags_from_id.assert_not_called()
+        self.tasks_service.task_manager.update_task.assert_not_called()
+
+    def test_unset_tags_to_task(self):
+        base_task = self._get_task()
+        base_tag = self._get_tag()
+
+        self.tasks_service.task_manager.get_task = MagicMock(return_value=base_task)
+        self.tasks_service.get_tags_from_id = MagicMock(return_value=[base_tag])
+        self.tasks_service.task_manager.update_task = MagicMock()
+
+        result = self.tasks_service.set_tags_to_task(
+            user_id="user_123", task_id="task_123", tag_ids=[]
+        )
+
+        self.assertTrue(result)
+
+        self.tasks_service.task_manager.get_task.assert_called_once_with(
+            user_id="user_123", task_id="task_123"
+        )
+        self.tasks_service.get_tags_from_id.assert_not_called()
+        self.tasks_service.task_manager.update_task.assert_called_once()
+
     def test_set_no_tags_to_task(self):
         base_task = self._get_task()
         base_tag = self._get_tag()
@@ -176,3 +260,16 @@ class TestTasksService(DummyBaseTestCase):
         )
         self.tasks_service.get_tags_from_id.assert_called_once()
         self.tasks_service.task_manager.update_task.assert_called_once()
+
+    def test_clean_all_items_of_tenant(self):
+        self.tasks_service.task_manager.delete_all_tenant_tasks = MagicMock()
+        self.tasks_service.tag_manager.delete_all_tenant_tags = MagicMock()
+
+        self.tasks_service.clean_all_items_of_tenant(tenant_id="tenant_123")
+
+        self.tasks_service.task_manager.delete_all_tenant_tasks.assert_called_once_with(
+            session=ANY, tenant_id="tenant_123"
+        )
+        self.tasks_service.tag_manager.delete_all_tenant_tags.assert_called_once_with(
+            session=ANY, tenant_id="tenant_123"
+        )
