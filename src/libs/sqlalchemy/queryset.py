@@ -4,6 +4,8 @@ from sqlalchemy import delete, not_, select, update
 
 from src.libs.hmi.querystring import Filter, Operations
 
+DEFAULT_PAGE_SIZE = 100
+
 
 class Queryset:
     """
@@ -72,7 +74,7 @@ class Queryset:
         self._query = self._query.options(*args, **kwargs)
         return self
 
-    def page(self, page_number: int, per_page: int = 100) -> Self:
+    def page(self, page_number: int, per_page: int = DEFAULT_PAGE_SIZE) -> Self:
         """A simple paginator"""
         offset = (page_number - 1) * per_page
         self._query = self._query.offset(offset).limit(per_page)
@@ -177,7 +179,7 @@ class Queryset:
         offset and page cannot be used together
         page has the precedence over offset
         """
-        limit = 100
+        limit = DEFAULT_PAGE_SIZE
         limit_filter = [f for f in filters if f.operation == Operations.LIMIT]
         if len(limit_filter) > 0:
             limit = int(limit_filter[0].value)
