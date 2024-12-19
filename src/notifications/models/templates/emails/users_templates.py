@@ -226,6 +226,7 @@ class UsersCancelledInvitationTemplate(BaseEmailTemplate):
         ),
     }
 
+
 class UsersDeleteTenantTemplate(BaseEmailTemplate):
     """User delete tenant group"""
 

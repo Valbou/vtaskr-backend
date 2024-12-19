@@ -1,7 +1,6 @@
 from jinja2 import FileSystemLoader
 
 from flask import Flask
-
 from src.tasks.events import UsersDeleteTenantObserver
 from src.tasks.hmi.flask import tasks_bp
 from src.tasks.persistence.sqlalchemy import TagDB, TaskDB

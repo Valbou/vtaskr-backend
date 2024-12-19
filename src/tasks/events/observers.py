@@ -1,7 +1,6 @@
 from logging import getLogger
 
 from src.ports import ObserverPort
-
 from src.tasks.services import TasksService
 
 logger = getLogger(__name__)

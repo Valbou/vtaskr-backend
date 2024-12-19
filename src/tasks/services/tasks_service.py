@@ -158,5 +158,7 @@ class TasksService:
         """
 
         with self.services.persistence.get_session() as session:
-            self.task_manager.delete_all_tenant_tasks(session=session, tenant_id=tenant_id)
+            self.task_manager.delete_all_tenant_tasks(
+                session=session, tenant_id=tenant_id
+            )
             self.tag_manager.delete_all_tenant_tags(session=session, tenant_id=tenant_id)
