@@ -1,6 +1,8 @@
 from jinja2 import FileSystemLoader
 
 from flask import Flask
+
+from src.tasks.events import UsersDeleteTenantObserver
 from src.tasks.hmi.flask import tasks_bp
 from src.tasks.persistence.sqlalchemy import TagDB, TaskDB
 
@@ -15,7 +17,9 @@ def setup_flask(app: Flask, project_dir: str) -> dict:
         "loaders": [
             FileSystemLoader(f"{project_dir}/src/{APP_NAME.lower()}/hmi/flask/templates")
         ],
-        "observers": [],
+        "observers": [
+            UsersDeleteTenantObserver(),
+        ],
         "repositories": [
             (APP_NAME, "Tag", TagDB()),
             (APP_NAME, "Task", TaskDB()),

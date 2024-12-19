@@ -37,3 +37,8 @@ class TagDBPort(AbstractDBPort, ABC):
         filters: list[Filter] | None = None,
     ) -> list[Tag]:
         raise NotImplementedError()
+
+    @abstractmethod
+    def delete_all_by_tenant(self, session, tenant_id: str) -> None:
+        """Clean all tenant's tags"""
+        raise NotImplementedError()

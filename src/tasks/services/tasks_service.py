@@ -148,3 +148,15 @@ class TasksService:
             self.task_manager.update_task(session=session, user_id=user_id, task=task)
 
             return True
+
+    def clean_all_items_of_tenant(self, tenant_id: str) -> None:
+        """
+        Clean all data associated with the tenant_id.
+
+        This function must stay behind a permission control
+        or an event sent after permission check.
+        """
+
+        with self.services.persistence.get_session() as session:
+            self.task_manager.delete_all_tenant_tasks(session=session, tenant_id=tenant_id)
+            self.tag_manager.delete_all_tenant_tags(session=session, tenant_id=tenant_id)

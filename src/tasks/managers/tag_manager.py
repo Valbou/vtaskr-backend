@@ -134,3 +134,6 @@ class TagManager:
             return True
 
         return False
+
+    def delete_all_tenant_tags(self, session, tenant_id: str) -> None:
+        self.tag_db.delete_all_by_tenant(session=session, tenant_id=tenant_id)

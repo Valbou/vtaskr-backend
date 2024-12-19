@@ -18,6 +18,7 @@ BASE_NOTIFICATION_EVENTS = [
     "users:register:user",
     "users:login_2fa:user",
     "users:delete:user",
+    "users:delete:tenant",
     "users:change_email:user",
     "users:change_password:user",
     "users:invite:user",

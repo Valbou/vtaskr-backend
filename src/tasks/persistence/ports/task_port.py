@@ -38,3 +38,8 @@ class TaskDBPort(AbstractDBPort, ABC):
     def clean_tags(self, session, task: Task) -> None:
         """Clean all associations with tags"""
         raise NotImplementedError()
+
+    @abstractmethod
+    def delete_all_by_tenant(self, session, tenant_id: str) -> None:
+        """Clean all tenant's tasks"""
+        raise NotImplementedError()

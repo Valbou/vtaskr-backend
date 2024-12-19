@@ -60,3 +60,9 @@ class TaskDB(TaskDBPort, DefaultDB):
 
         task = self.load(session=session, id=task.id)
         task.tags = []
+
+    def delete_all_by_tenant(self, session, tenant_id: str) -> None:
+        """Clean all tenant's tasks"""
+
+        self.qs.delete().tenants(tenant_ids=[tenant_id])
+        session.execute(self.qs.statement)

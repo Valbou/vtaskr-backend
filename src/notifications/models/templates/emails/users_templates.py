@@ -140,8 +140,8 @@ class UsersDeleteAccountTemplate(BaseEmailTemplate):
     event_name: str = "users:delete:user"
     subject: str = _("{APP_NAME} - Account deleted")
     files_path: dict[str:str] = {
-        "html": "emails/users/delete.html",
-        "txt": "emails/users/delete.txt",
+        "html": "emails/users/delete_account.html",
+        "txt": "emails/users/delete_account.txt",
     }
 
     context = {
@@ -223,5 +223,26 @@ class UsersCancelledInvitationTemplate(BaseEmailTemplate):
         "content_title": _("Hi !"),
         "paragraph_1": _(
             "Invitation to group {group_name} was cancelled by {from_name}"
+        ),
+    }
+
+class UsersDeleteTenantTemplate(BaseEmailTemplate):
+    """User delete tenant group"""
+
+    name: str = "User Delete Group"
+    event_name: str = "users:delete:tenant"
+    subject: str = "{APP_NAME} - {group_name} group was deleted"
+    files_path: dict[str:str] = {
+        "html": "emails/users/delete_group.html",
+        "txt": "emails/users/delete_group.txt",
+    }
+
+    context = {
+        "logo": "{EMAIL_LOGO}",
+        "title": _("{group_name} group was deleted"),
+        "content_title": _("Hi !"),
+        "paragraph_1": _(
+            "{group_name} was definitely deleted by {from_name}. "
+            "You can continue to work with {APP_NAME} and your others groups."
         ),
     }

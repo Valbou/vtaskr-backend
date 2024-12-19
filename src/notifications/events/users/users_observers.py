@@ -107,6 +107,7 @@ class UsersNotificationsObserver(ObserverPort):
         "users:login_2fa:user",
         "users:change_password:user",
         "users:accepted:invitation",
+        "users:delete:tenant",
     ]
 
     @classmethod

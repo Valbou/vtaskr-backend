@@ -55,3 +55,9 @@ class TagDB(TagDBPort, DefaultDB):
         self.qs.select().from_filters(filters).tenants(tenant_ids).task(task_id)
 
         return session.execute(self.qs.statement).scalars().all()
+
+    def delete_all_by_tenant(self, session, tenant_id: str) -> None:
+        """Clean all tenant's tags"""
+
+        self.qs.delete().tenants(tenant_ids=[tenant_id])
+        session.execute(self.qs.statement)

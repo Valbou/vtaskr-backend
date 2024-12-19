@@ -129,3 +129,6 @@ class TaskManager:
             return True
 
         return False
+
+    def delete_all_tenant_tasks(self, session, tenant_id: str) -> None:
+        self.task_db.delete_all_by_tenant(session=session, tenant_id=tenant_id)
