@@ -1,4 +1,4 @@
-from unittest.mock import MagicMock, ANY
+from unittest.mock import ANY, MagicMock
 
 from src.tasks.models import Tag, Task
 from src.tasks.services import TasksService
