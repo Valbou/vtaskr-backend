@@ -44,9 +44,7 @@ class TestTaskManager(DummyBaseTestCase):
         self.task_m.task_db.load = MagicMock(return_value=base_task)
         self.task_m.services.identity.can = MagicMock(return_value=True)
 
-        task = self.task_m.get_task(
-            session=None, user_id="user_123", task_id="task_123"
-        )
+        task = self.task_m.get_task(session=None, user_id="user_123", task_id="task_123")
 
         self.task_m.task_db.load.assert_called_once()
         self.task_m.services.identity.can.assert_called_once()
@@ -60,9 +58,7 @@ class TestTaskManager(DummyBaseTestCase):
         self.task_m.task_db.load = MagicMock(return_value=None)
         self.task_m.services.identity.can = MagicMock(return_value=True)
 
-        task = self.task_m.get_task(
-            session=None, user_id="user_123", task_id="task_123"
-        )
+        task = self.task_m.get_task(session=None, user_id="user_123", task_id="task_123")
 
         self.task_m.task_db.load.assert_called_once()
         self.task_m.services.identity.can.assert_not_called()
@@ -141,9 +137,7 @@ class TestTaskManager(DummyBaseTestCase):
         self.task_m.services.identity.can = MagicMock(return_value=True)
         self.task_m.task_db.clean_tags = MagicMock()
 
-        result = self.task_m.clean_task_tags(
-            session=None, user_id="user_123", task=task
-        )
+        result = self.task_m.clean_task_tags(session=None, user_id="user_123", task=task)
 
         self.task_m.services.identity.can.assert_called_once()
         self.task_m.task_db.clean_tags.assert_called_once()
@@ -156,9 +150,7 @@ class TestTaskManager(DummyBaseTestCase):
         self.task_m.services.identity.can = MagicMock(return_value=False)
         self.task_m.task_db.clean_tags = MagicMock()
 
-        result = self.task_m.clean_task_tags(
-            session=None, user_id="user_123", task=task
-        )
+        result = self.task_m.clean_task_tags(session=None, user_id="user_123", task=task)
 
         self.task_m.services.identity.can.assert_called_once()
         self.task_m.task_db.clean_tags.assert_not_called()

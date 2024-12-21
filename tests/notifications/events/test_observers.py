@@ -1,14 +1,13 @@
 from datetime import datetime
-
 from unittest.mock import MagicMock, patch
 
 from src.notifications.events import (
+    UsersChangeEmailObserver,
     UsersDeleteUserObserver,
+    UsersInviteUserObserver,
+    UsersNotificationsObserver,
     UsersRegisterUserObserver,
     UsersUpdateUserObserver,
-    UsersChangeEmailObserver,
-    UsersNotificationsObserver,
-    UsersInviteUserObserver,
 )
 from tests.base_test import DummyBaseTestCase
 
@@ -122,7 +121,7 @@ class TestObservers(DummyBaseTestCase):
             service.notify_all.assert_called_once()
 
     def test_notifications_observer(self):
-        event_data={
+        event_data = {
             "targets": ["user_123"],
             "email": "test@example.com",
             "first_name": "first",
@@ -136,7 +135,7 @@ class TestObservers(DummyBaseTestCase):
             service.build_messages = MagicMock(return_value=["a"])
             service.add_messages = MagicMock()
             service.notify_all = MagicMock()
-    
+
             UsersNotificationsObserver.run(
                 self.app, event_name="users:login_2fa:user", event_data=event_data
             )
@@ -146,7 +145,7 @@ class TestObservers(DummyBaseTestCase):
             service.notify_all.assert_called_once()
 
     def test_invite_user_observer(self):
-        event_data={
+        event_data = {
             "targets": ["user_123"],
             "from_name": "first last",
             "timezone": "UTC",
@@ -165,7 +164,7 @@ class TestObservers(DummyBaseTestCase):
             service.add_messages = MagicMock()
             service.notify_all = MagicMock()
             service.delete_contact = MagicMock()
-    
+
             UsersInviteUserObserver.run(
                 self.app, event_name="users:invite:user", event_data=event_data
             )
