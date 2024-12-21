@@ -17,13 +17,26 @@ class TestTaskManager(DummyBaseTestCase):
         )
 
     def test_create_task(self):
+        self.task_m.services.identity.can = MagicMock(return_value=True)
         self.task_m.task_db.save = MagicMock()
         task = self._get_task()
 
         result = self.task_m.create_task(session=None, user_id="user_123", task=task)
 
+        self.task_m.services.identity.can.assert_called_once()
         self.task_m.task_db.save.assert_called_once()
         self.assertTrue(result)
+
+    def test_cannot_create_task(self):
+        self.task_m.services.identity.can = MagicMock(return_value=False)
+        self.task_m.task_db.save = MagicMock()
+        task = self._get_task()
+
+        result = self.task_m.create_task(session=None, user_id="user_123", task=task)
+
+        self.task_m.services.identity.can.assert_called_once()
+        self.task_m.task_db.save.assert_not_called()
+        self.assertFalse(result)
 
     def test_get_task(self):
         base_task = self._get_task()
@@ -31,13 +44,30 @@ class TestTaskManager(DummyBaseTestCase):
         self.task_m.task_db.load = MagicMock(return_value=base_task)
         self.task_m.services.identity.can = MagicMock(return_value=True)
 
-        task = self.task_m.get_task(session=None, user_id="user_123", task_id="task_123")
+        task = self.task_m.get_task(
+            session=None, user_id="user_123", task_id="task_123"
+        )
 
         self.task_m.task_db.load.assert_called_once()
         self.task_m.services.identity.can.assert_called_once()
 
         self.assertIsInstance(task, Task)
         self.assertEqual(task.title, "Test Task")
+
+    def test_get_no_task(self):
+        base_task = self._get_task()
+
+        self.task_m.task_db.load = MagicMock(return_value=None)
+        self.task_m.services.identity.can = MagicMock(return_value=True)
+
+        task = self.task_m.get_task(
+            session=None, user_id="user_123", task_id="task_123"
+        )
+
+        self.task_m.task_db.load.assert_called_once()
+        self.task_m.services.identity.can.assert_not_called()
+
+        self.assertIsNone(task)
 
     def test_get_tasks(self):
         task = self._get_task()
@@ -92,6 +122,49 @@ class TestTaskManager(DummyBaseTestCase):
 
         self.assertTrue(result)
 
+    def test_cannot_update_task(self):
+        task = self._get_task()
+
+        self.task_m.services.identity.can = MagicMock(return_value=False)
+        self.task_m.task_db.save = MagicMock()
+
+        result = self.task_m.update_task(session=None, user_id="user_123", task=task)
+
+        self.task_m.services.identity.can.assert_called_once()
+        self.task_m.task_db.save.assert_not_called()
+
+        self.assertFalse(result)
+
+    def test_clean_task_tags(self):
+        task = self._get_task()
+
+        self.task_m.services.identity.can = MagicMock(return_value=True)
+        self.task_m.task_db.clean_tags = MagicMock()
+
+        result = self.task_m.clean_task_tags(
+            session=None, user_id="user_123", task=task
+        )
+
+        self.task_m.services.identity.can.assert_called_once()
+        self.task_m.task_db.clean_tags.assert_called_once()
+
+        self.assertTrue(result)
+
+    def test_cannot_clean_task_tags(self):
+        task = self._get_task()
+
+        self.task_m.services.identity.can = MagicMock(return_value=False)
+        self.task_m.task_db.clean_tags = MagicMock()
+
+        result = self.task_m.clean_task_tags(
+            session=None, user_id="user_123", task=task
+        )
+
+        self.task_m.services.identity.can.assert_called_once()
+        self.task_m.task_db.clean_tags.assert_not_called()
+
+        self.assertFalse(result)
+
     def test_delete_task(self):
         task = self._get_task()
 
@@ -104,3 +177,25 @@ class TestTaskManager(DummyBaseTestCase):
         self.task_m.task_db.delete.assert_called_once()
 
         self.assertTrue(result)
+
+    def test_cannot_delete_task(self):
+        task = self._get_task()
+
+        self.task_m.services.identity.can = MagicMock(return_value=False)
+        self.task_m.task_db.delete = MagicMock()
+
+        result = self.task_m.delete_task(session=None, user_id="user_123", task=task)
+
+        self.task_m.services.identity.can.assert_called_once()
+        self.task_m.task_db.delete.assert_not_called()
+
+        self.assertFalse(result)
+
+    def test_delete_all_tenant_tasks(self):
+        self.task_m.task_db.delete_all_by_tenant = MagicMock()
+
+        self.task_m.delete_all_tenant_tasks(session=None, tenant_id="tenant_123")
+
+        self.task_m.task_db.delete_all_by_tenant.assert_called_once_with(
+            session=None, tenant_id="tenant_123"
+        )
