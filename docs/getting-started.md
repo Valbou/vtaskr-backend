@@ -60,8 +60,14 @@ gunicorn src.flask:app
 vTaskr is now usable via CLI or API !  
 If you need help, create a Github issue.
 
-### Install dev dependencies
 
+### To run Celery stack
+```bash
+celery --app src.celery worker -l INFO
+celery --app src.celery beat -l INFO
+```
+
+### Install dev dependencies
 ```bash
 pip install .[dev]
 ```

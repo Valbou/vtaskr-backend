@@ -19,3 +19,15 @@ title: Model Relationship
 erDiagram
     Task }|--|{ Tags: has
 ```
+
+## Cron jobs / Celery Tasks
+
+### Notify Daily Tasks
+
+To run a daily notification with the list of scheduled tasks assigned to you (and for each user):
+
+```bash
+flask --app src.flask:app tasks todays_tasks
+```
+
+You can run it every day at 00:00 UTC for example.

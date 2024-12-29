@@ -32,7 +32,9 @@ class AbstractTemplate(ABC):
     ) -> str:
         try:
             return render_template(
-                self.files_path[format], **self._get_context(session=session, data=data)
+                self.files_path[format],
+                **data,
+                **self._get_context(session=session, data=data),
             )
         except IndexError:
             raise MissingTemplateFormatError(

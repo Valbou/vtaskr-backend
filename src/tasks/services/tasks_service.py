@@ -1,5 +1,10 @@
+from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
+
 from src.libs.dependencies import DependencyInjector
 from src.libs.hmi.querystring import Filter
+from src.libs.utils import split_by
+from src.tasks.events import TasksEventManager
 from src.tasks.managers import TagManager, TaskManager
 from src.tasks.models import Tag, Task
 
@@ -13,6 +18,7 @@ class TasksService:
     def _define_managers(self):
         """Define managers from domain (no DI here)"""
 
+        self.event_manager = TasksEventManager()
         self.tag_manager = TagManager(services=self.services)
         self.task_manager = TaskManager(services=self.services)
 
@@ -162,3 +168,79 @@ class TasksService:
                 session=session, tenant_id=tenant_id
             )
             self.tag_manager.delete_all_tenant_tags(session=session, tenant_id=tenant_id)
+
+    def _add_tasks_dict_to_index(self, index: dict, tasks: list[Task]) -> None:
+        for task in tasks:
+            if index[task.assigned_to] is None:
+                index[task.assigned_to] = []
+
+            index[task.assigned_to].append(
+                {
+                    "title": task.title,
+                    "emergency": task.emergency,
+                    "important": task.important,
+                    "scheduled_at": task.scheduled_at.isoformat(),
+                    "duration": task.duration.total_seconds() // 60,
+                }
+            )
+
+    def notify_tasks_to_assigned(
+        self, ids: list[str], now: datetime, end_day_1: datetime, end_day_2: datetime
+    ) -> None:
+        """Send events with today and tomorrow tasks"""
+
+        with self.services.persistence.get_session() as session:
+            # Build today tasks index
+            indexed_today_tasks = dict.fromkeys(ids)
+            today_tasks = self.task_manager.get_tasks_assigned_to_and_scheduled_between(
+                session=session, ids=ids, start=now, end=end_day_1
+            )
+            self._add_tasks_dict_to_index(index=indexed_today_tasks, tasks=today_tasks)
+
+            # Build tomorrow tasks index
+            indexed_tomorrow_tasks = dict.fromkeys(ids)
+            tomorrow_tasks = (
+                self.task_manager.get_tasks_assigned_to_and_scheduled_between(
+                    session=session, ids=ids, start=end_day_1, end=end_day_2
+                )
+            )
+            self._add_tasks_dict_to_index(
+                index=indexed_tomorrow_tasks, tasks=tomorrow_tasks
+            )
+
+            # Send notifications
+            for assigned_to_id in ids:
+                with self.services.eventbus as event_session:
+                    self.event_manager.send_tasks_todo_today_event(
+                        session=event_session,
+                        assigned_to=assigned_to_id,
+                        today_tasks=indexed_today_tasks[assigned_to_id],
+                        tomorrow_tasks=indexed_tomorrow_tasks[assigned_to_id],
+                    )
+
+    def send_today_tasks_notifications(
+        self, assigned_to: str | None = None, split_size: int = 100
+    ) -> None:
+        """
+        Send tasks scheduled in next 48h to all users by default
+
+        Update with caution to avoid data leak between users !
+        """
+
+        DAY = 24
+
+        now = datetime.now(tz=ZoneInfo("UTC"))
+        end_day_1 = now + timedelta(hours=DAY)
+        end_day_2 = end_day_1 + timedelta(hours=DAY)
+
+        # Look for all unique assigned_to id in tasks scheduled in next 48h
+        with self.services.persistence.get_session() as session:
+            assigned_ids = self.task_manager.all_assigned_to_for_scheduled_between(
+                session=session, start=now, end=end_day_2
+            )
+
+        # Split assigned by split_size to limit database access and memory consumption
+        for ids in split_by(iterable=assigned_ids, size=split_size):
+            self.notify_tasks_to_assigned(
+                ids=ids, now=now, end_day_1=end_day_1, end_day_2=end_day_2
+            )

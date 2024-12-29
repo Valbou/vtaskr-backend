@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from datetime import datetime
 
 from src.libs.hmi.querystring import Filter
 from src.ports import AbstractDBPort
@@ -42,4 +43,18 @@ class TaskDBPort(AbstractDBPort, ABC):
     @abstractmethod
     def delete_all_by_tenant(self, session, tenant_id: str) -> None:
         """Clean all tenant's tasks"""
+        raise NotImplementedError()
+
+    @abstractmethod
+    def all_assigned_to_for_scheduled_between(
+        self, session, start: datetime, end: datetime
+    ) -> list[str]:
+        """Return all distinct assigned_to ids in tasks list"""
+        raise NotImplementedError()
+
+    @abstractmethod
+    def get_tasks_assigned_to_and_scheduled_between(
+        self, session, ids: list[str], start: datetime, end: datetime
+    ) -> list[Task]:
+        """Return all tasks assigned_to ids and scheduled between start and end"""
         raise NotImplementedError()

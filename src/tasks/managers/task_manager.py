@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from src.libs.dependencies import DependencyInjector
 from src.libs.hmi.querystring import Filter
 from src.libs.iam.constants import Permissions
@@ -132,3 +134,21 @@ class TaskManager:
 
     def delete_all_tenant_tasks(self, session, tenant_id: str) -> None:
         self.task_db.delete_all_by_tenant(session=session, tenant_id=tenant_id)
+
+    def all_assigned_to_for_scheduled_between(
+        self, session, start: datetime, end: datetime
+    ) -> list[str]:
+        """Return a list of assigned_to for a period"""
+
+        return self.task_db.all_assigned_to_for_scheduled_between(
+            session=session, start=start, end=end
+        )
+
+    def get_tasks_assigned_to_and_scheduled_between(
+        self, session, ids: list[str], start: datetime, end: datetime
+    ) -> list[Task]:
+        """Return all tasks assigned to for a period"""
+
+        return self.task_db.get_tasks_assigned_to_and_scheduled_between(
+            session=session, ids=ids, start=start, end=end
+        )

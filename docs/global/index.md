@@ -59,7 +59,7 @@ To help developers to find the right file in the good folder, we use an app stru
 - **persistence**: contain ports and adapters to access data storage (ORM, SQL/NoSQL, file system etc...). With a sub folder for each lib used (SQLAlchemy, Pewee, Pony...).
 - **services**: store all services usable by a view.
 - **translations**: to store... translations (.pot, .po and .mo files).
-- **flask_config.py**: to setup some dedicaded config to flask. Feel free to create another file for another view lib respecting this pattern: mylib_config.py.
+- **config.py**: to setup some dedicaded config (Flask, Celery, Fastapi...). Auto discover functions respecting this pattern: setup_mylib.py where mylib is a value available in AppTypes enumeration.
 - **settings.py**: specific settings for the app, need at least a APP_NAME value.
 
 This code structure permit to move easily to a new lib with a limited rewrite scoped in the lib folder. We can imagine concurrent use of some libs in the same repo. Why not a Flask implementation and a FastAPI side by side, then you just need to run.sh --flask or run.sh --fastapi to swith !

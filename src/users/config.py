@@ -1,7 +1,5 @@
 from jinja2 import FileSystemLoader
 
-from flask import Flask
-from src.users.hmi.flask import users_bp, users_cli_bp
 from src.users.persistence.sqlalchemy import (
     GroupDB,
     InvitationDB,
@@ -16,10 +14,7 @@ from src.users.persistence.sqlalchemy import (
 from .settings import APP_NAME
 
 
-def setup_flask(app: Flask, project_dir: str) -> dict:
-    app.register_blueprint(users_bp)
-    app.register_blueprint(users_cli_bp, cli_group=APP_NAME.lower())
-
+def common_data(project_dir: str) -> dict:
     return {
         "domains": [APP_NAME.lower()],
         "loaders": [
@@ -38,3 +33,22 @@ def setup_flask(app: Flask, project_dir: str) -> dict:
         ],
         "permissions_resources": ["Group", "Role", "RoleType"],
     }
+
+
+def setup_celery(app, project_dir: str) -> dict:
+    """Must be called only if a Celery app is needed"""
+
+    return common_data(project_dir=project_dir)
+
+
+def setup_flask(app, project_dir: str) -> dict:
+    """Must be called only if a Flask app is needed"""
+
+    from flask import Flask
+    from src.users.hmi.flask import users_bp, users_cli_bp
+
+    local_app: Flask = app
+    local_app.register_blueprint(users_bp)
+    local_app.register_blueprint(users_cli_bp, cli_group=APP_NAME.lower())
+
+    return common_data(project_dir=project_dir)

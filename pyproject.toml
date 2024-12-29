@@ -28,6 +28,7 @@ dependencies = [
     "redis",
     "psycopg2-binary",
     "requests",
+    "celery",
 ]
 dynamic = ["version"]
 

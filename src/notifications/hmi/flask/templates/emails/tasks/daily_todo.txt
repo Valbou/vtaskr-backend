@@ -1,0 +1,19 @@
+{{ title }}
+{{ content_title }}
+---
+{% if nb_today %}
+    {{ title_today }}
+
+    {% for task in today %}
+        [ ] {{ task["title"] }} ({{ task["scheduled_at"] }})
+    {% endfor %}
+{% endif %}
+---
+{% if nb_tomorrow %}
+    {{ title_tomorrow }}
+
+    {% for task in tomorrow %}
+        [ ] {{ task["title"] }} ({{ task["scheduled_at"] }})
+    {% endfor %}
+{% endif %}
+---
