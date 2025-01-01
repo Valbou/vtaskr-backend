@@ -1,3 +1,4 @@
+from datetime import datetime
 from unittest.mock import ANY, MagicMock
 
 from src.tasks.models import Tag, Task
@@ -273,3 +274,76 @@ class TestTasksService(DummyBaseTestCase):
         self.tasks_service.tag_manager.delete_all_tenant_tags.assert_called_once_with(
             session=ANY, tenant_id="tenant_123"
         )
+
+    def test_add_tasks_dict_to_index(self):
+        now = datetime.now()
+        tasks = [
+            Task(
+                title="Test 1",
+                tenant_id="tenant_123",
+                assigned_to="asssigned_123",
+                scheduled_at=now,
+            ),
+            Task(
+                title="Test 2",
+                tenant_id="tenant_123",
+                assigned_to="asssigned_456",
+                scheduled_at=now,
+            ),
+            Task(
+                title="Test 3",
+                tenant_id="tenant_123",
+                assigned_to="asssigned_123",
+                scheduled_at=now,
+            ),
+        ]
+
+        index = {}
+        self.tasks_service._add_tasks_dict_to_index(index=index, tasks=tasks)
+
+        self.assertEqual(len(index.keys()), 2)
+        self.assertIsInstance(index["asssigned_123"], list)
+        self.assertEqual(len(index["asssigned_123"]), 2)
+        self.assertIsInstance(index["asssigned_456"], list)
+        self.assertEqual(len(index["asssigned_456"]), 1)
+
+    def test_notify_tasks_to_assigned(self):
+        now = datetime.now()
+        self.tasks_service.task_manager.get_tasks_assigned_to_and_scheduled_between = (
+            MagicMock(
+                return_value=[
+                    Task(
+                        title="Test 1",
+                        tenant_id="tenant_123",
+                        assigned_to="asssigned_123",
+                        scheduled_at=now,
+                    )
+                ]
+            )
+        )
+        self.tasks_service.event_manager.send_tasks_todo_today_event = MagicMock()
+
+        self.tasks_service.notify_tasks_to_assigned(
+            assigned_ids=["asssigned_123"], now=now, end_day_1=now, end_day_2=now
+        )
+
+        total_calls = (
+            self.tasks_service.task_manager.get_tasks_assigned_to_and_scheduled_between.call_count
+        )
+        self.assertEqual(total_calls, 2)
+        (
+            self.tasks_service.event_manager.send_tasks_todo_today_event.assert_called_once()
+        )
+
+    def test_send_today_tasks_notifications(self):
+        self.tasks_service.task_manager.all_assigned_to_for_scheduled_between = (
+            MagicMock(return_value=["asssigned_123"])
+        )
+        self.tasks_service.notify_tasks_to_assigned = MagicMock()
+
+        self.tasks_service.send_today_tasks_notifications()
+
+        (
+            self.tasks_service.task_manager.all_assigned_to_for_scheduled_between.assert_called_once()
+        )
+        self.tasks_service.notify_tasks_to_assigned.assert_called_once()

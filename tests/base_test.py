@@ -5,6 +5,7 @@ from unittest import TestCase
 from babel import Locale
 from faker import Faker
 
+from celery import Celery
 from flask import Flask, appcontext_pushed, g, template_rendered
 from src.settings import LOCALE, TIMEZONE
 from src.users.hmi.dto import UserDTO
@@ -12,7 +13,7 @@ from src.users.models import Group, User
 from src.users.services import UsersService
 from tests.utils.db_utils import text_query_column_exists, text_query_table_exists
 
-from . import APP, DUMMY_APP
+from . import APP, CELERY_APP, DUMMY_APP
 
 
 @contextmanager
@@ -103,6 +104,13 @@ class DummyBaseTestCase(MixinTestCase, AbstractBase):
             "Authorization": f"Bearer {self.token}",
         }
         return headers
+
+
+class DummyCeleryTestCase(DummyBaseTestCase):
+    app: Celery = CELERY_APP
+
+    def setUp(self) -> None:
+        self.fake = Faker()
 
 
 class BaseTestCase(MixinTestCase, AbstractBase):

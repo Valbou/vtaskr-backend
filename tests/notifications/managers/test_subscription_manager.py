@@ -40,6 +40,24 @@ class TestSubscriptionManager(DummyBaseTestCase):
 
         self.manager.subscription_db.save.assert_called_once()
 
+    def test_unsubscribe(self):
+        self.manager.subscription_db.delete_with_contact = MagicMock()
+
+        self.manager.unsubscribe(
+            session=None, name="test", type=MessageType.EMAIL, contact_id="contact_123"
+        )
+
+        self.manager.subscription_db.delete_with_contact.assert_called_once()
+
+    def test_delete_all_subscriptions_with_contact(self):
+        self.manager.subscription_db.delete_all_with_contact = MagicMock()
+
+        self.manager.delete_all_subscriptions_with_contact(
+            session=None, contact_id="contact_123"
+        )
+
+        self.manager.subscription_db.delete_all_with_contact.assert_called_once()
+
     def test_create(self):
         self.manager.subscription_db.save = MagicMock()
 
@@ -59,7 +77,7 @@ class TestSubscriptionManager(DummyBaseTestCase):
         self.assertIsInstance(index, dict)
         self.assertEqual(len(index[MessageType.EMAIL.name]), number)
 
-    def get_subscriptions_for_event(self) -> list[Subscription]:
+    def test_get_subscriptions_for_event(self) -> list[Subscription]:
         contact = self.get_contact()
         number = 3
         subscriptions = self.get_subscriptions(contact=contact, number=number)

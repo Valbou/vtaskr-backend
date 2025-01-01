@@ -18,25 +18,30 @@ class TestContactManager(DummyBaseTestCase):
             email="test@example.com",
         )
 
-    def get_by_id(self):
+    def test_get_by_id(self):
         self.manager.contact_db.load = MagicMock()
         self.manager.get_by_id(session=None, contact_id="abc123")
         self.manager.contact_db.load.assert_called_once()
 
-    def create(self):
+    def test_create(self):
         contact = self.get_contact()
         self.manager.contact_db.save = MagicMock()
         self.manager.create(session=None, contact=contact)
         self.manager.contact_db.save.assert_called_once()
 
-    def update(self):
+    def test_update(self):
         contact = self.get_contact()
         self.manager.contact_db.update = MagicMock()
         self.manager.update(session=None, contact=contact)
         self.manager.contact_db.update.assert_called_once()
 
-    def delete(self):
+    def test_delete(self):
         contact = self.get_contact()
         self.manager.contact_db.delete = MagicMock()
         self.manager.delete(session=None, contact=contact)
         self.manager.contact_db.delete.assert_called_once()
+
+    def test_delete_by_id(self):
+        self.manager.contact_db.delete_by_id = MagicMock()
+        self.manager.delete_by_id(session=None, contact_id="contact_123")
+        self.manager.contact_db.delete_by_id.assert_called_once()

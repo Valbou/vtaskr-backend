@@ -1,4 +1,5 @@
 from logging import getLogger
+from typing import Generator
 
 from src.libs.dependencies import DependencyInjector
 from src.notifications.managers import (
@@ -71,7 +72,7 @@ class NotificationService:
 
     def subscribe(
         self, contact: Contact, event_name: str, event_type: MessageType
-    ) -> Contact:
+    ) -> None:
         """Subscribe to an event notification"""
 
         with self.services.persistence.get_session() as session:
@@ -81,7 +82,7 @@ class NotificationService:
 
     def unsubscribe(
         self, contact: Contact, event_name: str, event_type: MessageType
-    ) -> Contact:
+    ) -> None:
         """Unsubscribe to an event notification"""
 
         with self.services.persistence.get_session() as session:
@@ -152,10 +153,13 @@ class NotificationService:
     def add_messages(self, messages: list[AbstractMessage]):
         self._messages.extend(messages)
 
+    def _get_sender_classes(self) -> Generator[AbstractSender, None, None]:
+        for sender_class in AbstractSender.__subclasses__():
+            yield sender_class()
+
     def notify_all(self):
         # Prepare all senders
-        for sender_class in AbstractSender.__subclasses__():
-            sender = sender_class()
+        for sender in self._get_sender_classes():
 
             # Dispatch messages
             for message in self._messages:

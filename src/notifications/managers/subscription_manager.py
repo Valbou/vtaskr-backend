@@ -25,13 +25,13 @@ class SubscriptionManager:
             session=session, name=name, type=type, contact_id=contact_id
         )
 
-    def create(self, session, subscription: Subscription) -> None:
-        self.subscription_db.save(session=session, obj=subscription)
-
     def delete_all_subscriptions_with_contact(self, session, contact_id: str) -> None:
         self.subscription_db.delete_all_with_contact(
             session=session, contact_id=contact_id
         )
+
+    def create(self, session, subscription: Subscription) -> None:
+        self.subscription_db.save(session=session, obj=subscription)
 
     def get_subscriptions_indexed_by_message_type(
         self, subscriptions: list[Subscription]

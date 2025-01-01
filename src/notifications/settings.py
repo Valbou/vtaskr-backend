@@ -24,6 +24,7 @@ BASE_NOTIFICATION_EVENTS = [
     "users:invite:user",
     "users:invite_cancelled:user",
     "users:invite_accepted:user",
+    "tasks:todo_today:tasks",
 ]
 
 

@@ -16,7 +16,7 @@ NOTIFICATION_SERVICE_PATH = (
 )
 
 
-class TestObservers(DummyBaseTestCase):
+class TestUsersNotificationsObservers(DummyBaseTestCase):
     def setUp(self) -> None:
         super().setUp()
 

@@ -1,4 +1,6 @@
+from celery import Celery
 from flask import Flask
+from src.libs.celery import create_celery_app
 from src.libs.flask import create_flask_app
 
 from .helpers import get_dummy_di, get_test_di
@@ -23,3 +25,4 @@ for rule in APP.url_map.iter_rules():
 print(" ----- ")
 
 DUMMY_APP: Flask = create_flask_app(dependencies=get_dummy_di())
+CELERY_APP: Celery = create_celery_app(dependencies=get_dummy_di())

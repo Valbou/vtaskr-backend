@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from logging import getLogger
 from zoneinfo import ZoneInfo
 
 from src.libs.dependencies import DependencyInjector
@@ -7,6 +8,8 @@ from src.libs.utils import split_by
 from src.tasks.events import TasksEventManager
 from src.tasks.managers import TagManager, TaskManager
 from src.tasks.models import Tag, Task
+
+logger = getLogger(__name__)
 
 
 class TasksService:
@@ -171,37 +174,42 @@ class TasksService:
 
     def _add_tasks_dict_to_index(self, index: dict, tasks: list[Task]) -> None:
         for task in tasks:
-            if index[task.assigned_to] is None:
+            if index.get(task.assigned_to) is None:
                 index[task.assigned_to] = []
 
+            duration = task.duration.total_seconds() // 60 if task.duration else None
             index[task.assigned_to].append(
                 {
                     "title": task.title,
                     "emergency": task.emergency,
                     "important": task.important,
                     "scheduled_at": task.scheduled_at.isoformat(),
-                    "duration": task.duration.total_seconds() // 60,
+                    "duration": duration,
                 }
             )
 
     def notify_tasks_to_assigned(
-        self, ids: list[str], now: datetime, end_day_1: datetime, end_day_2: datetime
+        self,
+        assigned_ids: list[str],
+        now: datetime,
+        end_day_1: datetime,
+        end_day_2: datetime,
     ) -> None:
         """Send events with today and tomorrow tasks"""
 
         with self.services.persistence.get_session() as session:
             # Build today tasks index
-            indexed_today_tasks = dict.fromkeys(ids)
+            indexed_today_tasks = dict.fromkeys(assigned_ids)
             today_tasks = self.task_manager.get_tasks_assigned_to_and_scheduled_between(
-                session=session, ids=ids, start=now, end=end_day_1
+                session=session, ids=assigned_ids, start=now, end=end_day_1
             )
             self._add_tasks_dict_to_index(index=indexed_today_tasks, tasks=today_tasks)
 
             # Build tomorrow tasks index
-            indexed_tomorrow_tasks = dict.fromkeys(ids)
+            indexed_tomorrow_tasks = dict.fromkeys(assigned_ids)
             tomorrow_tasks = (
                 self.task_manager.get_tasks_assigned_to_and_scheduled_between(
-                    session=session, ids=ids, start=end_day_1, end=end_day_2
+                    session=session, ids=assigned_ids, start=end_day_1, end=end_day_2
                 )
             )
             self._add_tasks_dict_to_index(
@@ -209,14 +217,20 @@ class TasksService:
             )
 
             # Send notifications
-            for assigned_to_id in ids:
-                with self.services.eventbus as event_session:
-                    self.event_manager.send_tasks_todo_today_event(
-                        session=event_session,
-                        assigned_to=assigned_to_id,
-                        today_tasks=indexed_today_tasks[assigned_to_id],
-                        tomorrow_tasks=indexed_tomorrow_tasks[assigned_to_id],
-                    )
+            with self.services.eventbus as event_session:
+                for assigned_to_id in assigned_ids:
+                    try:
+                        self.event_manager.send_tasks_todo_today_event(
+                            session=event_session,
+                            assigned_to=assigned_to_id,
+                            today_tasks=indexed_today_tasks[assigned_to_id],
+                            tomorrow_tasks=indexed_tomorrow_tasks[assigned_to_id],
+                        )
+                    except Exception as e:
+                        logger.error(
+                            f"Tasks assigned notification error: {e} "
+                            f"- assigned to {assigned_to_id}"
+                        )
 
     def send_today_tasks_notifications(
         self, assigned_to: str | None = None, split_size: int = 100
@@ -242,5 +256,5 @@ class TasksService:
         # Split assigned by split_size to limit database access and memory consumption
         for ids in split_by(iterable=assigned_ids, size=split_size):
             self.notify_tasks_to_assigned(
-                ids=ids, now=now, end_day_1=end_day_1, end_day_2=end_day_2
+                assigned_ids=ids, now=now, end_day_1=end_day_1, end_day_2=end_day_2
             )

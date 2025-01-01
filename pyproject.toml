@@ -54,7 +54,7 @@ line-length = 89
 profile = "black"
 
 [tool.coverage.run]
-omit = ["*/tests/*"]
+omit = ["*/tests/*", "*/ports/*"]
 
 [tool.bandit]
 exclude_dirs = ["build", "hooks", "tests"]

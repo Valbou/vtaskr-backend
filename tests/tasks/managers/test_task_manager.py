@@ -1,3 +1,4 @@
+from datetime import datetime
 from unittest.mock import MagicMock
 
 from src.tasks.managers import TaskManager
@@ -190,4 +191,45 @@ class TestTaskManager(DummyBaseTestCase):
 
         self.task_m.task_db.delete_all_by_tenant.assert_called_once_with(
             session=None, tenant_id="tenant_123"
+        )
+
+    def test_all_assigned_to_for_scheduled_between(self):
+        self.task_m.task_db.all_assigned_to_for_scheduled_between = MagicMock(
+            return_value=["assigned_123"]
+        )
+
+        now = datetime.now()
+        result = self.task_m.all_assigned_to_for_scheduled_between(
+            session=None, start=now, end=now
+        )
+
+        self.assertIsInstance(result, list)
+        self.assertEqual(len(result), 1)
+        self.assertEqual(result[0], "assigned_123")
+
+        self.task_m.task_db.all_assigned_to_for_scheduled_between.assert_called_once()
+
+    def test_get_tasks_assigned_to_and_scheduled_between(self):
+        now = datetime.now()
+        self.task_m.task_db.get_tasks_assigned_to_and_scheduled_between = MagicMock(
+            return_value=[
+                Task(
+                    title="Test 1",
+                    tenant_id="tenant_123",
+                    assigned_to="asssigned_123",
+                    scheduled_at=now,
+                )
+            ]
+        )
+
+        result = self.task_m.get_tasks_assigned_to_and_scheduled_between(
+            session=None, ids=["assigned_123"], start=now, end=now
+        )
+
+        self.assertIsInstance(result, list)
+        self.assertEqual(len(result), 1)
+        self.assertIsInstance(result[0], Task)
+
+        (
+            self.task_m.task_db.get_tasks_assigned_to_and_scheduled_between.assert_called_once()
         )
