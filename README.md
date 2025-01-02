@@ -2,8 +2,7 @@
 An open-source to do list application for personnal use.
 [API vTaskr](https://api.vtaskr.com "vTaskr API") - [OpenAPI](https://api.vtaskr.com/documentation) - [Public Postman](https://www.postman.com/valbou/workspace/vtaskr/overview)
 
-Development in progress... We aim to use the hexagonal architecture, and assume it, even if it seems overkill/overengineering for a small app.
-You can follow the [Roadmap](https://github.com/Valbou/vtaskr-backend/blob/master/ROADMAP.md).
+Development in progress... We aim to use the hexagonal architecture or tend to use it.
 
 [vTaskr Frontend](https://github.com/Valbou/vtaskr-frontend)
 
