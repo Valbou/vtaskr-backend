@@ -30,11 +30,11 @@ class AbstractTemplate(ABC):
     def interpolate_content(
         self, session: GNUTranslations, format: str, data: dict
     ) -> str:
+        context_data = {**data, **self._get_context(session=session, data=data)}
         try:
             return render_template(
                 self.files_path[format],
-                **data,
-                **self._get_context(session=session, data=data),
+                **context_data,
             )
         except IndexError:
             raise MissingTemplateFormatError(
