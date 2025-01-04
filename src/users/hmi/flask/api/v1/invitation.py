@@ -4,7 +4,12 @@ from flask import current_app, g, request
 from src.libs.flask.utils import ResponseAPI
 from src.libs.hmi import dto_to_dict, list_dto_to_dict, list_models_to_list_dto
 from src.libs.redis import rate_limited
-from src.users.hmi.dto import INVITATION_COMPONENT, ROLE_COMPONENT, InvitationMapperDTO, RoleMapperDTO
+from src.users.hmi.dto import (
+    INVITATION_COMPONENT,
+    ROLE_COMPONENT,
+    InvitationMapperDTO,
+    RoleMapperDTO,
+)
 from src.users.hmi.flask.decorators import login_required
 from src.users.services import UsersService
 
@@ -159,9 +164,7 @@ api_item = {
         "responses": {
             "200": {
                 "description": "Role accepted",
-                "content": {
-                    "application/json": {"schema": {"$ref": ROLE_COMPONENT}}
-                },
+                "content": {"application/json": {"schema": {"$ref": ROLE_COMPONENT}}},
             },
             "400": {
                 "description": "Bad request format",
