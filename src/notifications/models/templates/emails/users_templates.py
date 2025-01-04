@@ -181,7 +181,7 @@ class UsersInvitationTemplate(BaseEmailTemplate):
             "If necessary register first."
         ),
         "call_to_action": _("Join now"),
-        "call_to_action_link": "{LINK_TO_CHANGE_PASSWORD}?hash={hash}",
+        "call_to_action_link": "{LINK_TO_JOIN_GROUP}?hash={hash}",
     }
 
 
