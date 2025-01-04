@@ -20,11 +20,11 @@ class AbstractDBPort(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    def delete(self, session, obj) -> bool:
+    def delete(self, session, obj) -> None:
         raise NotImplementedError()
 
     @abstractmethod
-    def delete_by_id(self, session, id: str) -> bool:
+    def delete_by_id(self, session, id: str) -> None:
         raise NotImplementedError()
 
     @abstractmethod
