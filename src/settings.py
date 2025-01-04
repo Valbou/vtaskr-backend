@@ -4,7 +4,7 @@ from src.libs.security.utils import file_to_base64
 
 APP_NAME = "vTaskr"
 DESCRIPTION = "vTaskr is an open-source task manager"
-VERSION = "0.1.0"
+VERSION = "0.1.1"
 DOMAIN = "https://api.vtaskr.com"
 
 SECRET_KEY = os.getenv("SECRET_KEY", "fake_YM/92:>Dhqv=7p8+ixY=By?4i(%TU5L;W+4=dboG=")
