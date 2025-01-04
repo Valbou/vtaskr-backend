@@ -9,11 +9,11 @@ authors = [
 ]
 description = "An open-source to do list application"
 readme = "README.md"
-requires-python = ">=3.12"
+requires-python = ">=3.11"
 license = {text = "GNU General Public License v3.0"}
 classifiers = [
     "Framework :: Flask",
-    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.11",
 ]
 
 dependencies = [
