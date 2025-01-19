@@ -50,6 +50,7 @@ class TaskMapperDTO:
         return TaskDTO(
             id=task.id,
             created_at=task.created_at.isoformat(),
+            tenant_id=task.tenant_id,
             title=task.title,
             description=task.description,
             emergency=task.emergency,
