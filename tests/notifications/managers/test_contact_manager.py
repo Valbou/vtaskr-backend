@@ -23,6 +23,11 @@ class TestContactManager(DummyBaseTestCase):
         self.manager.get_by_id(session=None, contact_id="abc123")
         self.manager.contact_db.load.assert_called_once()
 
+    def test_load_by_email(self):
+        self.manager.contact_db.load_by_email = MagicMock()
+        self.manager.get_by_email(session=None, email="test@example.com")
+        self.manager.contact_db.load_by_email.assert_called_once()
+
     def test_create(self):
         contact = self.get_contact()
         self.manager.contact_db.save = MagicMock()

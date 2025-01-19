@@ -192,10 +192,12 @@
                       </td>
                     </tr>
                     <tr>
-                      <td>
+                      <td style="font-weight: normal; color: #f9f9f9; font-size: 22px; font-family: Verdana, Geneva, sans-serif; text-align: center" width="100%" valign="top" align="center">
                         <ul>
                           {% for task in today %}
-                            <li>{{ task["title"] }} ({{ task["scheduled_at"] }}) {% if task["emergency"] %}&#128680;{% endif %}{% if task["important"] %}&#10071;{% endif %}</li>
+                            <li>
+                              {{ task["title"] }} ({{ task["scheduled_at"] }}) {% if task["emergency"] %}&#128680;{% endif %}{% if task["important"] %}&#10071;{% endif %}
+                            </li>
                           {% endfor %}
                         </ul>
                       </td>
@@ -225,10 +227,12 @@
                       </td>
                     </tr>
                     <tr>
-                      <td>
+                      <td style="font-weight: normal; color: #f9f9f9; font-size: 22px; font-family: Verdana, Geneva, sans-serif; text-align: center" width="100%" valign="top" align="center">
                         <ul>
                           {% for task in tomorrow %}
-                            <li>{{ task["title"] }} ({{ task["scheduled_at"] }}) {% if task["emergency"] %}&#128680;{% endif %}{% if task["important"] %}&#10071;{% endif %}</li>
+                            <li>
+                              {{ task["title"] }} ({{ task["scheduled_at"] }}) {% if task["emergency"] %}&#128680;{% endif %}{% if task["important"] %}&#10071;{% endif %}
+                            </li>
                           {% endfor %}
                         </ul>
                       </td>

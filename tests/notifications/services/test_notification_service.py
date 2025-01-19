@@ -52,6 +52,24 @@ class TestNotificationsService(BaseTestCase):
         self.assertEqual(call_count, len(BASE_NOTIFICATION_EVENTS))
         self.assertEqual(new_contact.id, "contact_123")
 
+    def test_get_contact_from_email(self):
+        self.notification_service.contact_manager.get_by_email = MagicMock(
+            return_value=Contact(
+                first_name="first",
+                last_name="last",
+                email="test@example.com",
+            )
+        )
+
+        contact = self.notification_service.get_contact_from_email(
+            email="test@example.com"
+        )
+
+        self.notification_service.contact_manager.get_by_email.assert_called_once()
+
+        self.assertIsInstance(contact, Contact)
+        self.assertEqual(contact.email, "test@example.com")
+
     def test_subscribe(self):
         self.notification_service.subscription_manager.subscribe = MagicMock()
 

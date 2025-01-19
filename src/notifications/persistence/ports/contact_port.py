@@ -8,3 +8,7 @@ class ContactDBPort(AbstractDBPort, ABC):
     @abstractmethod
     def update(self, session, contact: Contact) -> bool:
         raise NotImplementedError()
+
+    @abstractmethod
+    def load_by_email(self, session, email: str) -> Contact | None:
+        raise NotImplementedError()

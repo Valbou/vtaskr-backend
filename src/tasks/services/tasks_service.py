@@ -223,8 +223,10 @@ class TasksService:
                         self.event_manager.send_tasks_todo_today_event(
                             session=event_session,
                             assigned_to=assigned_to_id,
-                            today_tasks=indexed_today_tasks[assigned_to_id],
-                            tomorrow_tasks=indexed_tomorrow_tasks[assigned_to_id],
+                            today_tasks=indexed_today_tasks.get(assigned_to_id, [])
+                            or [],
+                            tomorrow_tasks=indexed_tomorrow_tasks.get(assigned_to_id, [])
+                            or [],
                         )
                     except Exception as e:
                         logger.error(

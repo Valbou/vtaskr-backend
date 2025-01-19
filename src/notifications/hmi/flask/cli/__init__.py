@@ -10,4 +10,5 @@ notification_cli_bp = Blueprint(
 )
 
 
+from .register_subscriptions import *
 from .send_notification import *

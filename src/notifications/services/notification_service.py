@@ -70,6 +70,12 @@ class NotificationService:
 
         return contact
 
+    def get_contact_from_email(self, email: str) -> Contact | None:
+        """Return a contact from an email if exists"""
+
+        with self.services.persistence.get_session() as session:
+            return self.contact_manager.get_by_email(session, email)
+
     def subscribe(
         self, contact: Contact, event_name: str, event_type: MessageType
     ) -> None:

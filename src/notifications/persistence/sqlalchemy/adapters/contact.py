@@ -26,3 +26,7 @@ class ContactDB(ContactDBPort, DefaultDB):
             updated_at=datetime.now(tz=ZoneInfo("UTC")),
         )
         session.execute(self.qs.statement)
+
+    def load_by_email(self, session, email: str) -> Contact | None:
+        self.qs.select().where(Contact.email == email)
+        return session.scalars(self.qs.statement).one_or_none()

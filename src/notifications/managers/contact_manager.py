@@ -14,6 +14,9 @@ class ContactManager:
     def get_by_id(self, session, contact_id: str) -> Contact | None:
         return self.contact_db.load(session=session, id=contact_id)
 
+    def get_by_email(self, session, email: str) -> Contact | None:
+        return self.contact_db.load_by_email(session=session, email=email)
+
     def create(self, session, contact: Contact) -> Contact:
         return self.contact_db.save(session=session, obj=contact)
 
