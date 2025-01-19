@@ -456,7 +456,7 @@ class UsersService:
                 )
 
                 from_user = self.user_manager.get_user(
-                    session=session, id=invitation.from_user_id
+                    session=session, user_id=invitation.from_user_id
                 )
                 group = self.group_manager.get_group(
                     session=session, user_id=user.id, group_id=invitation.in_group_id
