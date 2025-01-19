@@ -1,7 +1,7 @@
 # vTaskr Backend Documentation (Dev Doc)
 
-vTaskr is a to do list application for personnal use.
-The project is under active developpement, but not ready for production. Some breaking changes may appear without warning.
+vTaskr is a to do list application for personnal use.  
+The project is under active developpement, but not ready for production. Some breaking changes may appear without warning.  
 
 You are visiting the **backend developer documentation**.  
 Code repository available here: [vTaskr Backend](https://github.com/Valbou/vtaskr-backend).  
@@ -18,9 +18,16 @@ To See more details about dependencies, you can read pyproject.toml file.
 [![CodeFactor](https://www.codefactor.io/repository/github/valbou/vtaskr-backend/badge)](https://www.codefactor.io/repository/github/valbou/vtaskr-backend)
 ![API](https://img.shields.io/website?url=https%3A%2F%2Fapi.vtaskr.com)
 
+## Keep in mind
+- vTaskr must stay free to use for individuals
+- We never sell personal user data
+- All must be secure first
+- Restrict third party dependencies to the minimum
+- AI is not intelligence, it's probability
+
 ## New to vTaskr
 
-To install vTaskr on premise: [Getting Started](./getting-started.md).  
+To install vTaskr: [Getting Started](./getting-started.md).  
 
 ### Roadmap
 
