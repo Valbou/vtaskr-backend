@@ -53,7 +53,7 @@ Excepting "libs", "ports", "static", all apps can be seen as a microservice, and
 To help developers to find the right file in the good folder, we use an app structure like follow:
 
 - **events**: this folder store observers and app events registry (to send and receive events from/to an other app).
-- **hmi**: store files relative to Human Machine Interfaces, like HTML pages, API, CLI etc... and helpers like DTO etc... This views files may use dedicaded libs like Flask or FastAPI etc... and need a specific folder for each dependendy.
+- **hmi**: store files relative to HMI (Human Machine Interfaces), like HTML pages, API, CLI etc... and helpers like DTO etc... This views files may use dedicaded libs like Flask or FastAPI etc... and need a specific folder for each dependendy.
 - **managers**: store files to manage models (use dependency injection to transparently store and retrieve data).
 - **models**: core models for the app. No external lib dependency here (only python batteries included code).
 - **persistence**: contain ports and adapters to access data storage (ORM, SQL/NoSQL, file system etc...). With a sub folder for each lib used (SQLAlchemy, Pewee, Pony...).
@@ -63,6 +63,21 @@ To help developers to find the right file in the good folder, we use an app stru
 - **settings.py**: specific settings for the app, need at least a APP_NAME value.
 
 This code structure permit to move easily to a new lib with a limited rewrite scoped in the lib folder. We can imagine concurrent use of some libs in the same repo. Why not a Flask implementation and a FastAPI side by side, then you just need to run.sh --flask or run.sh --fastapi to swith !
+
+## Third party applications - Hexagonal Architecture
+
+To permit a wide flexibility, each third party application have it's own main entry point using a shared initialisation.  
+This allow to have different entry points to run code, sharing the same configuration.  
+In this configuration, we may have support for many HMI (Human Machine Interface) libs side by side without conflict.
+For this, each apps have a "hmi" folder with a subfolder nammed according to HMI lib name.  
+To add a new HMI lib, you just need to add the main, complete the subfolder in each app, and declare it in apps settings.  
+
+In the same way, database libs (without direct entry point) can be injected using DependencyInjector.  
+In each app, a persistence folder contain a subfolder for each lib implementation.  
+You can find some ports to write all adapters needed for a new database lib.  
+
+This method of work is nammed Hexagonal Architecture or Ports/Adapters. Directory tree organisation may change over implementations but the goals stay identical: Have less work to change dependencies, and an easier code to test.  
+There are accepted drawbacks: a little worst performances, and a little more verbose code with some pass through functions.  
 
 **Feel free to discuss about this code organisation if you have found a better way to do it !**
 
