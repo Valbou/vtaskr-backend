@@ -2,6 +2,7 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+celerybeat-schedule.db
 site/
 build/
 htmlcov/

@@ -9,10 +9,13 @@ logger = logging.getLogger(__name__)
 
 
 def create_flask_app(dependencies: DependencyInjector) -> Flask:
+    from src.celery import app as celery
+
     logger.info(f"Starting Flask {APP_NAME}...")
 
     app = Flask(__name__)
     app_setup(app=app, app_type=AppTypes.FLASK, dependencies=dependencies)
+    app.extensions["celery"] = celery
 
     logger.info(f"{APP_NAME} ready !")
 
