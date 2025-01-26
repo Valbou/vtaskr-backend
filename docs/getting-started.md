@@ -63,8 +63,14 @@ If you need help, create a Github issue.
 
 ### To run Celery stack
 ```bash
-celery --app src.celery worker -l INFO
-celery --app src.celery beat -l INFO
+# 2 workers with concurrency set to 1 (adjust according to your needs)
+celery -A src.celery multi start 2 -c 1 -l INFO
+celery -A src.celery beat -l INFO
+```
+
+To check registered tasks
+```bash
+celery -A src.celery inspect registered
 ```
 
 ### Install dev dependencies
