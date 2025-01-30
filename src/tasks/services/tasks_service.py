@@ -236,18 +236,18 @@ class TasksService:
 
     def send_today_tasks_notifications(
         self, assigned_to: str | None = None, split_size: int = 100
-    ) -> None:
+    ) -> int:
         """
         Send tasks scheduled in next 48h to all users by default
 
         Update with caution to avoid data leak between users !
         """
 
-        DAY = 24
+        one_day = timedelta(hours=24)
 
         now = datetime.now(tz=ZoneInfo("UTC"))
-        end_day_1 = now + timedelta(hours=DAY)
-        end_day_2 = end_day_1 + timedelta(hours=DAY)
+        end_day_1 = now + one_day
+        end_day_2 = end_day_1 + one_day
 
         # Look for all unique assigned_to id in tasks scheduled in next 48h
         with self.services.persistence.get_session() as session:
@@ -260,3 +260,5 @@ class TasksService:
             self.notify_tasks_to_assigned(
                 assigned_ids=ids, now=now, end_day_1=end_day_1, end_day_2=end_day_2
             )
+
+        return len(assigned_ids)

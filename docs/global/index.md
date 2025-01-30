@@ -30,7 +30,7 @@ At first level you can find:
 - **LICENSE**: just to precise it's a GNU GPL v3 project.  
 - **pyproject.toml**: manage project dependencies and configs.  
 - **README.md**: to help users to find the doc 😇.  
-- **run.sh**: just a helper to run a dev HTTP server locally (if you need it).  
+- **run.sh**: just an helper to run a dev HTTP server locally (if you need it).  
 - **template.env**: a .env template to keep up to date !  
 - **trad_*.hs**: some helpers files to manage translation.  
 

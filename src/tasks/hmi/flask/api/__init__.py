@@ -16,5 +16,4 @@ tasks_bp = Blueprint(
 
 V1 = "/api/v1"
 
-
-from .v1.tasks import *
+from .v1 import *

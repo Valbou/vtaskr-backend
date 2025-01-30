@@ -341,7 +341,9 @@ class TestTasksService(DummyBaseTestCase):
         )
         self.tasks_service.notify_tasks_to_assigned = MagicMock()
 
-        self.tasks_service.send_today_tasks_notifications()
+        result = self.tasks_service.send_today_tasks_notifications()
+
+        self.assertEqual(result, 1)
 
         (
             self.tasks_service.task_manager.all_assigned_to_for_scheduled_between.assert_called_once()

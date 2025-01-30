@@ -3,6 +3,8 @@ from src.tasks.services import TasksService
 
 
 @shared_task()
-def run_dailys_tasks():
+def run_daily_tasks():
     service = TasksService(services=current_app.dependencies)
-    service.send_today_tasks_notifications()
+    nb_users = service.send_today_tasks_notifications()
+
+    return nb_users

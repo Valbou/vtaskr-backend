@@ -70,10 +70,10 @@ class ContactMapperDTO:
                 locale=contact_dto.locale,
             )
         else:
-            contact.email = (contact_dto.email,)
-            contact.telegram = (contact_dto.telegram,)
-            contact.phone_number = (contact_dto.phone_number,)
-            contact.timezone = (contact_dto.timezone,)
-            contact.locale = (contact_dto.locale,)
+            contact.email = contact_dto.email
+            contact.telegram = contact_dto.telegram
+            contact.phone_number = contact_dto.phone_number
+            contact.timezone = contact_dto.timezone
+            contact.locale = contact_dto.locale
 
         return contact
