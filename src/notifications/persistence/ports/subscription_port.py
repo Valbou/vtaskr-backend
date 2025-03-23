@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 
+from src.libs.hmi.querystring import Filter
 from src.notifications.models import Subscription
 from src.notifications.settings import MessageType
 from src.ports import AbstractDBPort
@@ -13,6 +14,16 @@ class SubscriptionDBPort(AbstractDBPort, ABC):
     @abstractmethod
     def get_subscriptions_for_event(
         self, session, name: str, targets: list[str]
+    ) -> list[Subscription]:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def get_contact_subscriptions_for_event(
+        self,
+        session,
+        user_id: str,
+        public_events: list[str],
+        filters: list[Filter] | None,
     ) -> list[Subscription]:
         raise NotImplementedError()
 

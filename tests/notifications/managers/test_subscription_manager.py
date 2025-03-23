@@ -65,6 +65,17 @@ class TestSubscriptionManager(DummyBaseTestCase):
 
         self.manager.subscription_db.save.assert_called_once()
 
+    def test_get_contact_subscriptions_for_event(self):
+        self.manager.subscription_db.get_contact_subscriptions_for_event = MagicMock()
+
+        self.manager.get_contact_subscriptions_for_event(
+            session=None, user_id="user123", public_events=[], filters=None
+        )
+
+        (
+            self.manager.subscription_db.get_contact_subscriptions_for_event.assert_called_once()
+        )
+
     def test_get_subscriptions_indexed_by_message_type(self):
         contact = self.get_contact()
         number = 3

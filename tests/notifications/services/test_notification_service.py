@@ -88,6 +88,17 @@ class TestNotificationsService(BaseTestCase):
 
         self.notification_service.subscription_manager.unsubscribe.assert_called_once()
 
+    def test_get_all_contact_subscriptions(self):
+        self.notification_service.subscription_manager.get_contact_subscriptions_for_event = (
+            MagicMock()
+        )
+
+        self.notification_service.get_all_contact_subscriptions(user_id="user123")
+
+        (
+            self.notification_service.subscription_manager.get_contact_subscriptions_for_event.assert_called_once()
+        )
+
     def test_update_contact(self):
         contact = Contact(
             first_name="first",

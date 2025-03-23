@@ -143,6 +143,15 @@ class Queryset:
             self._query = self._query.where(
                 not_(getattr(self.qs_class, f.field).endswith(f.value))
             )
+        elif f.operation == Operations.ISNULL:
+            if f.value is True:
+                self._query = self._query.where(
+                    getattr(self.qs_class, f.field) == None
+                )  # noqa E711
+            else:
+                self._query = self._query.where(
+                    not_(getattr(self.qs_class, f.field) == None)
+                )  # noqa E711
 
     def _add_composed_where_clause(self, fs: list[Filter], operation: Operations):
         fields = {f.field for f in fs}

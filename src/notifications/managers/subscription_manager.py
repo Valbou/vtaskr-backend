@@ -1,4 +1,5 @@
 from src.libs.dependencies import DependencyInjector
+from src.libs.hmi.querystring import Filter
 from src.notifications.models import Contact, Subscription
 from src.notifications.persistence import SubscriptionDBPort
 from src.notifications.settings import APP_NAME, MessageType
@@ -32,6 +33,24 @@ class SubscriptionManager:
 
     def create(self, session, subscription: Subscription) -> None:
         self.subscription_db.save(session=session, obj=subscription)
+
+    def get_contact_subscriptions_for_event(
+        self,
+        session,
+        user_id: str,
+        public_events: list[str],
+        filters: list[Filter] | None,
+    ) -> list[Subscription]:
+        """Get all public events subscriptions for a user"""
+
+        subscriptions = self.subscription_db.get_contact_subscriptions_for_event(
+            session=session,
+            user_id=user_id,
+            public_events=public_events,
+            filters=filters,
+        )
+
+        return subscriptions
 
     def get_subscriptions_indexed_by_message_type(
         self, subscriptions: list[Subscription]

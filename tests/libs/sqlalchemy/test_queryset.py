@@ -152,6 +152,16 @@ class TestQueryset(TestCase):
         self.queryset.from_filters(qsf.get_filters())
         self.assertInStatment(str(self.queryset.statement), "test_user.name NOT IN")
 
+    def test_filter_ISNULL(self):
+        qsf = QueryStringFilter("name_isnull=t")
+        self.queryset.from_filters(qsf.get_filters())
+        self.assertInStatment(str(self.queryset.statement), "test_user.name IS NULL")
+
+    def test_filter_not_ISNULL(self):
+        qsf = QueryStringFilter("name_isnull=0")
+        self.queryset.from_filters(qsf.get_filters())
+        self.assertInStatment(str(self.queryset.statement), "test_user.name IS NOT NULL")
+
     def test_filter_order_by_asc(self):
         qsf = QueryStringFilter("orderby=name")
         self.queryset.from_filters(qsf.get_filters())

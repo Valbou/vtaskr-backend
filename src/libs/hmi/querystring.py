@@ -4,6 +4,8 @@ from enum import Enum
 from typing import Any, _GenericAlias, types
 from urllib.parse import parse_qs
 
+TRUTHY = (1, "1", "y", "Y", "t", "T", "true", "True", "TRUE")
+
 
 class Operations(Enum):
     ASC = "order ASC"
@@ -25,6 +27,7 @@ class Operations(Enum):
     NSTARTSWITH = "not starts with"
     ENDSWITH = "ends with"
     NENDSWITH = "not ends with"
+    ISNULL = "is null"
 
 
 @dataclass
@@ -58,6 +61,7 @@ class QueryStringFilter:
 
     def _set_dto(self, dto: Any | None = None):
         """Define accepted fields"""
+
         self._dto_data = None
         self._dto_fields = None
 
@@ -102,6 +106,7 @@ class QueryStringFilter:
 
     def _separate_values(self, values: list[str]) -> list[str]:
         """Split grouped values in many"""
+
         new_values = []
         for value in values:
             new_values.extend(value.split(","))
@@ -109,7 +114,9 @@ class QueryStringFilter:
 
     def _create_filter(self, key: str, value: str):
         """Create a filter for a valid pair key, value"""
+
         field, op = self._parse_key(key, value)
+
         if (
             field
             and op
@@ -118,6 +125,12 @@ class QueryStringFilter:
                 or (self._dto_fields and field in self._dto_fields)
             )
         ):
+            if op is Operations.ISNULL:
+                if value in TRUTHY:
+                    value = True
+                else:
+                    value = False
+
             filtr = Filter(field=field, operation=op, value=value)
 
             if self._dto_fields:
@@ -128,6 +141,7 @@ class QueryStringFilter:
 
     def _parse_key(self, key: str, value: str):
         """Parse key to infer operation type"""
+
         if "_" in key:
             for op in Operations:
                 op_name = f"_{op.name.lower()}"

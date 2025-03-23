@@ -187,6 +187,20 @@ class TestQueryStringFilter(QSTestMixin):
         self.assertEqual(len(filters), 1)
         self.assertFilter(filters[0], "name", Operations.NENDSWITH, "val")
 
+    def test_is_null(self):
+        qs = "name_isnull=1"
+        qs_filter = QueryStringFilter(query_string=qs)
+        filters = qs_filter.get_filters()
+        self.assertEqual(len(filters), 1)
+        self.assertFilter(filters[0], "name", Operations.ISNULL, True)
+
+    def test_is_not_null(self):
+        qs = "name_isnull=false"
+        qs_filter = QueryStringFilter(query_string=qs)
+        filters = qs_filter.get_filters()
+        self.assertEqual(len(filters), 1)
+        self.assertFilter(filters[0], "name", Operations.ISNULL, False)
+
 
 @dataclass
 class TestDTO:
