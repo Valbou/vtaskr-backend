@@ -1,8 +1,9 @@
 from logging import getLogger
 from typing import Generator
 
-from src.libs.hmi.querystring import Filter
 from src.libs.dependencies import DependencyInjector
+from src.libs.hmi.querystring import Filter
+from src.notifications.events import EVENT_LIST
 from src.notifications.managers import (
     AbstractSender,
     ContactManager,
@@ -11,9 +12,9 @@ from src.notifications.managers import (
 from src.notifications.models import (
     AbstractMessage,
     Contact,
-    Subscription,
     MessageFabric,
     MessageType,
+    Subscription,
     TemplateFabric,
 )
 from src.notifications.settings import (
@@ -25,7 +26,6 @@ from src.notifications.settings import (
     LINK_TO_JOIN_GROUP,
     LINK_TO_LOGIN,
 )
-from src.notifications.events import EVENT_LIST
 from src.settings import APP_NAME as GLOBAL_APP_NAME
 from src.settings import EMAIL_LOGO
 
@@ -88,6 +88,19 @@ class NotificationService:
             self.subscription_manager.subscribe(
                 session=session, name=event_name, type=event_type, contact=contact
             )
+
+    def create_new_contact_subscription(
+        self, user_id: str, subscription: Subscription
+    ) -> bool:
+        """Create user contact subscription"""
+
+        if user_id == subscription.contact_id and subscription.name in EVENT_LIST:
+            with self.services.persistence.get_session() as session:
+                return self.subscription_manager.register_subscription(
+                    session=session, subscription=subscription
+                )
+
+        return False
 
     def unsubscribe(
         self, contact: Contact, event_name: str, event_type: MessageType

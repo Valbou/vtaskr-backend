@@ -363,7 +363,10 @@ class TestTasksService(DummyBaseTestCase):
 
             expected = "Tasks assigned notification error: Test - assigned to signed_123"
             self.assertListEqual(
-                cm.output, [f"ERROR:src.tasks.services.tasks_service:{expected}",]
+                cm.output,
+                [
+                    f"ERROR:src.tasks.services.tasks_service:{expected}",
+                ],
             )
 
         total_calls = (

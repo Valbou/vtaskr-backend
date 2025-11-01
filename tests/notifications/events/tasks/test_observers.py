@@ -66,9 +66,10 @@ class TestTasksNotificationsObserver(DummyBaseTestCase):
 
                 expected = "Test"
                 self.assertListEqual(
-                    cm.output, [
+                    cm.output,
+                    [
                         f"ERROR:src.notifications.events.tasks.tasks_observers:{expected}",
-                    ]
+                    ],
                 )
 
             service.build_messages.assert_called_once()
