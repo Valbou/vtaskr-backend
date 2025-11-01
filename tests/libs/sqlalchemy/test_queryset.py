@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from unittest import TestCase
+from unittest.mock import MagicMock
 
 from sqlalchemy import Column, Integer, String, Table
 
@@ -46,6 +47,15 @@ class TestQueryset(TestCase):
         for arg in args:
             with self.subTest(arg):
                 self.assertNotIn(arg, stmt)
+
+    def test_options(self):
+        self.queryset._query.options = MagicMock()
+        tested = self.queryset._query.options
+        result = self.queryset.options(test_name="test_value")
+
+        tested.assert_called_once_with(test_name="test_value")
+        self.assertIsInstance(result, Queryset)
+        self.assertIs(result, self.queryset)
 
     def test_page(self):
         self.queryset.page(2)

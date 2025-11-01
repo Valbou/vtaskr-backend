@@ -40,3 +40,37 @@ class TestTasksNotificationsObserver(DummyBaseTestCase):
             service.build_messages.assert_called_once()
             service.add_messages.assert_called_once_with(messages=["a"])
             service.notify_all.assert_called_once()
+
+    def test_notifications_observer_log_error(self):
+        event_data = {
+            "targets": ["assigned_123"],
+            "user_id": "assigned_123",
+            "today": [],
+            "nb_today": 0,
+            "tomorrow": [],
+            "nb_tomorrow": 0,
+        }
+
+        with patch(NOTIFICATION_SERVICE_PATH) as MockClass:
+            service = MockClass.return_value
+            service.build_messages = MagicMock(side_effect=ValueError("Test"))
+            service.add_messages = MagicMock()
+            service.notify_all = MagicMock()
+
+            with self.assertLogs(
+                "src.notifications.events.tasks.tasks_observers", level="ERROR"
+            ) as cm:
+                TasksNotificationsObserver.run(
+                    self.app, event_name="tasks:todo_today:tasks", event_data=event_data
+                )
+
+                expected = "Test"
+                self.assertListEqual(
+                    cm.output, [
+                        f"ERROR:src.notifications.events.tasks.tasks_observers:{expected}",
+                    ]
+                )
+
+            service.build_messages.assert_called_once()
+            service.add_messages.assert_not_called()
+            service.notify_all.assert_not_called()

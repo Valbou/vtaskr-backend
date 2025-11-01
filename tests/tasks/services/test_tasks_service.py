@@ -281,7 +281,7 @@ class TestTasksService(DummyBaseTestCase):
             Task(
                 title="Test 1",
                 tenant_id="tenant_123",
-                assigned_to="asssigned_123",
+                assigned_to="assigned_123",
                 scheduled_at=now,
             ),
             Task(
@@ -293,7 +293,7 @@ class TestTasksService(DummyBaseTestCase):
             Task(
                 title="Test 3",
                 tenant_id="tenant_123",
-                assigned_to="asssigned_123",
+                assigned_to="assigned_123",
                 scheduled_at=now,
             ),
         ]
@@ -302,8 +302,8 @@ class TestTasksService(DummyBaseTestCase):
         self.tasks_service._add_tasks_dict_to_index(index=index, tasks=tasks)
 
         self.assertEqual(len(index.keys()), 2)
-        self.assertIsInstance(index["asssigned_123"], list)
-        self.assertEqual(len(index["asssigned_123"]), 2)
+        self.assertIsInstance(index["assigned_123"], list)
+        self.assertEqual(len(index["assigned_123"]), 2)
         self.assertIsInstance(index["asssigned_456"], list)
         self.assertEqual(len(index["asssigned_456"]), 1)
 
@@ -315,7 +315,7 @@ class TestTasksService(DummyBaseTestCase):
                     Task(
                         title="Test 1",
                         tenant_id="tenant_123",
-                        assigned_to="asssigned_123",
+                        assigned_to="assigned_123",
                         scheduled_at=now,
                     )
                 ]
@@ -324,7 +324,7 @@ class TestTasksService(DummyBaseTestCase):
         self.tasks_service.event_manager.send_tasks_todo_today_event = MagicMock()
 
         self.tasks_service.notify_tasks_to_assigned(
-            assigned_ids=["asssigned_123"], now=now, end_day_1=now, end_day_2=now
+            assigned_ids=["assigned_123"], now=now, end_day_1=now, end_day_2=now
         )
 
         total_calls = (
@@ -335,9 +335,45 @@ class TestTasksService(DummyBaseTestCase):
             self.tasks_service.event_manager.send_tasks_todo_today_event.assert_called_once()
         )
 
+    def test_notify_tasks_to_assigned_log_error(self):
+        self.maxDiff = None
+
+        now = datetime.now()
+        self.tasks_service.task_manager.get_tasks_assigned_to_and_scheduled_between = (
+            MagicMock(
+                return_value=[
+                    Task(
+                        title="Test 1",
+                        tenant_id="tenant_123",
+                        assigned_to="assigned_123",
+                        scheduled_at=now,
+                    )
+                ]
+            )
+        )
+
+        self.tasks_service.event_manager.send_tasks_todo_today_event = MagicMock(
+            side_effect=ValueError("Test")
+        )
+
+        with self.assertLogs("src.tasks.services.tasks_service", level="ERROR") as cm:
+            self.tasks_service.notify_tasks_to_assigned(
+                assigned_ids=["signed_123"], now=now, end_day_1=now, end_day_2=now
+            )
+
+            expected = "Tasks assigned notification error: Test - assigned to signed_123"
+            self.assertListEqual(
+                cm.output, [f"ERROR:src.tasks.services.tasks_service:{expected}",]
+            )
+
+        total_calls = (
+            self.tasks_service.task_manager.get_tasks_assigned_to_and_scheduled_between.call_count
+        )
+        self.assertEqual(total_calls, 2)
+
     def test_send_today_tasks_notifications(self):
         self.tasks_service.task_manager.all_assigned_to_for_scheduled_between = (
-            MagicMock(return_value=["asssigned_123"])
+            MagicMock(return_value=["assigned_123"])
         )
         self.tasks_service.notify_tasks_to_assigned = MagicMock()
 

@@ -1,4 +1,4 @@
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
 from src.notifications.managers import AbstractSender
 from src.notifications.models import AbstractMessage, Contact, Subscription
@@ -14,9 +14,7 @@ class TestNotificationsService(BaseTestCase):
 
     def test_add_new_contact(self):
         contact = Contact(
-            first_name="first",
-            last_name="last",
-            email="test@example.com",
+            first_name="first", last_name="last", email="test@example.com",
         )
 
         self.notification_service.contact_manager.create = MagicMock(
@@ -32,9 +30,7 @@ class TestNotificationsService(BaseTestCase):
 
     def test_add_new_contact_set_id(self):
         contact = Contact(
-            first_name="first",
-            last_name="last",
-            email="test@example.com",
+            first_name="first", last_name="last", email="test@example.com",
         )
         self.assertNotEqual(contact.id, "contact_123")
 
@@ -55,9 +51,7 @@ class TestNotificationsService(BaseTestCase):
     def test_get_contact_from_email(self):
         self.notification_service.contact_manager.get_by_email = MagicMock(
             return_value=Contact(
-                first_name="first",
-                last_name="last",
-                email="test@example.com",
+                first_name="first", last_name="last", email="test@example.com",
             )
         )
 
@@ -79,6 +73,58 @@ class TestNotificationsService(BaseTestCase):
 
         self.notification_service.subscription_manager.subscribe.assert_called_once()
 
+    def test_create_new_contact_subscription(self):
+        contact = Contact(
+            first_name="first", last_name="last", email="test@example.com",
+        )
+        subscription = Subscription(
+            type=MessageType.SMS,
+            name="tasks:todo_today:tasks",
+            contact_id=contact.id,
+            contact=contact
+        )
+
+        self.notification_service.subscription_manager.register_subscription = (
+            MagicMock(return_value=True)
+        )
+
+        result = self.notification_service.create_new_contact_subscription(
+            user_id=contact.id, subscription=subscription
+        )
+
+        self.assertTrue(result)
+
+        (
+            self.notification_service.subscription_manager
+            .register_subscription.assert_called_once()
+        )
+
+    def test_fail_create_new_contact_subscription(self):
+        contact = Contact(
+            first_name="first", last_name="last", email="test@example.com",
+        )
+        subscription = Subscription(
+            type=MessageType.SMS,
+            name="tasks:todo_today:tasks",
+            contact_id="contact_1234",
+            contact=contact
+        )
+
+        self.notification_service.subscription_manager.register_subscription = (
+            MagicMock()
+        )
+
+        result = self.notification_service.create_new_contact_subscription(
+            user_id=contact.id, subscription=subscription
+        )
+
+        self.assertFalse(result)
+
+        (
+            self.notification_service.subscription_manager
+            .register_subscription.assert_not_called()
+        )
+
     def test_unsubscribe(self):
         self.notification_service.subscription_manager.unsubscribe = MagicMock()
 
@@ -96,14 +142,13 @@ class TestNotificationsService(BaseTestCase):
         self.notification_service.get_all_contact_subscriptions(user_id="user123")
 
         (
-            self.notification_service.subscription_manager.get_contact_subscriptions_for_event.assert_called_once()
+            self.notification_service.subscription_manager
+            .get_contact_subscriptions_for_event.assert_called_once()
         )
 
     def test_update_contact(self):
         contact = Contact(
-            first_name="first",
-            last_name="last",
-            email="test@example.com",
+            first_name="first", last_name="last", email="test@example.com",
         )
         self.notification_service.contact_manager.update = MagicMock()
 
@@ -113,9 +158,7 @@ class TestNotificationsService(BaseTestCase):
 
     def test_delete_contact(self):
         contact = Contact(
-            first_name="first",
-            last_name="last",
-            email="test@example.com",
+            first_name="first", last_name="last", email="test@example.com",
         )
 
         sub_manager = self.notification_service.subscription_manager
