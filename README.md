@@ -7,7 +7,7 @@ Development in progress... We aim to use the hexagonal architecture or tend to u
 [vTaskr Frontend](https://github.com/Valbou/vtaskr-frontend)
 
 ![License LGPLv3](https://img.shields.io/badge/license-LGPLv3-blue "License LGPLv3")
-![Tests 582 passed](https://img.shields.io/badge/tests-582%20passed-green "Tests 582 passed")
+![Tests 655 passed](https://img.shields.io/badge/tests-655%20passed-green "Tests 655 passed")
 ![Coverage 92%](https://img.shields.io/badge/coverage-92%25-green "Coverage 92%")
 [![CodeFactor](https://www.codefactor.io/repository/github/valbou/vtaskr-backend/badge)](https://www.codefactor.io/repository/github/valbou/vtaskr-backend)
 ![API](https://img.shields.io/website?url=https%3A%2F%2Fapi.vtaskr.com)
