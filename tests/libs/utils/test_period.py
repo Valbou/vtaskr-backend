@@ -2,7 +2,7 @@ from datetime import date, datetime, timedelta
 from unittest import TestCase
 from zoneinfo import ZoneInfo
 
-from src.libs.utils import Period, Periodicity, PeriodTypes
+from src.libs.utils import Period, PeriodTypes
 
 
 class TestPeriod(TestCase):
@@ -109,6 +109,23 @@ class TestPeriod(TestCase):
         self.assertIsNotNone(result.tzinfo)
         self.assertEqual(result.isoformat(), value)
 
+    def test_to_date_obj_from_str_with_timezone(self):
+        period = self._get_instance(type=PeriodTypes.DATETIME)
+
+        value = "2025-06-01T01:22:57"
+        result = period._to_date_obj(value=value, tz=self.cet)
+
+        self.assertIsInstance(result, datetime)
+        self.assertIsNotNone(result.tzinfo)
+        self.assertEqual(result.isoformat(), "2025-06-01T03:22:57+02:00")
+
+    def test_to_date_obj_from_str_fail(self):
+        period = self._get_instance(type=PeriodTypes.DATETIME)
+
+        value = "2025/06/01 01:22:57 CET"
+        with self.assertRaises(ValueError):
+            result = period._to_date_obj(value=value, tz=self.cet)
+
     def test_to_date_obj_from_datetime(self):
         period = self._get_instance(type=PeriodTypes.DATETIME)
 
@@ -192,8 +209,15 @@ class TestPeriod(TestCase):
         self.assertEqual(before.start, period.start)
         self.assertEqual(after.end, period.end)
 
-        self.assertTrue(before.is_joined(after))
-        self.assertTrue(after.is_joined(before))
+        self.assertTrue(before.is_joined_to(after))
+        self.assertTrue(after.is_joined_to(before))
+
+    def test_split_at_fail(self):
+        period = self._get_instance(PeriodTypes.DATETIME)
+        split_at = period.start - timedelta(days=5)
+
+        with self.assertRaises(ValueError):
+            period.split_at(value=split_at)
 
     def to_timedelta(self):
         period = self._get_instance(type=PeriodTypes.DATETIME)
@@ -209,7 +233,7 @@ class TestPeriod(TestCase):
         self.assertEqual(
             period.to_timedelta().total_seconds(), next.to_timedelta().total_seconds()
         )
-        self.assertTrue(period.is_joined(next))
+        self.assertTrue(period.is_joined_to(next))
         self.assertGreater(next.start, period.start)
 
     def test_prev_period(self):
@@ -220,7 +244,7 @@ class TestPeriod(TestCase):
         self.assertEqual(
             period.to_timedelta().total_seconds(), prev.to_timedelta().total_seconds()
         )
-        self.assertTrue(period.is_joined(prev))
+        self.assertTrue(period.is_joined_to(prev))
         self.assertLess(prev.start, period.start)
 
     def test_is_instant_true(self):
@@ -231,3 +255,27 @@ class TestPeriod(TestCase):
     def test_is_instant_false(self):
         period = self._get_instance(PeriodTypes.NAIVE)
         self.assertFalse(period.is_instant())
+
+    def test_is_covered_by(self):
+        period_1 = Period(start="2025-01-01T00:00:00Z", end="2026-01-01T00:00:00Z")
+        period_2 = Period(start="2026-01-01T00:00:00Z", end="2027-01-01T00:00:00Z")
+        period_3 = Period(start="2025-06-01T00:00:00Z", end="2026-06-01T00:00:00Z")
+        period_4 = Period(start="2024-02-01T00:00:00Z", end="2025-03-01T00:00:00Z")
+        period_5 = Period(start="2024-06-01T00:00:00Z", end="2027-11-01T00:00:00Z")
+
+        self.assertFalse(period_1.is_covered_by(period_2))
+        self.assertFalse(period_1.is_covered_by(period_3))
+        self.assertFalse(period_1.is_covered_by(period_4))
+        self.assertTrue(period_1.is_covered_by(period_5))
+
+    def test_is_intersected_by(self):
+        period_1 = Period(start="2025-01-01T00:00:00Z", end="2026-01-01T00:00:00Z")
+        period_2 = Period(start="2026-01-01T00:00:00Z", end="2027-01-01T00:00:00Z")
+        period_3 = Period(start="2025-06-01T00:00:00Z", end="2026-06-01T00:00:00Z")
+        period_4 = Period(start="2024-02-01T00:00:00Z", end="2025-03-01T00:00:00Z")
+        period_5 = Period(start="2024-06-01T00:00:00Z", end="2027-11-01T00:00:00Z")
+
+        self.assertFalse(period_1.is_intersected_by(period_2))
+        self.assertTrue(period_1.is_intersected_by(period_3))
+        self.assertTrue(period_1.is_intersected_by(period_4))
+        self.assertFalse(period_1.is_intersected_by(period_5))

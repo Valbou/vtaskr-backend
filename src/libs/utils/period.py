@@ -1,5 +1,5 @@
-from enum import Enum
 from datetime import date, datetime, timedelta
+from enum import Enum
 from typing import Self
 from zoneinfo import ZoneInfo
 
@@ -62,16 +62,13 @@ class Period:
                 try:
                     period_value = datetime.fromisoformat(value)
                     if tz:
-                        period_value = value.astimezone(tz=tz)
+                        period_value = period_value.astimezone(tz=tz)
                 except ValueError as e2:
                     raise ValueError(
                         f"{self.__class__.__name__} string format unknown: {e1} -- {e2}"
                     )
 
-        if isinstance(period_value, date):
-            return period_value
-
-        raise ValueError(f"Invalid value '{type(value)}' for {self.__class__.__name__}")
+        return period_value
 
     def _check_type(self, value: date | datetime) -> date | datetime:
         """Check period type"""
@@ -131,7 +128,7 @@ class Period:
                 Period(start=comp_date, end=self.end),
             )
         else:
-            ValueError(
+            raise ValueError(
                 f"The value given '{comp_date}' is not included in period: "
                 f"[{self.start}; {self.end}["
             )
@@ -158,20 +155,20 @@ class Period:
 
         return self.to_timedelta().total_seconds() == 0
 
-    def is_covered(self, period: Self) -> bool:
+    def is_covered_by(self, period: Self) -> bool:
         """Check if period is covered by another"""
 
         return period.start <= self.start and self.end <= period.end
 
-    def is_intersected(self, period: Self) -> bool:
+    def is_intersected_by(self, period: Self) -> bool:
         """Check if partially covered"""
 
-        before = period.start < self.start < period.end
-        after = period.start < self.end < period.end
+        before = self.start <= period.start < self.end
+        after = self.start < period.end <= self.end
 
         return before or after
 
-    def is_joined(self, period: Self) -> bool:
+    def is_joined_to(self, period: Self) -> bool:
         """Check if period is joined"""
 
         return self.start == period.end or self.end == period.start

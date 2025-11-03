@@ -13,7 +13,7 @@ To See more details about dependencies, you can read pyproject.toml file.
 
 ![License LGPLv3](https://img.shields.io/badge/license-LGPLv3-blue "License LGPLv3")
 ![Python v3.11](https://img.shields.io/badge/python-v3.11-blue "Python v3.11")
-![Tests 655 passed](https://img.shields.io/badge/tests-655%20passed-green "Tests 655 passed")
+![Tests 660 passed](https://img.shields.io/badge/tests-660%20passed-green "Tests 660 passed")
 ![Coverage 92%](https://img.shields.io/badge/coverage-92%25-green "Coverage 92%")
 [![CodeFactor](https://www.codefactor.io/repository/github/valbou/vtaskr-backend/badge)](https://www.codefactor.io/repository/github/valbou/vtaskr-backend)
 ![API](https://img.shields.io/website?url=https%3A%2F%2Fapi.vtaskr.com)
